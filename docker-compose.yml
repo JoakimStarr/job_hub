@@ -10,6 +10,10 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
       NODE_ENV: production
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-finintern-admin-2024}
+      OPERATOR_TOKEN: ${OPERATOR_TOKEN:-finintern-operator-2024}
+      VIEWER_TOKEN: ${VIEWER_TOKEN:-finintern-viewer-2024}
+      AUTH_SALT: ${AUTH_SALT:-finintern-hub-salt-v1}
     volumes:
       - ./data:/app/data
       - ./log:/app/log

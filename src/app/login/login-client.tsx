@@ -111,9 +111,11 @@ export function LoginClient() {
           </form>
 
           <div className="auth-note">
-            <div style={{ fontWeight: 800, marginBottom: 8 }}>登录说明</div>
-            <div style={{ color: 'var(--muted)', lineHeight: 1.8, fontSize: 14 }}>
-              默认管理员账号由后端自动创建。未登录或权限不足时，页面会跳转回这里。
+            <div style={{ fontWeight: 800, marginBottom: 8 }}>默认账号</div>
+            <div style={{ color: 'var(--muted)', lineHeight: 1.8, fontSize: 13 }}>
+              <div><strong>admin</strong> / <code style={{ background: 'var(--panel)', padding: '2px 6px', borderRadius: 4 }}>finintern-admin-2024</code> — 全部权限</div>
+              <div><strong>operator</strong> / <code style={{ background: 'var(--panel)', padding: '2px 6px', borderRadius: 4 }}>finintern-operator-2024</code> — 运营权限</div>
+              <div><strong>viewer</strong> / <code style={{ background: 'var(--panel)', padding: '2px 6px', borderRadius: 4 }}>finintern-viewer-2024</code> — 只读权限</div>
             </div>
           </div>
         </section>
