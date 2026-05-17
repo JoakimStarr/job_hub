@@ -2,7 +2,7 @@ import type { PermissionKey } from '@/lib/types';
 
 export const APP_NAME = 'FinIntern Hub';
 export const APP_TAGLINE = '金融实习招聘平台';
-export const APP_VERSION_FALLBACK = 'v6.1.0';
+export const APP_VERSION = `v${process.env.NEXT_PUBLIC_APP_VERSION || '6.5.0'}`;
 
 export const AUTH_TOKEN_KEY = 'finintern_hub_auth_token';
 export const AUTH_USER_KEY = 'finintern_hub_auth_user';

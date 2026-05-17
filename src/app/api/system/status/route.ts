@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
+import { APP_VERSION } from '@/lib/constants';
 
 export async function GET() {
   try {
@@ -28,7 +29,7 @@ export async function GET() {
       recent_errors: Array<{ source?: string; time?: string; status?: string; message?: string }>;
       crawler_diagnostics: Record<string, { runs?: number; fetched?: number; saved?: number; duplicates?: number; failed?: number; write_failures?: number }>;
     } = {
-      app: { version: 'v6.5.0' },
+      app: { version: APP_VERSION },
       database: { total_jobs: totalJobs.count },
       today_jobs: todayJobs.count,
       crawler_success_rate: 95,

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { APP_NAME, APP_TAGLINE, APP_VERSION_FALLBACK, NAV_ITEMS, ROUTE_TITLES } from '@/lib/constants';
+import { APP_NAME, APP_TAGLINE, APP_VERSION, NAV_ITEMS, ROUTE_TITLES } from '@/lib/constants';
 import { clearSession, getCachedUser, hasPermission, loadCurrentUser } from '@/lib/auth';
 import { AUTH_EXPIRED_EVENT } from '@/lib/constants';
 import type { AppUser, PermissionKey } from '@/lib/types';
@@ -162,7 +162,7 @@ export function AppShell({
               <div className="user-chip-role">{userRole}</div>
             </div>
           </div>
-          <div className="version-line">{APP_VERSION_FALLBACK}</div>
+          <div className="version-line">{APP_VERSION}</div>
           <button
             className="btn sidebar-logout-danger"
             onClick={async () => {

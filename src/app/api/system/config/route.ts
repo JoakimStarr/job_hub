@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
+import { APP_VERSION } from '@/lib/constants';
 
 const DB_PATH = path.join(process.cwd(), 'data', 'jobs.db');
 const CONFIG_FILE = path.join(process.cwd(), 'data', 'system_config.json');
@@ -9,7 +10,7 @@ const CONFIG_FILE = path.join(process.cwd(), 'data', 'system_config.json');
 const DEFAULT_CONFIG = {
   app: {
     name: 'FinIntern Hub',
-    version: 'v6.5.0',
+    version: APP_VERSION,
   },
   crawler: {
     max_jobs_per_source: 100,
