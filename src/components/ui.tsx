@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, memo, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
 import type { JobItem } from '@/lib/types';
 import { API } from '@/lib/api';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
@@ -9,7 +9,7 @@ function joinClassNames(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
 }
 
-export function SectionCard({
+export const SectionCard = memo(function SectionCard({
   title,
   description,
   action,
@@ -34,9 +34,9 @@ export function SectionCard({
       <div className="panel-body">{children}</div>
     </section>
   );
-}
+});
 
-export function MetricCard({ label, value, hint, tone = 'blue' }: { label: string; value: string | number; hint?: string; tone?: 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' }) {
+export const MetricCard = memo(function MetricCard({ label, value, hint, tone = 'blue' }: { label: string; value: string | number; hint?: string; tone?: 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' }) {
   const numericValue = typeof value === 'number' ? value : (Number.isNaN(Number(value)) ? null : Number(value));
   const [displayed, setDisplayed] = useState(numericValue !== null ? 0 : null);
   const [animating, setAnimating] = useState(numericValue !== null);
@@ -84,11 +84,18 @@ export function MetricCard({ label, value, hint, tone = 'blue' }: { label: strin
       {hint ? <div className="metric-hint">{hint}</div> : null}
     </article>
   );
-}
+});
 
 export function Button({ children, variant = 'primary', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'ghost' | 'danger' }) {
+  const hasTextContent = typeof children === 'string' && children.trim().length > 0;
+  const ariaLabel = props['aria-label'] || (!hasTextContent && !Array.isArray(children) ? props.title || '按钮' : undefined);
+
   return (
-    <button {...props} className={joinClassNames('btn', `btn-${variant}`, props.className)}>
+    <button
+      {...props}
+      aria-label={ariaLabel || props['aria-label']}
+      className={joinClassNames('btn', `btn-${variant}`, props.className)}
+    >
       {children}
     </button>
   );
@@ -102,11 +109,11 @@ export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
   return <select {...props} className={joinClassNames('select', props.className)} />;
 }
 
-export function Badge({ children, tone = 'slate' }: { children: ReactNode; tone?: 'slate' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' }) {
+export const Badge = memo(function Badge({ children, tone = 'slate' }: { children: ReactNode; tone?: 'slate' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' }) {
   return <span className={joinClassNames('badge', `badge-${tone}`)}>{children}</span>;
-}
+});
 
-export function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
+export const EmptyState = memo(function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
   return (
     <div className="empty-state">
       <h3>{title}</h3>
@@ -114,9 +121,9 @@ export function EmptyState({ title, description, action }: { title: string; desc
       {action ? <div className="empty-action">{action}</div> : null}
     </div>
   );
-}
+});
 
-export function StarButton({ active, onClick, size = 'md' }: { active: boolean; onClick: () => void; size?: 'sm' | 'md' }) {
+export const StarButton = memo(function StarButton({ active, onClick, size = 'md' }: { active: boolean; onClick: () => void; size?: 'sm' | 'md' }) {
   return (
     <button
       type="button"
@@ -130,7 +137,7 @@ export function StarButton({ active, onClick, size = 'md' }: { active: boolean; 
       </span>
     </button>
   );
-}
+});
 
 function formatDate(dateStr?: string | null): string {
   if (!dateStr) return '';
@@ -139,7 +146,7 @@ function formatDate(dateStr?: string | null): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export function JobCard({ job, onToggleFavorite, onClick }: { job: JobItem; onToggleFavorite?: (job: JobItem) => void; onClick?: (job: JobItem) => void }) {
+export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick }: { job: JobItem; onToggleFavorite?: (job: JobItem) => void; onClick?: (job: JobItem) => void }) {
   const handleClick = useCallback(() => {
     if (onClick) onClick(job);
   }, [onClick, job]);
@@ -150,6 +157,8 @@ export function JobCard({ job, onToggleFavorite, onClick }: { job: JobItem; onTo
     <article
       className={joinClassNames('job-card', onClick && 'job-card-clickable')}
       onClick={handleClick}
+      role="article"
+      aria-label={`岗位: ${job.title}${job.company ? ` - ${job.company}` : ''}`}
     >
       <div className="job-card-main">
         <div className="job-title-row">
@@ -177,14 +186,58 @@ export function JobCard({ job, onToggleFavorite, onClick }: { job: JobItem; onTo
       ) : null}
     </article>
   );
-}
+});
 
 export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobItem; onClose: () => void; onToggleFavorite?: (job: JobItem) => void }) {
   const [aiResult, setAiResult] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const detailDate = formatDate(job.publish_date || job.created_at);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!modalRef.current) return;
+
+    const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusableElements = Array.from(modalRef.current.querySelectorAll<HTMLElement>(focusableSelectors));
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    function handleTabKey(e: KeyboardEvent) {
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleTabKey);
+    const previousActiveElement = document.activeElement as HTMLElement;
+    firstElement?.focus();
+
+    return () => {
+      document.removeEventListener('keydown', handleTabKey);
+      previousActiveElement?.focus();
+    };
+  }, []);
 
   const handleAnalyze = useCallback(async () => {
     setAiLoading(true);
@@ -208,11 +261,18 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
   }, [job.id]);
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="job-detail-modal" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-backdrop" onClick={onClose} role="presentation">
+      <div
+        className="job-detail-modal"
+        ref={modalRef}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="job-detail-title"
+      >
         <div className="job-detail-head">
           <div>
-            <h2>{job.title}</h2>
+            <h2 id="job-detail-title">{job.title}</h2>
             <div className="job-detail-meta">
               {job.company ? <span>{job.company}</span> : null}
               {job.location ? <span>📍 {job.location}</span> : null}
@@ -397,14 +457,40 @@ export function FileUpload({ onFileSelect, accept, label }: { onFileSelect: (fil
 }
 
 export function TabNav<T extends string>({ tabs, active, onChange }: { tabs: { key: T; label: string }[]; active: T; onChange: (key: T) => void }) {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent, index: number) => {
+    let newIndex: number;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      newIndex = (index + 1) % tabs.length;
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      newIndex = (index - 1 + tabs.length) % tabs.length;
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      newIndex = 0;
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      newIndex = tabs.length - 1;
+    } else {
+      return;
+    }
+    onChange(tabs[newIndex].key);
+  }, [tabs, onChange]);
+
   return (
-    <nav className="tab-nav">
-      {tabs.map((tab) => (
+    <nav className="tab-nav" role="tablist" aria-label="选项卡导航">
+      {tabs.map((tab, index) => (
         <button
           key={tab.key}
           type="button"
+          id={`tab-${tab.key}`}
           className={joinClassNames('tab-item', active === tab.key && 'tab-item-active')}
           onClick={() => onChange(tab.key)}
+          onKeyDown={(e) => handleKeyDown(e, index)}
+          role="tab"
+          aria-selected={active === tab.key}
+          aria-controls={`panel-${tab.key}`}
+          tabIndex={active === tab.key ? 0 : -1}
         >
           {tab.label}
         </button>

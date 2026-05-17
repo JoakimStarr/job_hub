@@ -15,7 +15,14 @@ const TABS: { key: RecommendationMode; label: string }[] = [
 ];
 
 function isJobArray(data: unknown): data is JobItem[] {
-  return Array.isArray(data) && data.length > 0 && typeof (data[0] as Record<string, unknown>)?.title === 'string';
+  if (!Array.isArray(data) || data.length === 0) return false;
+  const first = data[0];
+  return (
+    typeof first === 'object' &&
+    first !== null &&
+    'title' in first &&
+    typeof (first as Record<string, unknown>).title === 'string'
+  );
 }
 
 function renderResult(data: unknown, submitting: boolean) {
@@ -209,12 +216,13 @@ export default function RecommendationsPage() {
           {!historyLoading && history.length > 0 ? (
             <div className="grid" style={{ gap: 12 }}>
               {history.map((item, index) => {
-                const historyItem = item as Record<string, unknown>;
-                const modeLabel = historyItem.mode === 'analyze' ? '岗位分析' : 
-                                  historyItem.mode === 'resume' ? '简历建议' : '投递助手';
-                const timestamp = historyItem.created_at ? 
-                  new Date(historyItem.created_at as string).toLocaleString('zh-CN') : 
-                  `记录 ${index + 1}`;
+            if (typeof item !== 'object' || item === null) return null;
+            const historyItem = item as Record<string, unknown>;
+            const modeLabel = historyItem.mode === 'analyze' ? '岗位分析' :
+                              historyItem.mode === 'resume' ? '简历建议' : '投递助手';
+            const timestamp = historyItem.created_at ?
+              new Date(historyItem.created_at as string).toLocaleString('zh-CN') :
+              `记录 ${index + 1}`;
                 
                 return (
                   <div key={index} className="history-card" onClick={() => setResponse(historyItem.result)}>

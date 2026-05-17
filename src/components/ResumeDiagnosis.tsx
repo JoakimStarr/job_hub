@@ -2,8 +2,39 @@
 
 import type { ResumeProfile, ResumeDiagnosis } from '@/lib/resume-types';
 import { API } from '@/lib/api';
+import { DIAGNOSIS_SCORE_LEVELS } from '@/lib/constants';
 import { useState, useEffect } from 'react';
 import styles from './resume-diagnosis.module.css';
+
+function getScoreColor(score: number): string {
+  const level = DIAGNOSIS_SCORE_LEVELS.find(l => score >= l.min);
+  switch (level?.colorKey) {
+    case 'green': return styles.scoreValueGreen;
+    case 'blue': return styles.scoreValueBlue;
+    case 'yellow': return styles.scoreValueYellow;
+    default: return styles.scoreValueRed;
+  }
+}
+
+function getScoreBgColor(score: number): string {
+  const level = DIAGNOSIS_SCORE_LEVELS.find(l => score >= l.min);
+  switch (level?.colorKey) {
+    case 'green': return styles.scoreCardGreen;
+    case 'blue': return styles.scoreCardBlue;
+    case 'yellow': return styles.scoreCardYellow;
+    default: return styles.scoreCardRed;
+  }
+}
+
+function getScoreBarColor(score: number): string {
+  const level = DIAGNOSIS_SCORE_LEVELS.find(l => score >= l.min);
+  switch (level?.colorKey) {
+    case 'green': return styles.scoreBarGreen;
+    case 'blue': return styles.scoreBarBlue;
+    case 'yellow': return styles.scoreBarYellow;
+    default: return styles.scoreBarRed;
+  }
+}
 
 interface ResumeDiagnosisProps {
   profile: ResumeProfile;
@@ -48,27 +79,6 @@ export default function ResumeDiagnosis({ profile, onImprove }: ResumeDiagnosisP
   if (!diagnosis) {
     return null;
   }
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return styles.scoreValueGreen;
-    if (score >= 60) return styles.scoreValueBlue;
-    if (score >= 40) return styles.scoreValueYellow;
-    return styles.scoreValueRed;
-  };
-
-  const getScoreBgColor = (score: number) => {
-    if (score >= 80) return styles.scoreCardGreen;
-    if (score >= 60) return styles.scoreCardBlue;
-    if (score >= 40) return styles.scoreCardYellow;
-    return styles.scoreCardRed;
-  };
-
-  const getScoreBarColor = (score: number) => {
-    if (score >= 80) return styles.scoreBarGreen;
-    if (score >= 60) return styles.scoreBarBlue;
-    if (score >= 40) return styles.scoreBarYellow;
-    return styles.scoreBarRed;
-  };
 
   return (
     <div className={styles.container}>

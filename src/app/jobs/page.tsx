@@ -1,12 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, SectionCard, Skeleton } from '@/components/ui';
 import { HierarchicalFilter } from '@/components/HierarchicalFilter';
 import { LoadingSpinner, SkeletonCard, SkeletonMetric } from '@/components/Loading';
 import { ErrorMessage, useToast } from '@/components/Toast';
 import { API } from '@/lib/api';
+import { DEBOUNCE_MS } from '@/lib/constants';
 import type { JobItem, PagedResponse, FilterOption, ProvinceWithCities, EducationMapping } from '@/types';
 
 interface FilterOptions {
@@ -18,8 +19,6 @@ interface FilterOptions {
   provinces: ProvinceWithCities[];
   education_mapping: EducationMapping[];
 }
-
-const DEBOUNCE_MS = 300;
 
 export default function JobsPage() {
   const toast = useToast();
@@ -62,7 +61,7 @@ export default function JobsPage() {
     };
   }, [query]);
 
-  const filterParams = {
+  const filterParams = useMemo(() => ({
     page,
     page_size: 12,
     location,
@@ -70,7 +69,7 @@ export default function JobsPage() {
     industry,
     education,
     source,
-  };
+  }), [page, location, jobType, industry, education, source]);
 
   async function loadJobs(nextLoading = false) {
     const requestId = ++requestIdRef.current;
@@ -168,7 +167,7 @@ export default function JobsPage() {
         description="按关键词、地点、类型、行业、学历和来源筛选岗位"
         action={<Button variant="secondary" onClick={() => void loadJobs(true)}>{refreshing ? '刷新中...' : '刷新数据'}</Button>}
       >
-        <div className="filter-grid">
+        <div className="filter-grid" role="search" aria-label="岗位筛选">
           <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索岗位或公司（支持拼音）" />
           <HierarchicalFilter
             label="地点"
@@ -289,24 +288,25 @@ export default function JobsPage() {
         ) : items.length === 0 ? (
           <EmptyState title="没有结果" description="当前筛选条件下没有找到岗位。" />
         ) : (
-          <div className="grid" style={{ gap: 14 }}>
+          <div className="grid" style={{ gap: 14 }} role="list" aria-label="岗位列表">
             {items.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                onClick={(target) => setSelectedJob(target)}
-                onToggleFavorite={handleToggleFavorite}
-              />
+              <div key={job.id} role="listitem">
+                <JobCard
+                  job={job}
+                  onClick={(target) => setSelectedJob(target)}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              </div>
             ))}
           </div>
         )}
         {jobs?.pages ? (
-          <div className="row-gap" style={{ marginTop: 18, justifyContent: 'space-between' }}>
-            <Button variant="secondary" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>上一页</Button>
+          <div className="row-gap" style={{ marginTop: 18, justifyContent: 'space-between' }} role="navigation" aria-label="分页">
+            <Button variant="secondary" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))} aria-label="上一页">上一页</Button>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <Badge tone="slate">第 {page} / {jobs.pages} 页</Badge>
             </div>
-            <Button variant="secondary" disabled={page >= jobs.pages} onClick={() => setPage((value) => value + 1)}>下一页</Button>
+            <Button variant="secondary" disabled={page >= jobs.pages} onClick={() => setPage((value) => value + 1)} aria-label="下一页">下一页</Button>
           </div>
         ) : null}
       </SectionCard>

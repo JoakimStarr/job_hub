@@ -49,3 +49,24 @@ export const ROUTE_TITLES: Record<string, string> = {
   '/users': '用户管理',
   '/login': '登录',
 };
+
+// API 相关
+export const DEBOUNCE_MS = 300;
+export const DEFAULT_PAGE_SIZE = 12;
+export const FAVORITES_PAGE_SIZE = 10;
+export const MAX_MATCH_RESULTS = 50;
+
+// 匹配分数阈值
+export const SCORE_THRESHOLDS = {
+  SPRINT: 85,
+  MATCH: 70,
+  POTENTIAL: 55,
+} as const;
+
+// 诊断分数阈值
+export const DIAGNOSIS_SCORE_LEVELS = [
+  { min: 80, colorKey: 'green' as const },
+  { min: 60, colorKey: 'blue' as const },
+  { min: 40, colorKey: 'yellow' as const },
+  { min: 0, colorKey: 'red' as const },
+] as const;

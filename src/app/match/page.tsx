@@ -7,6 +7,7 @@ import MatchResults from '@/components/MatchResults';
 import ResumeDiagnosis from '@/components/ResumeDiagnosis';
 import type { ResumeProfile, MatchResult } from '@/lib/resume-types';
 import { API } from '@/lib/api';
+import { MAX_MATCH_RESULTS } from '@/lib/constants';
 import styles from './match.module.css';
 
 type Step = 'upload' | 'confirm' | 'match' | 'results';
@@ -61,7 +62,7 @@ export default function MatchPage() {
         body: JSON.stringify({
           profile,
           filters: {
-            maxResults: 50,
+            maxResults: MAX_MATCH_RESULTS,
           },
         }),
       });

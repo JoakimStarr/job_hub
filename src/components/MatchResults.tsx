@@ -1,7 +1,9 @@
 'use client';
 
+import { useMemo, memo } from 'react';
 import type { MatchResult } from '@/lib/resume-types';
 import { scoreEngine } from '@/lib/score-engine';
+import { SCORE_THRESHOLDS } from '@/lib/constants';
 import styles from './match-results.module.css';
 
 interface MatchResultsProps {
@@ -23,10 +25,14 @@ export default function MatchResults({
     );
   }
 
-  const sprintJobs = matches.filter(m => m.score.total >= 85);
-  const matchJobs = matches.filter(m => m.score.total >= 70 && m.score.total < 85);
-  const potentialJobs = matches.filter(m => m.score.total >= 55 && m.score.total < 70);
-  const challengeJobs = matches.filter(m => m.score.total < 55);
+  const groupedResults = useMemo(() => ({
+    sprintJobs: matches.filter(m => m.score.total >= SCORE_THRESHOLDS.SPRINT),
+    matchJobs: matches.filter(m => m.score.total >= SCORE_THRESHOLDS.MATCH && m.score.total < SCORE_THRESHOLDS.SPRINT),
+    potentialJobs: matches.filter(m => m.score.total >= SCORE_THRESHOLDS.POTENTIAL && m.score.total < SCORE_THRESHOLDS.MATCH),
+    challengeJobs: matches.filter(m => m.score.total < SCORE_THRESHOLDS.POTENTIAL),
+  }), [matches]);
+
+  const { sprintJobs, matchJobs, potentialJobs, challengeJobs } = groupedResults;
 
   return (
     <div className={styles.container}>
@@ -66,7 +72,7 @@ export default function MatchResults({
       </div>
     </div>
   );
-}
+});
 
 interface MatchCardProps {
   match: MatchResult;
@@ -74,7 +80,7 @@ interface MatchCardProps {
   onExportReport?: (jobId: number) => void;
 }
 
-function MatchCard({ match, onViewDetail, onExportReport }: MatchCardProps) {
+const MatchCard = memo(function MatchCard({ match, onViewDetail, onExportReport }: MatchCardProps) {
   const { job, score, rank } = match;
   const level = scoreEngine.getMatchLevel(score.total);
   const color = scoreEngine.getMatchColor(score.total);
