@@ -3,6 +3,7 @@
 import type { ResumeProfile, ResumeDiagnosis } from '@/lib/resume-types';
 import { API } from '@/lib/api';
 import { useState, useEffect } from 'react';
+import styles from './resume-diagnosis.module.css';
 
 interface ResumeDiagnosisProps {
   profile: ResumeProfile;
@@ -34,11 +35,11 @@ export default function ResumeDiagnosis({ profile, onImprove }: ResumeDiagnosisP
 
   if (loading) {
     return (
-      <div className="w-full max-w-2xl mx-auto p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/2 mb-4" />
-          <div className="h-32 bg-gray-200 rounded mb-4" />
-          <div className="h-24 bg-gray-200 rounded" />
+      <div className={styles.loading}>
+        <div className={styles.pulse}>
+          <div className={`${styles.pulseLine} ${styles.pulseLineSm}`} />
+          <div className={`${styles.pulseLine} ${styles.pulseLineMd}`} />
+          <div className={`${styles.pulseLine} ${styles.pulseLineLg}`} />
         </div>
       </div>
     );
@@ -49,59 +50,62 @@ export default function ResumeDiagnosis({ profile, onImprove }: ResumeDiagnosisP
   }
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-blue-600';
-    if (score >= 40) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return styles.scoreValueGreen;
+    if (score >= 60) return styles.scoreValueBlue;
+    if (score >= 40) return styles.scoreValueYellow;
+    return styles.scoreValueRed;
   };
 
   const getScoreBgColor = (score: number) => {
-    if (score >= 80) return 'bg-green-100';
-    if (score >= 60) return 'bg-blue-100';
-    if (score >= 40) return 'bg-yellow-100';
-    return 'bg-red-100';
+    if (score >= 80) return styles.scoreCardGreen;
+    if (score >= 60) return styles.scoreCardBlue;
+    if (score >= 40) return styles.scoreCardYellow;
+    return styles.scoreCardRed;
+  };
+
+  const getScoreBarColor = (score: number) => {
+    if (score >= 80) return styles.scoreBarGreen;
+    if (score >= 60) return styles.scoreBarBlue;
+    if (score >= 40) return styles.scoreBarYellow;
+    return styles.scoreBarRed;
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">简历诊断报告</h2>
+    <div className={styles.container}>
+      <h2 className={styles.title}>简历诊断报告</h2>
 
-      <div className={`${getScoreBgColor(diagnosis.score)} rounded-lg p-6 mb-6`}>
-        <div className="flex items-center justify-between mb-4">
+      <div className={`${styles.scoreCard} ${getScoreBgColor(diagnosis.score)}`}>
+        <div className={styles.scoreCardHeader}>
           <div>
-            <div className="text-sm text-gray-600">简历诊断分</div>
-            <div className={`text-5xl font-bold ${getScoreColor(diagnosis.score)}`}>
+            <div className={styles.scoreLabel}>简历诊断分</div>
+            <div className={`${styles.scoreValue} ${getScoreColor(diagnosis.score)}`}>
               {diagnosis.score}
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-sm text-gray-600">满分</div>
-            <div className="text-2xl font-bold text-gray-400">100</div>
+          <div className={styles.scoreMax}>
+            <div className={styles.scoreMaxLabel}>满分</div>
+            <div className={styles.scoreMaxValue}>100</div>
           </div>
         </div>
-        <div className="w-full bg-white bg-opacity-50 rounded-full h-3">
+        <div className={styles.scoreBarBg}>
           <div
-            className={`h-3 rounded-full transition-all ${
-              diagnosis.score >= 80 ? 'bg-green-500' :
-              diagnosis.score >= 60 ? 'bg-blue-500' :
-              diagnosis.score >= 40 ? 'bg-yellow-500' : 'bg-red-500'
-            }`}
+            className={`${styles.scoreBarFill} ${getScoreBarColor(diagnosis.score)}`}
             style={{ width: `${diagnosis.score}%` }}
           />
         </div>
       </div>
 
       {diagnosis.highlights.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 flex items-center">
-            <span className="text-green-500 mr-2">✓</span>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <span className={`${styles.sectionIcon} ${styles.sectionIconGreen}`}>✓</span>
             优势亮点
           </h3>
-          <ul className="space-y-2">
+          <ul className={styles.sectionList}>
             {diagnosis.highlights.map((highlight, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-green-500 mr-2">•</span>
-                <span className="text-gray-700">{highlight}</span>
+              <li key={index} className={styles.sectionItem}>
+                <span className={`${styles.sectionBullet} ${styles.sectionBulletGreen}`}>•</span>
+                <span className={styles.sectionText}>{highlight}</span>
               </li>
             ))}
           </ul>
@@ -109,16 +113,16 @@ export default function ResumeDiagnosis({ profile, onImprove }: ResumeDiagnosisP
       )}
 
       {diagnosis.risks.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 flex items-center">
-            <span className="text-yellow-500 mr-2">⚠</span>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <span className={`${styles.sectionIcon} ${styles.sectionIconYellow}`}>⚠</span>
             风险提示
           </h3>
-          <ul className="space-y-2">
+          <ul className={styles.sectionList}>
             {diagnosis.risks.map((risk, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-yellow-500 mr-2">•</span>
-                <span className="text-gray-700">{risk}</span>
+              <li key={index} className={styles.sectionItem}>
+                <span className={`${styles.sectionBullet} ${styles.sectionBulletYellow}`}>•</span>
+                <span className={styles.sectionText}>{risk}</span>
               </li>
             ))}
           </ul>
@@ -126,16 +130,16 @@ export default function ResumeDiagnosis({ profile, onImprove }: ResumeDiagnosisP
       )}
 
       {diagnosis.gaps.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 flex items-center">
-            <span className="text-red-500 mr-2">✗</span>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <span className={`${styles.sectionIcon} ${styles.sectionIconRed}`}>✗</span>
             主要缺口
           </h3>
-          <ul className="space-y-2">
+          <ul className={styles.sectionList}>
             {diagnosis.gaps.map((gap, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-red-500 mr-2">•</span>
-                <span className="text-gray-700">{gap}</span>
+              <li key={index} className={styles.sectionItem}>
+                <span className={`${styles.sectionBullet} ${styles.sectionBulletRed}`}>•</span>
+                <span className={styles.sectionText}>{gap}</span>
               </li>
             ))}
           </ul>
@@ -143,16 +147,16 @@ export default function ResumeDiagnosis({ profile, onImprove }: ResumeDiagnosisP
       )}
 
       {diagnosis.suggestions.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 flex items-center">
-            <span className="text-blue-500 mr-2">💡</span>
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <span className={`${styles.sectionIcon} ${styles.sectionIconBlue}`}>💡</span>
             优化建议
           </h3>
-          <ul className="space-y-2">
+          <ul className={styles.sectionList}>
             {diagnosis.suggestions.map((suggestion, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-blue-500 mr-2">•</span>
-                <span className="text-gray-700">{suggestion}</span>
+              <li key={index} className={styles.sectionItem}>
+                <span className={`${styles.sectionBullet} ${styles.sectionBulletBlue}`}>•</span>
+                <span className={styles.sectionText}>{suggestion}</span>
               </li>
             ))}
           </ul>
@@ -162,7 +166,7 @@ export default function ResumeDiagnosis({ profile, onImprove }: ResumeDiagnosisP
       {onImprove && diagnosis.suggestions.length > 0 && (
         <button
           onClick={() => onImprove(diagnosis.suggestions)}
-          className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+          className={styles.actionBtn}
         >
           查看改进方案
         </button>

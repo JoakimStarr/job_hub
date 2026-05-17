@@ -1,0 +1,155 @@
+.container {
+  width: 100%;
+  max-width: 672px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.dropZone {
+  border: 2px dashed #d1d5db;
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.dropZoneActive {
+  border-color: var(--primary);
+  background: #eff6ff;
+}
+
+.parsing {
+  padding: 32px 0;
+}
+
+.parsingText {
+  margin-bottom: 16px;
+  font-size: 18px;
+}
+
+.progressBarBg {
+  width: 100%;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  height: 16px;
+}
+
+.progressBarFill {
+  background: var(--primary);
+  height: 16px;
+  border-radius: 9999px;
+  transition: width 300ms ease;
+}
+
+.progressPercent {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.uploadIcon {
+  margin: 0 auto;
+  height: 48px;
+  width: 48px;
+  color: #9ca3af;
+}
+
+.uploadTitle {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.uploadHint {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadBtn {
+  cursor: pointer;
+  background: var(--primary);
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: var(--radius-lg);
+  transition: background var(--transition);
+  display: inline-block;
+  border: none;
+  font-size: 14px;
+}
+
+.uploadBtn:hover {
+  background: var(--primary-hover);
+}
+
+.textareaSection {
+  margin-top: 24px;
+}
+
+.dividerRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dividerLine {
+  flex: 1;
+  border-top: 1px solid #d1d5db;
+}
+
+.dividerText {
+  padding: 0 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.resumeTextarea {
+  width: 100%;
+  height: 256px;
+  padding: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-lg);
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.resumeTextarea:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.submitBtn {
+  margin-top: 16px;
+  width: 100%;
+  background: var(--success);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: var(--radius-lg);
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.submitBtn:hover {
+  background: #059669;
+}
+
+.submitBtn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}

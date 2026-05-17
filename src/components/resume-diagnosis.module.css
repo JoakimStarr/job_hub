@@ -1,0 +1,234 @@
+.loading {
+  width: 100%;
+  max-width: 672px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.pulseLine {
+  background: #e2e8f0;
+  border-radius: var(--radius-sm);
+}
+
+.pulseLineSm {
+  height: 32px;
+  width: 50%;
+  margin-bottom: 16px;
+}
+
+.pulseLineMd {
+  height: 128px;
+  margin-bottom: 16px;
+}
+
+.pulseLineLg {
+  height: 96px;
+}
+
+.container {
+  width: 100%;
+  max-width: 672px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.scoreCard {
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.scoreCardGreen {
+  background: #d1fae5;
+}
+
+.scoreCardBlue {
+  background: #dbeafe;
+}
+
+.scoreCardYellow {
+  background: #fef3c7;
+}
+
+.scoreCardRed {
+  background: #fee2e2;
+}
+
+.scoreCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.scoreLabel {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.scoreValue {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.scoreValueGreen {
+  color: var(--success);
+}
+
+.scoreValueBlue {
+  color: var(--primary);
+}
+
+.scoreValueYellow {
+  color: var(--warning);
+}
+
+.scoreValueRed {
+  color: var(--danger);
+}
+
+.scoreMax {
+  text-align: right;
+}
+
+.scoreMaxLabel {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.scoreMaxValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.scoreBarBg {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 9999px;
+  height: 12px;
+}
+
+.scoreBarFill {
+  height: 12px;
+  border-radius: 9999px;
+  transition: width var(--transition);
+}
+
+.scoreBarGreen {
+  background: var(--success);
+}
+
+.scoreBarBlue {
+  background: var(--primary);
+}
+
+.scoreBarYellow {
+  background: var(--warning);
+}
+
+.scoreBarRed {
+  background: var(--danger);
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.sectionIcon {
+  margin-right: 8px;
+}
+
+.sectionIconGreen {
+  color: var(--success);
+}
+
+.sectionIconYellow {
+  color: var(--warning);
+}
+
+.sectionIconRed {
+  color: var(--danger);
+}
+
+.sectionIconBlue {
+  color: var(--primary);
+}
+
+.sectionList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sectionItem {
+  display: flex;
+  align-items: flex-start;
+}
+
+.sectionBullet {
+  margin-right: 8px;
+}
+
+.sectionBulletGreen {
+  color: var(--success);
+}
+
+.sectionBulletYellow {
+  color: var(--warning);
+}
+
+.sectionBulletRed {
+  color: var(--danger);
+}
+
+.sectionBulletBlue {
+  color: var(--primary);
+}
+
+.sectionText {
+  color: var(--text);
+}
+
+.actionBtn {
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: var(--radius-lg);
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.actionBtn:hover {
+  background: var(--primary-hover);
+}

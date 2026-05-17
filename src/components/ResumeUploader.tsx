@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import type { ResumeProfile, ParseResult } from '@/lib/resume-types';
 import { API } from '@/lib/api';
+import styles from './resume-uploader.module.css';
 
 interface ResumeUploaderProps {
   onParseSuccess: (profile: ResumeProfile) => void;
@@ -121,33 +122,31 @@ export default function ResumeUploader({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6 text-center">上传简历</h2>
-      
+    <div className={styles.container}>
+      <h2 className={styles.title}>上传简历</h2>
+
       <div
-        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-          isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-        }`}
+        className={`${styles.dropZone} ${isDragging ? styles.dropZoneActive : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         {isParsing ? (
-          <div className="py-8">
-            <div className="mb-4 text-lg">正在解析简历...</div>
-            <div className="w-full bg-gray-200 rounded-full h-4">
+          <div className={styles.parsing}>
+            <div className={styles.parsingText}>正在解析简历...</div>
+            <div className={styles.progressBarBg}>
               <div
-                className="bg-blue-500 h-4 rounded-full transition-all duration-300"
+                className={styles.progressBarFill}
                 style={{ width: `${parseProgress}%` }}
               />
             </div>
-            <div className="mt-2 text-sm text-gray-600">{parseProgress}%</div>
+            <div className={styles.progressPercent}>{parseProgress}%</div>
           </div>
         ) : (
           <>
-            <div className="mb-4">
+            <div style={{ marginBottom: '16px' }}>
               <svg
-                className="mx-auto h-12 w-12 text-gray-400"
+                className={styles.uploadIcon}
                 stroke="currentColor"
                 fill="none"
                 viewBox="0 0 48 48"
@@ -160,20 +159,20 @@ export default function ResumeUploader({
                 />
               </svg>
             </div>
-            <p className="text-lg mb-2">拖拽或点击上传简历</p>
-            <p className="text-sm text-gray-500 mb-4">
+            <p className={styles.uploadTitle}>拖拽或点击上传简历</p>
+            <p className={styles.uploadHint}>
               支持格式: {acceptedFormats.join(', ')} | 最大: {maxSize}MB
             </p>
             <input
               type="file"
               accept={acceptedFormats.join(',')}
               onChange={handleFileSelect}
-              className="hidden"
+              className={styles.fileInput}
               id="resume-upload"
             />
             <label
               htmlFor="resume-upload"
-              className="cursor-pointer bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors inline-block"
+              className={styles.uploadBtn}
             >
               选择文件
             </label>
@@ -181,25 +180,25 @@ export default function ResumeUploader({
         )}
       </div>
 
-      <div className="mt-6">
-        <div className="flex items-center mb-4">
-          <div className="flex-1 border-t border-gray-300" />
-          <span className="px-4 text-sm text-gray-500">或者直接粘贴简历内容</span>
-          <div className="flex-1 border-t border-gray-300" />
+      <div className={styles.textareaSection}>
+        <div className={styles.dividerRow}>
+          <div className={styles.dividerLine} />
+          <span className={styles.dividerText}>或者直接粘贴简历内容</span>
+          <div className={styles.dividerLine} />
         </div>
-        
+
         <textarea
           value={resumeText}
           onChange={(e) => setResumeText(e.target.value)}
           placeholder="请粘贴简历文本内容..."
-          className="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className={styles.resumeTextarea}
           disabled={isParsing}
         />
-        
+
         <button
           onClick={handleTextSubmit}
           disabled={isParsing || !resumeText.trim()}
-          className="mt-4 w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          className={styles.submitBtn}
         >
           {isParsing ? '解析中...' : '开始解析'}
         </button>

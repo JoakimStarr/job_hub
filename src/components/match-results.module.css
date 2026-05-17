@@ -1,0 +1,285 @@
+.emptyState {
+  text-align: center;
+  padding: 48px 0;
+}
+
+.emptyText {
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.statCard {
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+
+.statCardGreen {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.statCardBlue {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.statCardYellow {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+}
+
+.statCardRed {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.statValueGreen {
+  color: var(--success);
+}
+
+.statValueBlue {
+  color: var(--primary);
+}
+
+.statValueYellow {
+  color: var(--warning);
+}
+
+.statValueRed {
+  color: var(--danger);
+}
+
+.statLabel {
+  font-size: 14px;
+}
+
+.statLabelGreen {
+  color: #065f46;
+}
+
+.statLabelBlue {
+  color: #1e40af;
+}
+
+.statLabelYellow {
+  color: #92400e;
+}
+
+.statLabelRed {
+  color: #991b1b;
+}
+
+.cardList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: box-shadow var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.cardInfo {
+  flex: 1;
+}
+
+.cardTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.rank {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.jobTitle {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.jobMeta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.salary {
+  color: var(--success);
+  font-weight: 500;
+}
+
+.scoreBlock {
+  text-align: right;
+}
+
+.scoreValue {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.scoreLabel {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.progressBarBg {
+  width: 100%;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  height: 8px;
+  margin-bottom: 16px;
+}
+
+.progressBarFill {
+  height: 8px;
+  border-radius: 9999px;
+  transition: width var(--transition);
+}
+
+.breakdownGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  .breakdownGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.breakdownLabel {
+  color: var(--muted);
+}
+
+.breakdownValue {
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+.tagSection {
+  margin-bottom: 16px;
+}
+
+.tagSectionLabel {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.tagList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.matchTag {
+  padding: 4px 8px;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.gapTag {
+  padding: 4px 8px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.viewBtn {
+  flex: 1;
+  background: var(--primary);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.viewBtn:hover {
+  background: var(--primary-hover);
+}
+
+.exportBtn {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.exportBtn:hover {
+  background: #f9fafb;
+}
