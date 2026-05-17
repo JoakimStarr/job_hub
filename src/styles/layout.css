@@ -163,7 +163,7 @@
 }
 
 .user-chip-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text);
   white-space: nowrap;
@@ -173,14 +173,9 @@
 
 .user-chip-role {
   font-size: 11px;
-  color: var(--muted);
-}
-
-.version-line {
-  font-size: 10px;
   color: var(--panel-border);
-  text-align: center;
-  margin-bottom: 8px;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  letter-spacing: 0.3px;
 }
 
 .sidebar-logout-danger {

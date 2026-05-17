@@ -167,10 +167,9 @@ export function AppShell({
           <div className="user-chip">
             <div className="user-info">
               <div className="user-chip-name">{displayName}</div>
-              <div className="user-chip-role">{userRole}</div>
+              <div className="user-chip-role">{APP_VERSION}</div>
             </div>
           </div>
-          <div className="version-line">{APP_VERSION}</div>
           <button
             className="btn sidebar-logout-danger"
             onClick={async () => {
