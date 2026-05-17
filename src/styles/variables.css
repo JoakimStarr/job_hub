@@ -1,5 +1,6 @@
 :root {
   --bg: #f8fafc;
+  --bg-subtle: #f1f5f9;
   --panel: #ffffff;
   --panel-border: #e2e8f0;
   --text: #1e293b;
@@ -21,6 +22,7 @@
 
 [data-theme='dark'] {
   --bg: #0f172a;
+  --bg-subtle: #1e293b;
   --panel: #1e293b;
   --panel-border: #334155;
   --text: #e2e8f0;
@@ -73,4 +75,20 @@ select,
 textarea {
   font-family: inherit;
   font-size: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

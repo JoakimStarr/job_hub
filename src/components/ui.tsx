@@ -114,8 +114,25 @@ export const Badge = memo(function Badge({ children, tone = 'slate', style, onCl
 });
 
 export const EmptyState = memo(function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
+  const isNetworkError = /网络|连接|超时|timeout|network/i.test(description);
+  const isError = /错误|失败|error|404|500/i.test(title) || isNetworkError;
+
   return (
     <div className="empty-state">
+      {isError ? (
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="2.5" opacity="0.15" />
+          <path d="M40 26v20M40 54v2" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
+          <circle cx="40" cy="44" r="4" fill="currentColor" opacity="0.15" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="16" y="22" width="48" height="36" rx="6" stroke="currentColor" strokeWidth="2.5" opacity="0.15" />
+          <line x1="28" y1="34" x2="52" y2="34" stroke="currentColor" strokeWidth="2" opacity="0.2" />
+          <line x1="28" y1="42" x2="45" y2="42" stroke="currentColor" strokeWidth="2" opacity="0.15" />
+          <line x1="28" y1="50" x2="38" y2="50" stroke="currentColor" strokeWidth="2" opacity="0.12" />
+        </svg>
+      )}
       <h3>{title}</h3>
       <p>{description}</p>
       {action ? <div className="empty-action">{action}</div> : null}
@@ -132,7 +149,7 @@ export const StarButton = memo(function StarButton({ active, onClick, size = 'md
       aria-label={active ? '取消收藏' : '收藏'}
       title={active ? '取消收藏' : '收藏'}
     >
-      <span className={joinClassNames('star-icon', active && 'star-icon-active')}>
+      <span className={joinClassNames('star-icon', active && 'star-icon-active')} key={active ? 'active' : 'inactive'}>
         {active ? '★' : '☆'}
       </span>
     </button>
