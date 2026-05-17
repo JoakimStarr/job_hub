@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { APP_VERSION } from '@/lib/constants';
 import { requirePermission, AuthError } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 const CONFIG_FILE = path.join(process.cwd(), 'data', 'system_config.json');
 
@@ -39,7 +40,7 @@ function saveConfig(config: Record<string, unknown>): void {
   try {
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
   } catch (error) {
-    console.error('Failed to save config:', error);
+    logger.error('Failed to save config:', error);
   }
 }
 
@@ -48,7 +49,7 @@ export async function GET() {
     const config = loadConfig();
     return NextResponse.json(config);
   } catch (error) {
-    console.error('Config error:', error);
+    logger.error('Config error:', error);
     return NextResponse.json(
       { error: 'Failed to load config' },
       { status: 500 }
@@ -72,7 +73,7 @@ export async function PUT(request: NextRequest) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Config update error:', error);
+    logger.error('Config update error:', error);
     return NextResponse.json(
       { error: 'Failed to update config' },
       { status: 500 }

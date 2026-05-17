@@ -35,6 +35,9 @@ from urllib.parse import urljoin, urlparse, parse_qs
 
 import requests
 
+sys.path.insert(0, str(Path(__file__).parent / "src" / "spiders"))
+from spider_configs import get_lite_http_sources
+
 DB_PATH = Path(__file__).parent / "data" / "jobs.db"
 MAX_RETRIES = 5
 RETRY_DELAY_BASE = 2
@@ -44,75 +47,7 @@ SCHEDULE_INTERVALS = {
     "weekly": 604800,
 }
 
-HTTP_SOURCES = {
-    "sufe": {
-        "name": "上海财经大学",
-        "base_url": "https://career.sufe.edu.cn",
-        "list_url": "/career//zpxx/search/zpxx",
-        "detail_url": "/career//zpxx/data/zpxx/{item_id}",
-        "field_mapping": {
-            "title": "zpzt",
-            "company": "dwmc",
-            "location": "gzdd",
-            "salary": "xzdy",
-            "education": "xlyq",
-            "description": "zwms",
-        },
-    },
-    "zuel": {
-        "name": "中南财经政法大学",
-        "base_url": "https://jyzx.zuel.edu.cn",
-        "list_url": "/api/publicly/recruit/list?type=1&page={page}&limit={limit}",
-        "detail_url": "/api/publicly/recruit/get?id={id}",
-        "field_mapping": {
-            "title": "title",
-            "company": "companyName",
-            "location": "workCity",
-            "salary": "salary",
-            "education": "education",
-            "description": "positionDescription",
-            "publish_date": "createTime",
-        },
-    },
-    "cufe": {
-        "name": "中央财经大学",
-        "base_url": "http://scc.cufe.edu.cn",
-        "list_url": "/f/recruitmentinfo/ajax_frontRecruitinfo",
-        "detail_url": "/f/recruitmentinfo/ajax_show",
-        "field_mapping": {
-            "title": "title",
-            "company": "corporationinfo.name",
-            "location": "cityName",
-            "education": "education",
-            "description": "majorName",
-        },
-    },
-    "dufe": {
-        "name": "东北财经大学",
-        "base_url": "http://scc.dufe.edu.cn",
-        "list_url": "/f/recruitmentinfo/ajax_frontRecruitinfo",
-        "detail_url": "/f/recruitmentinfo/ajax_show",
-        "field_mapping": {
-            "title": "title",
-            "company": "corporationinfo.name",
-            "location": "cityName",
-            "education": "education",
-            "description": "majorName",
-        },
-    },
-    "swufe": {
-        "name": "西南财经大学",
-        "base_url": "https://job.swufe.edu.cn",
-        "list_url": "/news/web/list2?type=1&page={page}",
-        "detail_url": "/news/web/info/{id}",
-        "field_mapping": {
-            "title": "title",
-            "company": "company",
-            "location": "location",
-            "description": "content",
-        },
-    },
-}
+HTTP_SOURCES = get_lite_http_sources()
 
 
 def get_nested_value(data: Dict, key: str) -> Any:

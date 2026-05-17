@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
 import { APP_VERSION } from '@/lib/constants';
+import { logger } from '@/lib/logger';
 
 export async function GET() {
   try {
@@ -51,7 +52,7 @@ export async function GET() {
     
     return NextResponse.json(status);
   } catch (error) {
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch system status' },
       { status: 500 }

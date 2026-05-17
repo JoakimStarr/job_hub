@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
 import { requirePermission, AuthError } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 function initSubscriptionsTable(db: ReturnType<typeof getDb>) {
   db.exec(`
@@ -52,7 +53,7 @@ export async function GET() {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch subscriptions' },
       { status: 500 }
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to create subscription' },
       { status: 500 }

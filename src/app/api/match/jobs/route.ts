@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
 import { requireAuth, AuthError } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 import type { ResumeProfile, MatchResult, JobItem } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('岗位匹配错误:', error);
+    logger.error('岗位匹配错误:', error);
     return NextResponse.json(
       { error: '岗位匹配失败' },
       { status: 500 }

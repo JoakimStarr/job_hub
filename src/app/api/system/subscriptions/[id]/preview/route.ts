@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db-utils';
+import { getDb, buildJobWhereClause } from '@/lib/db-utils';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   request: NextRequest,
@@ -27,49 +28,14 @@ export async function GET(
       return NextResponse.json({ error: 'Subscription not found' }, { status: 404 });
     }
 
-    let whereConditions: string[] = [];
-    let params: unknown[] = [];
-
-    if (subscription.keyword) {
-      whereConditions.push('(title LIKE ? OR description LIKE ?)');
-      params.push(`%${subscription.keyword}%`, `%${subscription.keyword}%`);
-    }
-
-    if (subscription.locations) {
-      const locations = subscription.locations.split(',').map(s => s.trim()).filter(Boolean);
-      if (locations.length > 0) {
-        const locationConditions = locations.map(() => 'location LIKE ?').join(' OR ');
-        whereConditions.push(`(${locationConditions})`);
-        params.push(...locations.map(l => `%${l}%`));
-      }
-    }
-
-    if (subscription.industries) {
-      const industries = subscription.industries.split(',').map(s => s.trim()).filter(Boolean);
-      if (industries.length > 0) {
-        const industryConditions = industries.map(() => 'industry LIKE ?').join(' OR ');
-        whereConditions.push(`(${industryConditions})`);
-        params.push(...industries.map(i => `%${i}%`));
-      }
-    }
-
-    if (subscription.job_types) {
-      const jobTypes = subscription.job_types.split(',').map(s => s.trim()).filter(Boolean);
-      if (jobTypes.length > 0) {
-        const jobTypeConditions = jobTypes.map(() => 'job_type LIKE ?').join(' OR ');
-        whereConditions.push(`(${jobTypeConditions})`);
-        params.push(...jobTypes.map(jt => `%${jt}%`));
-      }
-    }
-
-    if (subscription.education) {
-      whereConditions.push('education LIKE ?');
-      params.push(`%${subscription.education}%`);
-    }
-
-    const whereClause = whereConditions.length > 0
-      ? `WHERE ${whereConditions.join(' AND ')}`
-      : '';
+    const { whereClause, params } = buildJobWhereClause({
+      keyword: subscription.keyword || undefined,
+      keywordFields: ['title', 'description'],
+      multiLocation: subscription.locations ? subscription.locations.split(',').map(s => s.trim()).filter(Boolean) : undefined,
+      multiIndustry: subscription.industries ? subscription.industries.split(',').map(s => s.trim()).filter(Boolean) : undefined,
+      multiJobType: subscription.job_types ? subscription.job_types.split(',').map(s => s.trim()).filter(Boolean) : undefined,
+      education: subscription.education || undefined,
+    });
 
     const jobs = db.prepare(`
       SELECT
@@ -85,7 +51,7 @@ export async function GET(
 
     return NextResponse.json(jobs);
   } catch (error) {
-    console.error('Database error:', error);
+    logger.error('Subscription preview error:', error);
     return NextResponse.json(
       { error: 'Failed to preview subscription' },
       { status: 500 }

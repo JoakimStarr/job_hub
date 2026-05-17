@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { ResumeProfile, ResumeDiagnosis } from '@/lib/resume-types';
+import { logger } from '@/lib/logger';
 import skillDictionary from '../../../../../data/skill_dictionary.json';
 
 export async function POST(request: NextRequest) {
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(diagnosis);
   } catch (error) {
-    console.error('简历诊断错误:', error);
+    logger.error('简历诊断错误:', error);
     return NextResponse.json(
       { error: '简历诊断失败' },
       { status: 500 }

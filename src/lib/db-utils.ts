@@ -1,21 +1,12 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
+import { SOURCE_NAME_MAP } from '@/lib/constants';
 import type { FilterOption, LocationMapping, EducationMapping, ProvinceWithCities, FilterCache } from '@/types';
 
 const DB_PATH = path.join(process.cwd(), 'data', 'jobs.db');
 
-export const SOURCE_NAME_MAP: Record<string, string> = {
-  swufe: '西南财经大学',
-  dufe: '东北财经大学',
-  sufe: '上海财经大学',
-  jxufe: '江西财经大学',
-  cufe: '中央财经大学',
-  smartedu: '国家智慧教育平台',
-  zuel: '中南财经政法大学',
-  neu: '东北大学',
-  uibe: '对外经济贸易大学',
-};
+export { SOURCE_NAME_MAP };
 
 export const SOURCE_CODE_MAP: Record<string, string> = Object.fromEntries(
   Object.entries(SOURCE_NAME_MAP).map(([code, name]) => [name, code])
@@ -55,6 +46,87 @@ export function closeDb(): void {
     dbInstance.close();
     dbInstance = null;
   }
+}
+
+export interface JobQueryFilters {
+  keyword?: string;
+  location?: string;
+  jobType?: string;
+  industry?: string;
+  education?: string;
+  source?: string;
+  isFavorite?: boolean | number;
+  keywordFields?: string[];
+  multiLocation?: string[];
+  multiIndustry?: string[];
+  multiJobType?: string[];
+}
+
+export function buildJobWhereClause(filters: JobQueryFilters): { whereClause: string; params: unknown[] } {
+  const conditions: string[] = [];
+  const params: unknown[] = [];
+
+  if (filters.keyword) {
+    const fields = filters.keywordFields || ['title', 'company', 'description'];
+    const keywordConditions = fields.map(f => `${f} LIKE ?`).join(' OR ');
+    conditions.push(`(${keywordConditions})`);
+    fields.forEach(() => params.push(`%${filters.keyword}%`));
+  }
+
+  if (filters.location) {
+    conditions.push('location LIKE ?');
+    params.push(`%${filters.location}%`);
+  }
+
+  if (filters.jobType) {
+    conditions.push('job_type LIKE ?');
+    params.push(`%${filters.jobType}%`);
+  }
+
+  if (filters.industry) {
+    conditions.push('industry LIKE ?');
+    params.push(`%${filters.industry}%`);
+  }
+
+  if (filters.education) {
+    conditions.push('education LIKE ?');
+    params.push(`%${filters.education}%`);
+  }
+
+  if (filters.source) {
+    const sourceCode = getSourceCode(filters.source);
+    conditions.push('source = ?');
+    params.push(sourceCode);
+  }
+
+  if (filters.isFavorite !== undefined && filters.isFavorite !== null) {
+    conditions.push('is_favorite = ?');
+    params.push(typeof filters.isFavorite === 'boolean' ? (filters.isFavorite ? 1 : 0) : filters.isFavorite);
+  }
+
+  if (filters.multiLocation && filters.multiLocation.length > 0) {
+    const multiConditions = filters.multiLocation.map(() => 'location LIKE ?').join(' OR ');
+    conditions.push(`(${multiConditions})`);
+    params.push(...filters.multiLocation.map(l => `%${l}%`));
+  }
+
+  if (filters.multiIndustry && filters.multiIndustry.length > 0) {
+    const multiConditions = filters.multiIndustry.map(() => 'industry LIKE ?').join(' OR ');
+    conditions.push(`(${multiConditions})`);
+    params.push(...filters.multiIndustry.map(i => `%${i}%`));
+  }
+
+  if (filters.multiJobType && filters.multiJobType.length > 0) {
+    const multiConditions = filters.multiJobType.map(() => 'job_type LIKE ?').join(' OR ');
+    conditions.push(`(${multiConditions})`);
+    params.push(...filters.multiJobType.map(jt => `%${jt}%`));
+  }
+
+  const whereClause = conditions.length > 0
+    ? `WHERE ${conditions.join(' AND ')}`
+    : '';
+
+  return { whereClause, params };
 }
 
 const CACHE_FILE = path.join(process.cwd(), 'data', 'filter_cache.json');

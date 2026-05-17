@@ -5,6 +5,7 @@ import { requireAuth, AuthError } from '@/lib/auth';
 import type { ResumeProfile, JobItem } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
           }
           userPrompt += '\n';
         } catch (error) {
-          console.error('匹配度分析错误:', error);
+          logger.error('匹配度分析错误:', error);
         }
       }
     }
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('AI分析错误:', error);
+    logger.error('AI分析错误:', error);
     return NextResponse.json(
       { error: 'AI分析失败，请稍后重试' },
       { status: 500 }

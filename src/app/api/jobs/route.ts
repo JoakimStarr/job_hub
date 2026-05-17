@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, getSourceName, getSourceCode } from '@/lib/db-utils';
+import { getDb, getSourceName, buildJobWhereClause } from '@/lib/db-utils';
 import { createErrorResponse, handleApiError, validatePagination } from '@/lib/api-response';
 import { logger } from '@/lib/logger';
 import type { JobItem, PagedResponse } from '@/types';
@@ -28,48 +28,15 @@ export async function GET(request: NextRequest) {
     const db = getDb();
     
     try {
-      let whereConditions: string[] = [];
-      let params: unknown[] = [];
-      
-      if (location) {
-        whereConditions.push('location LIKE ?');
-        params.push(`%${location}%`);
-      }
-      
-      if (keyword) {
-        whereConditions.push('(title LIKE ? OR company LIKE ? OR description LIKE ?)');
-        params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
-      }
-      
-      if (jobType) {
-        whereConditions.push('job_type LIKE ?');
-        params.push(`%${jobType}%`);
-      }
-      
-      if (industry) {
-        whereConditions.push('industry LIKE ?');
-        params.push(`%${industry}%`);
-      }
-      
-      if (education) {
-        whereConditions.push('education LIKE ?');
-        params.push(`%${education}%`);
-      }
-      
-      if (sourceParam) {
-        const sourceCode = getSourceCode(sourceParam);
-        whereConditions.push('source = ?');
-        params.push(sourceCode);
-      }
-      
-      if (isFavorite !== null && isFavorite !== '') {
-        whereConditions.push('is_favorite = ?');
-        params.push(parseInt(isFavorite));
-      }
-      
-      const whereClause = whereConditions.length > 0 
-        ? `WHERE ${whereConditions.join(' AND ')}` 
-        : '';
+      const { whereClause, params } = buildJobWhereClause({
+        location: location || undefined,
+        keyword: keyword || undefined,
+        jobType: jobType || undefined,
+        industry: industry || undefined,
+        education: education || undefined,
+        source: sourceParam || undefined,
+        isFavorite: isFavorite !== null && isFavorite !== '' ? parseInt(isFavorite) : undefined,
+      });
       
       const countSql = `SELECT COUNT(*) as total FROM jobs ${whereClause}`;
       const countResult = db.prepare(countSql).get(...params) as { total: number };

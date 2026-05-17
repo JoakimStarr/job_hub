@@ -44,9 +44,10 @@ export class AIService {
     }
   }
 
-  private async chatOpenAI(messages: AIMessage[]): Promise<AIResponse> {
-    const baseUrl = this.config.baseUrl || 'https://api.openai.com/v1';
-    
+  private async chatCompletion(messages: AIMessage[], defaultBaseUrl: string, defaultModel: string): Promise<AIResponse> {
+    const baseUrl = this.config.baseUrl || defaultBaseUrl;
+    const model = this.config.model || defaultModel;
+
     const response = await fetch(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
@@ -54,7 +55,7 @@ export class AIService {
         'Authorization': `Bearer ${this.config.apiKey}`,
       },
       body: JSON.stringify({
-        model: this.config.model,
+        model,
         messages,
         temperature: this.config.temperature || 0.7,
         max_tokens: this.config.maxTokens || 2000,
@@ -63,12 +64,10 @@ export class AIService {
 
     if (!response.ok) {
       const errorBody = await response.text().catch(() => '');
-      console.error(`AI API error: ${response.status}`, errorBody);
       throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
     }
 
     const data = await response.json();
-    
     return {
       content: data.choices[0].message.content,
       usage: data.usage,
@@ -76,134 +75,27 @@ export class AIService {
     };
   }
 
-  private async chatZhipu(messages: AIMessage[]): Promise<AIResponse> {
-    const baseUrl = this.config.baseUrl || 'https://open.bigmodel.cn/api/paas/v4';
-    
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.config.model || 'glm-4',
-        messages,
-        temperature: this.config.temperature || 0.7,
-        max_tokens: this.config.maxTokens || 2000,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text().catch(() => '');
-      console.error(`AI API error: ${response.status}`, errorBody);
-      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
-    }
-
-    const data = await response.json();
-    
-    return {
-      content: data.choices[0].message.content,
-      usage: data.usage,
-      model: data.model,
-    };
+  private chatOpenAI(messages: AIMessage[]): Promise<AIResponse> {
+    return this.chatCompletion(messages, 'https://api.openai.com/v1', '');
   }
 
-  private async chatSiliconFlow(messages: AIMessage[]): Promise<AIResponse> {
-    const baseUrl = this.config.baseUrl || 'https://api.siliconflow.cn/v1';
-    
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.config.model || 'Qwen/Qwen2.5-7B-Instruct',
-        messages,
-        temperature: this.config.temperature || 0.7,
-        max_tokens: this.config.maxTokens || 2000,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text().catch(() => '');
-      console.error(`AI API error: ${response.status}`, errorBody);
-      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
-    }
-
-    const data = await response.json();
-    
-    return {
-      content: data.choices[0].message.content,
-      usage: data.usage,
-      model: data.model,
-    };
+  private chatZhipu(messages: AIMessage[]): Promise<AIResponse> {
+    return this.chatCompletion(messages, 'https://open.bigmodel.cn/api/paas/v4', 'glm-4');
   }
 
-  private async chatDeepSeek(messages: AIMessage[]): Promise<AIResponse> {
-    const baseUrl = this.config.baseUrl || 'https://api.deepseek.com/v1';
-    
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.config.model || 'deepseek-chat',
-        messages,
-        temperature: this.config.temperature || 0.7,
-        max_tokens: this.config.maxTokens || 2000,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text().catch(() => '');
-      console.error(`AI API error: ${response.status}`, errorBody);
-      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
-    }
-
-    const data = await response.json();
-    
-    return {
-      content: data.choices[0].message.content,
-      usage: data.usage,
-      model: data.model,
-    };
+  private chatSiliconFlow(messages: AIMessage[]): Promise<AIResponse> {
+    return this.chatCompletion(messages, 'https://api.siliconflow.cn/v1', 'Qwen/Qwen2.5-7B-Instruct');
   }
 
-  private async chatCustom(messages: AIMessage[]): Promise<AIResponse> {
+  private chatDeepSeek(messages: AIMessage[]): Promise<AIResponse> {
+    return this.chatCompletion(messages, 'https://api.deepseek.com/v1', 'deepseek-chat');
+  }
+
+  private chatCustom(messages: AIMessage[]): Promise<AIResponse> {
     if (!this.config.baseUrl) {
       throw new Error('Custom AI provider requires baseUrl');
     }
-
-    const response = await fetch(`${this.config.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.config.model,
-        messages,
-        temperature: this.config.temperature || 0.7,
-        max_tokens: this.config.maxTokens || 2000,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text().catch(() => '');
-      console.error(`AI API error: ${response.status}`, errorBody);
-      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
-    }
-
-    const data = await response.json();
-    
-    return {
-      content: data.choices[0].message.content,
-      usage: data.usage,
-      model: data.model,
-    };
+    return this.chatCompletion(messages, this.config.baseUrl, '');
   }
 }
 
@@ -216,7 +108,6 @@ export function createAIService(): AIService | null {
   const maxTokens = parseInt(process.env.AI_MAX_TOKENS || '2000');
 
   if (!apiKey) {
-    console.warn('AI_API_KEY not configured, AI features will be disabled');
     return null;
   }
 
