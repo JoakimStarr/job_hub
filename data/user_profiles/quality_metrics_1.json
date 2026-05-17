@@ -1,0 +1,15 @@
+{
+  "impressions": 663,
+  "clicks": 1,
+  "deliveries": 0,
+  "feedback_total": 8,
+  "feedback_up": 4,
+  "feedback_down": 4,
+  "feedback_reasons": {
+    "direction_mismatch": 3,
+    "experience_mismatch": 1,
+    "positive": 4
+  },
+  "feedback_other_samples": [],
+  "updated_at": "2026-05-05T16:26:03"
+}

@@ -1,0 +1,512 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import { AppShell } from '@/components/app-shell';
+import { Badge, Button, EmptyState, Input, JobCard, MetricCard, SectionCard, Select, Skeleton, TabNav } from '@/components/ui';
+import { API } from '@/lib/api';
+import type { JobItem, SystemConfig, SystemStatus, SubscriptionItem } from '@/lib/types';
+
+type Feedback = { tone: 'success' | 'error'; text: string };
+type TabKey = 'config' | 'subscriptions' | 'diagnostics';
+
+function safeJsonParse(value: string) {
+  try {
+    return JSON.parse(value) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
+
+function PreviewModal({
+  subscription,
+  jobs,
+  loading,
+  onClose,
+}: {
+  subscription: { id: number; name: string } | null;
+  jobs: JobItem[];
+  loading: boolean;
+  onClose: () => void;
+}) {
+  if (!subscription) return null;
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <section className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 780, width: '100%' }}>
+        <div className="modal-head">
+          <div>
+            <h3>预览命中 · {subscription.name}</h3>
+            <p>当前订阅匹配到的岗位列表</p>
+          </div>
+          <Button variant="ghost" onClick={onClose}>关闭</Button>
+        </div>
+        <div style={{ marginTop: 20 }}>
+          {loading ? (
+            <Skeleton type="card" />
+          ) : jobs.length === 0 ? (
+            <EmptyState title="暂无命中" description="当前订阅没有匹配到岗位。" />
+          ) : (
+            <div className="grid" style={{ gap: 12, maxHeight: '60vh', overflowY: 'auto' }}>
+              {jobs.map((job) => (
+                <JobCard key={job.id} job={job} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default function SystemPage() {
+  const [status, setStatus] = useState<SystemStatus | null>(null);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
+  const [configText, setConfigText] = useState('{}');
+  const [config, setConfig] = useState<SystemConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [activeTab, setActiveTab] = useState<TabKey>('config');
+  const [savingConfig, setSavingConfig] = useState(false);
+  const [cleaning, setCleaning] = useState(false);
+  const [previewModal, setPreviewModal] = useState<{
+    subscription: { id: number; name: string } | null;
+    jobs: JobItem[];
+    loading: boolean;
+  }>({ subscription: null, jobs: [], loading: false });
+
+  const version = status?.app?.version || config?.app?.version || '--';
+
+  async function loadSystemData() {
+    setLoading(true);
+    try {
+      const [nextStatus, nextConfig, nextSubscriptions] = await Promise.all([
+        API.getSystemStatus(),
+        API.getSystemConfig(),
+        API.getSubscriptions(),
+      ]);
+      setStatus(nextStatus);
+      setConfig(nextConfig);
+      setConfigText(JSON.stringify(nextConfig || {}, null, 2));
+      setSubscriptions(nextSubscriptions || []);
+      return true;
+    } catch (requestError) {
+      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '加载系统状态失败' });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadSystemData();
+  }, []);
+
+  const diagnostics = useMemo(() => Object.entries(status?.crawler_diagnostics || {}), [status]);
+
+  const tabs: { key: TabKey; label: string }[] = [
+    { key: 'config', label: '配置中心' },
+    { key: 'subscriptions', label: '订阅管理' },
+    { key: 'diagnostics', label: '诊断日志' },
+  ];
+
+  async function handleSaveConfig() {
+    const parsed = safeJsonParse(configText);
+    if (!parsed) {
+      setFeedback({ tone: 'error', text: '配置 JSON 格式不正确' });
+      return;
+    }
+    setSavingConfig(true);
+    try {
+      await API.updateSystemConfig(parsed);
+      const refreshed = await loadSystemData();
+      if (refreshed) {
+        setFeedback({ tone: 'success', text: '配置已保存' });
+      }
+    } catch (requestError) {
+      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '保存配置失败' });
+    } finally {
+      setSavingConfig(false);
+    }
+  }
+
+  async function handleCleanHistory() {
+    setCleaning(true);
+    try {
+      await API.cleanHistoricalData(500);
+      const refreshed = await loadSystemData();
+      if (refreshed) {
+        setFeedback({ tone: 'success', text: '历史岗位已清洗' });
+      }
+    } catch (requestError) {
+      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '清洗历史岗位失败' });
+    } finally {
+      setCleaning(false);
+    }
+  }
+
+  return (
+    <AppShell title="系统状态" description="统一配置中心、数据库状态和订阅提醒" requiredPermission="view_system">
+      <SectionCard title="系统概览" description="后端、数据库、爬虫与 AI 运行指标">
+        {loading ? (
+          <Skeleton type="metric" />
+        ) : (
+          <div className="grid-4">
+            <MetricCard label="应用版本" value={version} hint="当前运行版本号" tone="blue" />
+            <MetricCard label="岗位总数" value={status?.database?.total_jobs ?? 0} hint="结构化入库岗位总量" tone="emerald" />
+            <MetricCard label="今日新增" value={status?.today_jobs ?? 0} hint="最近 24 小时新增岗位" tone="amber" />
+            <MetricCard label="采集成功率" value={`${status?.crawler_success_rate ?? 0}%`} hint="爬虫采集成功率" tone="violet" />
+          </div>
+        )}
+      </SectionCard>
+
+      {feedback ? (
+        <div className={`notice notice-${feedback.tone}`} style={{ marginBottom: 16 }}>
+          {feedback.text}
+        </div>
+      ) : null}
+
+      <SectionCard
+        title="系统管理"
+        description="配置中心、订阅管理和诊断日志"
+        action={
+          <Button variant="secondary" onClick={() => { void loadSystemData(); }}>
+            刷新
+          </Button>
+        }
+      >
+        <TabNav tabs={tabs} active={activeTab} onChange={(key) => { setActiveTab(key); setFeedback(null); }} />
+
+        {activeTab === 'config' && (
+          loading ? <Skeleton type="card" /> : (
+            <div style={{ marginTop: 10 }}>
+              <div className="grid-2" style={{ gap: 24 }}>
+                <label>
+                  <div style={{ marginBottom: 8, fontWeight: 700 }}>配置 JSON</div>
+                  <textarea
+                    className="textarea"
+                    rows={18}
+                    value={configText}
+                    onChange={(event) => setConfigText(event.target.value)}
+                    style={{ fontFamily: 'monospace', fontSize: 13 }}
+                  />
+                </label>
+                <div style={{ display: 'grid', gap: 16, alignContent: 'start' }}>
+                  <div className="panel" style={{ padding: 20 }}>
+                    <div style={{ fontWeight: 700, marginBottom: 12 }}>操作</div>
+                    <div style={{ display: 'grid', gap: 12 }}>
+                      <Button
+                        variant="primary"
+                        disabled={savingConfig}
+                        onClick={() => { void handleSaveConfig(); }}
+                      >
+                        {savingConfig ? '保存中...' : '保存配置'}
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        disabled={cleaning}
+                        onClick={() => { void handleCleanHistory(); }}
+                      >
+                        {cleaning ? '清洗中...' : '清洗历史岗位'}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="panel" style={{ padding: 20 }}>
+                    <div style={{ fontWeight: 700, marginBottom: 12 }}>诊断摘要</div>
+                    <div style={{ display: 'grid', gap: 8, fontSize: 13 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: 'var(--muted)' }}>AI 超时率</span>
+                        <span style={{ fontWeight: 600 }}>{status?.ai_runtime?.timeout_rate ?? 0}%</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: 'var(--muted)' }}>缓存命中</span>
+                        <span style={{ fontWeight: 600 }}>{status?.ai_runtime?.cache_hit_rate ?? 0}%</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ color: 'var(--muted)' }}>日预算</span>
+                        <span style={{ fontWeight: 600 }}>{status?.ai_runtime?.daily_budget ?? 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        )}
+
+        {activeTab === 'subscriptions' && (
+          loading ? <Skeleton type="card" /> : (
+            <div style={{ marginTop: 10 }}>
+              <SubscriptionPanel
+                subscriptions={subscriptions}
+                reload={loadSystemData}
+                onPreview={(subscription) => {
+                  setPreviewModal({ subscription, jobs: [], loading: true });
+                  API.previewSubscription(subscription.id)
+                    .then((result) => {
+                      setPreviewModal({ subscription, jobs: Array.isArray(result) ? result : [], loading: false });
+                    })
+                    .catch((requestError) => {
+                      setPreviewModal({ subscription: null, jobs: [], loading: false });
+                      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '预览订阅失败' });
+                    });
+                }}
+              />
+            </div>
+          )
+        )}
+
+        {activeTab === 'diagnostics' && (
+          loading ? <Skeleton type="card" /> : (
+            <div className="grid-2" style={{ marginTop: 10 }}>
+              <div className="glass-card" style={{ padding: 18, borderRadius: 22 }}>
+                <div style={{ fontWeight: 800, marginBottom: 12 }}>最近错误</div>
+                {(status?.recent_errors || []).length === 0 ? (
+                  <EmptyState title="暂无错误" description="最近运行稳定。" />
+                ) : (
+                  <div className="grid" style={{ gap: 10 }}>
+                    {(status?.recent_errors || []).map((item, index) => (
+                      <div key={`${item.time || index}`} className="glass-card" style={{ padding: 14, borderRadius: 18 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
+                          <strong>{item.source || 'unknown'}</strong>
+                          <Badge tone="rose">{item.status || 'error'}</Badge>
+                        </div>
+                        <div style={{ marginTop: 8, color: 'var(--muted)' }}>{item.message || '运行异常'}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="glass-card" style={{ padding: 18, borderRadius: 22 }}>
+                <div style={{ fontWeight: 800, marginBottom: 12 }}>爬虫诊断</div>
+                {diagnostics.length === 0 ? (
+                  <EmptyState title="暂无诊断" description="运行过一次爬虫后会显示各来源抓取统计。" />
+                ) : (
+                  <div className="grid" style={{ gap: 10 }}>
+                    {diagnostics.map(([name, value]) => (
+                      <div key={name} className="glass-card" style={{ padding: 14, borderRadius: 18 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
+                          <strong>{name}</strong>
+                          <span style={{ color: 'var(--muted)' }}>运行 {value.runs || 0} 次</span>
+                        </div>
+                        <div style={{ marginTop: 8, color: 'var(--muted)' }}>
+                          抓取 {value.fetched || 0} · 保存 {value.saved || 0} · 重复 {value.duplicates || 0} · 失败 {value.failed || 0}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        )}
+      </SectionCard>
+
+      <PreviewModal
+        subscription={previewModal.subscription}
+        jobs={previewModal.jobs}
+        loading={previewModal.loading}
+        onClose={() => setPreviewModal({ subscription: null, jobs: [], loading: false })}
+      />
+    </AppShell>
+  );
+}
+
+function SubscriptionPanel({
+  subscriptions,
+  reload,
+  onPreview,
+}: {
+  subscriptions: SubscriptionItem[];
+  reload: () => Promise<boolean>;
+  onPreview: (subscription: { id: number; name: string }) => void;
+}) {
+  const [name, setName] = useState('');
+  const [keyword, setKeyword] = useState('');
+  const [locations, setLocations] = useState('');
+  const [industries, setIndustries] = useState('');
+  const [jobTypes, setJobTypes] = useState('');
+  const [education, setEducation] = useState('');
+  const [enabled, setEnabled] = useState(true);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [togglingId, setTogglingId] = useState<number | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
+
+  function resetForm() {
+    setName('');
+    setKeyword('');
+    setLocations('');
+    setIndustries('');
+    setJobTypes('');
+    setEducation('');
+    setEnabled(true);
+    setEditingId(null);
+  }
+
+  function editSubscription(item: SubscriptionItem) {
+    setEditingId(item.id);
+    setName(item.name);
+    setKeyword(item.keyword || '');
+    setLocations((item.locations || []).join(', '));
+    setIndustries((item.industries || []).join(', '));
+    setJobTypes((item.job_types || []).join(', '));
+    setEducation(item.education || '');
+    setEnabled(item.enabled ?? true);
+    setFeedback(null);
+  }
+
+  async function submitSubscription() {
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const payload = { name, keyword, locations, industries, job_types: jobTypes, education, enabled };
+      if (editingId) {
+        await API.updateSubscription(editingId, payload);
+      } else {
+        await API.saveSubscription(payload);
+      }
+      resetForm();
+      const refreshed = await reload();
+      if (refreshed) {
+        setFeedback({ tone: 'success', text: editingId ? '订阅已更新' : '订阅已保存' });
+      }
+    } catch (requestError) {
+      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '保存订阅失败' });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(item: SubscriptionItem) {
+    setDeletingId(item.id);
+    try {
+      await API.deleteSubscription(item.id);
+      const refreshed = await reload();
+      if (refreshed) {
+        setFeedback({ tone: 'success', text: `订阅「${item.name}」已删除` });
+      }
+    } catch (requestError) {
+      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '删除订阅失败' });
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  async function handleToggle(item: SubscriptionItem) {
+    setTogglingId(item.id);
+    try {
+      await API.updateSubscription(item.id, { enabled: !item.enabled } as Record<string, unknown>);
+      const refreshed = await reload();
+      if (refreshed) {
+        setFeedback({ tone: 'success', text: `订阅「${item.name}」已${item.enabled ? '停用' : '启用'}` });
+      }
+    } catch (requestError) {
+      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '切换订阅状态失败' });
+    } finally {
+      setTogglingId(null);
+    }
+  }
+
+  return (
+    <div className="grid-2">
+      <div>
+        <div className="grid-2">
+          <label>
+            <div style={{ marginBottom: 8, fontWeight: 700 }}>订阅名称</div>
+            <Input value={name} onChange={(event) => setName(event.target.value)} placeholder="例如：上海基金实习" />
+          </label>
+          <label>
+            <div style={{ marginBottom: 8, fontWeight: 700 }}>关键词</div>
+            <Input value={keyword} onChange={(event) => setKeyword(event.target.value)} placeholder="例如：投研 / 量化" />
+          </label>
+          <label>
+            <div style={{ marginBottom: 8, fontWeight: 700 }}>地点</div>
+            <Input value={locations} onChange={(event) => setLocations(event.target.value)} placeholder="逗号分隔" />
+          </label>
+          <label>
+            <div style={{ marginBottom: 8, fontWeight: 700 }}>行业</div>
+            <Input value={industries} onChange={(event) => setIndustries(event.target.value)} placeholder="逗号分隔" />
+          </label>
+          <label>
+            <div style={{ marginBottom: 8, fontWeight: 700 }}>类型</div>
+            <Input value={jobTypes} onChange={(event) => setJobTypes(event.target.value)} placeholder="逗号分隔" />
+          </label>
+          <label>
+            <div style={{ marginBottom: 8, fontWeight: 700 }}>学历</div>
+            <Input value={education} onChange={(event) => setEducation(event.target.value)} placeholder="例如：硕士" />
+          </label>
+        </div>
+        <div className="row-gap" style={{ marginTop: 16 }}>
+          <label className="badge badge-slate" style={{ cursor: 'pointer', gap: 8 }}>
+            <input type="checkbox" checked={enabled} onChange={(event) => setEnabled(event.target.checked)} />
+            启用该订阅
+          </label>
+          <Button
+            variant="primary"
+            disabled={saving}
+            onClick={() => { void submitSubscription(); }}
+          >
+            {saving ? (editingId ? '更新中...' : '保存中...') : (editingId ? '更新订阅' : '保存订阅')}
+          </Button>
+          {editingId ? (
+            <Button variant="secondary" onClick={resetForm}>
+              取消编辑
+            </Button>
+          ) : null}
+        </div>
+        {feedback ? (
+          <div className={`notice notice-${feedback.tone}`} style={{ marginTop: 16 }}>
+            {feedback.text}
+          </div>
+        ) : null}
+      </div>
+      <div className="grid" style={{ gap: 10 }}>
+        {subscriptions.length === 0 ? (
+          <EmptyState title="暂无订阅" description="创建一个订阅后，这里会列出全部规则。" />
+        ) : (
+          subscriptions.map((item) => (
+            <div key={item.id} className="glass-card" style={{ padding: 16, borderRadius: 22 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+                <strong>{item.name}</strong>
+                <Badge tone={item.enabled ? 'emerald' : 'slate'}>
+                  {item.enabled ? '启用' : '停用'}
+                </Badge>
+              </div>
+              <div style={{ marginTop: 8, color: 'var(--muted)', lineHeight: 1.7 }}>
+                {item.keyword || '无关键词'}
+                <br />
+                {(item.locations || []).join('、') || '无地点'}
+              </div>
+              <div className="row-gap" style={{ marginTop: 12 }}>
+                <Button
+                  variant="secondary"
+                  onClick={() => onPreview({ id: item.id, name: item.name })}
+                >
+                  预览命中
+                </Button>
+                <Button variant="secondary" onClick={() => editSubscription(item)}>
+                  编辑
+                </Button>
+                <Button
+                  variant="secondary"
+                  disabled={togglingId === item.id}
+                  onClick={() => { void handleToggle(item); }}
+                >
+                  {togglingId === item.id ? '切换中...' : (item.enabled ? '停用' : '启用')}
+                </Button>
+                <Button
+                  variant="danger"
+                  disabled={deletingId === item.id}
+                  onClick={() => { void handleDelete(item); }}
+                >
+                  {deletingId === item.id ? '删除中...' : '删除'}
+                </Button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}

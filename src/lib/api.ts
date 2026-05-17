@@ -1,0 +1,165 @@
+import type {
+  AppUser,
+  CrawlerStatus,
+  JobItem,
+  PagedResponse,
+  RoleItem,
+  StatsOverview,
+  SubscriptionItem,
+  SystemConfig,
+  SystemStatus,
+  FilterOption,
+  ProvinceWithCities,
+  EducationMapping,
+} from '@/lib/types';
+import { AUTH_EXPIRED_EVENT, AUTH_TOKEN_KEY, AUTH_USER_KEY } from '@/lib/constants';
+
+const REQUEST_TIMEOUT_MS = 30_000;
+
+export class APIError extends Error {
+  status: number;
+  data: unknown;
+
+  constructor(message: string, status: number, data: unknown = null) {
+    super(message);
+    this.name = 'APIError';
+    this.status = status;
+    this.data = data;
+  }
+}
+
+function getApiBaseUrl() {
+  const configured = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '');
+  if (!configured || configured === '/' || configured === '/api') return '';
+  return configured;
+}
+
+function buildQuery(params: Record<string, unknown> = {}) {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value === null || value === undefined || value === '') continue;
+    if (Array.isArray(value) && !value.length) continue;
+    if (Array.isArray(value)) {
+      query.set(key, value.join(','));
+      continue;
+    }
+    query.set(key, String(value));
+  }
+  return query.toString();
+}
+
+async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+  const token = typeof window !== 'undefined' ? localStorage.getItem(AUTH_TOKEN_KEY) : '';
+  const headers = new Headers(init.headers || {});
+  headers.set('Accept', 'application/json');
+  if (!(init.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+    ...init,
+    headers,
+    signal: controller.signal,
+  }).catch((error) => {
+    if (controller.signal.aborted) {
+      throw new APIError('请求超时，请稍后重试', 408, error);
+    }
+    throw error;
+  }).finally(() => {
+    clearTimeout(timeoutId);
+  });
+
+  if (!response.ok) {
+    let errorData: unknown = null;
+    try {
+      errorData = await response.json();
+    } catch {
+      errorData = null;
+    }
+    const payload = errorData as { detail?: string; message?: string; error?: string } | null;
+    const message = payload?.detail || payload?.message || payload?.error || `HTTP ${response.status}: ${response.statusText}`;
+    if (response.status === 401 && typeof window !== 'undefined' && path !== '/api/auth/login') {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(AUTH_USER_KEY);
+      window.dispatchEvent(new Event(AUTH_EXPIRED_EVENT));
+    }
+    throw new APIError(message, response.status, errorData);
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    return response.json() as Promise<T>;
+  }
+  return response.text() as Promise<T>;
+}
+
+export const API = {
+  buildQuery,
+  request,
+  login: (data: Record<string, unknown> = {}) => request<{ access_token: string; user: AppUser }>('/api/auth/login', { method: 'POST', body: JSON.stringify(data) }),
+  logout: () => request<{ success: boolean }>('/api/auth/logout', { method: 'POST' }),
+  getCurrentUser: () => request<AppUser>('/api/auth/me'),
+  getRoles: () => request<{ roles: RoleItem[] }>('/api/auth/roles'),
+  getUsers: () => request<AppUser[]>('/api/auth/users'),
+  createUser: (data: Record<string, unknown>) => request('/api/auth/users', { method: 'POST', body: JSON.stringify(data) }),
+  updateUser: (id: number, data: Record<string, unknown>) => request(`/api/auth/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  resetUserPassword: (id: number, data: Record<string, unknown>) => request(`/api/auth/users/${id}/reset-password`, { method: 'POST', body: JSON.stringify(data) }),
+  deleteUser: (id: number) => request(`/api/auth/users/${id}`, { method: 'DELETE' }),
+
+  getStatsOverview: () => request<StatsOverview>('/api/stats/overview'),
+  getSourceStats: () => request('/api/stats/sources'),
+  getTrends: (days = 7) => request(`/api/stats/trends?days=${days}`),
+
+  getJobs: (params: Record<string, unknown> = {}) => request<PagedResponse<JobItem>>(`/api/jobs?${buildQuery(params)}`),
+  searchJobs: (keyword: string, params: Record<string, unknown> = {}) => request<PagedResponse<JobItem>>(`/api/jobs/search?${buildQuery({ q: keyword, ...params })}`),
+  getFavorites: (params: Record<string, unknown> = {}) => request<PagedResponse<JobItem>>(`/api/jobs/favorites?${buildQuery(params)}`),
+  toggleFavorite: (id: number) => request(`/api/jobs/${id}/favorite`, { method: 'POST' }),
+  getFilterOptions: () => request<{
+    locations: FilterOption[];
+    job_types: FilterOption[];
+    industries: FilterOption[];
+    education: FilterOption[];
+    sources: FilterOption[];
+    provinces: ProvinceWithCities[];
+    education_mapping: EducationMapping[];
+  }>('/api/jobs/filters'),
+  getFilterSuggestions: (query: string, limit = 10) => request<{ suggestions: { name: string; count: number }[] }>(`/api/jobs/filters?suggest=${encodeURIComponent(query)}&limit=${limit}`),
+  searchFilters: (query: string, type?: string) => request<Record<string, unknown>>(`/api/jobs/filters?q=${encodeURIComponent(query)}${type ? `&type=${type}` : ''}`),
+  getJobDetail: (id: number) => request<JobItem>(`/api/jobs/${id}`),
+  getJobTimeline: (id: number) => request(`/api/jobs/${id}/timeline`),
+  addJobTimeline: (id: number, data: Record<string, unknown>) => request(`/api/jobs/${id}/timeline`, { method: 'POST', body: JSON.stringify(data) }),
+  generateInterviewQuestions: (id: number) => request(`/api/jobs/${id}/interview-questions`, { method: 'POST' }),
+  analyzeJob: (id: number, data: Record<string, unknown> = {}) => request(`/api/jobs/${id}/ai-analysis`, { method: 'POST', body: JSON.stringify(data) }),
+
+  getCrawlerStatus: () => request<CrawlerStatus>('/api/crawler/status'),
+  startCrawler: (data: Record<string, unknown> = {}) => request('/api/crawler/start', { method: 'POST', body: JSON.stringify(data) }),
+  stopCrawler: () => request('/api/crawler/stop', { method: 'POST' }),
+  getCrawlerLogs: (limit = 50) => request(`/api/crawler/logs?limit=${limit}`),
+  getCrawlerSources: () => request('/api/crawler/sources'),
+
+  getSystemStatus: () => request<SystemStatus>('/api/system/status'),
+  getSystemConfig: () => request<SystemConfig>('/api/system/config'),
+  updateSystemConfig: (data: Record<string, unknown>) => request('/api/system/config', { method: 'PUT', body: JSON.stringify(data) }),
+  cleanHistoricalData: (limit = 500) => request(`/api/system/maintenance/clean-history?limit=${limit}`, { method: 'POST' }),
+  getSubscriptions: () => request<SubscriptionItem[]>('/api/system/subscriptions'),
+  saveSubscription: (data: Record<string, unknown>) => request('/api/system/subscriptions', { method: 'POST', body: JSON.stringify(data) }),
+  updateSubscription: (id: number, data: Record<string, unknown>) => request(`/api/system/subscriptions/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteSubscription: (id: number) => request(`/api/system/subscriptions/${id}`, { method: 'DELETE' }),
+  previewSubscription: (id: number) => request<JobItem[]>(`/api/system/subscriptions/${id}/preview`),
+
+  getRecommendations: (data: Record<string, unknown> = {}) => request('/api/recommendations/analyze', { method: 'POST', body: JSON.stringify(data) }),
+  getRecommendationChat: (data: Record<string, unknown> = {}) => request('/api/recommendations/chat', { method: 'POST', body: JSON.stringify(data) }),
+  getResumeAdvice: (data: Record<string, unknown> = {}) => request('/api/recommendations/resume-advice', { method: 'POST', body: JSON.stringify(data) }),
+  getDeliveryAssistant: (data: Record<string, unknown> = {}) => request('/api/recommendations/delivery-assistant', { method: 'POST', body: JSON.stringify(data) }),
+  getRecommendationHistory: (limit = 10) => request(`/api/recommendations/history?limit=${limit}`),
+  getRecommendationQualityDashboard: () => request('/api/recommendations/quality-dashboard'),
+  reportRecommendationImpression: (data: Record<string, unknown>) => request('/api/recommendations/metrics/impression', { method: 'POST', body: JSON.stringify(data) }),
+  reportRecommendationClick: (data: Record<string, unknown>) => request('/api/recommendations/metrics/click', { method: 'POST', body: JSON.stringify(data) }),
+  reportRecommendationDelivery: (data: Record<string, unknown>) => request('/api/recommendations/metrics/delivery', { method: 'POST', body: JSON.stringify(data) }),
+  reportRecommendationFeedback: (data: Record<string, unknown>) => request('/api/recommendations/feedback', { method: 'POST', body: JSON.stringify(data) }),
+};

@@ -1,0 +1,31 @@
+# 日志文件
+*.log
+*.log.*
+
+# 压缩的日志文件
+*.zip
+
+# 数据库文件
+*.db
+*.db-journal
+
+# Python缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 虚拟环境
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 操作系统
+.DS_Store
+Thumbs.db

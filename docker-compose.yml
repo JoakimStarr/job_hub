@@ -1,0 +1,17 @@
+services:
+  finintern-next:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+    ports:
+      - "${NEXT_APP_PORT:-3001}:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+      NODE_ENV: production
+    volumes:
+      - ./data:/app/data
+      - ./log:/app/log
+      - ./output:/app/output
+    restart: unless-stopped

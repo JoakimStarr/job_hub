@@ -1,0 +1,760 @@
+{
+  "id": "da2a7b20be054a7f9a9d7bacf44baa48",
+  "type": "recommendation",
+  "created_at": "2026-04-09T10:36:11",
+  "owner_user_id": 1,
+  "owner_username": "admin",
+  "original_filename": null,
+  "saved_file": null,
+  "file_hash": null,
+  "profile": {
+    "keywords": [
+      "证券"
+    ],
+    "preferred_locations": [
+      "重庆"
+    ],
+    "preferred_job_types": [
+      "实习"
+    ],
+    "preferred_industries": [
+      "证券"
+    ],
+    "education": "硕士",
+    "experience": "有实习经历",
+    "target_companies": [],
+    "strengths": [
+      "Python",
+      "Excel",
+      "Wind",
+      "数据分析"
+    ],
+    "schools": [
+      "东北财经大学",
+      "九江学院"
+    ],
+    "majors": [
+      "金融工程",
+      "经济学",
+      "统计学",
+      "数学",
+      "数量经济学",
+      "投资学"
+    ],
+    "skills": [
+      "Python",
+      "Excel",
+      "Wind",
+      "数据分析"
+    ],
+    "certifications": [],
+    "internship_companies": [],
+    "project_keywords": [],
+    "resume_text": "吴乾军 手机：[已隐藏手机号] 邮箱：[已隐藏邮箱] 性别：男 生日：2001-01 教育经历 2025.09-至今 东北财经大学 硕士 数量经济学 核心课程：高级计量经济学、高级微（宏）观经济学、Python语言于数据分析等 九江学院 本科 2020.09-2024.07 金融工程 核心课程：金融工程、计量经济学、统计学、证券投资学、数理经济学、国际商务等 实习经历 2025.05-2025.08 重庆风逸捷科技有限公司 策略开发实习生 主要负责产品策略开发，算法研究，以及产品上线维护等。 项目经历 2023.05-2023.05 古代玻璃制品化学成分的分析与研究 模型建立与数学分析 工作职责：利用二叉树模型建立玻璃化学成分的关系网络，通过分析已有数据，提取关键特征，为后续研究提供 基础。 结果：通过聚类分析统计学方法，成功地将古代玻璃制品进行了分类，将其分为几个不同的类别。基于数据间 的相似性和差异性，将数据点分组成为不同的集群，从而将古代玻璃制品按照其特性进行分类。 校园实践 2020.11-2020.11 校园调查问卷 信息收集员 参与校园街头采访志愿者活动，通过问卷调查收集群众意见。采访记录的反馈信息对了解校园需求与问题具有高 参考价值。在完成信息收集后，我们细致整理分析数据，得出有关校园的重要结论，这些结论对校园发展具有指 导意义，并有助于深入理解校园实况及制定合理解决方案。 技能证书 证书：计算机三级 技能:Excel,Word,PowerPoint,Python,Stata，Wind 兴趣：羽毛球，电影，绘画，读书 自我评价 作为一名数量经济学专业学生，我具备较强的逻辑思维和创新精神，积极探求真理、热衷于未知领域的挖 掘。我擅长多角度深度分析并寻找解决方案，拥有扎实的数学与计算机基础，曾自学过PHP、Pytho n、C#等语言，能够运用各类工具高效处理数据、精准进行金融分析预测。同时，我具有出色的学习及适 应能力，能够快速掌握新知识并融入新环境，随时准备应对金融市场瞬息万变的挑战。",
+    "additional_notes": null,
+    "save_to_server_history": true,
+    "max_results": 12,
+    "use_ai_summary": true,
+    "use_pure_ai_recommendation": true,
+    "strict_pure_ai_recommendation": true,
+    "preferred_model": "glm-4.7-flash"
+  },
+  "parsed_text_preview": null,
+  "recommendation": {
+    "total_considered": 1200,
+    "returned": 9,
+    "profile_summary": "重点关键词：证券 | 意向地点：重庆 | 岗位类型：实习 | 行业方向：证券 | 学历：硕士 | 经验：有实习经历 | 优势：Python, Excel, Wind, 数据分析 | 技能：Python, Excel, Wind, 数据分析 | 专业：金融工程, 经济学 | 院校：东北财经大学, 九江学院",
+    "top_titles": [
+      "国联民生证券2026暑期实习生",
+      "东吴证券2026春季校园招聘",
+      "深圳证券交易所2026年暑期实习生招收启事",
+      "中国银河证券博士后研究员招聘",
+      "宏源汇富创业投资有限公司投资经理岗实习生"
+    ],
+    "trace_id": "rec-20260409103611-08030bda",
+    "analysis_summary": "### 总体判断\n用户为东北财经大学数量经济学硕士在读，具备扎实的数理统计背景和Python、Wind等数据分析技能，且有一段策略开发实习经历，整体画像契合**金融科技、量化分析及数据研究**类岗位。但受限于院校背景（非985/211）及目前缺乏高含金量证书，在竞争头部核心投研岗时存在劣势。意向地点为重庆，但提供的候选岗位均位于北京，存在地域错配。\n\n### 优先投递方向\n基于用户技能树（Python, 策略开发, 计量经济学）及过往实习，最匹配的方向为**证券公司的金融工程部、资产管理部（量化/数据岗）或研究所（金工组）**。若考虑地域因素，应优先关注重庆本地券商营业部的投资顾问助理或中后台支持岗；若考虑岗位匹配度，则应聚焦于量化分析、数据分析及策略开发类实习。\n\n### 最推荐的岗位特征\n1.  **技能导向**：岗位描述中明确要求Python编程、数据挖掘、统计分析或量化建模能力。\n2.  **职能匹配**：金融工程分析师、量化策略开发实习生、数据分析师（金融方向）。\n3.  **学历门槛**：要求硕士学历，但对院校背景要求相对宽容，更看重实际代码能力和数据处理经验。\n\n### 潜在短板\n1.  **院校背景**：本科和硕士院校非“双一流”或头部财经名校，在简历筛选阶段容易被头部机构（如深交所、头部券商总部）卡掉。\n2.  **证书缺失**：无CFA、CPA或FRM等金融高含金量证书，缺乏专业资格认证。\n3.  **实习经历单薄**：仅在一家非金融科技公司（重庆风逸捷）有过实习，缺乏知名券商或基金公司的背书。\n4.  **地域错配**：意向城市为重庆，但候选岗位及优质金融资源多集中在北京/上海。\n\n### 补强建议\n1.  **强化项目展示**：在简历中深度量化“策略开发实习”的成果，突出Python在金融场景下的实际应用（如回测数据量、策略收益率等），弥补公司名气的不足。\n2.  **考取核心证书**：优先备考CFA（特许金融分析师）一级或证券从业资格证，快速补齐专业背景短板。\n3.  **调整求职地域**：建议扩大搜索范围至重庆本地的金融机构（如西南证券、本地私募或银行分行），或接受异地实习以获取更好的平台背书。\n4.  **补充相关项目**：利用量化经济学专业优势，在GitHub上发布一些基于Python的金融数据分析或量化策略项目，作为作品集链接附在简历中。\n\n### 投递顺序建议\n1.  **第一梯队（高匹配/高挑战）**：深圳证券交易所（量化/交易）——虽然门槛高且地点不符，但岗位与量化技能高度契合，可作为冲刺目标尝试。\n2.  **第二梯队（技能相关）**：关注重庆本地或线上的量化私募、证券公司金融工程部实习岗位（需自行搜索，因提供的候选列表中无此类岗位）。\n3.  **第三梯队（保底/曲线救国）**：若必须从提供的列表中选择，可投递**国联民生证券**或**东吴证券**的**人力/行政**岗位，作为进入大平台的跳板，后续争取内部转岗；但需注意这与用户技能树及意向偏差较大。\n4.  **排除项**：中国银河证券博士后研究员（要求博士，学历不符）；宏源汇富（信息不全，通常PE/VC对院校要求极高，且地点不符）。",
+    "model": "glm-4.7",
+    "ai_note": "已启用纯AI推荐（非规则打分）",
+    "resume_diagnostic_markdown": "### 简历诊断\n- 诊断分：**67**\n- 优势亮点：已识别院校背景：东北财经大学、九江学院; 专业信息较明确：金融工程、经济学; 技能/证书信息较丰富：Python、Excel、Wind、数据分析\n- 风险提示：暂无明显风险\n- 主要缺口：缺少明确实习单位或经历描述; 项目经历信息较少，影响量化与研究类岗位匹配\n\n### 优化建议\n- 优先补充项目经历、实习职责和量化成果\n- 可补充 CFA/FRM/基金从业等证书提升说服力",
+    "resume_diagnostic": {
+      "score": 67,
+      "highlights": [
+        "已识别院校背景：东北财经大学、九江学院",
+        "专业信息较明确：金融工程、经济学",
+        "技能/证书信息较丰富：Python、Excel、Wind、数据分析",
+        "求职方向较清晰：证券、证券"
+      ],
+      "risks": [],
+      "gaps": [
+        "缺少明确实习单位或经历描述",
+        "项目经历信息较少，影响量化与研究类岗位匹配"
+      ],
+      "suggestions": [
+        "优先补充项目经历、实习职责和量化成果",
+        "可补充 CFA/FRM/基金从业等证书提升说服力"
+      ],
+      "markdown": "### 简历诊断\n- 诊断分：**67**\n- 优势亮点：已识别院校背景：东北财经大学、九江学院; 专业信息较明确：金融工程、经济学; 技能/证书信息较丰富：Python、Excel、Wind、数据分析\n- 风险提示：暂无明显风险\n- 主要缺口：缺少明确实习单位或经历描述; 项目经历信息较少，影响量化与研究类岗位匹配\n\n### 优化建议\n- 优先补充项目经历、实习职责和量化成果\n- 可补充 CFA/FRM/基金从业等证书提升说服力"
+    },
+    "recommendations": [
+      {
+        "job": {
+          "title": "国联民生证券2026暑期实习生",
+          "company": "国联民生证券",
+          "location": "北京",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "",
+          "description": "专业要求: 不限专业\n招聘人数: 1人\n公司规模: 500人以上\n公司性质: 其他企业(含民营企业等)",
+          "requirements": "学历要求: 本科,硕士,博士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=7ece463ce4cf431fa53c4121d62fb6da",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=7ece463ce4cf431fa53c4121d62fb6da",
+          "publish_date": "2026-04-09",
+          "deadline": null,
+          "category": "人力/行政",
+          "tags": "券商,技术/数据,实习,证券/投行,人力/行政,博士可投",
+          "education": "博士",
+          "experience": "1年以内",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3747,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 56,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 58/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 58.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:08",
+          "updated_at": "2026-04-09 01:06:08"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      },
+      {
+        "job": {
+          "title": "东吴证券2026春季校园招聘",
+          "company": "东吴证券",
+          "location": "北京",
+          "job_type": "校招",
+          "industry": "证券/投行",
+          "salary": "",
+          "description": "专业要求: 不限专业\n招聘人数: 1人\n公司规模: 500人以上\n公司性质: 其他企业(含民营企业等)",
+          "requirements": "学历要求: 本科,硕士,博士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=dabac8d85a8f4f7ab0e73023dcc04ef8",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=dabac8d85a8f4f7ab0e73023dcc04ef8",
+          "publish_date": "2026-04-09",
+          "deadline": null,
+          "category": "人力/行政",
+          "tags": "券商,技术/数据,校招,证券/投行,人力/行政,博士可投",
+          "education": "博士",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3746,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 56,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 58/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 58.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:08",
+          "updated_at": "2026-04-09 01:06:08"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      },
+      {
+        "job": {
+          "title": "深圳证券交易所2026年暑期实习生招收启事",
+          "company": "深圳证券交易所",
+          "location": "北京",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "",
+          "description": "专业要求: 英语（财经英语）,法学（应用型、复合型）,应用统计学,数量经济学,法律（法学）,经济统计,管理科学,财务管理（公司金融方向）,税收学（税务师）,法学（第二专业）,管理科学与工程,法学（留学生）,法学（法学-会计学双学位项目）,经济法学,诉讼法学,财税法学,双培会计学,法学（二学位）,工商管理类（会计学院）,会计学（注册会计师专门化）,税收学（国际税收）,翻译,税收学,工商管理类 （会计学院）,审计,民商法学,★金融工程,会计学（管理会计方向）,翻译（财经翻译）,税收学（注册税务师）,会计学（注册会计师方向）,金融服务法,会计学（管理会计）,法律（非法学）,法学,外国语言文学类（财经英语与财经翻译）,双培财务管理（智能财务决策）,刑法学,会计学,双培财务管理,★税收学,应用数学,概率论与数理统计,管理科学（商务量化分析）,财务管理（留学生）,会计,国际法学,经济统计学,金融统计与风险管理,计算数学,会计学（注册会计师）,税务,法学（涉外型）,资产评估,应用统计学（金融统计）,双培会计学（数字化转型）,数理统计,财务管理,会计学（会计学-法学双学位项目）,法学（法学-工商管理双学位项目）,宪法学与行政法学,金融工程,应用统计,会计学（留学生）,法学（卓越法治人才教育培养计划）,法学（涉外法治人才培养基地班）\n招聘人数: 4人\n公司规模: 500人以上\n公司性质: 其他事业单位",
+          "requirements": "学历要求: 硕士,博士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=5e0d56b4fcd944e4bc39fa1d7a1368ca",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=5e0d56b4fcd944e4bc39fa1d7a1368ca",
+          "publish_date": "2026-04-08",
+          "deadline": null,
+          "category": "量化/交易",
+          "tags": "券商,财务,量化,实习,证券/投行,量化/交易",
+          "education": "博士",
+          "experience": "1年以内",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3761,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 58,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 64/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 64.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:08",
+          "updated_at": "2026-04-09 01:06:08"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      },
+      {
+        "job": {
+          "title": "中国银河证券博士后研究员招聘",
+          "company": "中国银河证券股份有限公司",
+          "location": "北京",
+          "job_type": "全职",
+          "industry": "证券/投行",
+          "salary": "",
+          "description": "专业要求: 不限专业\n招聘人数: 1人\n公司规模: 500人以上\n公司性质: 国有企业",
+          "requirements": "学历要求: 博士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=2f193e3dcfbe4e3a9bdff8596189db8e",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=2f193e3dcfbe4e3a9bdff8596189db8e",
+          "publish_date": "2026-04-08",
+          "deadline": null,
+          "category": "投资研究",
+          "tags": "国企,券商,投研,证券/投行,博士可投",
+          "education": "博士",
+          "experience": "",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3756,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 54,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 50/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 50.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:08",
+          "updated_at": "2026-04-09 01:06:08"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      },
+      {
+        "job": {
+          "title": "宏源汇富创业投资有限公司投资经理岗实习生",
+          "company": "宏源汇富创业投资有限公司",
+          "location": "北京",
+          "job_type": "实习",
+          "industry": "投资/PEVC",
+          "salary": "",
+          "description": "公司规模: 500人以上\n公司性质: 其他企业(含民营企业等)",
+          "requirements": "学历要求:",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=cca9eac69c1045368ddab13f07b520ee",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=cca9eac69c1045368ddab13f07b520ee",
+          "publish_date": "2026-04-08",
+          "deadline": null,
+          "category": "投资/并购",
+          "tags": "实习,投资/PEVC,投资/并购",
+          "education": "",
+          "experience": "1年以内",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3760,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 48,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 47/57，正文可信度 36/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "正文疑似夹杂公告噪音",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 47.0,
+            "content_credibility": 36.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:08",
+          "updated_at": "2026-04-09 01:06:08"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      },
+      {
+        "job": {
+          "title": "中国自然资源报社2026年度公开招聘应届毕业生（第二批）",
+          "company": "中国自然资源报社",
+          "location": "北京",
+          "job_type": "校招",
+          "industry": "教育/科研",
+          "salary": "",
+          "description": "专业要求: 新闻与传播,中国语言文学,新闻学,法律（法学）,法律（非法学）,计算机科学与技术\n招聘人数: 1人\n公司规模: 100人-200人\n公司性质: 其他事业单位",
+          "requirements": "学历要求: 硕士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=6b7279a61389454ea2f3aee2b6421360",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=6b7279a61389454ea2f3aee2b6421360",
+          "publish_date": "2026-04-09",
+          "deadline": null,
+          "category": "人力/行政",
+          "tags": "技术/数据,校招,教育/科研,人力/行政,硕士可投",
+          "education": "硕士",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3748,
+          "is_favorite": false,
+          "is_read": true,
+          "quality_score": 56,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 58/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 58.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:08",
+          "updated_at": "2026-04-09 01:06:49"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      },
+      {
+        "job": {
+          "title": "平安产险青海分公司产品管培生",
+          "company": "中国平安财产保险股份有限公司青海分公司",
+          "location": "北京",
+          "job_type": "全职",
+          "industry": "保险",
+          "salary": "",
+          "description": "专业要求: 数据科学与大数据技术,法律（法学）,数学类\n招聘人数: 1人\n公司规模: 500人以上\n公司性质: 其他(含社会组织、国际组织等)",
+          "requirements": "学历要求: 本科,硕士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=6d8ff644857945e78f846dddbc1a0507",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=6d8ff644857945e78f846dddbc1a0507",
+          "publish_date": "2026-04-08",
+          "deadline": null,
+          "category": "人力/行政",
+          "tags": "保险,技术/数据,管培生,人力/行政,硕士可投",
+          "education": "硕士",
+          "experience": "",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3749,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 56,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 58/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 58.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:08",
+          "updated_at": "2026-04-09 01:06:08"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      },
+      {
+        "job": {
+          "title": "大连农商银行2026年春季招聘公告",
+          "company": "大连农村商业银行股份有限公司",
+          "location": "北京",
+          "job_type": "全职",
+          "industry": "银行",
+          "salary": "",
+          "description": "专业要求: 不限专业\n招聘人数: 1人\n公司规模: 500人以上\n公司性质: 国有企业",
+          "requirements": "学历要求: 本科,硕士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=44e7ebf23f584f9ea75a8261f50fd20d",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=44e7ebf23f584f9ea75a8261f50fd20d",
+          "publish_date": "2026-04-08",
+          "deadline": null,
+          "category": "人力/行政",
+          "tags": "国企,银行,人力/行政,硕士可投",
+          "education": "硕士",
+          "experience": "",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3750,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 54,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 50/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 50.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:08",
+          "updated_at": "2026-04-09 01:06:08"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      },
+      {
+        "job": {
+          "title": "【截止4月20日】广发银行福州分行2026年度春季校园招聘公告",
+          "company": "广发银行股份有限公司福州分行",
+          "location": "福州",
+          "job_type": "校招",
+          "industry": "基金/资管",
+          "salary": "面议",
+          "description": "公司规模：100-499人\n行业：金融业\n地址：曙光路132号申发大厦3A层\n广发银行 1988年诞生于全国改革开放的前沿广东，是国有控股的全国性股份制商业银行， 2021年入选 国内 首批 系统重要性银行 ， 202 2 年 起 国家及国有法人持股比例超 95% 。 广发银行已 连续 1 5 年荣获 “全国最佳雇主” ， 连续 17年入选世界品牌实验室，2024年位列“中国500最具价值品牌榜”银行业第9位，2025年位列 《银行家》全球银行 1 000强 中位列第 60 位。 广发银行福州分行是总行设立在福建的 一级分行 ，位于福州台江金融街。广发银行福州分行 202 6年度春季 校园招聘现已开启，福州分行将为青年大学生提供广阔的成长舞台、公平的晋升机制和具有市场竞争力的薪酬福利待遇！ 一 、招聘对象 招聘 202 6 届境内外院校 本科 及以上学历毕业生 ， 应聘者入职前须取得教育部认证的学历学位证书（境外院校应聘者还须取得《国外学历学位认证书》） 。 境内院校 毕业时间： 202 6 年 1月至202 6 年 8月 境外院校 毕业时间： 202 5 年 1月至202 6 年 8月 二 、招聘 岗位及工作职责 （一）分行金融科技类（ 1人，工作地点：福州） 1. 负责分行应用系统和小程序的开发编码、测试及运维等工作。 2 .协助完成分行大数据分析及建模工作。 3 .根据广发银行信息安全管理总体要求，负责分行信息安全管理的各项具体工作。 4 .配合总行完成相关产品及应用系统的实施和推广。 5 .开展业务需求分析和金融产品的调研分析，协助业务人员进行验收测试，跟踪投产后的优化工作等。 （二）分行法律与风险管理类（ 1人，工作地点：福州） 为分行法律合规、授信审批、风险管理、特殊资产经营等部门储备专家型人才。新员工将有机会在分行、支行多岗位历练，积累较丰富的基层工作经验，结合岗位需求及个人专长安排在分行法律合规、授信审批、风险管理、特殊资产经营等相关岗位工作。 （三）分行营销英才（ 2人，工作地点：福州、福清） 为公司金融、零售金融、运营条线储备营销或服务型人才，结合工作需要及个人专长确定工作岗位，可从事公司客户经理、零售信贷客户经理、理财经理、综合金融客户经理、柜面经理、服务经理等岗位的工作。表现出色者有机会成为支行管理干部人选。 三、薪酬福利 六险二金（含补充医疗保险、企业年金） 、 连续 3年应届生专项补贴 、 带薪年假 、 节日福利 、 生日贺礼 、 食堂或餐补 、 工会活动 、 团建拓展 、 健康体检 、 健身房 等。 四 、 报名方式 （一） PC端： 1. www.chinalife.com .cn/chinalife/zhaopin 登录中国人寿招聘官网 ->校园招聘->广发银行-> 工作地点选择 “福州”或“ 福清 ” 即可找到我行招聘岗位，点击职位即可进入简历投递界面（需先注册并登陆） 。 2. www.cgbchina.com.cn 登录广发银行官网 ->人才招聘->校园招聘-> 工作地点选择 “福州”或“ 福清 ” 即可找到我行招聘岗位，点击职位即可进入简历投递界面（需先注册并登陆） 。 移动端： 关注 “广发银行招聘官微”微信公众号，点击“校招申请”菜单进入“广发银行”， 工作地点选择 “福州”或“福清”即可找到我行招聘岗位，点击职位即可进入简历投递界面（需先注册并登陆） 。 报名截止日期： 2026年4月20日 咨询邮箱： chinalife@jobapply.cn （不接受简历投递） （二）简历筛选 即日起分批开展 。 （三） 面试 4月至5月分批开展。 （四） 笔试测评 4月起分批开展。 （五）体检、资格审查、签约 5月至6月分批开展 。 五 、注意事项 （一）招聘期间，本行将通过手机短信、电子邮件、电话等方式与应聘者联系，请确保网申信息准确，并保持通信通畅。为便于及时联系，请勿填写 hotmail、gmail等境外服务器邮箱或境外电话号码。 （二）具体招聘要求和更多一手招聘资讯，请关注 “广发银行招聘官微”微信公众号。 年轻、创新、有温度！ 广发爱才，就等你来！",
+          "requirements": "",
+          "source": "上海财经大学",
+          "source_url": "https://career.sufe.edu.cn/career/zpxx/view/zpxx/182227611131449344",
+          "apply_url": "https://career.sufe.edu.cn/career/zpxx/view/zpxx/182227611131449344",
+          "publish_date": "2026-04-09",
+          "deadline": null,
+          "category": "风控/合规",
+          "tags": "银行,保险,咨询,风控,技术/数据,校招",
+          "education": "本科",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3645,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 60,
+          "quality_level": "中",
+          "quality_summary": "中质量数据，字段完整度 52/57，正文可信度 72/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "正文可信度较高",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 72.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-09 01:06:01",
+          "updated_at": "2026-04-09 01:06:01"
+        },
+        "score": 72.0,
+        "reasons": [
+          "AI输出非标准JSON，已按内容提取排序"
+        ],
+        "matched_fields": {
+          "ai": [
+            "纯AI推荐"
+          ]
+        },
+        "score_breakdown": {
+          "AI匹配评分": 72.0
+        },
+        "risks": [
+          "建议投递前复核原岗位要求"
+        ],
+        "gaps": [],
+        "action_plan": [
+          "建议先查看岗位原文，再结合 AI 理由决定投递优先级"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 纯AI推荐说明\n- AI匹配分：**72.0**\n- AI推荐理由：AI输出非标准JSON，已按内容提取排序\n- 风险提示：建议投递前复核原岗位要求",
+        "ai_fit_score": 72.0,
+        "ai_reason": "AI输出非标准JSON，已按内容提取排序",
+        "ai_risk": "建议投递前复核原岗位要求"
+      }
+    ]
+  }
+}

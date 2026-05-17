@@ -1,0 +1,6 @@
+2026-05-16 20:44:58.712 | DEBUG    | spiders.browser_wrapper:<module>:24 | Playwright已安装
+2026-05-16 20:44:58.713 | DEBUG    | spiders.browser_wrapper:<module>:54 | 加载constants模块: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/constants.py
+2026-05-16 20:44:58.713 | DEBUG    | spiders.browser_wrapper:<module>:62 | 加载utils模块: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/utils.py
+2026-05-16 20:44:58.714 | DEBUG    | spiders.browser_wrapper:<module>:70 | 加载base模块: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/base.py
+2026-05-16 20:44:58.715 | DEBUG    | spiders.browser_wrapper:<module>:89 | 加载爬虫文件: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/uibe.py
+2026-05-16 20:44:58.716 | DEBUG    | spiders.browser_wrapper:<module>:89 | 加载爬虫文件: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/jxufe_spider.py

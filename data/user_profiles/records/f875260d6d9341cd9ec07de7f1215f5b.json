@@ -1,0 +1,372 @@
+{
+  "id": "f875260d6d9341cd9ec07de7f1215f5b",
+  "type": "recommendation_chat",
+  "created_at": "2026-04-09T13:40:14",
+  "owner_user_id": 1,
+  "owner_username": "admin",
+  "original_filename": null,
+  "saved_file": null,
+  "file_hash": null,
+  "profile": {
+    "keywords": [
+      "证券"
+    ],
+    "preferred_locations": [
+      "重庆"
+    ],
+    "preferred_job_types": [
+      "实习"
+    ],
+    "preferred_industries": [
+      "证券"
+    ],
+    "education": "硕士",
+    "experience": "有实习经历",
+    "target_companies": [],
+    "strengths": [
+      "Python",
+      "Excel",
+      "Wind",
+      "数据分析"
+    ],
+    "schools": [
+      "东北财经大学",
+      "九江学院"
+    ],
+    "majors": [
+      "金融工程",
+      "经济学",
+      "统计学",
+      "数学",
+      "数量经济学",
+      "投资学"
+    ],
+    "skills": [
+      "Python",
+      "Excel",
+      "Wind",
+      "数据分析",
+      "无证券实习经历**）",
+      "推荐优先投递： 1. **国联民生证券2026暑期实习生** * **理由**：岗位类型包含**证券",
+      "行**",
+      "且明确要求**硕士**学历",
+      "您的教育背景匹配度最高",
+      "符合投行对数据处理的要求"
+    ],
+    "certifications": [],
+    "internship_companies": [],
+    "project_keywords": [],
+    "resume_text": "吴乾军 手机：[已隐藏手机号] 邮箱：[已隐藏邮箱] 性别：男 生日：2001-01 教育经历 2025.09-至今 东北财经大学 硕士 数量经济学 核心课程：高级计量经济学、高级微（宏）观经济学、Python语言于数据分析等 九江学院 本科 2020.09-2024.07 金融工程 核心课程：金融工程、计量经济学、统计学、证券投资学、数理经济学、国际商务等 实习经历 2025.05-2025.08 重庆风逸捷科技有限公司 策略开发实习生 主要负责产品策略开发，算法研究，以及产品上线维护等。 项目经历 2023.05-2023.05 古代玻璃制品化学成分的分析与研究 模型建立与数学分析 工作职责：利用二叉树模型建立玻璃化学成分的关系网络，通过分析已有数据，提取关键特征，为后续研究提供 基础。 结果：通过聚类分析统计学方法，成功地将古代玻璃制品进行了分类，将其分为几个不同的类别。基于数据间 的相似性和差异性，将数据点分组成为不同的集群，从而将古代玻璃制品按照其特性进行分类。 校园实践 2020.11-2020.11 校园调查问卷 信息收集员 参与校园街头采访志愿者活动，通过问卷调查收集群众意见。采访记录的反馈信息对了解校园需求与问题具有高 参考价值。在完成信息收集后，我们细致整理分析数据，得出有关校园的重要结论，这些结论对校园发展具有指 导意义，并有助于深入理解校园实况及制定合理解决方案。 技能证书 证书：计算机三级 技能:Excel,Word,PowerPoint,Python,Stata，Wind 兴趣：羽毛球，电影，绘画，读书 自我评价 作为一名数量经济学专业学生，我具备较强的逻辑思维和创新精神，积极探求真理、热衷于未知领域的挖 掘。我擅长多角度深度分析并寻找解决方案，拥有扎实的数学与计算机基础，曾自学过PHP、Pytho n、C#等语言，能够运用各类工具高效处理数据、精准进行金融分析预测。同时，我具有出色的学习及适 应能力，能够快速掌握新知识并融入新环境，随时准备应对金融市场瞬息万变的挑战。",
+    "additional_notes": "只要实习，最好是能够暑期实习的工作。",
+    "save_to_server_history": true,
+    "max_results": 12,
+    "use_ai_summary": true,
+    "use_pure_ai_recommendation": true,
+    "strict_pure_ai_recommendation": true,
+    "preferred_model": "glm-4.7-flash",
+    "continue_session": false,
+    "session_id": null,
+    "ignore_history_context": false
+  },
+  "parsed_text_preview": null,
+  "recommendation": {
+    "returned": 5,
+    "original_profile": {
+      "keywords": [
+        "证券"
+      ],
+      "preferred_locations": [
+        "重庆"
+      ],
+      "preferred_job_types": [
+        "实习"
+      ],
+      "preferred_industries": [
+        "证券"
+      ],
+      "education": "硕士",
+      "experience": "有实习经历",
+      "target_companies": [],
+      "strengths": [
+        "Python",
+        "Excel",
+        "Wind",
+        "数据分析"
+      ],
+      "schools": [
+        "东北财经大学",
+        "九江学院"
+      ],
+      "majors": [
+        "金融工程",
+        "经济学",
+        "统计学",
+        "数学",
+        "数量经济学",
+        "投资学"
+      ],
+      "skills": [
+        "Python",
+        "Excel",
+        "Wind",
+        "数据分析"
+      ],
+      "certifications": [],
+      "internship_companies": [],
+      "project_keywords": [],
+      "resume_text": "吴乾军 手机：[已隐藏手机号] 邮箱：[已隐藏邮箱] 性别：男 生日：2001-01 教育经历 2025.09-至今 东北财经大学 硕士 数量经济学 核心课程：高级计量经济学、高级微（宏）观经济学、Python语言于数据分析等 九江学院 本科 2020.09-2024.07 金融工程 核心课程：金融工程、计量经济学、统计学、证券投资学、数理经济学、国际商务等 实习经历 2025.05-2025.08 重庆风逸捷科技有限公司 策略开发实习生 主要负责产品策略开发，算法研究，以及产品上线维护等。 项目经历 2023.05-2023.05 古代玻璃制品化学成分的分析与研究 模型建立与数学分析 工作职责：利用二叉树模型建立玻璃化学成分的关系网络，通过分析已有数据，提取关键特征，为后续研究提供 基础。 结果：通过聚类分析统计学方法，成功地将古代玻璃制品进行了分类，将其分为几个不同的类别。基于数据间 的相似性和差异性，将数据点分组成为不同的集群，从而将古代玻璃制品按照其特性进行分类。 校园实践 2020.11-2020.11 校园调查问卷 信息收集员 参与校园街头采访志愿者活动，通过问卷调查收集群众意见。采访记录的反馈信息对了解校园需求与问题具有高 参考价值。在完成信息收集后，我们细致整理分析数据，得出有关校园的重要结论，这些结论对校园发展具有指 导意义，并有助于深入理解校园实况及制定合理解决方案。 技能证书 证书：计算机三级 技能:Excel,Word,PowerPoint,Python,Stata，Wind 兴趣：羽毛球，电影，绘画，读书 自我评价 作为一名数量经济学专业学生，我具备较强的逻辑思维和创新精神，积极探求真理、热衷于未知领域的挖 掘。我擅长多角度深度分析并寻找解决方案，拥有扎实的数学与计算机基础，曾自学过PHP、Pytho n、C#等语言，能够运用各类工具高效处理数据、精准进行金融分析预测。同时，我具有出色的学习及适 应能力，能够快速掌握新知识并融入新环境，随时准备应对金融市场瞬息万变的挑战。",
+      "additional_notes": "只要实习，最好是能够暑期实习的工作。",
+      "save_to_server_history": true,
+      "max_results": 12,
+      "use_ai_summary": true,
+      "use_pure_ai_recommendation": true,
+      "strict_pure_ai_recommendation": true,
+      "preferred_model": "glm-4.7-flash",
+      "continue_session": false,
+      "session_id": null,
+      "ignore_history_context": false
+    },
+    "effective_profile": {
+      "keywords": [
+        "证券"
+      ],
+      "preferred_locations": [
+        "重庆"
+      ],
+      "preferred_job_types": [
+        "实习"
+      ],
+      "preferred_industries": [
+        "证券"
+      ],
+      "education": "硕士",
+      "experience": "有实习经历",
+      "target_companies": [],
+      "strengths": [
+        "Python",
+        "Excel",
+        "Wind",
+        "数据分析"
+      ],
+      "schools": [
+        "东北财经大学",
+        "九江学院"
+      ],
+      "majors": [
+        "金融工程",
+        "经济学",
+        "统计学",
+        "数学",
+        "数量经济学",
+        "投资学"
+      ],
+      "skills": [
+        "Python",
+        "Excel",
+        "Wind",
+        "数据分析",
+        "无证券实习经历**）",
+        "推荐优先投递： 1. **国联民生证券2026暑期实习生** * **理由**：岗位类型包含**证券",
+        "行**",
+        "且明确要求**硕士**学历",
+        "您的教育背景匹配度最高",
+        "符合投行对数据处理的要求"
+      ],
+      "certifications": [],
+      "internship_companies": [],
+      "project_keywords": [],
+      "resume_text": "吴乾军 手机：[已隐藏手机号] 邮箱：[已隐藏邮箱] 性别：男 生日：2001-01 教育经历 2025.09-至今 东北财经大学 硕士 数量经济学 核心课程：高级计量经济学、高级微（宏）观经济学、Python语言于数据分析等 九江学院 本科 2020.09-2024.07 金融工程 核心课程：金融工程、计量经济学、统计学、证券投资学、数理经济学、国际商务等 实习经历 2025.05-2025.08 重庆风逸捷科技有限公司 策略开发实习生 主要负责产品策略开发，算法研究，以及产品上线维护等。 项目经历 2023.05-2023.05 古代玻璃制品化学成分的分析与研究 模型建立与数学分析 工作职责：利用二叉树模型建立玻璃化学成分的关系网络，通过分析已有数据，提取关键特征，为后续研究提供 基础。 结果：通过聚类分析统计学方法，成功地将古代玻璃制品进行了分类，将其分为几个不同的类别。基于数据间 的相似性和差异性，将数据点分组成为不同的集群，从而将古代玻璃制品按照其特性进行分类。 校园实践 2020.11-2020.11 校园调查问卷 信息收集员 参与校园街头采访志愿者活动，通过问卷调查收集群众意见。采访记录的反馈信息对了解校园需求与问题具有高 参考价值。在完成信息收集后，我们细致整理分析数据，得出有关校园的重要结论，这些结论对校园发展具有指 导意义，并有助于深入理解校园实况及制定合理解决方案。 技能证书 证书：计算机三级 技能:Excel,Word,PowerPoint,Python,Stata，Wind 兴趣：羽毛球，电影，绘画，读书 自我评价 作为一名数量经济学专业学生，我具备较强的逻辑思维和创新精神，积极探求真理、热衷于未知领域的挖 掘。我擅长多角度深度分析并寻找解决方案，拥有扎实的数学与计算机基础，曾自学过PHP、Pytho n、C#等语言，能够运用各类工具高效处理数据、精准进行金融分析预测。同时，我具有出色的学习及适 应能力，能够快速掌握新知识并融入新环境，随时准备应对金融市场瞬息万变的挑战。",
+      "additional_notes": "只要实习，最好是能够暑期实习的工作。",
+      "save_to_server_history": true,
+      "max_results": 12,
+      "use_ai_summary": true,
+      "use_pure_ai_recommendation": true,
+      "strict_pure_ai_recommendation": true,
+      "preferred_model": "glm-4.7-flash",
+      "continue_session": false,
+      "session_id": null,
+      "ignore_history_context": false
+    },
+    "top_titles": [
+      "国联民生证券2026暑期实习生",
+      "深圳证券交易所2026年暑期实习生招收启事",
+      "中国银河证券博士后研究员招聘",
+      "宏源汇富创业投资有限公司投资经理岗实习生",
+      "中国自然资源报社2026年度公开招聘应届毕业生（第二批）"
+    ],
+    "chat_question": "那如果只是假期学习呢",
+    "chat_answer": "基于您“假期学习”且“最好是暑期实习”的需求，结合您的背景（无证券实习、有Python/量化技能），推荐优先投递：\n\n**1. 深圳证券交易所2026年暑期实习生**\n*   **理由**：岗位为**量化/交易**，要求**硕士**。您的数量经济学背景及项目经历（聚类分析、二叉树模型）符合量化岗的筛选标准。这是最符合您技能栈的实习机会。\n\n**2. 国联民生证券2026暑期实习生**\n*   **理由**：岗位类型包含**证券/投行**，且明确要求**硕士**学历，与您的教育背景匹配度最高。虽然您无证券实习，但数量经济学背景和Python技能符合投行对数据处理的要求。\n\n**建议**：先投递证券/投行岗积累经验，再尝试量化岗。",
+    "model": "glm-4.7-flash",
+    "mode": "ai",
+    "error": null,
+    "exclusion_source_summary": {
+      "from_additional_notes": true,
+      "from_question": true,
+      "from_history_messages": 1,
+      "from_previous_session": true,
+      "previous_constraint_count": 0,
+      "current_turn_constraint_count": 0
+    },
+    "session_inherit_applied": true,
+    "session_context": {
+      "base_profile": {
+        "keywords": [
+          "证券"
+        ],
+        "preferred_locations": [
+          "重庆"
+        ],
+        "preferred_job_types": [
+          "实习"
+        ],
+        "preferred_industries": [
+          "证券"
+        ],
+        "education": "硕士",
+        "experience": "有实习经历",
+        "target_companies": [],
+        "strengths": [
+          "Python",
+          "Excel",
+          "Wind",
+          "数据分析"
+        ],
+        "schools": [
+          "东北财经大学",
+          "九江学院"
+        ],
+        "majors": [
+          "金融工程",
+          "经济学",
+          "统计学",
+          "数学",
+          "数量经济学",
+          "投资学"
+        ],
+        "skills": [
+          "Python",
+          "Excel",
+          "Wind",
+          "数据分析"
+        ],
+        "certifications": [],
+        "internship_companies": [],
+        "project_keywords": [],
+        "resume_text": "吴乾军 手机：[已隐藏手机号] 邮箱：[已隐藏邮箱] 性别：男 生日：2001-01 教育经历 2025.09-至今 东北财经大学 硕士 数量经济学 核心课程：高级计量经济学、高级微（宏）观经济学、Python语言于数据分析等 九江学院 本科 2020.09-2024.07 金融工程 核心课程：金融工程、计量经济学、统计学、证券投资学、数理经济学、国际商务等 实习经历 2025.05-2025.08 重庆风逸捷科技有限公司 策略开发实习生 主要负责产品策略开发，算法研究，以及产品上线维护等。 项目经历 2023.05-2023.05 古代玻璃制品化学成分的分析与研究 模型建立与数学分析 工作职责：利用二叉树模型建立玻璃化学成分的关系网络，通过分析已有数据，提取关键特征，为后续研究提供 基础。 结果：通过聚类分析统计学方法，成功地将古代玻璃制品进行了分类，将其分为几个不同的类别。基于数据间 的相似性和差异性，将数据点分组成为不同的集群，从而将古代玻璃制品按照其特性进行分类。 校园实践 2020.11-2020.11 校园调查问卷 信息收集员 参与校园街头采访志愿者活动，通过问卷调查收集群众意见。采访记录的反馈信息对了解校园需求与问题具有高 参考价值。在完成信息收集后，我们细致整理分析数据，得出有关校园的重要结论，这些结论对校园发展具有指 导意义，并有助于深入理解校园实况及制定合理解决方案。 技能证书 证书：计算机三级 技能:Excel,Word,PowerPoint,Python,Stata，Wind 兴趣：羽毛球，电影，绘画，读书 自我评价 作为一名数量经济学专业学生，我具备较强的逻辑思维和创新精神，积极探求真理、热衷于未知领域的挖 掘。我擅长多角度深度分析并寻找解决方案，拥有扎实的数学与计算机基础，曾自学过PHP、Pytho n、C#等语言，能够运用各类工具高效处理数据、精准进行金融分析预测。同时，我具有出色的学习及适 应能力，能够快速掌握新知识并融入新环境，随时准备应对金融市场瞬息万变的挑战。",
+        "additional_notes": "只要实习，最好是能够暑期实习的工作。",
+        "save_to_server_history": true,
+        "max_results": 12,
+        "use_ai_summary": true,
+        "use_pure_ai_recommendation": true,
+        "strict_pure_ai_recommendation": true,
+        "preferred_model": "glm-4.7-flash",
+        "continue_session": false,
+        "session_id": null,
+        "ignore_history_context": false
+      },
+      "effective_profile": {
+        "keywords": [
+          "证券"
+        ],
+        "preferred_locations": [
+          "重庆"
+        ],
+        "preferred_job_types": [
+          "实习"
+        ],
+        "preferred_industries": [
+          "证券"
+        ],
+        "education": "硕士",
+        "experience": "有实习经历",
+        "target_companies": [],
+        "strengths": [
+          "Python",
+          "Excel",
+          "Wind",
+          "数据分析"
+        ],
+        "schools": [
+          "东北财经大学",
+          "九江学院"
+        ],
+        "majors": [
+          "金融工程",
+          "经济学",
+          "统计学",
+          "数学",
+          "数量经济学",
+          "投资学"
+        ],
+        "skills": [
+          "Python",
+          "Excel",
+          "Wind",
+          "数据分析",
+          "无证券实习经历**）",
+          "推荐优先投递： 1. **国联民生证券2026暑期实习生** * **理由**：岗位类型包含**证券",
+          "行**",
+          "且明确要求**硕士**学历",
+          "您的教育背景匹配度最高",
+          "符合投行对数据处理的要求"
+        ],
+        "certifications": [],
+        "internship_companies": [],
+        "project_keywords": [],
+        "resume_text": "吴乾军 手机：[已隐藏手机号] 邮箱：[已隐藏邮箱] 性别：男 生日：2001-01 教育经历 2025.09-至今 东北财经大学 硕士 数量经济学 核心课程：高级计量经济学、高级微（宏）观经济学、Python语言于数据分析等 九江学院 本科 2020.09-2024.07 金融工程 核心课程：金融工程、计量经济学、统计学、证券投资学、数理经济学、国际商务等 实习经历 2025.05-2025.08 重庆风逸捷科技有限公司 策略开发实习生 主要负责产品策略开发，算法研究，以及产品上线维护等。 项目经历 2023.05-2023.05 古代玻璃制品化学成分的分析与研究 模型建立与数学分析 工作职责：利用二叉树模型建立玻璃化学成分的关系网络，通过分析已有数据，提取关键特征，为后续研究提供 基础。 结果：通过聚类分析统计学方法，成功地将古代玻璃制品进行了分类，将其分为几个不同的类别。基于数据间 的相似性和差异性，将数据点分组成为不同的集群，从而将古代玻璃制品按照其特性进行分类。 校园实践 2020.11-2020.11 校园调查问卷 信息收集员 参与校园街头采访志愿者活动，通过问卷调查收集群众意见。采访记录的反馈信息对了解校园需求与问题具有高 参考价值。在完成信息收集后，我们细致整理分析数据，得出有关校园的重要结论，这些结论对校园发展具有指 导意义，并有助于深入理解校园实况及制定合理解决方案。 技能证书 证书：计算机三级 技能:Excel,Word,PowerPoint,Python,Stata，Wind 兴趣：羽毛球，电影，绘画，读书 自我评价 作为一名数量经济学专业学生，我具备较强的逻辑思维和创新精神，积极探求真理、热衷于未知领域的挖 掘。我擅长多角度深度分析并寻找解决方案，拥有扎实的数学与计算机基础，曾自学过PHP、Pytho n、C#等语言，能够运用各类工具高效处理数据、精准进行金融分析预测。同时，我具有出色的学习及适 应能力，能够快速掌握新知识并融入新环境，随时准备应对金融市场瞬息万变的挑战。",
+        "additional_notes": "只要实习，最好是能够暑期实习的工作。",
+        "save_to_server_history": true,
+        "max_results": 12,
+        "use_ai_summary": true,
+        "use_pure_ai_recommendation": true,
+        "strict_pure_ai_recommendation": true,
+        "preferred_model": "glm-4.7-flash",
+        "continue_session": false,
+        "session_id": null,
+        "ignore_history_context": false
+      },
+      "history_turns": [
+        {
+          "asked_at": "2026-04-09T13:40:11",
+          "question": "那如果只是假期学习呢",
+          "history": [
+            {
+              "role": "user",
+              "content": "实习更适合那个岗位，简洁一点回答我"
+            },
+            {
+              "role": "assistant",
+              "content": "基于您的画像（**东北财经大学硕士、数量经济学、有Python/数据分析技能、无证券实习经历**），推荐优先投递：\n\n1.  **国联民生证券2026暑期实习生**\n    *   **理由**：岗位类型包含**证券/投行**，且明确要求**硕士**学历，与您的教育背景匹配度最高。虽然您无证券实习，但数量经济学背景和Python技能符合投行对数据处理的要求。\n2.  **深圳证券交易所2026年暑期实习生**\n    *   **理由**：岗位为**量化/交易**，要求**硕士**。您的数学/统计学背景及项目经历（聚类分析）符合量化岗的筛选标准。\n\n**建议**：先投递证券/投行岗积累经验，再尝试量化岗。"
+            }
+          ],
+          "constraints": {
+            "exclude_tags": [],
+            "excluded_jobs": [],
+            "excluded_companies": [],
+            "excluded_job_types": [],
+            "excluded_directions": [],
+            "required_locations": [],
+            "excluded_locations": []
+          },
+          "result_summary": "",
+          "top_titles": [
+            "国联民生证券2026暑期实习生",
+            "深圳证券交易所2026年暑期实习生招收启事",
+            "中国银河证券博士后研究员招聘",
+            "宏源汇富创业投资有限公司投资经理岗实习生",
+            "中国自然资源报社2026年度公开招聘应届毕业生（第二批）"
+          ]
+        }
+      ],
+      "accumulated_constraints": {
+        "exclude_tags": [],
+        "excluded_jobs": [],
+        "excluded_companies": [],
+        "excluded_job_types": [],
+        "excluded_directions": [],
+        "required_locations": [],
+        "excluded_locations": []
+      }
+    }
+  }
+}

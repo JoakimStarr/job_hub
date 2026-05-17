@@ -1,0 +1,1365 @@
+{
+  "id": "1a270a3e9cdc40fa85e7d06b653779e7",
+  "type": "recommendation",
+  "created_at": "2026-04-06T18:22:42",
+  "original_filename": null,
+  "saved_file": null,
+  "profile": {
+    "keywords": [
+      "证券"
+    ],
+    "preferred_locations": [
+      "重庆"
+    ],
+    "preferred_job_types": [
+      "实习"
+    ],
+    "preferred_industries": [
+      "证券"
+    ],
+    "education": "硕士",
+    "experience": "有实习经历",
+    "target_companies": [],
+    "strengths": [
+      "Python",
+      "Excel",
+      "Wind",
+      "数据分析"
+    ],
+    "schools": [
+      "东北财经大学",
+      "九江学院"
+    ],
+    "majors": [
+      "金融工程",
+      "经济学",
+      "统计学",
+      "数学",
+      "数量经济学",
+      "投资学"
+    ],
+    "skills": [
+      "Python",
+      "Excel",
+      "Wind",
+      "数据分析"
+    ],
+    "certifications": [],
+    "internship_companies": [],
+    "project_keywords": [],
+    "resume_text": "吴乾军 手机：[已隐藏手机号] 邮箱：[已隐藏邮箱] 性别：男 生日：2001-01 教育经历 2025.09-至今 东北财经大学 硕士 数量经济学 核心课程：高级计量经济学、高级微（宏）观经济学、Python语言于数据分析等 九江学院 本科 2020.09-2024.07 金融工程 核心课程：金融工程、计量经济学、统计学、证券投资学、数理经济学、国际商务等 实习经历 2025.05-2025.08 重庆风逸捷科技有限公司 策略开发实习生 主要负责产品策略开发，算法研究，以及产品上线维护等。 项目经历 2023.05-2023.05 古代玻璃制品化学成分的分析与研究 模型建立与数学分析 工作职责：利用二叉树模型建立玻璃化学成分的关系网络，通过分析已有数据，提取关键特征，为后续研究提供 基础。 结果：通过聚类分析统计学方法，成功地将古代玻璃制品进行了分类，将其分为几个不同的类别。基于数据间 的相似性和差异性，将数据点分组成为不同的集群，从而将古代玻璃制品按照其特性进行分类。 校园实践 2020.11-2020.11 校园调查问卷 信息收集员 参与校园街头采访志愿者活动，通过问卷调查收集群众意见。采访记录的反馈信息对了解校园需求与问题具有高 参考价值。在完成信息收集后，我们细致整理分析数据，得出有关校园的重要结论，这些结论对校园发展具有指 导意义，并有助于深入理解校园实况及制定合理解决方案。 技能证书 证书：计算机三级 技能:Excel,Word,PowerPoint,Python,Stata，Wind 兴趣：羽毛球，电影，绘画，读书 自我评价 作为一名数量经济学专业学生，我具备较强的逻辑思维和创新精神，积极探求真理、热衷于未知领域的挖 掘。我擅长多角度深度分析并寻找解决方案，拥有扎实的数学与计算机基础，曾自学过PHP、Pytho n、C#等语言，能够运用各类工具高效处理数据、精准进行金融分析预测。同时，我具有出色的学习及适 应能力，能够快速掌握新知识并融入新环境，随时准备应对金融市场瞬息万变的挑战。",
+    "additional_notes": "最好是可以短期实习，暑假实习的。优先考虑实习的工作。",
+    "save_to_server_history": true,
+    "max_results": 12,
+    "use_ai_summary": true
+  },
+  "parsed_text_preview": null,
+  "recommendation": {
+    "total_considered": 1200,
+    "returned": 12,
+    "profile_summary": "重点关键词：证券 | 意向地点：重庆 | 岗位类型：实习 | 行业方向：证券 | 学历：硕士 | 经验：有实习经历 | 优势：Python, Excel, Wind, 数据分析 | 技能：Python, Excel, Wind, 数据分析 | 专业：金融工程, 经济学 | 院校：东北财经大学, 九江学院",
+    "top_titles": [
+      "和谐健康保险2026年度春季校园招聘",
+      "中关村发展集团股份有限公司  2026年度校园招聘及博士后招聘公告",
+      "中国民生银行武汉分行2026年实习生招募启事",
+      "柳州银行2026年春季招聘",
+      "行业研究员岗"
+    ],
+    "analysis_summary": "Thinking Process:\n\n1.  **Analyze the Request:**\n    *   **Role:** Financial Job Recommendation Assistant (金融求职智能推荐助手).\n    *   **Task:** Summarize suitable job types, reasons, risks, improvement suggestions, and application strategies based on user profile and candidate positions.\n    *   **Output Format:** Markdown, max 6 sections (总体判断、优先投递方向、最推荐的岗位特征、潜在短板、补强建议、投递顺序建议).\n    *   **Constraints:** Do not fabricate information (based on provided info only).\n    *   **User Profile:**\n        *   Keywords: Securities (证券).\n        *   Location: Chongqing (重庆).\n        *   Job Type: Internship (实习).\n        *   Industry: Securities (证券).\n        *   Target Companies: None.\n        *   Education: Master's (硕士).\n        *   Experience: Has internship experience (有实习经历).\n        *   Advantages/Skills: Python, Excel, Wind, Data Analysis.\n        *   Majors: Financial Engineering, Economics, Statistics, Math, Quant Economics, Investment.\n        *   Certificates: None.\n        *   Internships: None (listed as \"无\", but experience says \"有实习经历\" - slight contradiction, but I should note the lack of specific internship companies).\n        *   Projects: None.\n        *   Additional Info: Prefer short-term internship, summer internship. Prioritize internships.\n    *   **Candidate Positions:**\n        1.  Harmony Health Insurance (Chengdu) - Fund/Asset Mgmt, Risk/Compliance.\n        2.  Zhongguancun Development Group (Beijing) - Securities/Investment Banking, Finance/Accounting/Audit.\n        3.  China Minsheng Bank Wuhan Branch - Fund/Asset Mgmt, Quant/Trading. (Location: Wuhan, not Chongqing).",
+    "model": "Qwen/Qwen3.5-4B",
+    "ai_note": null,
+    "resume_diagnostic_markdown": "### 简历诊断\n- 诊断分：**67**\n- 优势亮点：已识别院校背景：东北财经大学、九江学院; 专业信息较明确：金融工程、经济学; 技能/证书信息较丰富：Python、Excel、Wind、数据分析\n- 风险提示：暂无明显风险\n- 主要缺口：缺少明确实习单位或经历描述; 项目经历信息较少，影响量化与研究类岗位匹配\n\n### 优化建议\n- 优先补充项目经历、实习职责和量化成果\n- 可补充 CFA/FRM/基金从业等证书提升说服力",
+    "resume_diagnostic": {
+      "score": 67,
+      "highlights": [
+        "已识别院校背景：东北财经大学、九江学院",
+        "专业信息较明确：金融工程、经济学",
+        "技能/证书信息较丰富：Python、Excel、Wind、数据分析",
+        "求职方向较清晰：证券、证券"
+      ],
+      "risks": [],
+      "gaps": [
+        "缺少明确实习单位或经历描述",
+        "项目经历信息较少，影响量化与研究类岗位匹配"
+      ],
+      "suggestions": [
+        "优先补充项目经历、实习职责和量化成果",
+        "可补充 CFA/FRM/基金从业等证书提升说服力"
+      ],
+      "markdown": "### 简历诊断\n- 诊断分：**67**\n- 优势亮点：已识别院校背景：东北财经大学、九江学院; 专业信息较明确：金融工程、经济学; 技能/证书信息较丰富：Python、Excel、Wind、数据分析\n- 风险提示：暂无明显风险\n- 主要缺口：缺少明确实习单位或经历描述; 项目经历信息较少，影响量化与研究类岗位匹配\n\n### 优化建议\n- 优先补充项目经历、实习职责和量化成果\n- 可补充 CFA/FRM/基金从业等证书提升说服力"
+    },
+    "recommendations": [
+      {
+        "job": {
+          "title": "和谐健康保险2026年度春季校园招聘",
+          "company": "和谐健康保险股份有限公司",
+          "location": "成都",
+          "job_type": "实习",
+          "industry": "基金/资管",
+          "salary": "",
+          "description": "招聘单位： 和谐健康保险股份有限公司 招聘说明： 和谐健康保险2026年度春季校园招聘简章 一、公司简介： 和谐健康保险股份有限公司（以下简称“和谐健康”）于2006年经原中国保险监督管理委员会批准正式开业，是全国性、专业性健康保险公司之一。 2020年3月19日，经原中国银行保险监督管理委员会批复同意，福佳集团受让51%股份成为和谐健康控股股东。公司注册资本139亿元，在全国设有15家省级分公司，42家中支及支公司，基本形成覆盖全国的服务网络。 和谐健康坚持“保险姓保”的发展方向，以“科学、开放、共享、协调、创新”为发展理念。以“合规经营，诚信发展，防控风险，严谨廉洁”为经营宗旨，大力发展保障型业务、期交业务，全面增强核心竞争力。 和谐健康奉行“崇尚专业、敬畏行业”的文化理念，按照“精细化、高效化、专业化”的管理理念，立足广大消费者需求，广泛整合各类医疗机构、健康保障、养老服务等社会资源，创新构建“保险+科技+服务”的生态系统，全力打造“健康保障+健康管理”的服务模式，为客户提供全方位大健康服务，满足人民群众多样化养老保障需求。 和谐健康坚持“视客户为亲人”的服务宗旨，珍惜每一份保单、服务每一位客户、抓住每一个细节、立足于每一次创新，致力于成为一家科技一流、服务一流、口碑一流、体验一流、值得信赖、受人尊敬的科技保险企业，为提高人民健康水平，为实现“健康中国”的伟大战略目标贡献力量！ 二、招聘岗位： 2026 春季校园招聘管培生岗位： （一）产品开发中心/精算中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 精算等相关专业； 3. 有相关岗位实习经验者优先； 4. 精算师资格证通过四门及以上者优先。 工作内容： 1. 各渠道产品的经营分析； 2. 搭建、维护、更新分析模型。 （二）法律中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 法律、法学等相关专业； 3. 有较强的抗压能力、吃苦耐劳、工作细致认真； 4. 通过司法考试A证者优先考虑。 工作内容： 1. 协助各部门和分支机构制定、修订各项规章制度； 2. 协助公司进行合同、诉讼等相关法律事项的处理。 （三）人力资源中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 人力资源相关专业； 3. 勤劳细致，抗压能力强； 4. 熟练使用office办公软件。 工作内容： 1. 协助社保、公积金增减员业务办理及缴纳； 2. 协助总公司考勤、奖励、绩效等数据整理； 3. 协助总公司薪酬数据整理及工作。 （四）培训中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 人力资源相关专业； 3. 勤劳细致，抗压能力强； 4. 熟练使用office办公软件。 工作内容： 1. 协助组织、实施各部门培训及管理工作； 2. 协助培训课程的开发、审核及报审工作； 3. 协助培训资料、手册等编制工作； 4. 协助落实内外训项目的开发与实施。 （五）科技创新事业部 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 计算机、软件开发、用户体验、金融、保险、市场营销等相关专业； 3. 工作认真细心，有较好的问题分析能力及数据处理能力； 4. 有新媒体运营经验者优先； 5. 有金融或互联网金融行业相关实习经验者优先。 工作内容： 1. 协助部门进行APP与系统前端、后端研发工作； 2. 协助客户端与销售端APP的质量管理工作； 3. 协助进行应用运营与维护工作。 （六）信息中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 计算机软件、网络通信、信息安全及相关专业； 3. 熟练掌握并运用java、python等编程语言； 4. 具备基金、保险资管、券商实习经验者优先。 工作内容： 1. 协助资管部门新系统设计分析；资管公司自研系统设计、研发、维护；资管公司投资业务数据分析处理(研发岗)； 2. 协助开发防火墙设备及管理工具，WAF管理工具，数据库审计管理工具，IDS管理工具，漏洞扫描管理工具，堡垒机管理工具（运维岗）。 （七）计划中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 经济、金融、统计、保险、财务、会计等相关专业； 3. 工作认真细心，有较好的公文撰写能力以及数据处理能力； 4. 对数据敏感，市场敏锐度强。 工作内容： 1. 协助总公司ERP任务管理； 2. 协助总部进行战略规划工作； 3. 协助计划指标管理，经营分析管理，报表管理； 4. 协助组织绩效管理，企划绩效管理。 （八）风险/合规中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 法律、风险管理等相关专业； 3. 至少熟练掌握一种计算机语言或数据处理软件； 4. 有CFA、FRM、法律从业资格证者优先考虑。 工作内容： 1. 协助进行内控体系建立与优化； 2. 根据各项目评估公司内部运营风险，并及时发布风险提示； 3. 根据监管要求和规章制度进行合规风险控制与反洗钱工作； 4. 信用风险管理工具开发、运用与维护； 5. 协助完成同信用风险管理相关的信息收集、尽职调查等工作。 （九）行政办公室 岗位要求： 1. 统招本科院校，本科及以上学历，专业不限； 2. 良好的沟通表达与文字撰写能力，勤劳细致，抗压能力强； 3. 熟练应用office办公软件。 工作内容： 1. 参与相关会议并做好会议记录，整理编写会议纪要，经审阅下发； 2. 对总经理会议决议事项或重点任务指示事项进行跟进督办； 3. 对负责相关部门的文件、OA进行处理，上报，做好上传下达。 （十）资产管理中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 投资、保险、金融、经济、金融数学、法律、风险管理等相关专业； 3. 熟悉Wind等金融软件和办公软件的使用； 4. 有券商、保险、公募基金等相关行业实习经历优先考虑； 5. 有CFA、FRM、证券从业资格证者优先考虑。 工作内容： 1. 协助投资经理完成项目分析； 2. 协助管理尽职调查过程中的法律合规问题； 3. 协助做好专项工作的跟踪，及时把握进度并汇报。 （十一）核保客服部 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 经济、金融、统计、保险、医学等相关专业； 3. 工作认真细心，有较好的文字撰写能力以及数据处理能力。 工作内容： 1. 新契约管理室承保业务管理相关工作； 2. 核保管理室个险、团险核保相关工作； 3. 保全管理室业务管理岗相关工作； 4.续期管理室续期管理岗相关工作； 5. 客户服务管理室咨询投诉、客户服务管理岗相关工作。 （十二）银邮/个险/团险/中介/大健康/互联网/直销/电销事业部 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 经济、金融、保险、市场营销、新媒体运营、医学等相关专业； 3. 工作认真细心，有较好的文字撰写能力以及数据处理能力； 4. 有新媒体运营、直播等相关实习经验者优先。 工作内容： 1. 辅助科室日常工作的开展； 2. 负责部门各合同的到期时限管理、手续费结算报表的数据收集与制作； 3. 整理汇总银保监会的最新动态； 4. 协助开拓并维护客户和机构； 5. 协助进行新险种和新展业技能的推广。 （十三） 理赔部 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 经济、金融、统计、保险、医学等相关专业； 3. 工作认真细心，有较好的文字撰写能力以及数据处理能力。 工作内容： 1. 协助完成案件材料整理及初审； 2. 协助完成各类工作报告撰写； 3. 协助完成重大、疑难、特殊案件的调查工作； 4. 协助完成工作日报、周报、月报及会议纪要撰写。 （十四）印章管理中心 岗位要求： 1. 统招本科院校，本科及以上学历；专业不限； 2. 勤劳细致，抗压能力强； 3. 熟练使用office办公软件。 工作内容： 1. 协助用印文件的用印审核工作； 2. 协助印章机的保管与使用工作； 3. 协助实物印章的监督盘点、刻制、保管、销毁、更换工作； 4. 协助电子章的修订与更新工作。 （十五）财务中心 岗位要求： 1. 统招本科院校，本科及以上学历； 2. 财务、会计、税务、财政、保险等相关专业； 3. 有较强的抗压能力，对数据较为敏感； 4. 有在保险公司财务岗、四大会计师事务所实习经验者优先考虑。 工作内容： 1. 协助总分公司财务核算，凭证录入，报表审核，业财对接工作； 2. 协助总分公司税务管理，税金测算，申报缴纳，税收筹划工作； 3. 协助总分公司资金管理，资金归集，上划下拨，银行账户管理； 4. 协助总分公司成本控制，成本审核，报销管理，预算编制管理。 三、工作地点 1、总部岗位： 北京朝阳区国贸WWT世界财富大厦； 2、分支机构岗位： 北京、上海、广东、深圳、黑龙江、辽宁、安徽、河北、湖北、陕西、山东、江苏、四川、浙江、福建等。 四、薪资待遇 1、总部： 总部：本科：12-18万/年；硕士：13-21万/年； 2、分支机构： 本科：5-10万/年；硕士：7-12万/年； 更有五险一金、年度体检及高温补贴、节假日福利等你来享！ 五、投递方式 1、网申投递链接： http://u.51job.com/AvIvQva 和谐健康保险等你来！",
+          "requirements": "",
+          "source": "对外经济贸易大学",
+          "source_url": "https://career.uibe.edu.cn/front/zpxx.jspa?tid=2034824754929598465",
+          "apply_url": "https://career.uibe.edu.cn/front/zpxx.jspa?tid=2034824754929598465",
+          "publish_date": "2026-03-20",
+          "deadline": null,
+          "category": "风控/合规",
+          "tags": "银行,券商,基金,保险,咨询,财务",
+          "education": "硕士",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 2722,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 61,
+          "quality_level": "中",
+          "quality_summary": "中质量数据，字段完整度 52/57，正文可信度 74/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "正文可信度较高",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 74.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-03 10:55:25",
+          "updated_at": "2026-04-03 10:55:25"
+        },
+        "score": 88.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "岗位内容与专业背景相关：数学"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "majors": [
+            "数学"
+          ],
+          "strengths": [
+            "Python",
+            "Wind",
+            "数据分析"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "Python",
+            "Wind",
+            "数据分析",
+            "数学"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "专业相关度": 6.0,
+          "技能优势命中": 12.0,
+          "附加信息命中": 8.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位要求字段较短，信息可能不够完整。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 对外经济贸易大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**88.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**和谐健康保险股份有限公司**\n- 地点：**成都**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **技能优势命中**: +12\n- **学历适配**: +8\n- **附加信息命中**: +8\n- **专业相关度**: +6\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 岗位内容与专业背景相关：数学\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **majors**: 数学\n- **strengths**: Python, Wind, 数据分析\n- **context**: 证券, 实习, Python, Wind\n\n### 风险提示\n- 岗位要求字段较短，信息可能不够完整。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 对外经济贸易大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "中关村发展集团股份有限公司  2026年度校园招聘及博士后招聘公告",
+          "company": "",
+          "location": "北京",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "",
+          "description": "【公司规模】100-499人\n【行业】租赁和商务服务业\n【地址】北京市海淀区彩和坊路6号11-12层\n\n<p style=\"text-align: center;line-height: 3.14286em\"><span style=\"font-size:29px;font-family:方正小标宋简体\">中关村发展集团股份有限公司</span></p><p style=\"text-align: center;line-height: 3.14286em\"><span style=\"font-size:29px;font-family:方正小标宋简体\">2026</span><span style=\"font-size:29px;font-family:方正小标宋简体\">年度校园招聘及博士后招聘公告</span></p><p style=\"text-align: center;line-height: 3.14286em\"><span style=\"font-size:29px;font-family:方正小标宋简体\">&nbsp;</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">中关村发展集团股份有限公司（简称“中关村发展集团”）是北京市政府发起设立的科技创新服务平台。自成立以来，中关村发展集团坚守“让创新生长”的使命，锚定“打造国际一流创新生态集成服务商”的发展愿景，发现、培育和服务高价值企业，构建起“资本供给、金融支撑、服务集成、网络协同”业务体系，提供从0-1原始创新、1-10孵化加速、10-N产业发展的全周期全栈式服务，助力4I（Idea-IP-Industry-IPO）的转化过程更加高效。</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">截至目前，集团注册资本169亿元，总资产超千亿元，累计服务科技企业18万多家(次)，长期主体资信评级AAA，品牌竞争力和影响力不断增强。</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">中关村发展集团总部及子公司面向国（境）内外优秀院校开展2026年校园招聘及博士后招聘，现将有关事项公告如下：</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:黑体\">一、招聘条件</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:楷体\">（一）校园招聘条件</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">1.</span><span style=\"font-size:21px;font-family:仿宋_GB2312\">国（境）内外</span><span style=\"font-size:21px;font-family:仿宋_GB2312\">院校2026年应届毕业生及留学回国毕业生</span><span style=\"font-size:21px;font-family:仿宋_GB2312\">；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">2.</span><span style=\"font-size:21px;font-family:仿宋_GB2312\">硕士研究生（含）以上学历，所学专业符合招聘岗位要求，其中，运营管理类岗位优先考虑具有理工医学类复合专业背景者；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">3.</span><span style=\"font-size:21px;font-family:仿宋_GB2312\">学习成绩优异，综合素质较高，能在2026年8月31日前按时取得相应学历的毕业证和学位证；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">4.</span><span style=\"font-size:21px;font-family:仿宋_GB2312\">具有良好的英语听说读写能力；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">5.</span><span style=\"font-size:21px;font-family:仿宋_GB2312\">具有强烈事业心、责任感和团队精神；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">6.</span><span style=\"font-size: 21px;font-family:仿宋_GB2312\">身体健康，精力充沛。</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:楷体\">（二）博士后招聘招聘条件</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">1.</span><span style=\"font-size: 21px;font-family:仿宋_GB2312\">近年在国内外获得博士学位，或即将获得博士学位（博士培养单位出具证明，进站前能获得博士学位），或已从其他博士后科研流动站（工作站）出站；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">2.</span><span style=\"font-size: 21px;font-family:仿宋_GB2312\">专业方向与中关村发展集团博士后项目课题相匹配，有前期研究成果者优先；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">3.</span><span style=\"font-size: 21px;font-family:仿宋_GB2312\">可以全脱产在中关村发展集团博士后科研工作站从事研究工作；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">4.</span><span style=\"font-size: 21px;font-family:仿宋_GB2312\">品学兼优，身体健康，具有强烈事业心、责任感和团队精神。</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:黑体\">二、招聘岗位</span></p><table cellspacing=\"0\" cellpadding=\"0\" width=\"662\"><tbody><tr style=\";height:33px\" class=\"firstRow\"><td width=\"662px\" colspan=\"5\" style=\"border-width: 1px; border-color: black; background: rgb(0, 70, 153); padding: 0px 7px;\" height=\"33px\"><p style=\"text-align: center;line-height: 1.8em\"><strong><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">校园招聘需求</span></strong></p></td></tr><tr style=\";height:33px\"><td width=\"80px\" style=\"border-top: none; border-left-width: 1px; border-left-color: black; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: black; background: rgb(0, 70, 153); padding: 0px 7px;\" height=\"33px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">岗位类别</span></p></td><td width=\"100px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: black; background: rgb(0, 70, 153); padding: 0px 7px;\" height=\"33px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">岗位数量及</span></p><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">需求人数</span></p></td><td width=\"225px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: black; background: rgb(0, 70, 153); padding: 0px 7px;\" height=\"33px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">专业要求</span></p></td><td width=\"85px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: black; background: rgb(0, 70, 153); padding: 0px 7px;\" height=\"33px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">学历要求</span></p></td><td width=\"57px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: black; background: rgb(0, 70, 153); padding: 0px 7px;\" height=\"33px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">工作地点</span></p></td></tr><tr style=\";height:26px\"><td width=\"80px\" style=\"border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-right-color: windowtext; border-bottom-color: windowtext; border-left-color: windowtext; border-top: none; padding: 0px 7px;\" height=\"26px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">运营</span></p><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">管理类</span></p></td><td width=\"100px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"26px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">&nbsp;</span></p><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">5</span><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">人</span></p></td><td width=\"225px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"26px\"><p style=\"line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">计算机科学与技术、人工智能、数据科学、电子信息、信息与计算科学、统计学、金融学、产业经济学、数量经济学、信息与通信工程、控制科学与工程、会计学、法学等相关专业（有理工医学类及经济学类复合专业背景者优先）</span></p></td><td width=\"85px\" rowspan=\"3\" style=\"border-top: none; border-bottom: none; border-left: none; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"26px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">硕士研究生（含）以上学历</span></p></td><td width=\"57px\" rowspan=\"3\" style=\"border-top: none; border-bottom: none; border-left: none; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"26px\"><p style=\"line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">北京</span></p></td></tr><tr style=\";height:42px\"><td width=\"80px\" style=\"border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-right-color: windowtext; border-bottom-color: windowtext; border-left-color: windowtext; border-top: none; padding: 0px 7px;\" height=\"42px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">专业化</span></p><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">服务类</span></p></td><td width=\"100px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"42px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">19</span><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">人</span></p></td><td width=\"225px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: windowtext; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"42px\"><p style=\"line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">化学、生物学、医学、药学、物理学、集成电路科学与工程、智能科学与技术、光学工程、仪器科学与技术、电子科学与技术、信息与通信工程、计算机科学与技术、软件工程、电子信息、微电子学与固体电子学、微电子科学与工程、环境科学与工程、自然地理与资源环境、能源与动力工程、机械工程、生态学、材料科学与工程、理论经济学、应用经济学、区域经济学、人文地理学、工商管理等相关专业</span></p></td></tr><tr style=\";height:55px\"><td width=\"80px\" style=\"border-top: none; border-left-width: 1px; border-left-color: windowtext; border-bottom: none; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"55px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">咨询</span></p><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">设计类</span></p></td><td width=\"100px\" style=\"border-top: none; border-bottom: none; border-left: none; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"55px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">5</span><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">人</span></p></td><td width=\"225px\" style=\"border-top: none; border-bottom: none; border-left: none; border-right-width: 1px; border-right-color: windowtext; padding: 0px 7px;\" height=\"55px\"><p style=\"line-height: 1.8em\"><span style=\"font-size: 16px;line-height: 115%;font-family: 仿宋_GB2312\">经济学、数学、地理学、仪器科学与工程、材料科学与工程、电子科学与技术、信息与通信工程、计算机科学与技术、航空宇航科学与技术、生物医学工程、管理科学与工程等相关专业（有理工类及经济管理类复合背景者优先）</span></p></td></tr></tbody></table><p style=\";text-align: justify;line-height: 2.2em\"><strong><span style=\"font-size: 21px;font-family: 微软雅黑, sans-serif;letter-spacing: 1px\">&nbsp;</span></strong></p><p style=\";text-align: justify;line-height: 2.2em\"><strong><span style=\"font-size: 21px;font-family: 微软雅黑, sans-serif;letter-spacing: 1px\">&nbsp;</span></strong></p><p style=\";text-align: justify;line-height: 2.2em\"><strong><span style=\"font-size: 21px;font-family: 微软雅黑, sans-serif;letter-spacing: 1px\">&nbsp;</span></strong></p><p style=\";text-align: justify;line-height: 2.2em\"><strong><span style=\"font-size: 21px;font-family: 微软雅黑, sans-serif;letter-spacing: 1px\">&nbsp;</span></strong></p><p style=\";text-align: justify;line-height: 2.2em\"><strong><span style=\"font-size: 21px;font-family: 微软雅黑, sans-serif;letter-spacing: 1px\">&nbsp;</span></strong></p><p style=\";text-align: justify;line-height: 2.2em\"><strong><span style=\"font-size: 21px;font-family: 微软雅黑, sans-serif;letter-spacing: 1px\">&nbsp;</span></strong></p><table cellspacing=\"0\" cellpadding=\"0\" width=\"661\"><tbody><tr style=\";height:32px\" class=\"firstRow\"><td width=\"661px\" colspan=\"5\" style=\"border-width: 1px; border-color: black; background: rgb(0, 103, 176); padding: 0px 7px;\" height=\"32px\"><p style=\"text-align: center;line-height: 1.8em\"><strong><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">博士后招聘需求</span></strong></p></td></tr><tr style=\";height:59px\"><td width=\"158px\" style=\"border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-right-color: black; border-bottom-color: black; border-left-color: black; border-top: none; background: rgb(0, 103, 176); padding: 0px 7px;\" height=\"59px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">科研课题选题</span></p></td><td width=\"303px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; background: rgb(0, 103, 176); padding: 0px 7px;\" height=\"59px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">专业需求</span></p></td><td width=\"59px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; background: rgb(0, 103, 176); padding: 0px 7px;\" height=\"59px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">需求人数</span></p></td><td width=\"80px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; background: rgb(0, 103, 176); padding: 0px 7px;\" height=\"59px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">学历</span></p><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">要求</span></p></td><td width=\"62px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; background: rgb(0, 103, 176); padding: 0px 7px;\" height=\"59px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size:16px;line-height:115%;font-family:黑体;color:white\">工作地点</span></p></td></tr><tr style=\";height:60px\"><td width=\"158px\" style=\"border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-right-color: black; border-bottom-color: black; border-left-color: black; border-top: none; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">推动科技创新和产业创新深度融合的模式研究</span></p></td><td width=\"303px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">经济学、数学、管理科学与工程、公共管理类、地理学、仪器科学与工程、材料科学与工程、电子科学与技术、信息与通信工程、计算机科学与技术、航空宇航科学与技术、生物医学工程等相关专业</span></p></td><td width=\"59px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">2</span></p></td><td width=\"80px\" rowspan=\"4\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">博士</span></p><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">研究生</span></p></td><td width=\"62px\" rowspan=\"4\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">北京</span></p></td></tr><tr style=\";height:60px\"><td width=\"158px\" style=\"border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-right-color: black; border-bottom-color: black; border-left-color: black; border-top: none; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">深化国有企业改革的思路和举措研究</span></p></td><td width=\"303px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">经济学、数学、管理科学与工程、公共管理类、地理学、仪器科学与工程、材料科学与工程、电子科学与技术、信息与通信工程、计算机科学与技术、航空宇航科学与技术、生物医学工程等相关专业</span></p></td><td width=\"59px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">3</span></p></td></tr><tr style=\";height:60px\"><td width=\"158px\" style=\"border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-right-color: black; border-bottom-color: black; border-left-color: black; border-top: none; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">新材料领域科技成果转化</span></p></td><td width=\"303px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">机械工程、材料科学与工程、仪器科学与技术、电气工程、控制科学与工程、机械、材料与化工、智能科学与技术等理工类相关专业</span></p></td><td width=\"59px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">1</span></p></td></tr><tr style=\";height:60px\"><td width=\"158px\" style=\"border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-right-color: black; border-bottom-color: black; border-left-color: black; border-top: none; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">科技服务类国有资本投资效益评价</span></p></td><td width=\"303px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">经济学类相关专业，有理工医学类和经济学类复合专业背景者优先</span></p></td><td width=\"59px\" style=\"border-top: none; border-left: none; border-bottom-width: 1px; border-bottom-color: black; border-right-width: 1px; border-right-color: black; padding: 0px 7px;\" height=\"60px\"><p style=\"text-align: center;vertical-align: middle;line-height: 1.8em\"><span style=\"font-size: 16px;font-family: 仿宋_GB2312\">1</span></p></td></tr></tbody></table><p style=\";text-align: justify;line-height: 2.2em\"><strong><span style=\"font-size: 21px;font-family: 微软雅黑, sans-serif;letter-spacing: 1px\">&nbsp;</span></strong></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:黑体\">三、注意事项</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">1. </span><span style=\"font-size:21px;font-family:仿宋_GB2312\">中关村发展集团根据北京市有关政策规定，择优为符合引进条件的非京籍应届毕业生、留学回国毕业生办理在京落户手续；出站博士后在京落户事宜按照全国博管办有关规定执行。</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">2. </span><span style=\"font-size:21px;font-family:仿宋_GB2312\">网上报名为本次招聘的唯一报名方式，每位应聘者仅限填报1个岗位；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">3. </span><span style=\"font-size:21px;font-family:仿宋_GB2312\">最终录用岗位将根据中关村发展集团总部及子公司实际需求统筹安排；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">4. </span><span style=\"font-size:21px;font-family:仿宋_GB2312\">资格审核将贯穿招聘全过程，应聘人员须保证所提供信息真实可靠，如有发现弄虚作假者，取消其应聘及录用资格；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">5. </span><span style=\"font-size:21px;font-family:仿宋_GB2312\">招聘过程中，公司将通过应聘者在线报名时填写的联系方式（包括手机号码、邮箱等）与本人联系，请应聘者保持通讯畅通；</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">6. </span><span style=\"font-size:21px;font-family:仿宋_GB2312\">中关村发展集团有权根据岗位需求变化及报名情况等因素，调整、取消或终止个别岗位的招聘工作，并对本次招聘享有最终解释权。</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:黑体\">四、报名网址</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"text-decoration:underline;\"><span style=\"font-size:21px;font-family:仿宋_GB2312\"><a href=\"http://xyzp.51job.com/zgcgroup2026\">http://xyzp.51job.com/zgcgroup2026</a></span></span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:黑体\">五、招聘流程</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">报名：<span style=\"color:red\">2026</span><span style=\"color:red\">年1月30日起；</span></span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">测评及面试：<span style=\"color:red\">2026</span><span style=\"color:red\">年3月至2026年7月；</span></span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">实习、体检及录用：另行通知，请及时关注。</span></p><p style=\"text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">&nbsp;</span></p><p style=\"text-align: right;text-indent: 43px;line-height: 2.2em\"><span style=\"font-size:21px;font-family:仿宋_GB2312\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style=\"font-size:21px;font-family:仿宋_GB2312\">中关村发展集团股份有限公司</span></p><p><span style=\"font-size:21px;font-family:仿宋_GB2312\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2026</span><span style=\"font-size:21px;font-family:仿宋_GB2312\">年1月&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</span></p><p><br/></p>",
+          "requirements": "",
+          "source": "上海财经大学",
+          "source_url": "https://career.sufe.edu.cn/career/zpxx/view/zpxx/179174797559861248",
+          "apply_url": "https://career.sufe.edu.cn/career/zpxx/view/zpxx/179174797559861248",
+          "publish_date": "2026-03-31",
+          "deadline": null,
+          "category": "财务/会计/审计",
+          "tags": "国企,咨询,财务,投研,技术/数据,校招",
+          "education": "博士,硕士",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 202,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 54,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 42/57，正文可信度 64/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 42.0,
+            "content_credibility": 64.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-02 05:30:35",
+          "updated_at": "2026-04-02 05:46:19"
+        },
+        "score": 85.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "岗位内容与专业背景相关：经济学, 统计学"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "majors": [
+            "经济学",
+            "统计学",
+            "数学",
+            "数量经济学"
+          ],
+          "strengths": [
+            "Wind"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "Wind",
+            "经济学",
+            "统计学",
+            "数学"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "专业相关度": 10.0,
+          "技能优势命中": 4.0,
+          "附加信息命中": 9.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位要求字段较短，信息可能不够完整。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 上海财经大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**85.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**未知公司**\n- 地点：**北京**\n- 学历：**博士,硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **专业相关度**: +10\n- **附加信息命中**: +9\n- **学历适配**: +8\n- **技能优势命中**: +4\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 岗位内容与专业背景相关：经济学, 统计学\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **majors**: 经济学, 统计学, 数学, 数量经济学\n- **strengths**: Wind\n- **context**: 证券, 实习, Wind, 经济学\n\n### 风险提示\n- 岗位要求字段较短，信息可能不够完整。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 上海财经大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "中国民生银行武汉分行2026年实习生招募启事",
+          "company": "中国民生银行股份有限公司武汉分行",
+          "location": "武汉",
+          "job_type": "实习",
+          "industry": "基金/资管",
+          "salary": "面议",
+          "description": "招聘职位：资产评估/分析\n相关专业：数字经济,金融学,国民经济学,产业经济学,投资学,保险学,金融工程,管理科学与工程,精算学,工程管理,工程造价,国际商务,贸易经济,诉讼法学,经济法学,民商法学,刑法学,宪法学与行政法学,人工智能,会计学,统计学,数量经济学,应用统计,经济统计学,金融统计、保险精算与风险管理,数理统计学,应用统计学,数理统计,金融数学,信息与计算科学,数据科学与大数据技术,电子信息,计算机科学与技术,现代技术管理...\n招聘人数：30\n有效时间：2026-05-04 23:59\n中国民生银行于1996年1月12日在北京正式成立，是一家在上海和香港两地上市的全国性股份制商业银行，2016年，在英国《银行家》公布的全球1000家银行排名中列第33位，并跻身“世界500强”第221位。 中国民生银行武汉分行是中国民生银行首批五家区域性分行之一，自1997年落户江城以来，在各级政府、监管部门与社会各界的鼎力支持下，始终坚持以服务地方经济、支持社会发展为己任，服务网点从无到有，业务规模从小到大，经营效益稳步提升，快速跃升为当地股份制商业银行的前列，树立了良好市场形象，赢得了社会与政府的广泛认可。 截止2016年末，武汉分行管理资产总额破两千亿元，存款余额破千亿元，规模在本地股份制银行中位居前三甲，被监管和政府部门评为银行监管1级、人民银行综合A类、金融支持湖北经济发展突出贡献单位、金融支持武汉经济社会发展贡献单位、湖北省劳动保障诚信先进单位等。\n中国民生银行股份有限公司于1996年1月在北京成立，是中国第一家主要由民营企业发起设立的全国性股份制商业银行。 2000年、2009年先后在上海证券交易所和香港联合交易所上市。 现已发展为一家总资产7.8万亿元、分支机构2400余家、员工总数6.2万余名，拥有商业银行、金融租赁、基金管理、境外投行、银行理财等金融牌照的银行集团。\n为帮助更多有志从事金融工作的学生更好地了解民生，提前熟悉职场环境，中国民生银行武汉分行启动2026年实习生招聘，诚邀优秀学子报名参与！ 一、招聘对象 预计于2027年、2028年毕业的境内外院校在校生 二、招聘机构 武汉分行、襄阳分行、宜昌分行、黄石、孝感和咸宁支行 三、基本要求 (一)全日制本科及以上学历，STEM(科学、技术、工程、 数学)理工专业背景，或金融数学、金融科技等“STEM+金融”复合专业背景者优先； (二)视野开阔，善于创新，具备较强的自驱力以及良好的学习应用、团队协作及沟通表达能力； (三)具有社团创建及管理经历者优先，学生干部优先； (四)具备CFA、CPA、法律职业资格等专业资质认证； (五)具备良好的道德品质，无违法违纪记录。 四、实习安排 主要安排在重点业务领域跟岗实习，配套专业培训、导师辅导、毕业设计指导等支持，实习考核优异者将予以优先留用。 五、招聘流程 简历投递-测评/笔试-面试-实习offer发放-实习(本批实习主要安排在2026年暑假，也可商议灵活安排) 六、应聘须知 (一)简历投递截止时间2026年5月5日 24点。 (二)每位应聘者最多可投递3个岗位。 (三)应聘地址:招聘官网https://career.cmbc.com.cn/ (四)如需变更已投递职位，请在“申请助手”中撤消后重新申请。 (五)网申中如遇系统及操作问题，可发邮件至zhaopin2026@cmbc. com. cn. 七、温馨提示 (一)应聘者须对填报信息和提供材料的真实性、完整性负责，如与事实不符，我行有权取消录用资格。同时，我行承诺对应聘者信息严格保密，仅用于招聘工作。 (二)应聘者务必保证提交的联系方式准确无误，并保持通讯畅通，以免遗漏重要通知 (三)我行未委托任何三方机构开展考试或面试辅导培训，招聘过程中不会向应聘者收取任何费用，谨防上当受骗。\n预计于2027年、2028年毕业的境内外院校在校生\n面议\n027-85736308",
+          "requirements": "学历要求：本科,硕士\n专业要求：数字经济,金融学,国民经济学,产业经济学,投资学,保险学,金融工程,管理科学与工程,精算学,工程管理,工程造价,国际商务,贸易经济,诉讼法学,经济法学,民商法学,刑法学,宪法学与行政法学,人工智能,会计学,统计学,数量经济学,应用统计,经济统计学,金融统计、保险精算与风险管理,数理统计学,应用统计学,数理统计,金融数学,信息与计算科学,数据科学与大数据技术,电子信息,计算机科学与技术,现代技术管理...\n联系人：许雯惠\n招聘邮箱：zhaopin@cmbc.com.cn",
+          "source": "中南财经政法大学",
+          "source_url": "https://jyzx.zuel.edu.cn/home/career/internship?id=43457",
+          "apply_url": "https://jyzx.zuel.edu.cn/home/career/internship?id=43457",
+          "publish_date": "2026-04-02",
+          "deadline": null,
+          "category": "量化/交易",
+          "tags": "银行,券商,基金,保险,财务,量化",
+          "education": "硕士",
+          "experience": "1年以内",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3065,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 59,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 68/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 68.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-04 05:41:45",
+          "updated_at": "2026-04-04 05:41:45"
+        },
+        "score": 82.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "岗位内容与专业背景相关：金融工程, 经济学"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "majors": [
+            "金融工程",
+            "经济学",
+            "统计学",
+            "数学",
+            "数量经济学"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "金融工程",
+            "经济学",
+            "统计学",
+            "数学"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "专业相关度": 10.0,
+          "附加信息命中": 10.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位中未明显命中你的技能或优势关键词。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "简历技能没有在岗位描述中形成明显命中。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 中南财经政法大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**82.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**中国民生银行股份有限公司武汉分行**\n- 地点：**武汉**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **专业相关度**: +10\n- **附加信息命中**: +10\n- **学历适配**: +8\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 岗位内容与专业背景相关：金融工程, 经济学\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **majors**: 金融工程, 经济学, 统计学, 数学\n- **context**: 证券, 实习, 金融工程, 经济学\n\n### 风险提示\n- 岗位中未明显命中你的技能或优势关键词。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 简历技能没有在岗位描述中形成明显命中。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 中南财经政法大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "柳州银行2026年春季招聘",
+          "company": "柳州银行股份有限公司",
+          "location": "北京",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "",
+          "description": "专业要求: 金融学（留学生）,保险学,工程管理（建设经济管理）,应用统计学,双培金融科技,统计学（二学位）,应用统计学（留学生）,数量经济学,房地产开发与管理,经济统计,精算学,管理科学,数学与应用数学（金融数学）,统计学（第二专业）,金融学专业实验班,财务管理（公司金融方向）,统计学（统计—金融双学位项目）,管理科学与工程,★投资学,统计学（统计-金融双学位项目）,管理科学（留学生）,投资学（二学位）,数据科学与大数据技术（统数）,双培会计学,房地产经济与管理,数学与应用数学（二学位）,保险,工商管理类（会计学院）,会计学（注册会计师专门化）,投资学（投资学-大数据双学位项目）,双培金融学（国际金融）,大数据管理与应用,工商管理类 （会计学院）,社会保障,审计,信息与计算科学（金融计算）,★应用统计,统计应用学,★金融工程,会计学（管理会计方向）,统计学类,双培金融学,会计学（注册会计师方向）,数学与应用数学,数据科学与大数据技术,会计学（管理会计）,金融学,双培财务管理（智能财务决策）,金融学（互联网金融）,工程管理,会计学,双培财务管理,项目管理,应用数学,概率论与数理统计,管理科学（商务量化分析）,双培金融学（金融与监管科技）,财务管理（留学生）,数学类,金融学（国际货币与国际金融）,会计,金融,经济统计学,金融统计与风险管理,计算数学,会计学（注册会计师）,金融学类,经济统计学（经统-供应链双学位项目）,信息与计算科学,应用统计学（金融统计）,工程与项目管理,金融科技（北航计算机科学与技术专业联培）,双培会计学（数字化转型）,数理统计,应用统计学（应统-国经贸双学位项目）,统计学,财务管理,金融学（北外英语联培）,证券投资,会计学（会计学-法学双学位项目）,应用统计,金融工程,双培金融学（互联网金融）,工程管理（项目管理）,投资学,会计学（留学生）,国际金融学,管理科学与工程类,数学,双培经济统计学,金融科技\n招聘人数: 3人\n公司规模: 500人以上\n公司性质: 国有企业",
+          "requirements": "学历要求: 本科,硕士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=b880479f742a4e2fb25da03c1531ba46",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=b880479f742a4e2fb25da03c1531ba46",
+          "publish_date": "2026-04-03",
+          "deadline": null,
+          "category": "量化/交易",
+          "tags": "国企,银行,券商,保险,财务,量化",
+          "education": "硕士",
+          "experience": "",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 1931,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 58,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 64/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 64.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-03 08:16:58",
+          "updated_at": "2026-04-03 08:16:58"
+        },
+        "score": 82.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "岗位内容与专业背景相关：金融工程, 经济学"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "majors": [
+            "金融工程",
+            "经济学",
+            "统计学",
+            "数学",
+            "数量经济学"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "金融工程",
+            "经济学",
+            "统计学",
+            "数学"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "专业相关度": 10.0,
+          "附加信息命中": 10.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位中未明显命中你的技能或优势关键词。",
+          "岗位要求字段较短，信息可能不够完整。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "简历技能没有在岗位描述中形成明显命中。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 中央财经大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**82.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**柳州银行股份有限公司**\n- 地点：**北京**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **专业相关度**: +10\n- **附加信息命中**: +10\n- **学历适配**: +8\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 岗位内容与专业背景相关：金融工程, 经济学\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **majors**: 金融工程, 经济学, 统计学, 数学\n- **context**: 证券, 实习, 金融工程, 经济学\n\n### 风险提示\n- 岗位中未明显命中你的技能或优势关键词。\n- 岗位要求字段较短，信息可能不够完整。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 简历技能没有在岗位描述中形成明显命中。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 中央财经大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "行业研究员岗",
+          "company": "国寿安保基金管理有限公司",
+          "location": "北京",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "9K-10K/月",
+          "description": "标签：世界500强、双休、五险一金、朝九晚五\n\n职位描述\n【岗位职责】\n1.负责相关行业（如消费、科技、医药、新能源等）及上市公司的深度研究，搭建行业及个股研究框架，跟踪行业发展趋势、政策变化、企业经营动态，挖掘投资价值；\n2.撰写行业研究报告、个股调研报告，为基金经理提供专业、客观、及时的研究支持和投资建议；\n3.参与投研会议，协助基金经理进行组合管理相关的辅助工作，跟进投资逻辑的落地与验证；\n4.持续积累行业知识，跟踪国内外资本市场动态，优化研究方法，提升研究深度和效率；\n5.完成上级领导交办的其他事项，配合部门完成其他研究相关工作。\n【岗位要求】\n1.硕士及以上学历，理工科和金融学复合专业背景优先；\n2.具备扎实的金融理论基础，熟悉资本市场运作逻辑，了解公募基金行业基本情况，能熟练使用Excel、Wind、Bloomberg等工具，具备一定的数据分析和报告撰写能力；\n3.具备良好的语言表达能力、沟通协调能力和团队协作意识，能承受一定的工作压力；\n4.有相关行业实习经历（公募基金、券商研究岗）者优先，具备CFA、CPA、FRM等证书者优先。\n工作地点\n北京市\n投递要求\n简历要求：不限\n联系方式\n该企业未开启查看联系方式，请直接投递简历\n申请职位\n微信扫一扫，及时了解投递状态\n看了此职位的人还会看\n查看更多相似职位>>\n研究/战略\n面议\n合肥\n|\n天／周\n|\n实习个月\n|\n安徽国元信托有限责任公司\n信托投资业务\n面议\n合肥\n|\n天／周\n|\n实习个月\n|\n安徽国元信托有限责任公司\n系统管理岗\n9000-10000/天\n北京市\n|\n0天／周\n|\n实习个月\n|\n国寿安保基金管理有限公司\n网络安全岗\n9000-10000/天\n北京市\n|\n0天／周\n|\n实习个月\n|\n国寿安保基金管理有限公司\n投资合规岗\n9000-10000/天\n北京市\n|\n天／周\n|\n实习个月\n|\n国寿安保基金管理有限公司\n稽核审计岗\n9000-10000/天\n北京市\n|\n天／周\n|\n实习个月\n|\n国寿安保基金管理有限公司\n申请职位\n收藏\n扫描二维码即可在手机端精彩呈现“微招聘”，一键分享到朋友圈，为同学求职助力！\n给我留言\n发 送",
+          "requirements": "学历要求：硕士\n标签：世界500强、双休、五险一金、朝九晚五",
+          "source": "西南财经大学",
+          "source_url": "https://job3.swufe.edu.cn/jobs/jobs-show-14594-.htm",
+          "apply_url": "https://job3.swufe.edu.cn/jobs/jobs-show-14594-.htm",
+          "publish_date": "2026-03-25 14:49:25",
+          "deadline": null,
+          "category": "投研",
+          "tags": "上市公司,券商,基金,信托,财务,风控",
+          "education": "硕士",
+          "experience": "1年以内",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 520,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 60,
+          "quality_level": "中",
+          "quality_summary": "中质量数据，字段完整度 57/57，正文可信度 63/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 57.0,
+            "content_credibility": 63.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-02 07:10:21",
+          "updated_at": "2026-04-02 07:10:21"
+        },
+        "score": 81.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "与你的优势关键词有重合：Excel, Wind, 数据分析"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "strengths": [
+            "Excel",
+            "Wind",
+            "数据分析"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "Excel",
+            "Wind",
+            "数据分析"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "技能优势命中": 12.0,
+          "附加信息命中": 7.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 西南财经大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**81.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**国寿安保基金管理有限公司**\n- 地点：**北京**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **技能优势命中**: +12\n- **学历适配**: +8\n- **附加信息命中**: +7\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 与你的优势关键词有重合：Excel, Wind, 数据分析\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **strengths**: Excel, Wind, 数据分析\n- **context**: 证券, 实习, Excel, Wind\n\n### 风险提示\n- 暂未识别明显风险\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 西南财经大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "天健会计师事务所（特殊普通合伙）四川分所",
+          "company": "天健会计师事务所（特殊普通合伙）四川分所",
+          "location": "成都",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "面议",
+          "description": "招聘职位：审计专员/助理,资产评估/分析\n相关专业：会计学,财务管理,金融学,审计学,会计,审计,资产评估\n招聘人数：22\n有效时间：2026-04-29 23:59\n天健会计师事务所成立于 1983年12月，是首批具有A＋H股企业审计资格的全国性大型会计审计专业服务机构，综合实力位列全国第七（内资所全国前三），全球排名第十九位。天健是中国会计准则委员会、中国审计准则委员会、中国证监会股票发行审核委员会、上海证券交易所上市委员会、深圳证券交易所上市委员会成员单位。天健在全国16个城市设有分支机构，在境外6个地区设有成员所或联系所，合伙人及员工约5,000名，服务包括A股、B股、H股上市公司、大型国企、外商投资企业等在内的固定客户5000余家，其中上市公司客户300余家、新三板客户近800家，客户涉及制造业、公用事业、建筑业、交通运输和仓储业、信息技术业、批发和零售贸易业、金融和保险业、房地产业、社会服务业、传播与文化产业等多个行业领域，提供的服务内容包括企业上市、财务报表审计、房地产估价、保险公估、税务、工程投资咨询和基建审计、司法会计鉴定、管理咨询等。天健在一业为主、多元经营的基础上，专注务实、勇于创新、超越自我、追求卓越，以更好地帮助客户在不断变化的改革和发展环境中，应对和破解相关现实专业问题，以实现客户价值的最大化。“天行健，君子以自强不息”。 天健人始终奉行规范执业、稳健经营的理念，坚持诚信客观、公正独立的原则，秉承立足本土、面向国际的视野，与时俱进，开拓创新，沿着规范化、信息化的正确轨道，向着中华一流、世界著名的国际化事务所的发展目标挺进！\n天健会计师事务所成立于1983年12月，是我国首批具有A+H股企业审计资质的全国性大型专业会计审计中介服务机构。综合实力连续位列全国内资所前茅，全球前二十强。 天健目前拥有包括A股、B股、H股上市公司、大型央企、国企、外商投资企业等在内的固定客户7,000余家，其中上市公司客户700余家，占全国市场份额的13%，位列全国前二。2021年至2023年期间，天健三年合计过会家数240家、已发行家数254家以及在会数量三项指标均蝉联第一。 天健四川分所成立于2001年，系天健会计师事务所的分支机构之一，在总所授权范围内主要从事证券、期货相关业务。天健四川分所专注于资本市场服务，致力于为中国企业提供一流的审计、税务、企业管理咨询及财务咨询服务，帮助更多优质企业通过资本市场实现快速扩张和加速发展。\n财务审计（2026校招）招聘要求： （1）本岗位面向2026年应届本科及以上毕业生； （2）学习成绩优秀，英语四级以上或口语成绩优秀优先考虑； （3）财务会计、国际会计、审计、计算机审计、信息管理系统等相关专业者，辅修财会专业或有财务等相关专业基础的其他经济类专业或理工科专业，成绩优异者； （4）CPA等（国外相应资质如ACCA、CGA）执业资格考试通过若干门者优先考虑； （5）具备良好的沟通能力及团队合作精神，富有责任心和毅力；吃苦耐劳，适应高强度工作及经常性出差 资产评估（2026校招）招聘要求： （1）本岗位面向2026届财经类、理工类专业本科及以上学历毕业生，资产评估专业优先； （2）熟练使用办公软件，具备较强的数据、信息整合能力和文字表达能力，能熟练使用Python编程优先； （3）身体健康、品行端正，具备良好的沟通能力及团队合作精神，富有责任心，毅力，吃苦耐劳。 财务审计实习生（非校招）招聘要求： 1. 本岗位面向财务、会计、审计类大三及以上本科、硕士在校大学生； 2. 要求高考分数上一段线、学业成绩优秀，英语四级以上水平，口语优秀者优先考虑； 3. 能熟练运用Excel、Word等Office办公软件； 4. 具备良好的沟通能力及团队合作精神，富有责任心和毅力，吃苦耐劳，适应高强度工作及经常性出差； 5. 年报期间要求连续实习至少2个月。\n财务审计（2026校招） 1. 招聘人数：20人 2. 招聘要求： （1）本岗位面向2026年应届本科及以上毕业生； （2）学习成绩优秀，英语四级以上或口语成绩优秀优先考虑； （3）财务会计、国际会计、审计、计算机审计、信息管理系统等相关专业者，辅修财会专业或有财务等相关专业基础的其他经济类专业或理工科专业，成绩优异者； （4）CPA等（国外相应资质如ACCA、CGA）执业资格考试通过若干门者优先考虑； （5）具备良好的沟通能力及团队合作精神，富有责任心和毅力；吃苦耐劳，适应高强度工作及经常性出差。 3. 岗位职责： （1）在项目经理的指导下，参与各类企业及上市公司的年报审计、IPO审计、企业并购重组等项目； （2）编写审计底稿、参与审计报告编制、各类审计资料的整理与存档； （3）及时完成项目组交办的其他各项工作任务。 资产评估（2026校招） 1. 招聘人数：2人 2. 招聘要求： （1）本岗位面向2026届财经类、理工类专业本科及以上学历毕业生，资产评估专业优先； （2）熟练使用办公软件，具备较强的数据、信息整合能力和文字表达能力，能熟练使用Python编程优先； （3）身体健康、品行端正，具备良好的沟通能力及团队合作精神，富有责任心，毅力，吃苦耐劳。 3.岗位职责： （1）协助项目经理开展申报表填写、资料收集和盘点等资产评估相关工作； （2）协助评估报告的格式复核和报告装订; （3）在项目经理的指导下，及时完成交办的其他各项工作任务; （4）接受因项目需要的出差和必要加班。 财务审计实习生（非校招） （一）招聘人数：20人 （二）招聘要求： 1. 本岗位面向财务、会计、审计类大三及以上本科、硕士在校大学生； 2. 要求高考分数上一段线、学业成绩优秀，英语四级以上水平，口语优秀者优先考虑； 3. 能熟练运用Excel、Word等Office办公软件； 4. 具备良好的沟通能力及团队合作精神，富有责任心和毅力，吃苦耐劳，适应高强度工作及经常性出差； 5. 年报期间要求连续实习至少2个月。 （三）岗位职责： 1.在项目经理的指导下，参与各类企业及上市公司IPO审计、年报审计工作; 2.编写审计底稿、参与审计报告编制、各类审计资料的整理与存档； 3.在项目经理的指导下，及时完成交办的其他各项工作任务。\n面议\n招聘信息发布平台 （一）唯一网申通道：zhaopin.pccpa.cn （二）天健官网：www.pccpa.cn （三）新浪微博：@天健招聘 （四）微信公众号：天健招聘 招聘工作联系人姓名及联系方式 天健会计师事务所四川分所行政人事部 李女士 电话：028-65025282 传真：028-65062888 邮箱：lilishasc@pccpa.cn 地址：成都市高新区锦城大道666号奥克斯广场B座20层",
+          "requirements": "学历要求：本科,硕士\n专业要求：会计学,财务管理,金融学,审计学,会计,审计,资产评估\n联系人：李女士\n招聘邮箱：lilishasc@pccpa.cn",
+          "source": "中南财经政法大学",
+          "source_url": "https://jyzx.zuel.edu.cn/home/career/internship?id=43353",
+          "apply_url": "https://jyzx.zuel.edu.cn/home/career/internship?id=43353",
+          "publish_date": "2026-03-23",
+          "deadline": null,
+          "category": "量化/交易",
+          "tags": "国企,外企,上市公司,券商,保险,咨询",
+          "education": "硕士",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3150,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 59,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 68/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 68.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-04 05:41:45",
+          "updated_at": "2026-04-04 05:41:45"
+        },
+        "score": 76.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "与你的优势关键词有重合：Python, Excel"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "strengths": [
+            "Python",
+            "Excel"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "Python",
+            "Excel"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "技能优势命中": 8.0,
+          "附加信息命中": 6.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 中南财经政法大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**76.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**天健会计师事务所（特殊普通合伙）四川分所**\n- 地点：**成都**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **学历适配**: +8\n- **技能优势命中**: +8\n- **附加信息命中**: +6\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 与你的优势关键词有重合：Python, Excel\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **strengths**: Python, Excel\n- **context**: 证券, 实习, Python, Excel\n\n### 风险提示\n- 暂未识别明显风险\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 中南财经政法大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "大连韩丁数字科技有限公司",
+          "company": "大连韩丁数字科技有限公司",
+          "location": "大连",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "1-1.5万",
+          "description": "招聘职位：量化研究\n相关专业：金融工程,统计学,应用统计,金融统计、保险精算与风险管理,数理统计,数据科学与大数据技术,信息与计算科学\n招聘人数：10\n有效时间：2026-05-24 23:59\n大连韩丁数字科技有限公司于 2026 年 2 月成立。公司主要业务为大数据分析与股票市场投资。公司自有资金充足，创始人有深厚的金融学术背景和资本市场投资经验。现拟组建股票二级市场研究团队，诚聘国内有工作经验或高校全／兼职研究生。\n大连韩丁数字科技有限公司于2026年2月成立。公司主要业务为大数据分析与股票市场投资。公司自有资金充足，创始人有深厚的金融学术背景和资本市场投资经验。现拟组建股票二级市场研究团队，诚聘国内有工作经验或高校全／兼职研究生。\n1.具备出色的数据分析能力；能够根据问题导向，搭建研究分析体系框架。 2. 金融工程、数学专业；或工科背景对股票二级市场有一定了解； 3. 发表过资产定价论文优先； 有股票交易经验优先；\n量化投资开发岗 10 人 工作地点：辽宁省大连市\n福利： 1. 应届生可自选全职入职或保留应届生身份，可居家办公。 2.实习兼职300-500/天；全职1-2w/月。 3.对有潜力员工提供资金进行实盘交易，培养员工股票投资能力，个人无需承担亏损。\n邮箱：hdszkj@163.com 联系人：王女士 联系电话：18200544367",
+          "requirements": "学历要求：硕士,博士\n专业要求：金融工程,统计学,应用统计,金融统计、保险精算与风险管理,数理统计,数据科学与大数据技术,信息与计算科学\n联系人：王女士\n招聘邮箱：hdszkj@163.com",
+          "source": "中南财经政法大学",
+          "source_url": "https://jyzx.zuel.edu.cn/home/career/internship?id=43403",
+          "apply_url": "https://jyzx.zuel.edu.cn/home/career/internship?id=43403",
+          "publish_date": "2026-03-26",
+          "deadline": null,
+          "category": "量化/交易",
+          "tags": "保险,投研,量化,技术/数据,校招,实习",
+          "education": "博士",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3109,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 61,
+          "quality_level": "中",
+          "quality_summary": "中质量数据，字段完整度 57/57，正文可信度 68/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 57.0,
+            "content_credibility": 68.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-04 05:41:45",
+          "updated_at": "2026-04-04 05:41:45"
+        },
+        "score": 76.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "岗位内容与专业背景相关：金融工程, 统计学",
+          "与你的优势关键词有重合：数据分析"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "majors": [
+            "金融工程",
+            "统计学",
+            "数学"
+          ],
+          "strengths": [
+            "数据分析"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "数据分析",
+            "金融工程",
+            "统计学",
+            "数学"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "专业相关度": 10.0,
+          "技能优势命中": 4.0,
+          "附加信息命中": 8.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位学历要求可能高于当前画像，需要重点确认。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 中南财经政法大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**76.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**大连韩丁数字科技有限公司**\n- 地点：**大连**\n- 学历：**博士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **专业相关度**: +10\n- **附加信息命中**: +8\n- **技能优势命中**: +4\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 岗位内容与专业背景相关：金融工程, 统计学\n- 与你的优势关键词有重合：数据分析\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **majors**: 金融工程, 统计学, 数学\n- **strengths**: 数据分析\n- **context**: 证券, 实习, 数据分析, 金融工程\n\n### 风险提示\n- 岗位学历要求可能高于当前画像，需要重点确认。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 中南财经政法大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "中国银河金控2026年“新苗计划” 春季校园招聘公告",
+          "company": "中国银河金融控股有限责任公司",
+          "location": "北京",
+          "job_type": "实习",
+          "industry": "基金/资管",
+          "salary": "",
+          "description": "招聘单位： 中国银河金融控股有限责任公司 招聘说明： 中国银河金控2026年“新苗计划” 春季校园招聘公告 为培养和选拔优秀年轻人才、加强年轻干部队伍建设，为中国银河金融控股有限责任公司（以下简称“中国银河金控”）长远发展储备人才力量，现面向海内外高校开展2026年“新苗计划”春季校园招聘工作。 一、企业简介 中国银河金控成立于2005年8月，是经国务院批准成立的中央直属国有金融企业，股东单位为：财政部、中央汇金投资有限责任公司、全国社会保障基金理事会，肩负着探索我国金融业综合经营模式的历史使命。截至2024年末，中国银河金控集团合并资产总额超7700亿元，旗下涵盖不良资产、公募基金、私募股权、证券投行等业务板块。立足新发展阶段，中国银河金控聚焦不良资产主责主业，以“重塑资产价值，共创美好生活”为企业使命，践行“守正创新，和合共赢”的企业价值观，力争成为受人尊敬的一流资产管理集团。 二、 “ 新苗计划 ” 简介 习近平总书记一直高度关切年轻干部培养工作，对年轻干部成长寄予厚望。中国银河金控作为中央金融企业，高度重视年轻人才的培养及储备工作。“新苗计划”是中国银河金控为持续培养和储备一批综合素质好、专业能力强、发展潜力高的年轻人才，面向海内外高校学子开展的人才培养品牌项目。入选“新苗计划”的在校生，将在中国银河金控开展实习工作。经过实习考察后，考核结果优秀的实习生将获得录用机会。 三、招聘岗位及需求专业 中国银河金控“新苗计划”管培生（管理类） 岗位描述：面向中后台职能支持部门。 需求专业：经济学类、金融学类、管理学类、法学类、电子信息类、计算机类、党建类、财会类等相关专业。 四、报名资质 （一）政治素质强，中共党员优先； （二）具备金融类资格证书、法律职业资格的优先； （三）团队合作精神强，有较强的责任心和自驱力； （四）应届毕业生，原则上应于2026年7月前完成硕士研究生及以上学历教育，并获得相应学位。 五、招聘流程 本次招聘流程总体分为网申报名、笔试、面试、实习通知发放、留用考察、录取等环节，实习时间2周。笔试面试分批次进行，先投先面，招满即止。 六、相关说明 自即日起，应聘者可登录中国银河金控官方网站、官方微信公众号查询相关信息，通过在线招聘系统注册并填写个人信息后，选择相应机构及岗位进行报名。 在线招聘系统链接：https://ideal.51job.com/galaxy 七、注意事项 （一）请应聘者准确、完整填写简历和相关资料信息，保证信息真实性；如与事实不符，中国银河金控有权取消其应聘资格。 （二）招聘过程中，工作人员将通过应聘者在线报名时填写的联系方式（包括短信、电子邮件、电话等）与本人联系，请确保联系方式准确并保持通讯畅通。 （三）中国银河金控未成立或委托成立任何考试中心、命题中心等机构或类似机构，在招聘过程中，不会向应聘者收取任何费用。 （四）对本次招聘过程中的疑问可发邮件至答疑专用邮箱进行咨询。 中国银河金控：zhaopin@cgc.cn",
+          "requirements": "",
+          "source": "对外经济贸易大学",
+          "source_url": "https://career.uibe.edu.cn/front/zpxx.jspa?tid=2036273544979021825",
+          "apply_url": "https://career.uibe.edu.cn/front/zpxx.jspa?tid=2036273544979021825",
+          "publish_date": "2026-03-24",
+          "deadline": null,
+          "category": "投资研究",
+          "tags": "券商,基金,咨询,投研,校招,实习",
+          "education": "硕士",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 2697,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 57,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 60/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 60.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-03 10:55:25",
+          "updated_at": "2026-04-03 10:55:25"
+        },
+        "score": 73.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "岗位内容与专业背景相关：经济学"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "majors": [
+            "经济学"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "经济学"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "专业相关度": 6.0,
+          "附加信息命中": 5.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位中未明显命中你的技能或优势关键词。",
+          "岗位要求字段较短，信息可能不够完整。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "简历技能没有在岗位描述中形成明显命中。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 对外经济贸易大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**73.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**中国银河金融控股有限责任公司**\n- 地点：**北京**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **学历适配**: +8\n- **专业相关度**: +6\n- **附加信息命中**: +5\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 岗位内容与专业背景相关：经济学\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **majors**: 经济学\n- **context**: 证券, 实习, 经济学\n\n### 风险提示\n- 岗位中未明显命中你的技能或优势关键词。\n- 岗位要求字段较短，信息可能不够完整。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 简历技能没有在岗位描述中形成明显命中。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 对外经济贸易大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "销售经理岗（深圳）",
+          "company": "国寿安保基金管理有限公司",
+          "location": "深圳",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "9K-10K/月",
+          "description": "标签：世界500强、双休、五险一金、朝九晚五\n\n职位描述\n【岗位职责】\n1.配合公司总体机构销售策略和目标，执行所属区域内机构销售策略计划；\n2.负责区域内机构客户的开拓、维护与服务工作，达成销售目标，提升客户满意度；\n3.积极参与新业务、新产品的研发。\n【岗位要求】\n1.硕士及以上学历，经济、金融、财务、数学等相关专业；\n2.具备扎实的金融行业知识，对基金市场各类机构客户特点具有深刻的了解和掌控，有能力针对产品特点选择机构客户并独立开展营销；\n3.了解泛资产管理行业各类业务特点，能够充分理解保险、国央企、上市公司、财务公司、私募、银行、券商等机构业务模式，了解监管政策及市场形势变化对资产管理业务的影响；\n4.沟通、学习能力强，勇于挑战、能够承压，注重团队合作价值，并对事业发展有积极的进取心。\n工作地点\n深圳\n投递要求\n简历要求：不限\n联系方式\n该企业未开启查看联系方式，请直接投递简历\n申请职位\n微信扫一扫，及时了解投递状态\n看了此职位的人还会看\n查看更多相似职位>>\n研究/战略\n面议\n合肥\n|\n天／周\n|\n实习个月\n|\n安徽国元信托有限责任公司\n信托投资业务\n面议\n合肥\n|\n天／周\n|\n实习个月\n|\n安徽国元信托有限责任公司\n系统管理岗\n9000-10000/天\n北京市\n|\n0天／周\n|\n实习个月\n|\n国寿安保基金管理有限公司\n网络安全岗\n9000-10000/天\n北京市\n|\n0天／周\n|\n实习个月\n|\n国寿安保基金管理有限公司\n投资合规岗\n9000-10000/天\n北京市\n|\n天／周\n|\n实习个月\n|\n国寿安保基金管理有限公司\n稽核审计岗\n9000-10000/天\n北京市\n|\n天／周\n|\n实习个月\n|\n国寿安保基金管理有限公司\n申请职位\n收藏\n扫描二维码即可在手机端精彩呈现“微招聘”，一键分享到朋友圈，为同学求职助力！\n给我留言\n发 送",
+          "requirements": "学历要求：硕士\n标签：世界500强、双休、五险一金、朝九晚五",
+          "source": "西南财经大学",
+          "source_url": "https://job3.swufe.edu.cn/jobs/jobs-show-14595-.htm",
+          "apply_url": "https://job3.swufe.edu.cn/jobs/jobs-show-14595-.htm",
+          "publish_date": "2026-03-25 14:49:25",
+          "deadline": null,
+          "category": "风控/合规/法务",
+          "tags": "国企,上市公司,银行,券商,基金,保险",
+          "education": "硕士",
+          "experience": "1年以内",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 521,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 60,
+          "quality_level": "中",
+          "quality_summary": "中质量数据，字段完整度 57/57，正文可信度 63/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 57.0,
+            "content_credibility": 63.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-02 07:10:21",
+          "updated_at": "2026-04-02 07:10:21"
+        },
+        "score": 73.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "岗位内容与专业背景相关：数学"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "majors": [
+            "数学"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "数学"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "专业相关度": 6.0,
+          "附加信息命中": 5.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位中未明显命中你的技能或优势关键词。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "简历技能没有在岗位描述中形成明显命中。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 西南财经大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**73.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**国寿安保基金管理有限公司**\n- 地点：**深圳**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **学历适配**: +8\n- **专业相关度**: +6\n- **附加信息命中**: +5\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 岗位内容与专业背景相关：数学\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **majors**: 数学\n- **context**: 证券, 实习, 数学\n\n### 风险提示\n- 岗位中未明显命中你的技能或优势关键词。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 简历技能没有在岗位描述中形成明显命中。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 西南财经大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "管理培训生",
+          "company": "华龙证券股份有限公司",
+          "location": "兰州",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "面议",
+          "description": "标签：环境好、双休、交通方便、有年假、技术培训\n\n职位描述\n投递链接\nhttps://hlzj.changanjoin.com\n岗位职责\n本岗位为公司战略级核心人才储备计划，定向培养未来管理人才与复合型业务精英。通过全维度轮岗、精英导师赋能、个性化培养体系及实战项目历练，快速夯实业务能力、掌握管理精髓，成长为适配公司战略发展的高素质复合型人才。\n其他要求\n1.具备良好的文字能力和语言表达能力；\n2.品行端正，责任意识强，具备良好的职业道德与组织纪律观念\n3.学习能力突出，有出色的团队协作能力，抗压能力较强\n职业资格要求\n具有CFA、FRM、CPA、ACCA、法律职业资格证书者优先。\n专业要求\n经济学、金融类、财务类、管理类、法学类、计算机科学与技术专业类、社会学类、文学、马克思主义哲学等相关专业。\n工作实习经验\n具有金融行业相关实习或工作经历者优先。\n工作地点\n兰州\n投递要求\n简历要求：不限\n联系方式\n该企业未开启查看联系方式，请直接投递简历\n申请职位\n微信扫一扫，及时了解投递状态\n看了此职位的人还会看\n查看更多相似职位>>\n管培生\n12000-15000/天\n南通\n|\n天／周\n|\n实习个月\n|\n南通海门人才发展集团有限公司\n优粮生计划\n面议\n北京市,天津市,上海市,南京,杭州,武汉,长沙,重庆市,成都,西安\n|\n0天／周\n|\n实习个月\n|\n中粮集团有限公司\n总部管理培训生\n10000-11000/天\n海南/海口/秀英区\n|\n0天／周\n|\n实习个月\n|\n海南天然橡胶产业集团股份有限公司\n子公司管理培训生\n7000-14000/天\n海南/海口/秀英区\n|\n0天／周\n|\n实习个月\n|\n海南天然橡胶产业集团股份有限公司\n分公司管理培训生\n10000-11000/天\n海南/海口/秀英区\n|\n0天／周\n|\n实习个月\n|\n海南天然橡胶产业集团股份有限公司\n管培生\n10000-16000/天\n上海市\n|\n天／周\n|\n实习个月\n|\n上海长基供应链集团有限公司\n申请职位\n收藏\n扫描二维码即可在手机端精彩呈现“微招聘”，一键分享到朋友圈，为同学求职助力！\n给我留言\n发 送",
+          "requirements": "学历要求：硕士\n标签：环境好、双休、交通方便、有年假、技术培训",
+          "source": "西南财经大学",
+          "source_url": "https://job3.swufe.edu.cn/jobs/jobs-show-14619-.htm",
+          "apply_url": "https://job3.swufe.edu.cn/jobs/jobs-show-14619-.htm",
+          "publish_date": "2026-03-26 11:11:36",
+          "deadline": null,
+          "category": "财务/会计/审计",
+          "tags": "券商,财务,技术/数据,实习,管培生,证券/投行",
+          "education": "硕士",
+          "experience": "1年以内",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 479,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 58,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 63/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 63.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-02 07:10:21",
+          "updated_at": "2026-04-02 07:10:21"
+        },
+        "score": 73.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "岗位内容与专业背景相关：经济学"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "majors": [
+            "经济学"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "经济学"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "专业相关度": 6.0,
+          "附加信息命中": 5.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位中未明显命中你的技能或优势关键词。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "简历技能没有在岗位描述中形成明显命中。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 西南财经大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**73.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**华龙证券股份有限公司**\n- 地点：**兰州**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **学历适配**: +8\n- **专业相关度**: +6\n- **附加信息命中**: +5\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 岗位内容与专业背景相关：经济学\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **majors**: 经济学\n- **context**: 证券, 实习, 经济学\n\n### 风险提示\n- 岗位中未明显命中你的技能或优势关键词。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 简历技能没有在岗位描述中形成明显命中。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 西南财经大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "销售实习生",
+          "company": "",
+          "location": "",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "",
+          "description": "专业要求: 金融学类,金融学（互联网金融）,双培金融学（国际金融）,金融学（北外英语联培）,双培金融学（金融与监管科技）,金融学（国际货币与国际金融）,证券投资,金融,★金融工程,金融学专业实验班,金融工程,双培金融学（互联网金融）,双培金融学,国际金融学,金融学,金融科技\n招聘人数: 1人\n公司规模: 100人-200人\n公司性质: 外商投资企业",
+          "requirements": "学历要求: 本科,硕士",
+          "source": "中央财经大学",
+          "source_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=5a315397b6964f2aa44d9e3ee66301a8",
+          "apply_url": "http://scc.cufe.edu.cn/f/recruitmentinfo/show?recruitmentId=5a315397b6964f2aa44d9e3ee66301a8",
+          "publish_date": "2026-03-31",
+          "deadline": null,
+          "category": "人力/行政",
+          "tags": "外企,券商,实习,证券/投行,人力/行政,硕士可投",
+          "education": "硕士,本科",
+          "experience": "1年以内",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 240,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 51,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 34/57，正文可信度 64/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 34.0,
+            "content_credibility": 64.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-02 05:30:57",
+          "updated_at": "2026-04-02 05:46:19"
+        },
+        "score": 73.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "岗位内容与专业背景相关：金融工程"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "majors": [
+            "金融工程"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "金融工程"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "专业相关度": 6.0,
+          "附加信息命中": 5.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位中未明显命中你的技能或优势关键词。",
+          "岗位要求字段较短，信息可能不够完整。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "简历技能没有在岗位描述中形成明显命中。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议放入优先投递清单，先处理简历定制化后尽快投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 中央财经大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "冲刺岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**73.0**\n- 推荐优先级：**冲刺岗**\n\n### 岗位信息\n- 公司：**未知公司**\n- 地点：**未知地点**\n- 学历：**硕士,本科**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **学历适配**: +8\n- **专业相关度**: +6\n- **附加信息命中**: +5\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 岗位内容与专业背景相关：金融工程\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **majors**: 金融工程\n- **context**: 证券, 实习, 金融工程\n\n### 风险提示\n- 岗位中未明显命中你的技能或优势关键词。\n- 岗位要求字段较短，信息可能不够完整。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 简历技能没有在岗位描述中形成明显命中。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议放入优先投递清单，先处理简历定制化后尽快投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 中央财经大学 原网页确认最新发布时间和要求。"
+      },
+      {
+        "job": {
+          "title": "天健会计师事务所(特殊普通合伙)四川分所2026实习生招聘",
+          "company": "天健会计师事务所（特殊普通合伙）四川分所",
+          "location": "成都",
+          "job_type": "实习",
+          "industry": "证券/投行",
+          "salary": "面议",
+          "description": "公司规模：100-499人\n行业：科学研究和技术服务业\n地址：成都市锦城大道666号奥克斯广场B座20层\n天健会计师事 务所成立于1983年12月， 是我国首批具有A+H股企业审计资质的全国性大型专业会计审计中介服务机构 。 综合实力连续位列全国内资所前茅，全球前二十强。 天健目前拥有包括A股、B股、H股上市公司、大型央企、国企、外商投资企业等在内的固定客户7,000余家，其中上市公司客户700余家，占全国市场份额的13%，位列全国 前二 。2021年至2023年期间，天健三年合计过会家数240家、已发行家数254家以及在会数量三项指标均蝉联第一。 天健四川分所成立于2001年，系天健会计师事务所的分支机构之一，在总所授权范围内主要从事证券、期货相关业务。天健四川分所专注于资本市场服务，致力于为中国企业提供一流的审计、税务、企业管理咨询及财务咨询服务，帮助更多优质企业通过资本市场实现快速扩张和加速发展。 在这里，我们想要招募的不是雇员，而是相互信任、相互投资、共同受益的合伙人；我们相信互相尊重、平等、开放、包容、分享的工作环境更能激发人的潜能；我们期待您的加入，与优秀者共事，我们将带您参与不同行业的上市辅导项目、全面了解企业上市全流程，一起助力优质企业通过资本市场实现快速扩张和加速发展的同时实现个人理想价值！ 实习生招聘岗位：财务审计实习生（非校招） （一） 招聘人数 ：20 人 （二） 招聘要求 ： 1. 本岗位面向财务、会计、审计类大三及以上本科、硕士在校大学生； 2. 要求高考分数上一段线、学业成绩优秀，英语四级以上水平，口语优秀者优先考虑； 3. 能熟练运用Excel、Word等Office办公软件； 4. 具备良好的沟通能力及团队合作精神，富有责任心和毅力，吃苦耐劳，适应高强度工作及经常性出差； 5. 年报期间要求连续实习至少2个月。 （三） 岗位职责 ： 1.在项目经理的指导下，参与各类企业及上市公司IPO审计、年报审计工作; 2.编写审计底稿、参与审计报告编制、各类审计资料的整理与存档； 3.在项目经理的指导下，及时完成交办的其他各项工作任务。 天健会计师事务所四川分所行政人事部 李 女士 电话：028-65025282 传真：028 - 65062888 邮箱：lilishasc@pccpa.cn 地址：成都市高新区锦城大道666号奥克斯广场B座20层",
+          "requirements": "",
+          "source": "上海财经大学",
+          "source_url": "https://career.sufe.edu.cn/career/zpxx/view/sxzpxx/176259121983655936",
+          "apply_url": "https://career.sufe.edu.cn/career/zpxx/view/sxzpxx/176259121983655936",
+          "publish_date": "2026-03-23",
+          "deadline": null,
+          "category": "投资研究",
+          "tags": "国企,外企,上市公司,券商,咨询,财务",
+          "education": "硕士",
+          "experience": "应届",
+          "application_status": "未投递",
+          "application_notes": "",
+          "application_updated_at": null,
+          "id": 3012,
+          "is_favorite": false,
+          "is_read": false,
+          "quality_score": 58,
+          "quality_level": "一般",
+          "quality_summary": "一般质量数据，字段完整度 52/57，正文可信度 64/100，发布时间可信度 94/100，来源质量 12/20。",
+          "quality_reasons": [
+            "岗位标题完整",
+            "公司名称完整",
+            "地点结构化较完整",
+            "发布时间可信度较高",
+            "来源分级：C 档"
+          ],
+          "quality_breakdown": {
+            "field_completeness": 52.0,
+            "content_credibility": 64.0,
+            "publish_date_credibility": 94.0,
+            "source_quality": 12.0
+          },
+          "source_tier": "C",
+          "source_frequency": "低频",
+          "source_priority": 40,
+          "source_reason": "未配置专属策略，按低频补充源处理",
+          "created_at": "2026-04-04 05:39:50",
+          "updated_at": "2026-04-04 05:39:50"
+        },
+        "score": 71.0,
+        "reasons": [
+          "与关键词 证券 高度相关",
+          "岗位类型匹配：实习",
+          "行业方向匹配：证券",
+          "学历要求较为匹配",
+          "与你的优势关键词有重合：Excel"
+        ],
+        "matched_fields": {
+          "keywords": [
+            "证券"
+          ],
+          "job_types": [
+            "实习"
+          ],
+          "industries": [
+            "证券"
+          ],
+          "education": [
+            "硕士"
+          ],
+          "strengths": [
+            "Excel"
+          ],
+          "context": [
+            "证券",
+            "实习",
+            "Excel"
+          ]
+        },
+        "score_breakdown": {
+          "关键词匹配": 20.0,
+          "岗位类型匹配": 14.0,
+          "行业方向匹配": 16.0,
+          "学历适配": 8.0,
+          "技能优势命中": 4.0,
+          "附加信息命中": 5.0,
+          "简历语义补强": 4.0
+        },
+        "risks": [
+          "岗位要求字段较短，信息可能不够完整。"
+        ],
+        "gaps": [
+          "工作地点与当前意向地点没有明显重合。",
+          "画像中项目/实习信息较少，AI 可解释性会受影响。"
+        ],
+        "action_plan": [
+          "建议结合岗位职责补充一段相关项目或技能描述后投递。",
+          "简历中突出 Python, Excel, Wind 等技能证据。",
+          "优先查看 上海财经大学 原网页确认最新发布时间和要求。"
+        ],
+        "recommendation_tier": "匹配岗",
+        "summary_markdown": "### 匹配判断\n- 匹配分：**71.0**\n- 推荐优先级：**匹配岗**\n\n### 岗位信息\n- 公司：**天健会计师事务所（特殊普通合伙）四川分所**\n- 地点：**成都**\n- 学历：**硕士**\n\n### 评分拆解\n- **关键词匹配**: +20\n- **行业方向匹配**: +16\n- **岗位类型匹配**: +14\n- **学历适配**: +8\n- **附加信息命中**: +5\n- **技能优势命中**: +4\n- **简历语义补强**: +4\n\n### 推荐理由\n- 与关键词 证券 高度相关\n- 岗位类型匹配：实习\n- 行业方向匹配：证券\n- 学历要求较为匹配\n- 与你的优势关键词有重合：Excel\n\n### 命中字段\n- **keywords**: 证券\n- **job_types**: 实习\n- **industries**: 证券\n- **education**: 硕士\n- **strengths**: Excel\n- **context**: 证券, 实习, Excel\n\n### 风险提示\n- 岗位要求字段较短，信息可能不够完整。\n\n### 能力缺口\n- 工作地点与当前意向地点没有明显重合。\n- 画像中项目/实习信息较少，AI 可解释性会受影响。\n\n### 建议动作\n- 建议结合岗位职责补充一段相关项目或技能描述后投递。\n- 简历中突出 Python, Excel, Wind 等技能证据。\n- 优先查看 上海财经大学 原网页确认最新发布时间和要求。"
+      }
+    ]
+  }
+}

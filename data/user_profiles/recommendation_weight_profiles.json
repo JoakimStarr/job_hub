@@ -1,0 +1,164 @@
+{
+  "1": {
+    "vector": {
+      "keyword": 0.97,
+      "location": 1.0,
+      "job_type": 0.8799999999999999,
+      "industry": 0.8400000000000001,
+      "company": 1.0,
+      "education": 1.0,
+      "major": 0.95,
+      "experience": 0.9,
+      "skill": 1.08,
+      "internship": 1.0,
+      "context": 1.0,
+      "semantic": 1.0
+    },
+    "history": [
+      {
+        "at": "2026-04-06T19:14:53",
+        "reason": "direction_mismatch",
+        "vector": {
+          "keyword": 0.95,
+          "location": 1.0,
+          "job_type": 0.96,
+          "industry": 0.92,
+          "company": 1.0,
+          "education": 1.0,
+          "major": 1.0,
+          "experience": 1.0,
+          "skill": 1.0,
+          "internship": 1.0,
+          "context": 1.0,
+          "semantic": 1.0
+        }
+      },
+      {
+        "at": "2026-04-06T19:15:04",
+        "reason": "experience_mismatch",
+        "vector": {
+          "keyword": 0.95,
+          "location": 1.0,
+          "job_type": 0.96,
+          "industry": 0.92,
+          "company": 1.0,
+          "education": 1.0,
+          "major": 0.95,
+          "experience": 0.9,
+          "skill": 1.0,
+          "internship": 1.0,
+          "context": 1.0,
+          "semantic": 1.0
+        }
+      },
+      {
+        "at": "2026-04-06T19:15:12",
+        "reason": "positive",
+        "vector": {
+          "keyword": 0.98,
+          "location": 1.0,
+          "job_type": 0.96,
+          "industry": 0.9400000000000001,
+          "company": 1.0,
+          "education": 1.0,
+          "major": 0.95,
+          "experience": 0.9,
+          "skill": 1.02,
+          "internship": 1.0,
+          "context": 1.0,
+          "semantic": 1.0
+        }
+      },
+      {
+        "at": "2026-04-06T19:15:14",
+        "reason": "positive",
+        "vector": {
+          "keyword": 1.01,
+          "location": 1.0,
+          "job_type": 0.96,
+          "industry": 0.9600000000000001,
+          "company": 1.0,
+          "education": 1.0,
+          "major": 0.95,
+          "experience": 0.9,
+          "skill": 1.04,
+          "internship": 1.0,
+          "context": 1.0,
+          "semantic": 1.0
+        }
+      },
+      {
+        "at": "2026-04-06T19:15:15",
+        "reason": "positive",
+        "vector": {
+          "keyword": 1.04,
+          "location": 1.0,
+          "job_type": 0.96,
+          "industry": 0.9800000000000001,
+          "company": 1.0,
+          "education": 1.0,
+          "major": 0.95,
+          "experience": 0.9,
+          "skill": 1.06,
+          "internship": 1.0,
+          "context": 1.0,
+          "semantic": 1.0
+        }
+      },
+      {
+        "at": "2026-04-06T19:15:21",
+        "reason": "positive",
+        "vector": {
+          "keyword": 1.07,
+          "location": 1.0,
+          "job_type": 0.96,
+          "industry": 1.0,
+          "company": 1.0,
+          "education": 1.0,
+          "major": 0.95,
+          "experience": 0.9,
+          "skill": 1.08,
+          "internship": 1.0,
+          "context": 1.0,
+          "semantic": 1.0
+        }
+      },
+      {
+        "at": "2026-04-06T19:15:47",
+        "reason": "direction_mismatch",
+        "vector": {
+          "keyword": 1.02,
+          "location": 1.0,
+          "job_type": 0.9199999999999999,
+          "industry": 0.92,
+          "company": 1.0,
+          "education": 1.0,
+          "major": 0.95,
+          "experience": 0.9,
+          "skill": 1.08,
+          "internship": 1.0,
+          "context": 1.0,
+          "semantic": 1.0
+        }
+      },
+      {
+        "at": "2026-04-09T09:12:26",
+        "reason": "direction_mismatch",
+        "vector": {
+          "keyword": 0.97,
+          "location": 1.0,
+          "job_type": 0.8799999999999999,
+          "industry": 0.8400000000000001,
+          "company": 1.0,
+          "education": 1.0,
+          "major": 0.95,
+          "experience": 0.9,
+          "skill": 1.08,
+          "internship": 1.0,
+          "context": 1.0,
+          "semantic": 1.0
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+2026-05-16 20:44:58 | INFO     | 日志系统初始化完成，日志目录: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/log
+2026-05-16 20:44:58 | DEBUG    | Playwright已安装
+2026-05-16 20:44:58 | DEBUG    | 加载constants模块: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/constants.py
+2026-05-16 20:44:58 | SUCCESS  | constants模块加载成功
+2026-05-16 20:44:58 | DEBUG    | 加载utils模块: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/utils.py
+2026-05-16 20:44:58 | SUCCESS  | utils模块加载成功
+2026-05-16 20:44:58 | DEBUG    | 加载base模块: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/base.py
+2026-05-16 20:44:58 | SUCCESS  | base模块加载成功
+2026-05-16 20:44:58 | DEBUG    | 加载爬虫文件: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/uibe.py
+2026-05-16 20:44:58 | SUCCESS  | 成功加载爬虫: UibeJobSpider
+2026-05-16 20:44:58 | DEBUG    | 加载爬虫文件: /home/joakim/Project/hmAPP/finintern_hub/next-app/src/spiders/jxufe_spider.py
+2026-05-16 20:44:58 | SUCCESS  | 成功加载爬虫: JxufeJobSpider
+2026-05-16 20:44:58 | SUCCESS  | 浏览器爬虫加载成功，共 2 个
