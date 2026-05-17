@@ -99,7 +99,6 @@
 .nav-item-active {
   background: #eff6ff;
   color: var(--primary);
-  border-left: 3px solid var(--primary);
   font-weight: 600;
 }
 
