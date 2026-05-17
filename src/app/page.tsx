@@ -1,14 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
-import { Badge, Button, EmptyState, JobCard, MetricCard, SectionCard, Skeleton } from '@/components/ui';
+import { Badge, Button, EmptyState, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton } from '@/components/ui';
 import { API } from '@/lib/api';
 import type { JobItem, StatsOverview } from '@/lib/types';
 
 export default function HomePage() {
+  const router = useRouter();
   const [stats, setStats] = useState<StatsOverview | null>(null);
   const [jobs, setJobs] = useState<JobItem[]>([]);
+  const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -18,7 +21,7 @@ export default function HomePage() {
     try {
       const [overview, latestResult] = await Promise.all([
         API.getStatsOverview(),
-        API.getJobs({ page: 1, page_size: 6 }),
+        API.getJobs({ page: 1, page_size: 6, days: 7 }),
       ]);
       setStats(overview);
       setJobs(latestResult.items || []);
@@ -38,6 +41,14 @@ export default function HomePage() {
   async function handleToggleFavorite(job: JobItem) {
     await API.toggleFavorite(job.id);
     await loadData();
+  }
+
+  function handleKeywordClick(keyword: string) {
+    router.push('/jobs?q=' + encodeURIComponent(keyword));
+  }
+
+  function handleTagClick(type: string, value: string) {
+    router.push('/jobs?' + type + '=' + encodeURIComponent(value));
   }
 
   return (
@@ -66,7 +77,7 @@ export default function HomePage() {
             {(stats?.hot_keywords || []).length ? (
               <div className="job-tags">
                 {stats?.hot_keywords?.map((item) => (
-                  <Badge key={item.keyword} tone="blue">{item.keyword} &middot; {item.count}</Badge>
+                  <Badge key={item.keyword} tone="blue" style={{ cursor: 'pointer' }} onClick={() => handleKeywordClick(item.keyword)}>{item.keyword} &middot; {item.count}</Badge>
                 ))}
               </div>
             ) : (
@@ -74,17 +85,21 @@ export default function HomePage() {
             )}
           </SectionCard>
 
-          <SectionCard title="最新岗位" description="按照采集时间排序的最新数据">
+          <SectionCard title="最新岗位" description="最近一周的岗位数据">
             {jobs.length === 0 ? (
               <EmptyState title="暂无岗位" description="当前数据库里还没有可展示的岗位。" />
             ) : (
               <div className="grid" style={{ gap: '14px' }}>
                 {jobs.map((job) => (
-                  <JobCard key={job.id} job={job} onToggleFavorite={() => handleToggleFavorite(job)} />
+                  <JobCard key={job.id} job={job} onToggleFavorite={() => handleToggleFavorite(job)} onClick={(target) => setSelectedJob(target)} onTagClick={handleTagClick} />
                 ))}
               </div>
             )}
           </SectionCard>
+
+          {selectedJob && (
+            <JobDetailModal job={selectedJob} onClose={() => setSelectedJob(null)} onToggleFavorite={(job) => handleToggleFavorite(job)} />
+          )}
         </>
       )}
     </AppShell>

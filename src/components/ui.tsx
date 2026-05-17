@@ -109,8 +109,8 @@ export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
   return <select {...props} className={joinClassNames('select', props.className)} />;
 }
 
-export const Badge = memo(function Badge({ children, tone = 'slate' }: { children: ReactNode; tone?: 'slate' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet' }) {
-  return <span className={joinClassNames('badge', `badge-${tone}`)}>{children}</span>;
+export const Badge = memo(function Badge({ children, tone = 'slate', style, onClick }: { children: ReactNode; tone?: 'slate' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet'; style?: React.CSSProperties; onClick?: (e: React.MouseEvent<HTMLSpanElement>) => void }) {
+  return <span className={joinClassNames('badge', `badge-${tone}`)} style={style} onClick={onClick}>{children}</span>;
 });
 
 export const EmptyState = memo(function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
@@ -146,7 +146,7 @@ function formatDate(dateStr?: string | null): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick }: { job: JobItem; onToggleFavorite?: (job: JobItem) => void; onClick?: (job: JobItem) => void }) {
+export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick, onTagClick }: { job: JobItem; onToggleFavorite?: (job: JobItem) => void; onClick?: (job: JobItem) => void; onTagClick?: (type: string, value: string) => void }) {
   const handleClick = useCallback(() => {
     if (onClick) onClick(job);
   }, [onClick, job]);
@@ -166,17 +166,17 @@ export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick }:
           {job.is_favorite ? <Badge tone="amber">收藏</Badge> : null}
         </div>
         <div className="job-meta">
-          {job.company ? <span>{job.company}</span> : null}
-          {job.location ? <span>📍 {job.location}</span> : null}
+          {job.company ? <span style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onTagClick?.('company', job.company!); }}>{job.company}</span> : null}
+          {job.location ? <span style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onTagClick?.('location', job.location!); }}>📍 {job.location}</span> : null}
           {job.salary ? <span>💰 {job.salary}</span> : null}
           {dateStr ? <span>📅 {dateStr}</span> : null}
         </div>
         <p className="job-description">{job.description}</p>
         <div className="job-tags">
-          {job.source ? <Badge tone="blue">{job.source}</Badge> : null}
-          {job.job_type ? <Badge tone="slate">{job.job_type}</Badge> : null}
-          {job.industry ? <Badge tone="violet">{job.industry}</Badge> : null}
-          {job.education ? <Badge tone="emerald">{job.education}</Badge> : null}
+          {job.source ? <Badge tone="blue" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onTagClick?.('source', job.source!); }}>{job.source}</Badge> : null}
+          {job.job_type ? <Badge tone="slate" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onTagClick?.('job_type', job.job_type!); }}>{job.job_type}</Badge> : null}
+          {job.industry ? <Badge tone="violet" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onTagClick?.('industry', job.industry!); }}>{job.industry}</Badge> : null}
+          {job.education ? <Badge tone="emerald" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); onTagClick?.('education', job.education!); }}>{job.education}</Badge> : null}
         </div>
       </div>
       {onToggleFavorite ? (
@@ -282,18 +282,6 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
           <div className="job-detail-actions">
             {onToggleFavorite ? (
               <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} />
-            ) : null}
-            {job.source_url || job.apply_url ? (
-              <a
-                href={job.apply_url || job.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-                style={{ fontSize: 13, textDecoration: 'none' }}
-                aria-label="查看原网页"
-              >
-                查看原网页 ↗
-              </a>
             ) : null}
             <button type="button" className="modal-close-btn" onClick={onClose} aria-label="关闭">
               ✕
