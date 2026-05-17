@@ -283,6 +283,18 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
             {onToggleFavorite ? (
               <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} />
             ) : null}
+            {job.source_url || job.apply_url ? (
+              <a
+                href={job.apply_url || job.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{ fontSize: 13, textDecoration: 'none' }}
+                aria-label="查看原网页"
+              >
+                查看原网页 ↗
+              </a>
+            ) : null}
             <button type="button" className="modal-close-btn" onClick={onClose} aria-label="关闭">
               ✕
             </button>
@@ -315,6 +327,19 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
               <div className="job-detail-info-item">
                 <span className="job-detail-info-label">日期</span>
                 <span>{detailDate}</span>
+              </div>
+            ) : null}
+            {(job.source_url || job.apply_url) ? (
+              <div className="job-detail-info-item">
+                <span className="job-detail-info-label">来源链接</span>
+                <a
+                  href={job.apply_url || job.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--primary)', wordBreak: 'break-all' }}
+                >
+                  {job.apply_url || job.source_url}
+                </a>
               </div>
             ) : null}
           </div>

@@ -4,11 +4,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton, StarButton } from '@/components/ui';
-import { API } from '@/lib/api';
+import { Pagination } from '@/components/Pagination';
+import { API, APIError } from '@/lib/api';
 import type { JobItem, PagedResponse } from '@/lib/types';
+import { useToast } from '@/components/Toast';
 
 export default function FavoritesPage() {
   const router = useRouter();
+  const toast = useToast();
   const [favorites, setFavorites] = useState<PagedResponse<JobItem> | null>(null);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
@@ -65,10 +68,21 @@ export default function FavoritesPage() {
 
     try {
       await API.toggleFavorite(job.id);
-    } catch {
+      toast.success('已取消收藏');
+    } catch (err) {
       void loadFavorites(page, query);
+      const errorMsg = err instanceof Error ? err.message : '操作失败';
+      if (err instanceof APIError && err.status === 404) {
+        toast.error('收藏接口不存在，请检查后端服务');
+      } else if (err instanceof APIError && err.status === 500) {
+        toast.error('服务器内部错误，收藏操作失败');
+      } else if (err instanceof APIError && err.status === 401) {
+        toast.error('登录已过期，请重新登录');
+      } else {
+        toast.error(errorMsg);
+      }
     }
-  }, [page, query, loadFavorites, selectedJob]);
+  }, [page, query, loadFavorites, selectedJob, toast]);
 
   const handleJobClick = useCallback((job: JobItem) => {
     setSelectedJob(job);
@@ -87,13 +101,31 @@ export default function FavoritesPage() {
         total: prev.total - 1,
       };
     });
-    setSelectedJob(null);
+
+    setSelectedJob((prev) => {
+      if (prev && prev.id === job.id) {
+        return { ...prev, is_favorite: 0 };
+      }
+      return prev;
+    });
+
     try {
       await API.toggleFavorite(job.id);
-    } catch {
+      toast.success('已取消收藏');
+    } catch (err) {
       void loadFavorites(page, query);
+      const errorMsg = err instanceof Error ? err.message : '操作失败';
+      if (err instanceof APIError && err.status === 404) {
+        toast.error('收藏接口不存在，请检查后端服务');
+      } else if (err instanceof APIError && err.status === 500) {
+        toast.error('服务器内部错误，收藏操作失败');
+      } else if (err instanceof APIError && err.status === 401) {
+        toast.error('登录已过期，请重新登录');
+      } else {
+        toast.error(errorMsg);
+      }
     }
-  }, [page, query, loadFavorites]);
+  }, [page, query, loadFavorites, toast]);
 
   const items = favorites?.items || [];
   const statsLoading = loading && !favorites;
@@ -159,23 +191,11 @@ export default function FavoritesPage() {
             </div>
 
             {favorites?.pages ? (
-              <div className="row-gap" style={{ marginTop: 18, justifyContent: 'space-between' }}>
-                <Button
-                  variant="secondary"
-                  disabled={page <= 1}
-                  onClick={() => { const p = Math.max(1, page - 1); setPage(p); void loadFavorites(p, query); }}
-                >
-                  上一页
-                </Button>
-                <Badge tone="slate">第 {page} / {favorites.pages} 页</Badge>
-                <Button
-                  variant="secondary"
-                  disabled={page >= favorites.pages}
-                  onClick={() => { const p = page + 1; setPage(p); void loadFavorites(p, query); }}
-                >
-                  下一页
-                </Button>
-              </div>
+              <Pagination
+                current={page}
+                total={favorites.pages}
+                onChange={(p) => { setPage(p); void loadFavorites(p, query); }}
+              />
             ) : null}
           </>
         ) : null}

@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, SectionCard, Skeleton } from '@/components/ui';
+import { Pagination } from '@/components/Pagination';
 import { HierarchicalFilter } from '@/components/HierarchicalFilter';
 import { LoadingSpinner, SkeletonCard, SkeletonMetric } from '@/components/Loading';
 import { ErrorMessage, useToast } from '@/components/Toast';
-import { API } from '@/lib/api';
+import { API, APIError } from '@/lib/api';
 import { DEBOUNCE_MS } from '@/lib/constants';
 import type { JobItem, PagedResponse, FilterOption, ProvinceWithCities, EducationMapping } from '@/types';
 
@@ -109,6 +110,7 @@ export default function JobsPage() {
 
   const handleToggleFavorite = useCallback(async (job: JobItem) => {
     const newFavoriteState = job.is_favorite ? 0 : 1;
+
     setJobs((prev) => {
       if (!prev) return prev;
       return {
@@ -124,10 +126,11 @@ export default function JobsPage() {
       }
       return prev;
     });
+
     try {
       await API.toggleFavorite(job.id);
       toast.success(newFavoriteState ? '已添加到收藏' : '已取消收藏');
-    } catch {
+    } catch (err) {
       setJobs((prev) => {
         if (!prev) return prev;
         return {
@@ -143,7 +146,17 @@ export default function JobsPage() {
         }
         return prev;
       });
-      toast.error('操作失败，请重试');
+
+      const errorMsg = err instanceof Error ? err.message : '操作失败';
+      if (err instanceof APIError && err.status === 404) {
+        toast.error('收藏接口不存在，请检查后端服务');
+      } else if (err instanceof APIError && err.status === 500) {
+        toast.error('服务器内部错误，收藏操作失败');
+      } else if (err instanceof APIError && err.status === 401) {
+        toast.error('登录已过期，请重新登录');
+      } else {
+        toast.error(errorMsg);
+      }
     }
   }, [toast]);
 
@@ -301,13 +314,7 @@ export default function JobsPage() {
           </div>
         )}
         {jobs?.pages ? (
-          <div className="row-gap" style={{ marginTop: 18, justifyContent: 'space-between' }} role="navigation" aria-label="分页">
-            <Button variant="secondary" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))} aria-label="上一页">上一页</Button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Badge tone="slate">第 {page} / {jobs.pages} 页</Badge>
-            </div>
-            <Button variant="secondary" disabled={page >= jobs.pages} onClick={() => setPage((value) => value + 1)} aria-label="下一页">下一页</Button>
-          </div>
+          <Pagination current={page} total={jobs.pages} onChange={(p) => setPage(p)} />
         ) : null}
       </SectionCard>
 
@@ -318,14 +325,6 @@ export default function JobsPage() {
           onToggleFavorite={handleToggleFavorite}
         />
       ) : null}
-
-      <style jsx>{`
-        .filter-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 12px;
-        }
-      `}</style>
     </AppShell>
   );
 }
