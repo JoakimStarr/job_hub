@@ -7,7 +7,8 @@ export async function POST(request: NextRequest) {
     requirePermission(request, 'system:write');
 
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get('limit') || '500');
+    const rawLimit = parseInt(searchParams.get('limit') || '500');
+    const limit = Math.min(Math.max(1, Number(rawLimit) || 500), 5000);
 
     const db = getDb();
 

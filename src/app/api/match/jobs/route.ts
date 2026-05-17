@@ -50,8 +50,9 @@ export async function POST(request: NextRequest) {
 
     query += ' ORDER BY publish_date DESC';
 
-    const maxResults = filters?.maxResults || 100;
-    query += ` LIMIT ${maxResults}`;
+    const maxResults = Math.min(Math.max(1, Number(filters?.maxResults) || 100), 500);
+    query += ` LIMIT ?`;
+    params.push(maxResults);
 
     const jobs = db.prepare(query).all(...params) as JobItem[];
 
