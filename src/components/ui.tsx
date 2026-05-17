@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
 import type { JobItem } from '@/lib/types';
 import { API } from '@/lib/api';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 function joinClassNames(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
@@ -136,33 +137,6 @@ function formatDate(dateStr?: string | null): string {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return '';
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-function renderMarkdown(text: string): string {
-  let html = text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-  html = html.replace(/^### (.+)$/gm, '<h4>$1</h4>');
-  html = html.replace(/^## (.+)$/gm, '<h3>$1</h3>');
-  html = html.replace(/^# (.+)$/gm, '<h2>$1</h2>');
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
-  html = html.replace(/(<li>[\s\S]*?<\/li>(\n)?)+/g, '<ul>$&</ul>');
-  html = html.replace(/\n{2,}/g, '</p><p>');
-  html = html.replace(/\n/g, '<br/>');
-  html = '<p>' + html + '</p>';
-  html = html.replace(/<p><\/p>/g, '');
-  html = html.replace(/<p>(<h[234]>)/g, '$1');
-  html = html.replace(/(<\/h[234]>)<\/p>/g, '$1');
-  html = html.replace(/<p>(<pre>)/g, '$1');
-  html = html.replace(/(<\/pre>)<\/p>/g, '$1');
-  html = html.replace(/<p>(<ul>)/g, '$1');
-  html = html.replace(/(<\/ul>)<\/p>/g, '$1');
-  return html;
 }
 
 export function JobCard({ job, onToggleFavorite, onClick }: { job: JobItem; onToggleFavorite?: (job: JobItem) => void; onClick?: (job: JobItem) => void }) {
@@ -305,7 +279,7 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
               <div className="notice notice-error">{aiError}</div>
             ) : null}
             {aiResult ? (
-              <div className="ai-result" dangerouslySetInnerHTML={{ __html: renderMarkdown(aiResult) }} />
+              <div className="ai-result"><MarkdownRenderer content={aiResult} /></div>
             ) : null}
           </div>
         </div>
