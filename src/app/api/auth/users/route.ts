@@ -11,6 +11,7 @@ const USERS: AppUser[] = [
     username: 'admin',
     role: 'admin',
     permissions: [
+      'view_jobs', 'view_stats', 'manage_crawler', 'view_system', 'use_recommendations', 'manage_users',
       'jobs:read', 'jobs:write', 'crawler:read', 'crawler:write',
       'system:read', 'system:write', 'users:read', 'users:write',
       'recommendations:read', 'recommendations:write', 'match:read', 'match:write',
@@ -21,6 +22,7 @@ const USERS: AppUser[] = [
     username: 'operator',
     role: 'operator',
     permissions: [
+      'view_jobs', 'view_stats', 'manage_crawler', 'view_system', 'use_recommendations',
       'jobs:read', 'jobs:write', 'crawler:read', 'crawler:write',
       'system:read', 'recommendations:read', 'recommendations:write',
       'match:read', 'match:write',
@@ -31,6 +33,7 @@ const USERS: AppUser[] = [
     username: 'viewer',
     role: 'viewer',
     permissions: [
+      'view_jobs', 'view_stats', 'view_system', 'use_recommendations',
       'jobs:read', 'crawler:read', 'system:read',
       'recommendations:read', 'match:read',
     ],

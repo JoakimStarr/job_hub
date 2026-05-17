@@ -18,15 +18,29 @@ const VALID_TOKENS: Record<string, AppUser> = (() => {
 
   tokens[hashToken(adminToken)] = {
     id: 1, username: 'admin', role: 'admin',
-    permissions: ['jobs:read', 'jobs:write', 'crawler:read', 'crawler:write', 'system:read', 'system:write', 'users:read', 'users:write', 'recommendations:read', 'recommendations:write', 'match:read', 'match:write'],
+    permissions: [
+      'view_jobs', 'view_stats', 'manage_crawler', 'view_system', 'use_recommendations', 'manage_users',
+      'jobs:read', 'jobs:write', 'crawler:read', 'crawler:write',
+      'system:read', 'system:write', 'users:read', 'users:write',
+      'recommendations:read', 'recommendations:write', 'match:read', 'match:write',
+    ],
   };
   tokens[hashToken(operatorToken)] = {
     id: 2, username: 'operator', role: 'operator',
-    permissions: ['jobs:read', 'jobs:write', 'crawler:read', 'crawler:write', 'system:read', 'recommendations:read', 'recommendations:write', 'match:read', 'match:write'],
+    permissions: [
+      'view_jobs', 'view_stats', 'manage_crawler', 'view_system', 'use_recommendations',
+      'jobs:read', 'jobs:write', 'crawler:read', 'crawler:write',
+      'system:read', 'recommendations:read', 'recommendations:write',
+      'match:read', 'match:write',
+    ],
   };
   tokens[hashToken(viewerToken)] = {
     id: 3, username: 'viewer', role: 'viewer',
-    permissions: ['jobs:read', 'crawler:read', 'system:read', 'recommendations:read', 'match:read'],
+    permissions: [
+      'view_jobs', 'view_stats', 'view_system', 'use_recommendations',
+      'jobs:read', 'crawler:read', 'system:read',
+      'recommendations:read', 'match:read',
+    ],
   };
   return tokens;
 })();
