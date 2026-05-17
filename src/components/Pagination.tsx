@@ -56,8 +56,8 @@ export const Pagination = memo(function Pagination({ current, total, onChange }:
             autoFocus
           />
           <span>/ {total} 页</span>
-          <Button variant="primary" size="sm" onClick={handleJump}>跳转</Button>
-          <Button variant="ghost" size="sm" onClick={() => { setInputVisible(false); setInputValue(''); }}>取消</Button>
+          <Button variant="primary" onClick={handleJump}>跳转</Button>
+          <Button variant="ghost" onClick={() => { setInputVisible(false); setInputValue(''); }}>取消</Button>
         </div>
       )}
 
