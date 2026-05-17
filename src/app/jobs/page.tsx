@@ -178,7 +178,6 @@ export default function JobsPage() {
       <SectionCard
         title="筛选条件"
         description="按关键词、地点、类型、行业、学历和来源筛选岗位"
-        action={<Button variant="secondary" onClick={() => void loadJobs(true)}>{refreshing ? '刷新中...' : '刷新数据'}</Button>}
       >
         <div className="filter-grid" role="search" aria-label="岗位筛选">
           <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索岗位或公司（支持拼音）" />
@@ -241,7 +240,12 @@ export default function JobsPage() {
             </div>
             <div className="stat-card-list">
               {(filters.sources || []).slice(0, 5).map((item) => (
-                <div key={item.name} className="stat-card-item">
+                <div
+                  key={item.name}
+                  className="stat-card-item"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => { setSource(item.name); setPage(1); }}
+                >
                   <span className="stat-card-item-name">{item.name}</span>
                   <span className="stat-card-item-count">{item.count}</span>
                 </div>
@@ -255,7 +259,12 @@ export default function JobsPage() {
             </div>
             <div className="stat-card-list">
               {(filters.job_types || []).slice(0, 5).map((item) => (
-                <div key={item.name} className="stat-card-item">
+                <div
+                  key={item.name}
+                  className="stat-card-item"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => { setJobType(item.name); setPage(1); }}
+                >
                   <span className="stat-card-item-name">{item.name}</span>
                   <span className="stat-card-item-count">{item.count}</span>
                 </div>
@@ -269,7 +278,12 @@ export default function JobsPage() {
             </div>
             <div className="stat-card-list">
               {(filters.locations || []).slice(0, 5).map((item) => (
-                <div key={item.name} className="stat-card-item">
+                <div
+                  key={item.name}
+                  className="stat-card-item"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => { setLocation(item.name); setPage(1); }}
+                >
                   <span className="stat-card-item-name">{item.name}</span>
                   <span className="stat-card-item-count">{item.count}</span>
                 </div>
@@ -283,7 +297,12 @@ export default function JobsPage() {
             </div>
             <div className="stat-card-list">
               {(filters.industries || []).slice(0, 5).map((item) => (
-                <div key={item.name} className="stat-card-item">
+                <div
+                  key={item.name}
+                  className="stat-card-item"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => { setIndustry(item.name); setPage(1); }}
+                >
                   <span className="stat-card-item-name">{item.name}</span>
                   <span className="stat-card-item-count">{item.count}</span>
                 </div>
@@ -293,7 +312,48 @@ export default function JobsPage() {
         </div>
       )}
 
-      <SectionCard title="岗位结果" description="点击卡片查看详情，点击星星切换收藏状态">
+      <SectionCard
+        title="岗位结果"
+        description="点击卡片查看详情，点击星星切换收藏状态"
+        action={
+          <button
+            onClick={() => void loadJobs(true)}
+            disabled={refreshing}
+            className="refresh-icon-btn"
+            aria-label="刷新数据"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: refreshing ? 'not-allowed' : 'pointer',
+              padding: '8px',
+              borderRadius: 'var(--radius-md)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all var(--transition)',
+              color: 'var(--muted)',
+            }}
+            onMouseEnter={(e) => { if (!refreshing) e.currentTarget.style.color = 'var(--primary)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--muted)'; }}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }}
+            >
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+          </button>
+        }
+      >
         {loading ? (
           <SkeletonCard count={5} />
         ) : error ? (
