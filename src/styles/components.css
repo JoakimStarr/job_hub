@@ -147,12 +147,12 @@
 .input,
 .select {
   width: 100%;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   background: white;
   color: var(--text);
-  font-size: 14px;
+  font-size: 13px;
   transition: border-color var(--transition);
 }
 
