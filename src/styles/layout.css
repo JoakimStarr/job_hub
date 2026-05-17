@@ -231,6 +231,38 @@
   flex: 1;
 }
 
+.site-footer {
+  margin-top: auto;
+  padding: 24px 0;
+  border-top: 1px solid var(--panel-border);
+}
+
+.footer-inner {
+  text-align: center;
+  padding: 0 16px;
+}
+
+.footer-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.footer-label {
+  font-weight: 600;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.footer-version {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--panel-border);
+}
+
 .mobile-menu-btn {
   display: none;
 }
