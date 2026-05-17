@@ -542,6 +542,40 @@
   border: 1px solid #fecaca;
 }
 
+.ai-error-container {
+  margin-top: 12px;
+}
+
+.ai-error-container .notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+}
+
+.ai-error-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ai-error-content {
+  flex: 1;
+}
+
+.ai-error-title {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: var(--danger);
+}
+
+.ai-error-message {
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
 .notice-success {
   background: #ecfdf5;
   color: var(--success);

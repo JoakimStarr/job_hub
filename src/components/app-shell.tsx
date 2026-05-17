@@ -191,8 +191,12 @@ export function AppShell({
 
       <main className="main-shell">
         <header className="topbar">
-          <button className="btn btn-secondary mobile-menu-btn" onClick={() => setMobileOpen((value) => !value)} aria-label="打开菜单" aria-expanded={mobileOpen}>
-            ☰
+          <button className="btn btn-secondary sidebar-toggle-btn" onClick={() => setMobileOpen((value) => !value)} aria-label="打开菜单" aria-expanded={mobileOpen}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
           </button>
           <div>
             <div className="topbar-title">{currentRouteTitle}</div>
@@ -200,7 +204,6 @@ export function AppShell({
           </div>
           <div className="topbar-actions">
             <ThemeToggle />
-            <button className="btn btn-secondary" onClick={() => router.refresh()}>刷新</button>
           </div>
         </header>
 

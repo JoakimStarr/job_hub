@@ -70,6 +70,8 @@ export default function JobsPage() {
     industry,
     education,
     source,
+    sort: 'created_at',
+    order: 'desc',
   }), [page, location, jobType, industry, education, source]);
 
   async function loadJobs(nextLoading = false) {
@@ -180,7 +182,7 @@ export default function JobsPage() {
         description="按关键词、地点、类型、行业、学历和来源筛选岗位"
       >
         <div className="filter-grid" role="search" aria-label="岗位筛选">
-          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索岗位或公司（支持拼音）" />
+          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索岗位或公司" />
           <HierarchicalFilter
             label="地点"
             options={filters.locations}

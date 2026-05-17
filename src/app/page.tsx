@@ -21,7 +21,7 @@ export default function HomePage() {
     try {
       const [overview, latestResult] = await Promise.all([
         API.getStatsOverview(),
-        API.getJobs({ page: 1, page_size: 6, days: 7 }),
+        API.getJobs({ page: 1, page_size: 6, days: 7, sort: 'created_at', order: 'desc' }),
       ]);
       setStats(overview);
       setJobs(latestResult.items || []);

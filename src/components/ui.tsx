@@ -192,9 +192,30 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
   const [aiResult, setAiResult] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
+  const [fullJob, setFullJob] = useState<JobItem | null>(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const detailDate = formatDate(job.publish_date || job.created_at);
+
+  useEffect(() => {
+    async function loadFullJob() {
+      if (!job.source_url && !job.apply_url) {
+        setLoadingDetail(true);
+        try {
+          const detail = await API.getJobDetail(job.id);
+          setFullJob(detail);
+        } catch (err) {
+          console.error('Failed to load job detail:', err);
+        } finally {
+          setLoadingDetail(false);
+        }
+      }
+    }
+    void loadFullJob();
+  }, [job.id, job.source_url, job.apply_url]);
+
+  const displayJob = fullJob || job;
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -319,25 +340,29 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
             ) : null}
           </div>
 
-          {(job.source_url || job.apply_url) ? (
+          {(displayJob.source_url || displayJob.apply_url) ? (
             <div className="job-detail-source-link">
               <span className="job-detail-source-label">🔗 来源链接</span>
-              <a
-                href={job.apply_url || job.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="job-detail-source-url"
-              >
-                {(() => {
-                  const url = job.apply_url || job.source_url || '';
-                  return url.length > 80 ? url.substring(0, 80) + '...' : url;
-                })()}
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </a>
+              {loadingDetail ? (
+                <span style={{ color: 'var(--muted)', fontSize: 13 }}>正在加载来源链接...</span>
+              ) : (
+                <a
+                  href={displayJob.apply_url || displayJob.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="job-detail-source-url"
+                >
+                  {(() => {
+                    const url = displayJob.apply_url || displayJob.source_url || '';
+                    return url.length > 80 ? url.substring(0, 80) + '...' : url;
+                  })()}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              )}
             </div>
           ) : null}
 
@@ -358,7 +383,16 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
               </div>
             ) : null}
             {aiError ? (
-              <div className="notice notice-error">{aiError}</div>
+              <div className="ai-error-container">
+                <div className="notice notice-error">
+                  <div className="ai-error-icon">⚠️</div>
+                  <div className="ai-error-content">
+                    <div className="ai-error-title">AI 分析失败</div>
+                    <div className="ai-error-message">{aiError}</div>
+                  </div>
+                </div>
+                <Button variant="secondary" onClick={handleAnalyze} style={{ marginTop: 12 }}>重试</Button>
+              </div>
             ) : null}
             {aiResult ? (
               <div className="ai-result"><MarkdownRenderer content={aiResult} /></div>
