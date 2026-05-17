@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, SectionCard } from '@/components/ui';
-import { API } from '@/lib/api';
+import { API, APIError } from '@/lib/api';
 import type { CrawlerStatus } from '@/lib/types';
 
 type CrawlerLog = { timestamp?: string; level?: string; message?: string; source?: string };
@@ -21,6 +21,7 @@ export default function CrawlerPage() {
   const [statusError, setStatusError] = useState('');
   const [logsError, setLogsError] = useState('');
   const [sourcesError, setSourcesError] = useState('');
+  const [featureUnavailable, setFeatureUnavailable] = useState(false);
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('crawlerHeadless') : null;
@@ -36,12 +37,28 @@ export default function CrawlerPage() {
     setStatusError('');
     setLogsError('');
     setSourcesError('');
+    setFeatureUnavailable(false);
 
     const [nextStatus, nextLogs, nextSources] = await Promise.allSettled([
       API.getCrawlerStatus(),
       API.getCrawlerLogs(20),
       API.getCrawlerSources(),
     ]);
+
+    const has404Errors = [nextStatus, nextLogs, nextSources].some(
+      (result) => result.status === 'rejected' && result.reason instanceof APIError && result.reason.status === 404
+    );
+
+    if (has404Errors) {
+      setFeatureUnavailable(true);
+      setStatusError('功能尚未就绪');
+      setLogsError('功能尚未就绪');
+      setSourcesError('功能尚未就绪');
+      setStatusLoading(false);
+      setLogsLoading(false);
+      setSourcesLoading(false);
+      return;
+    }
 
     if (nextStatus.status === 'fulfilled') {
       setStatus(nextStatus.value);
@@ -72,6 +89,23 @@ export default function CrawlerPage() {
 
   return (
     <AppShell title="数据采集" description="查看爬虫状态、日志和来源" requiredPermission="manage_crawler">
+      {featureUnavailable ? (
+        <SectionCard title="功能尚未就绪" description="爬虫服务正在开发中">
+          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+            <div style={{ fontSize: 64, marginBottom: 20 }}>🚧</div>
+            <h3 style={{ fontSize: 24, fontWeight: 700, marginBottom: 12, color: 'var(--text)' }}>功能开发中</h3>
+            <p style={{ fontSize: 16, color: 'var(--muted)', lineHeight: 1.8, maxWidth: 500, margin: '0 auto' }}>
+              该功能的后端接口尚未实现，请联系管理员部署爬虫服务。
+              <br />
+              预计将在后续版本中提供完整的数据采集功能。
+            </p>
+            <div style={{ marginTop: 24 }}>
+              <Button variant="secondary" onClick={() => void loadCrawlerData()}>重新检测</Button>
+            </div>
+          </div>
+        </SectionCard>
+      ) : (
+        <>
       <SectionCard title="爬虫状态" description="与旧版控制台一致的启动、停止与日志概览">
         {statusLoading ? <EmptyState title="正在加载" description="爬虫状态正在拉取。" /> : null}
         {statusError ? <EmptyState title="加载失败" description={statusError} action={<Button variant="secondary" onClick={loadCrawlerData}>重试</Button>} /> : null}
@@ -176,6 +210,8 @@ export default function CrawlerPage() {
           </div>
         ) : null}
       </SectionCard>
+        </>
+      )}
     </AppShell>
   );
 }
