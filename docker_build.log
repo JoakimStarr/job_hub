@@ -1,0 +1,76 @@
+nohup: 忽略输入
+#1 [internal] load local bake definitions
+#1 reading from stdin 604B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.45kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:20-alpine
+#3 DONE 0.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 391B done
+#4 DONE 0.0s
+
+#5 [deps 1/5] FROM docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293
+#5 resolve docker.io/library/node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 done
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 9.94kB done
+#6 DONE 0.0s
+
+#7 [deps 2/5] WORKDIR /app
+#7 CACHED
+
+#8 [deps 3/5] RUN echo "http://mirrors.aliyun.com/alpine/v3.23/main" > /etc/apk/repositories &&     echo "http://mirrors.aliyun.com/alpine/v3.23/community" >> /etc/apk/repositories &&     apk update &&     apk add --no-cache libc6-compat python3 make g++ &&     rm -rf /var/cache/apk/*
+#8 CACHED
+
+#9 [deps 4/5] COPY package.json package-lock.json .npmrc ./
+#9 CACHED
+
+#10 [deps 5/5] RUN npm ci &&     npm cache clean --force &&     rm -rf /root/.npm
+#10 81.03 npm error code ENOTFOUND
+#10 81.03 npm error syscall getaddrinfo
+#10 81.03 npm error errno ENOTFOUND
+#10 81.03 npm error network request to https://mirrors.huawei.com/npm/zustand/-/zustand-5.0.13.tgz failed, reason: getaddrinfo ENOTFOUND mirrors.huawei.com
+#10 81.03 npm error network This is a problem related to network connectivity.
+#10 81.03 npm error network In most cases you are behind a proxy or have bad network settings.
+#10 81.03 npm error network
+#10 81.03 npm error network If you are behind a proxy, please make sure that the
+#10 81.03 npm error network 'proxy' config is set properly.  See: 'npm help config'
+#10 81.03 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-05-17T07_45_08_023Z-debug-0.log
+#10 ERROR: process "/bin/sh -c npm ci &&     npm cache clean --force &&     rm -rf /root/.npm" did not complete successfully: exit code: 1
+------
+ > [deps 5/5] RUN npm ci &&     npm cache clean --force &&     rm -rf /root/.npm:
+81.03 npm error code ENOTFOUND
+81.03 npm error syscall getaddrinfo
+81.03 npm error errno ENOTFOUND
+81.03 npm error network request to https://mirrors.huawei.com/npm/zustand/-/zustand-5.0.13.tgz failed, reason: getaddrinfo ENOTFOUND mirrors.huawei.com
+81.03 npm error network This is a problem related to network connectivity.
+81.03 npm error network In most cases you are behind a proxy or have bad network settings.
+81.03 npm error network
+81.03 npm error network If you are behind a proxy, please make sure that the
+81.03 npm error network 'proxy' config is set properly.  See: 'npm help config'
+81.03 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-05-17T07_45_08_023Z-debug-0.log
+------
+Dockerfile:11
+
+--------------------
+
+  10 |     COPY package.json package-lock.json .npmrc ./
+
+  11 | >>> RUN npm ci && \
+
+  12 | >>>     npm cache clean --force && \
+
+  13 | >>>     rm -rf /root/.npm
+
+  14 |     
+
+--------------------
+
+failed to solve: process "/bin/sh -c npm ci &&     npm cache clean --force &&     rm -rf /root/.npm" did not complete successfully: exit code: 1
+
