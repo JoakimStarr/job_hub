@@ -1,6 +1,77 @@
 import { API, APIError } from '@/lib/api';
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY } from '@/lib/constants';
 import type { AppUser } from '@/lib/types';
+import { NextRequest } from 'next/server';
+import crypto from 'crypto';
+
+const TOKEN_SALT = process.env.AUTH_SALT || 'finintern-hub-default-salt';
+
+function hashToken(token: string): string {
+  return crypto.createHash('sha256').update(token + TOKEN_SALT).digest('hex');
+}
+
+const VALID_TOKENS: Record<string, AppUser> = (() => {
+  const tokens: Record<string, AppUser> = {};
+  const adminToken = process.env.ADMIN_TOKEN || 'admin-token-default';
+  const operatorToken = process.env.OPERATOR_TOKEN || 'operator-token-default';
+  const viewerToken = process.env.VIEWER_TOKEN || 'viewer-token-default';
+
+  tokens[hashToken(adminToken)] = {
+    id: 1, username: 'admin', role: 'admin',
+    permissions: ['jobs:read', 'jobs:write', 'crawler:read', 'crawler:write', 'system:read', 'system:write', 'users:read', 'users:write', 'recommendations:read', 'recommendations:write', 'match:read', 'match:write'],
+  };
+  tokens[hashToken(operatorToken)] = {
+    id: 2, username: 'operator', role: 'operator',
+    permissions: ['jobs:read', 'jobs:write', 'crawler:read', 'crawler:write', 'system:read', 'recommendations:read', 'recommendations:write', 'match:read', 'match:write'],
+  };
+  tokens[hashToken(viewerToken)] = {
+    id: 3, username: 'viewer', role: 'viewer',
+    permissions: ['jobs:read', 'crawler:read', 'system:read', 'recommendations:read', 'match:read'],
+  };
+  return tokens;
+})();
+
+export function verifyAuth(request: NextRequest): { authorized: boolean; user: AppUser | null } {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return { authorized: false, user: null };
+  }
+
+  const token = authHeader.slice(7);
+  const hashed = hashToken(token);
+  const user = VALID_TOKENS[hashed];
+
+  if (!user) {
+    return { authorized: false, user: null };
+  }
+
+  return { authorized: true, user };
+}
+
+export function requireAuth(request: NextRequest): AppUser {
+  const result = verifyAuth(request);
+  if (!result.authorized || !result.user) {
+    throw new AuthError('未授权访问，请先登录');
+  }
+  return result.user;
+}
+
+export function requirePermission(request: NextRequest, permission: string): AppUser {
+  const user = requireAuth(request);
+  if (!(user.permissions || []).includes(permission)) {
+    throw new AuthError('权限不足，无法执行此操作');
+  }
+  return user;
+}
+
+export class AuthError extends Error {
+  status: number;
+  constructor(message: string, status = 401) {
+    super(message);
+    this.name = 'AuthError';
+    this.status = status;
+  }
+}
 
 export function getToken() {
   if (typeof window === 'undefined') return '';

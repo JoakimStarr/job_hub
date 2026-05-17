@@ -34,7 +34,7 @@ async def init_database_and_run_spiders():
         try:
             logger.info(f"开始爬取 {source}...")
             spider = UnifiedSpider(source)
-            jobs = await spider.crawl(max_items=0, headless=True)
+            jobs = await spider.crawl(max_items=0)
             results[source] = jobs
             logger.success(f"{source} 爬取完成: {len(jobs)} 条")
         except Exception as e:

@@ -62,8 +62,9 @@ export class AIService {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`OpenAI API error: ${response.status} - ${error}`);
+      const errorBody = await response.text().catch(() => '');
+      console.error(`AI API error: ${response.status}`, errorBody);
+      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
     }
 
     const data = await response.json();
@@ -93,8 +94,9 @@ export class AIService {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Zhipu AI API error: ${response.status} - ${error}`);
+      const errorBody = await response.text().catch(() => '');
+      console.error(`AI API error: ${response.status}`, errorBody);
+      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
     }
 
     const data = await response.json();
@@ -124,8 +126,9 @@ export class AIService {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`SiliconFlow API error: ${response.status} - ${error}`);
+      const errorBody = await response.text().catch(() => '');
+      console.error(`AI API error: ${response.status}`, errorBody);
+      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
     }
 
     const data = await response.json();
@@ -155,8 +158,9 @@ export class AIService {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`DeepSeek API error: ${response.status} - ${error}`);
+      const errorBody = await response.text().catch(() => '');
+      console.error(`AI API error: ${response.status}`, errorBody);
+      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
     }
 
     const data = await response.json();
@@ -188,8 +192,9 @@ export class AIService {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Custom AI API error: ${response.status} - ${error}`);
+      const errorBody = await response.text().catch(() => '');
+      console.error(`AI API error: ${response.status}`, errorBody);
+      throw new Error(`AI API 请求失败 (${response.status})，请检查配置或稍后重试`);
     }
 
     const data = await response.json();

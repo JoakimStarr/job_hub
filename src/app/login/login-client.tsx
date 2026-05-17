@@ -11,8 +11,8 @@ function safeRedirect(raw: string | null) {
   const fallback = '/';
   if (!raw) return fallback;
   const value = raw.trim();
-  if (!value || /^https?:\/\//i.test(value)) return fallback;
-  const normalized = value.startsWith('/') ? value : `/${value.replace(/^\/+/, '')}`;
+  if (!value || /^https?:\/\//i.test(value) || /^\/\//.test(value)) return fallback;
+  const normalized = '/' + value.replace(/^\/+/, '');
   const pathname = normalized.split(/[?#]/, 1)[0];
   if (pathname === '/login') return fallback;
   return normalized;

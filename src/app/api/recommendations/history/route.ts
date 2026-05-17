@@ -1,58 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Database from 'better-sqlite3';
-import path from 'path';
-
-const DB_PATH = path.join(process.cwd(), 'data', 'jobs.db');
+import { getDb } from '@/lib/db-utils';
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const limit = parseInt(searchParams.get('limit') || '10');
 
-    const db = new Database(DB_PATH, { readonly: true, fileMustExist: false });
-    
-    try {
-      const tableCheck = db.prepare(`
-        SELECT name FROM sqlite_master 
-        WHERE type='table' AND name='match_history'
-      `).get();
+    const db = getDb();
 
-      if (!tableCheck) {
-        return NextResponse.json({
-          history: [],
-          message: '匹配历史表尚未创建',
-        });
-      }
+    const tableCheck = db.prepare(`
+      SELECT name FROM sqlite_master 
+      WHERE type='table' AND name='match_history'
+    `).get();
 
-      const history = db.prepare(`
-        SELECT 
-          id,
-          user_id,
-          job_id,
-          score,
-          match_level,
-          matched_fields,
-          gaps,
-          suggestions,
-          created_at
-        FROM match_history
-        ORDER BY created_at DESC
-        LIMIT ?
-      `).all(limit);
-
+    if (!tableCheck) {
       return NextResponse.json({
-        history: history.map((item: any) => ({
-          ...item,
-          matched_fields: item.matched_fields ? JSON.parse(item.matched_fields) : [],
-          gaps: item.gaps ? JSON.parse(item.gaps) : [],
-          suggestions: item.suggestions ? JSON.parse(item.suggestions) : [],
-        })),
-        total: history.length,
+        history: [],
+        message: '匹配历史表尚未创建',
       });
-
-    } finally {
-      db.close();
     }
+
+    const history = db.prepare(`
+      SELECT 
+        id,
+        user_id,
+        job_id,
+        score,
+        match_level,
+        matched_fields,
+        gaps,
+        suggestions,
+        created_at
+      FROM match_history
+      ORDER BY created_at DESC
+      LIMIT ?
+    `).all(limit);
+
+    return NextResponse.json({
+      history: history.map((item: any) => ({
+        ...item,
+        matched_fields: item.matched_fields ? JSON.parse(item.matched_fields) : [],
+        gaps: item.gaps ? JSON.parse(item.gaps) : [],
+        suggestions: item.suggestions ? JSON.parse(item.suggestions) : [],
+      })),
+      total: history.length,
+    });
 
   } catch (error) {
     console.error('获取推荐历史错误:', error);

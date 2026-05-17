@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Database from 'better-sqlite3';
-import path from 'path';
-
-const DB_PATH = path.join(process.cwd(), 'data', 'jobs.db');
-
-function getDb(): Database.Database {
-  return new Database(DB_PATH, { readonly: false, fileMustExist: false });
-}
+import { getDb } from '@/lib/db-utils';
+import { requirePermission, AuthError } from '@/lib/auth';
 
 export async function PUT(
   request: NextRequest,
@@ -14,14 +8,16 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
+    requirePermission(request, 'system:write');
+
     const body = await request.json();
     const { name, keyword, locations, industries, job_types, education, enabled } = body;
-    
+
     const db = getDb();
-    
+
     const updates: string[] = [];
     const values: unknown[] = [];
-    
+
     if (name !== undefined) {
       updates.push('name = ?');
       values.push(name);
@@ -50,27 +46,27 @@ export async function PUT(
       updates.push('enabled = ?');
       values.push(enabled ? 1 : 0);
     }
-    
+
     if (updates.length === 0) {
-      db.close();
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
     }
-    
+
     updates.push('updated_at = ?');
     values.push(new Date().toISOString());
     values.push(parseInt(id));
-    
+
     const sql = `UPDATE subscriptions SET ${updates.join(', ')} WHERE id = ?`;
     const result = db.prepare(sql).run(...values);
-    
-    db.close();
-    
+
     if (result.changes === 0) {
       return NextResponse.json({ error: 'Subscription not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to update subscription' },
@@ -85,18 +81,21 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
+    requirePermission(request, 'system:write');
+
     const db = getDb();
-    
+
     const result = db.prepare('DELETE FROM subscriptions WHERE id = ?').run(parseInt(id));
-    
-    db.close();
-    
+
     if (result.changes === 0) {
       return NextResponse.json({ error: 'Subscription not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to delete subscription' },

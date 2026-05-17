@@ -189,6 +189,14 @@ export class MatchEngine {
   }
 
   private calculateTotalScore(breakdown: MatchScore['breakdown']): number {
+    const maxScores = {
+      skills: 30,
+      education: 20,
+      major: 15,
+      location: 10,
+      experience: 15,
+      industry: 10,
+    };
     const weights = {
       skills: 0.30,
       education: 0.20,
@@ -199,12 +207,12 @@ export class MatchEngine {
     };
 
     return Math.round(
-      breakdown.skills * weights.skills +
-      breakdown.education * weights.education +
-      breakdown.major * weights.major +
-      breakdown.location * weights.location +
-      breakdown.experience * weights.experience +
-      breakdown.industry * weights.industry
+      (breakdown.skills / maxScores.skills) * 100 * weights.skills +
+      (breakdown.education / maxScores.education) * 100 * weights.education +
+      (breakdown.major / maxScores.major) * 100 * weights.major +
+      (breakdown.location / maxScores.location) * 100 * weights.location +
+      (breakdown.experience / maxScores.experience) * 100 * weights.experience +
+      (breakdown.industry / maxScores.industry) * 100 * weights.industry
     );
   }
 

@@ -6,6 +6,7 @@ import ResumeUploader from '@/components/ResumeUploader';
 import MatchResults from '@/components/MatchResults';
 import ResumeDiagnosis from '@/components/ResumeDiagnosis';
 import type { ResumeProfile, MatchResult } from '@/lib/resume-types';
+import { API } from '@/lib/api';
 
 type Step = 'upload' | 'confirm' | 'match' | 'results';
 
@@ -35,9 +36,8 @@ export default function MatchPage() {
     setError(null);
 
     try {
-      const response = await fetch('/api/match/jobs', {
+      const result = await API.request<{ matches: MatchResult[]; total: number; processingTime: number }>('/api/match/jobs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           profile,
           filters: {
@@ -45,12 +45,6 @@ export default function MatchPage() {
           },
         }),
       });
-
-      if (!response.ok) {
-        throw new Error('岗位匹配失败');
-      }
-
-      const result = await response.json();
       setMatches(result.matches);
       setCurrentStep('results');
     } catch (err) {
@@ -62,24 +56,17 @@ export default function MatchPage() {
   };
 
   const handleViewDetail = (jobId: number) => {
-    router.push(`/jobs/${jobId}`);
+    router.push(`/jobs?highlight=${jobId}`);
   };
 
   const handleExportReport = async (jobId: number) => {
     if (!profile) return;
 
     try {
-      const response = await fetch(`/api/match/job/${jobId}`, {
+      const result = await API.request<{ score: any; recommendation: string; suggestions: string[]; actionPlan: string[] }>('/api/match/job/' + jobId, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ profile }),
       });
-
-      if (!response.ok) {
-        throw new Error('生成报告失败');
-      }
-
-      const result = await response.json();
       
       console.log('匹配报告:', result);
       alert(`匹配报告已生成！\n匹配度: ${result.score.total}分\n推荐等级: ${result.recommendation}`);

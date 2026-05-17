@@ -1,6 +1,7 @@
 'use client';
 
 import type { ResumeProfile, ResumeDiagnosis } from '@/lib/resume-types';
+import { API } from '@/lib/api';
 import { useState, useEffect } from 'react';
 
 interface ResumeDiagnosisProps {
@@ -19,18 +20,11 @@ export default function ResumeDiagnosis({ profile, onImprove }: ResumeDiagnosisP
   const diagnoseResume = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/resume/diagnose', {
+      const result = await API.request('/api/resume/diagnose', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ profile }),
       });
-
-      if (!response.ok) {
-        throw new Error('简历诊断失败');
-      }
-
-      const result = await response.json();
-      setDiagnosis(result);
+      setDiagnosis(result as ResumeDiagnosis | null);
     } catch (error) {
       console.error('简历诊断错误:', error);
     } finally {

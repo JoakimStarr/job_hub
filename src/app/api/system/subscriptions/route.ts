@@ -1,14 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Database from 'better-sqlite3';
-import path from 'path';
+import { getDb } from '@/lib/db-utils';
+import { requirePermission, AuthError } from '@/lib/auth';
 
-const DB_PATH = path.join(process.cwd(), 'data', 'jobs.db');
-
-function getDb(): Database.Database {
-  return new Database(DB_PATH, { readonly: false, fileMustExist: false });
-}
-
-function initSubscriptionsTable(db: Database.Database) {
+function initSubscriptionsTable(db: ReturnType<typeof getDb>) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS subscriptions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,7 +23,7 @@ export async function GET() {
   try {
     const db = getDb();
     initSubscriptionsTable(db);
-    
+
     const subscriptions = db.prepare(`
       SELECT id, name, keyword, locations, industries, job_types, education, enabled
       FROM subscriptions
@@ -44,9 +38,7 @@ export async function GET() {
       education: string | null;
       enabled: number;
     }[];
-    
-    db.close();
-    
+
     const result = subscriptions.map(item => ({
       id: item.id,
       name: item.name,
@@ -57,7 +49,7 @@ export async function GET() {
       education: item.education || undefined,
       enabled: item.enabled === 1,
     }));
-    
+
     return NextResponse.json(result);
   } catch (error) {
     console.error('Database error:', error);
@@ -70,16 +62,18 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    requirePermission(request, 'system:write');
+
     const body = await request.json();
     const { name, keyword, locations, industries, job_types, education, enabled } = body;
-    
+
     if (!name) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
-    
+
     const db = getDb();
     initSubscriptionsTable(db);
-    
+
     const result = db.prepare(`
       INSERT INTO subscriptions (name, keyword, locations, industries, job_types, education, enabled)
       VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -92,11 +86,9 @@ export async function POST(request: NextRequest) {
       education || null,
       enabled !== false ? 1 : 0
     );
-    
+
     const newId = result.lastInsertRowid;
-    
-    db.close();
-    
+
     return NextResponse.json({
       id: newId,
       name,
@@ -108,6 +100,9 @@ export async function POST(request: NextRequest) {
       enabled: enabled !== false,
     });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to create subscription' },

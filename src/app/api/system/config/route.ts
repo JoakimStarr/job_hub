@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
 import { APP_VERSION } from '@/lib/constants';
+import { requirePermission, AuthError } from '@/lib/auth';
 
-const DB_PATH = path.join(process.cwd(), 'data', 'jobs.db');
 const CONFIG_FILE = path.join(process.cwd(), 'data', 'system_config.json');
 
 const DEFAULT_CONFIG = {
@@ -59,15 +58,20 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
+    requirePermission(request, 'system:write');
+
     const body = await request.json();
-    
+
     const currentConfig = loadConfig();
     const newConfig = { ...currentConfig, ...body };
-    
+
     saveConfig(newConfig);
-    
+
     return NextResponse.json({ success: true, config: newConfig });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('Config update error:', error);
     return NextResponse.json(
       { error: 'Failed to update config' },

@@ -93,12 +93,23 @@ class LocalDatabase:
                 d["content_hash"] = self._compute_content_hash(d)
                 if replace_existing:
                     await self._conn.execute('''
-                        INSERT OR REPLACE INTO jobs
+                        INSERT INTO jobs
                         (title, company, location, salary, description, requirements,
                          job_type, industry, education, experience, source, university,
                          source_url, apply_url, publish_date, deadline, category, tags,
-                         is_favorite, is_read, content_hash)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, ?)
+                         content_hash)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ON CONFLICT(source_url) DO UPDATE SET
+                            title=excluded.title, company=excluded.company,
+                            location=excluded.location, salary=excluded.salary,
+                            description=excluded.description, requirements=excluded.requirements,
+                            job_type=excluded.job_type, industry=excluded.industry,
+                            education=excluded.education, experience=excluded.experience,
+                            source=excluded.source, university=excluded.university,
+                            apply_url=excluded.apply_url, publish_date=excluded.publish_date,
+                            deadline=excluded.deadline, category=excluded.category,
+                            tags=excluded.tags, content_hash=excluded.content_hash,
+                            updated_at=CURRENT_TIMESTAMP
                     ''', (
                         d["title"], d["company"], d["location"], d["salary"],
                         d["description"], d["requirements"], d["job_type"],

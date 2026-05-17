@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aiService } from '@/lib/ai-service';
+import { getDb } from '@/lib/db-utils';
+import { requireAuth, AuthError } from '@/lib/auth';
 import type { ResumeProfile, JobItem } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
-import Database from 'better-sqlite3';
-import path from 'path';
-
-const DB_PATH = path.join(process.cwd(), 'data', 'jobs.db');
 
 export async function POST(request: NextRequest) {
   try {
+    requireAuth(request);
+
     const body = await request.json();
     const { job_id, profile, prompt } = body;
 
@@ -22,12 +22,8 @@ export async function POST(request: NextRequest) {
 
     let job: JobItem | null = null;
     if (job_id) {
-      const db = new Database(DB_PATH, { readonly: true, fileMustExist: false });
-      try {
-        job = db.prepare('SELECT * FROM jobs WHERE id = ?').get(job_id) as JobItem;
-      } finally {
-        db.close();
-      }
+      const db = getDb();
+      job = db.prepare('SELECT * FROM jobs WHERE id = ?').get(job_id) as JobItem;
     }
 
     const systemPrompt = `你是一位专业的金融行业求职顾问，拥有丰富的招聘和职业规划经验。
@@ -117,6 +113,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error('AI分析错误:', error);
     return NextResponse.json(
       { error: 'AI分析失败，请稍后重试' },
@@ -127,7 +126,7 @@ export async function POST(request: NextRequest) {
 
 function parseProfileText(text: string): ResumeProfile {
   const lines = text.split('\n').filter(line => line.trim());
-  
+
   const profile: ResumeProfile = {
     name: '',
     phone: '',
@@ -152,7 +151,7 @@ function parseProfileText(text: string): ResumeProfile {
         endDate: '',
       });
     }
-    
+
     const skillKeywords = ['Python', 'Excel', 'Wind', 'SQL', '数据分析', '财务分析', 'CFA', 'CPA', 'FRM'];
     for (const skill of skillKeywords) {
       if (line.includes(skill) && !profile.skills.includes(skill)) {

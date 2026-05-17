@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import type { ResumeProfile, ParseResult } from '@/lib/resume-types';
+import { API } from '@/lib/api';
 
 interface ResumeUploaderProps {
   onParseSuccess: (profile: ResumeProfile) => void;
@@ -67,19 +68,12 @@ export default function ResumeUploader({
       setResumeText(text);
       setParseProgress(30);
 
-      const response = await fetch('/api/resume/parse', {
+      const result: ParseResult = await API.request<ParseResult>('/api/resume/parse', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
       });
 
       setParseProgress(70);
-
-      if (!response.ok) {
-        throw new Error('简历解析失败');
-      }
-
-      const result: ParseResult = await response.json();
       setParseProgress(100);
 
       if (result.warnings.length > 0) {
@@ -106,19 +100,12 @@ export default function ResumeUploader({
     try {
       setParseProgress(30);
 
-      const response = await fetch('/api/resume/parse', {
+      const result: ParseResult = await API.request<ParseResult>('/api/resume/parse', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: resumeText }),
       });
 
       setParseProgress(70);
-
-      if (!response.ok) {
-        throw new Error('简历解析失败');
-      }
-
-      const result: ParseResult = await response.json();
       setParseProgress(100);
 
       if (result.warnings.length > 0) {

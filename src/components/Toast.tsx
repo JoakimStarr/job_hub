@@ -45,17 +45,13 @@ export function ToastProvider({ children, maxToasts = 5 }: ToastProviderProps) {
 
   const addToast = useCallback(
     (type: ToastType, message: string, duration = 4000) => {
-      const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const id = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
       const newToast: Toast = { id, type, message, duration };
 
       setToasts((prev) => {
         const updated = [...prev, newToast];
         return updated.slice(-maxToasts);
       });
-
-      if (duration > 0) {
-        setTimeout(() => removeToast(id), duration);
-      }
     },
     [maxToasts, removeToast]
   );
