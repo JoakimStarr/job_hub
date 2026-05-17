@@ -1,14 +1,18 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 
+ARG NPM_REGISTRY=https://registry.npmjs.org
+
 RUN echo "http://mirrors.aliyun.com/alpine/v3.23/main" > /etc/apk/repositories && \
     echo "http://mirrors.aliyun.com/alpine/v3.23/community" >> /etc/apk/repositories && \
     apk update && \
     apk add --no-cache libc6-compat python3 make g++ && \
     rm -rf /var/cache/apk/*
 
-COPY package.json package-lock.json .npmrc ./
-RUN npm ci && \
+COPY package.json package-lock.json ./
+
+RUN echo "registry=${NPM_REGISTRY}" > .npmrc && \
+    npm ci && \
     npm cache clean --force && \
     rm -rf /root/.npm
 

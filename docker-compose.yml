@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org}
     ports:
       - "${NEXT_APP_PORT:-3001}:3000"
     environment:
