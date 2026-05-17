@@ -105,10 +105,10 @@ interface ToastItemProps {
 
 function ToastItem({ toast, onClose }: ToastItemProps) {
   const typeConfig = {
-    success: { icon: '✓', bgColor: '#f6ffed', borderColor: '#b7eb8f', color: '#52c41a' },
-    error: { icon: '✕', bgColor: '#fff2f0', borderColor: '#ffccc7', color: '#ff4d4f' },
-    warning: { icon: '!', bgColor: '#fffbe6', borderColor: '#ffe58f', color: '#faad14' },
-    info: { icon: 'i', bgColor: '#e6f7ff', borderColor: '#91d5ff', color: '#1890ff' },
+    success: { icon: '✓', bgColor: 'var(--panel)', borderColor: 'var(--success)', color: 'var(--success)', iconBg: '#f6ffed' },
+    error: { icon: '✕', bgColor: 'var(--panel)', borderColor: 'var(--danger)', color: 'var(--danger)', iconBg: '#fff2f0' },
+    warning: { icon: '!', bgColor: 'var(--panel)', borderColor: 'var(--warning)', color: 'var(--warning)', iconBg: '#fffbe6' },
+    info: { icon: 'i', bgColor: 'var(--panel)', borderColor: 'var(--primary)', color: 'var(--primary)', iconBg: '#e6f7ff' },
   };
 
   const config = typeConfig[toast.type];
@@ -124,7 +124,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
         {config.icon}
       </div>
       <div className="toast-message">{toast.message}</div>
-      <button className="toast-close" onClick={onClose}>
+      <button className="toast-close" onClick={onClose} aria-label="关闭通知">
         ×
       </button>
       <style jsx>{`
@@ -134,7 +134,7 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
           padding: 12px 16px;
           border-radius: 8px;
           border: 1px solid;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          box-shadow: var(--shadow-md);
           animation: slideIn 0.3s ease;
         }
         .toast-icon {
@@ -152,20 +152,20 @@ function ToastItem({ toast, onClose }: ToastItemProps) {
         .toast-message {
           flex: 1;
           font-size: 14px;
-          color: #333;
+          color: var(--text);
           line-height: 1.5;
         }
         .toast-close {
           background: none;
           border: none;
           font-size: 18px;
-          color: #999;
+          color: var(--muted);
           cursor: pointer;
           padding: 0 0 0 12px;
           line-height: 1;
         }
         .toast-close:hover {
-          color: #333;
+          color: var(--text);
         }
         @keyframes slideIn {
           from {
@@ -234,15 +234,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             }
             h3 {
               margin: 0 0 8px;
-              color: #333;
+              color: var(--text);
             }
             p {
-              color: #666;
+              color: var(--muted);
               margin: 0 0 24px;
             }
             button {
               padding: 8px 24px;
-              background: #1890ff;
+              background: var(--primary);
               color: white;
               border: none;
               border-radius: 6px;
@@ -250,7 +250,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               font-size: 14px;
             }
             button:hover {
-              background: #40a9ff;
+              background: var(--primary-hover);
             }
           `}</style>
         </div>
@@ -316,18 +316,18 @@ export function ErrorMessage({
         }
         .error-title {
           font-weight: 600;
-          color: #333;
+          color: var(--text);
           margin-bottom: 4px;
         }
         .error-text {
-          color: #666;
+          color: var(--muted);
           font-size: 14px;
           line-height: 1.5;
         }
         .error-retry {
           margin-top: 12px;
           padding: 6px 16px;
-          background: #1890ff;
+          background: var(--primary);
           color: white;
           border: none;
           border-radius: 4px;
@@ -335,7 +335,7 @@ export function ErrorMessage({
           font-size: 13px;
         }
         .error-retry:hover {
-          background: #40a9ff;
+          background: var(--primary-hover);
         }
       `}</style>
     </div>

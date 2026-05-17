@@ -132,6 +132,51 @@
   }
 }
 
+@media (max-width: 480px) {
+  .steps {
+    gap: 4px;
+  }
+
+  .stepCircle {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .stepLine {
+    width: 40px;
+    height: 3px;
+  }
+
+  .profileGrid {
+    gap: 16px;
+  }
+
+  .confirmActions {
+    flex-direction: column;
+  }
+
+  .matchTitle {
+    font-size: 22px;
+  }
+
+  .matchInner {
+    padding: 0 12px;
+  }
+
+  .profilePanel {
+    padding: 16px;
+  }
+
+  .reportPanel {
+    padding: 16px;
+  }
+
+  .reportGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .profileSection h3 {
   font-size: 18px;
   font-weight: 600;

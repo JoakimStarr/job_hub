@@ -130,11 +130,27 @@ export default function ResumeUploader({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        role="button"
+        aria-label="上传简历"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const fileInput = document.getElementById('resume-upload') as HTMLInputElement;
+            fileInput?.click();
+          }
+        }}
       >
         {isParsing ? (
           <div className={styles.parsing}>
             <div className={styles.parsingText}>正在解析简历...</div>
-            <div className={styles.progressBarBg}>
+            <div className={styles.progressBarBg}
+              role="progressbar"
+              aria-valuenow={parseProgress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="解析进度"
+            >
               <div
                 className={styles.progressBarFill}
                 style={{ width: `${parseProgress}%` }}
@@ -193,6 +209,7 @@ export default function ResumeUploader({
           placeholder="请粘贴简历文本内容..."
           className={styles.resumeTextarea}
           disabled={isParsing}
+          aria-label="简历文本输入"
         />
 
         <button

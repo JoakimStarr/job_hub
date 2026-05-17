@@ -72,7 +72,7 @@ export default function MatchResults({
       </div>
     </div>
   );
-});
+}
 
 interface MatchCardProps {
   match: MatchResult;
@@ -195,4 +195,4 @@ const MatchCard = memo(function MatchCard({ match, onViewDetail, onExportReport 
       </div>
     </div>
   );
-}
+});

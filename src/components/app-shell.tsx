@@ -7,6 +7,8 @@ import { APP_NAME, APP_TAGLINE, APP_VERSION, NAV_ITEMS, ROUTE_TITLES } from '@/l
 import { clearSession, getCachedUser, hasPermission, loadCurrentUser } from '@/lib/auth';
 import { AUTH_EXPIRED_EVENT } from '@/lib/constants';
 import type { AppUser, PermissionKey } from '@/lib/types';
+import { useAppStore } from '@/store';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 function joinClassNames(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
@@ -33,6 +35,7 @@ export function AppShell({
   const [user, setUser] = useState<AppUser | null>(null);
   const [ready, setReady] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { setUser: setStoreUser } = useAppStore();
   const visibleItems = useMemo(() => NAV_ITEMS.filter((item) => !item.permission || hasPermission(user, item.permission)), [user]);
 
   useEffect(() => {
@@ -41,6 +44,7 @@ export function AppShell({
     function redirectToLogin() {
       clearSession();
       setUser(null);
+      setStoreUser(null);
       setReady(false);
       const redirect = encodeURIComponent(`${pathname}${window.location.search}`);
       router.replace(`/login?redirect=${redirect}`);
@@ -51,10 +55,12 @@ export function AppShell({
       if (cached?.id) {
         if (cancelled) return;
         setUser(cached);
+        setStoreUser(cached);
         setReady(true);
         void loadCurrentUser(true).then((current) => {
           if (!cancelled && current) {
             setUser(current);
+            setStoreUser(current);
           }
         });
         return;
@@ -68,6 +74,7 @@ export function AppShell({
       }
 
       setUser(current);
+      setStoreUser(current);
       setReady(true);
     }
 
@@ -139,13 +146,14 @@ export function AppShell({
           </div>
         </div>
 
-        <nav className="nav-list">
+        <nav className="nav-list" role="navigation" aria-label="主导航">
           {visibleItems.map((item) => (
             <Link
               key={item.key}
               href={item.href}
               className={joinClassNames('nav-item', pathname === item.href && 'nav-item-active')}
               onClick={() => setMobileOpen(false)}
+              aria-current={pathname === item.href ? 'page' : undefined}
             >
               <div className="nav-item-content">
                 {item.emoji && <span className="nav-emoji">{item.emoji}</span>}
@@ -172,6 +180,7 @@ export function AppShell({
                 router.replace('/login');
               }
             }}
+            aria-label="退出登录"
           >
             退出登录
           </button>
@@ -182,7 +191,7 @@ export function AppShell({
 
       <main className="main-shell">
         <header className="topbar">
-          <button className="btn btn-secondary mobile-menu-btn" onClick={() => setMobileOpen((value) => !value)}>
+          <button className="btn btn-secondary mobile-menu-btn" onClick={() => setMobileOpen((value) => !value)} aria-label="打开菜单" aria-expanded={mobileOpen}>
             ☰
           </button>
           <div>
@@ -190,6 +199,7 @@ export function AppShell({
             <div className="topbar-subtitle">{description || '统一账号、岗位和系统控制中心'}</div>
           </div>
           <div className="topbar-actions">
+            <ThemeToggle />
             <button className="btn btn-secondary" onClick={() => router.refresh()}>刷新</button>
           </div>
         </header>
