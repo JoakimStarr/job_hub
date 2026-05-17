@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, getSourceName } from '@/lib/db-utils';
+import { getDb, getSourceName, buildJobWhereClause } from '@/lib/db-utils';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -10,13 +11,10 @@ export async function GET(request: NextRequest) {
   try {
     const db = getDb();
     
-    let whereClause = 'WHERE is_favorite = 1';
-    let params: any[] = [];
-    
-    if (keyword) {
-      whereClause += ' AND (title LIKE ? OR company LIKE ? OR description LIKE ?)';
-      params.push(`%${keyword}%`, `%${keyword}%`, `%${keyword}%`);
-    }
+    const { whereClause, params } = buildJobWhereClause({
+      isFavorite: 1,
+      keyword: keyword || undefined,
+    });
     
     const countSql = `SELECT COUNT(*) as total FROM jobs ${whereClause}`;
     const countResult = db.prepare(countSql).get(...params) as { total: number };
@@ -50,7 +48,7 @@ export async function GET(request: NextRequest) {
       pages: Math.ceil(total / pageSize),
     });
   } catch (error) {
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch favorite jobs' },
       { status: 500 }

@@ -291,3 +291,75 @@ def get_spider_display_name(source: str) -> str:
     """获取爬虫的显示名称（大学名称）"""
     config = get_spider_config(source)
     return config.get("university", source)
+
+
+def get_lite_http_sources():
+    """
+    从 SPIDER_CONFIGS 提取 HTTP 类型数据源的简化配置，供 lite_crawler 使用。
+
+    返回格式与 lite_crawler.py 的 HTTP_SOURCES 兼容：
+    {
+        "source_key": {
+            "name": "大学名",
+            "base_url": "...",
+            "list_url": "...",
+            "detail_url": "...",
+            "field_mapping": {...},
+        }
+    }
+    """
+    lite_sources = {}
+
+    for key, config in SPIDER_CONFIGS.items():
+        spider_type = config.get("spider_type", "")
+
+        if spider_type == "api_post":
+            sections = config.get("sections")
+            if sections:
+                lite_sources[key] = {
+                    "name": config["university"],
+                    "base_url": config["base_url"],
+                    "list_url": sections[0]["list_url"],
+                    "detail_url": sections[0]["detail_url"],
+                    "field_mapping": {k: (v[0] if isinstance(v, list) else v)
+                                      for k, v in config.get("field_mapping", {}).items()},
+                }
+            else:
+                fm = config.get("field_mapping", {})
+                if fm == "same_as_cufe":
+                    fm = SPIDER_CONFIGS["cufe"]["field_mapping"]
+                lite_sources[key] = {
+                    "name": config["university"],
+                    "base_url": config["base_url"],
+                    "list_url": config.get("list_api_path", ""),
+                    "detail_url": config.get("detail_api_path", ""),
+                    "field_mapping": {k: (v[0] if isinstance(v, list) else v)
+                                      for k, v in fm.items()},
+                }
+
+        elif spider_type == "api_get":
+            list_api = config.get("list_api", "")
+            detail_api = config.get("detail_api", "")
+            lite_sources[key] = {
+                "name": config["university"],
+                "base_url": config["base_url"],
+                "list_url": list_api.replace(config["base_url"], "") + "?type=1&page={page}&limit={limit}",
+                "detail_url": detail_api.replace(config["base_url"], "") + "?id={id}",
+                "field_mapping": {k: (v[0] if isinstance(v, list) else v)
+                                  for k, v in config.get("field_mapping", {}).items()},
+            }
+
+    lite_sources["swufe"] = {
+        "name": "西南财经大学",
+        "base_url": "https://job.swufe.edu.cn",
+        "list_url": "/news/web/list2?type=1&page={page}",
+        "detail_url": "/news/web/info/{id}",
+        "field_mapping": {
+            "title": "title",
+            "company": "company",
+            "location": "location",
+            "description": "content",
+        },
+    }
+
+    return lite_sources

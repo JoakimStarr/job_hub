@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
@@ -25,7 +26,7 @@ export async function POST(
       data: { is_favorite: newFavoriteState === 1 }
     });
   } catch (error) {
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to toggle favorite' },
       { status: 500 }

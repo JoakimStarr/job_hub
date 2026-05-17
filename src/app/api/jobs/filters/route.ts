@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getFilterOptions, searchFilterOptions, searchLocationsByProvince, getSuggestions } from '@/lib/db-utils';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
       education_mapping: cache.educationMapping,
     });
   } catch (error) {
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch filter options' },
       { status: 500 }

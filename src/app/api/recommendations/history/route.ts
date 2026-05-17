@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
+import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -47,7 +48,7 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('获取推荐历史错误:', error);
+    logger.error('获取推荐历史错误:', error);
     return NextResponse.json(
       { error: '获取推荐历史失败' },
       { status: 500 }

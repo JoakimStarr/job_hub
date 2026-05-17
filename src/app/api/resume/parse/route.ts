@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseResumeText } from '@/lib/resume-parser';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('简历解析错误:', error);
+    logger.error('简历解析错误:', error);
     return NextResponse.json(
       { error: '简历解析失败，请检查格式是否正确' },
       { status: 500 }

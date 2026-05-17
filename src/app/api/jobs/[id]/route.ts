@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb, getSourceName } from '@/lib/db-utils';
+import { logger } from '@/lib/logger';
 
 export async function GET(
   request: NextRequest,
@@ -27,7 +28,7 @@ export async function GET(
       source: getSourceName(String(job.source || '')),
     });
   } catch (error) {
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch job' },
       { status: 500 }
@@ -74,7 +75,7 @@ export async function PATCH(
     
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to update job' },
       { status: 500 }

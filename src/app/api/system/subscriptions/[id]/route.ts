@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
 import { requirePermission, AuthError } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 export async function PUT(
   request: NextRequest,
@@ -67,7 +68,7 @@ export async function PUT(
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to update subscription' },
       { status: 500 }
@@ -96,7 +97,7 @@ export async function DELETE(
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('Database error:', error);
+    logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to delete subscription' },
       { status: 500 }

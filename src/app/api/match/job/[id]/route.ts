@@ -4,6 +4,7 @@ import { requireAuth, AuthError } from '@/lib/auth';
 import type { ResumeProfile } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
@@ -61,7 +62,7 @@ export async function POST(
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
-    console.error('单岗位匹配错误:', error);
+    logger.error('单岗位匹配错误:', error);
     return NextResponse.json(
       { error: '岗位匹配失败' },
       { status: 500 }

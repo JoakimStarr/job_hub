@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aiService } from '@/lib/ai-service';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('简历建议错误:', error);
+    logger.error('简历建议错误:', error);
     return NextResponse.json(
       { error: '简历建议生成失败，请稍后重试' },
       { status: 500 }
