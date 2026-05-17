@@ -94,7 +94,7 @@
 }
 
 .sidebar-nav {
-  padding: 12px 8px;
+  padding: 12px 8px 32px;
   overflow-y: auto;
   flex: 1;
 }
@@ -144,9 +144,10 @@
 }
 
 .sidebar-footer {
-  padding: 12px 16px;
+  padding: 20px 16px 16px;
   border-top: 1px solid var(--panel-border);
   flex-shrink: 0;
+  margin-top: auto;
 }
 
 .user-chip {
