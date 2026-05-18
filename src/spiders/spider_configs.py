@@ -161,7 +161,7 @@ SPIDER_CONFIGS: Dict[str, Dict[str, Any]] = {
         "detail_concurrency": 8,
         "url_patterns": {
             "fulltime": {
-                "pattern": "https://job3.swufe.edu.cn/jobs/jobs-show-{id}-.htm",
+                "pattern": "https://job3.swufe.edu.cn/jobs/jobs-show-{id}.htm",
                 "start_id": 14506,
                 "job_type": "全职",
             },

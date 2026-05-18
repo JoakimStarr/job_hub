@@ -751,9 +751,49 @@ class UnifiedSpider(BaseSpider):
                 break
             
             pattern_jobs = await self._crawl_swufe_pattern(pattern_config, max_items, len(jobs))
-            jobs.extend(pattern_jobs)
+            jobs = self._dedup_jobs(jobs, pattern_jobs)
         
         return jobs
+
+    def _dedup_jobs(self, existing: List[JobData], new: List[JobData]) -> List[JobData]:
+        """基于(title,company)去重，保留信息更完整的记录"""
+        seen = {(j.title, j.company): j for j in existing}
+        result = list(existing)
+        skipped = 0
+        for job in new:
+            key = (job.title, job.company)
+            if key in seen:
+                old = seen[key]
+                old_score = self._job_completeness(old)
+                new_score = self._job_completeness(job)
+                if new_score > old_score:
+                    result.remove(old)
+                    result.append(job)
+                    seen[key] = job
+                else:
+                    skipped += 1
+            else:
+                result.append(job)
+                seen[key] = job
+        if skipped > 0:
+            logger.info(f"[{self.source}] 跨模式去重: 跳过 {skipped} 条重复")
+        return result
+
+    @staticmethod
+    def _job_completeness(job: JobData) -> int:
+        """计算岗位信息完整度评分"""
+        score = 0
+        if job.description and len(job.description) > 50:
+            score += len(job.description)
+        if job.salary and job.salary != '面议':
+            score += 100
+        if job.location and job.location != '':
+            score += 50
+        if job.education and job.education != '' and job.education != '不限':
+            score += 30
+        if job.source_url and job.source_url and 'example.com' not in job.source_url:
+            score += 20
+        return score
 
     async def _crawl_swufe_pattern(self, pattern_config: Dict, max_items: int, current_total: int) -> List[JobData]:
         """爬取SWUFE的一个URL模式"""

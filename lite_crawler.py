@@ -157,13 +157,31 @@ def url_exists(url: str) -> bool:
 
 
 def insert_job(job: Dict) -> bool:
-    """插入岗位数据"""
+    """插入岗位数据，基于(title,company)去重保留最完整记录"""
     try:
         conn = sqlite3.connect(str(DB_PATH))
         cursor = conn.cursor()
         
+        title = job.get("title", "")
+        company = job.get("company", "")
+        source = job.get("source", "")
+        
+        existing = cursor.execute(
+            "SELECT id, LENGTH(description) as desc_len FROM jobs WHERE title=? AND company=? AND source=?",
+            (title, company, source)
+        ).fetchone()
+        
+        new_desc_len = len(job.get("description", ""))
+        
+        if existing:
+            old_id, old_desc_len = existing
+            if new_desc_len <= old_desc_len:
+                conn.close()
+                return False
+            cursor.execute("DELETE FROM jobs WHERE id=?", (old_id,))
+        
         cursor.execute("""
-            INSERT OR IGNORE INTO jobs 
+            INSERT INTO jobs 
             (title, company, location, salary, education, description, 
              publish_date, source, university, source_url, apply_url, job_type)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
