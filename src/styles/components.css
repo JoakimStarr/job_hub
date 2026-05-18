@@ -20,7 +20,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 16px;
 }
 
@@ -1011,80 +1011,229 @@
   text-decoration: underline;
 }
 
+/* ======== 平板 & 手机横屏 (≤768px) ======== */
 @media (max-width: 768px) {
+  /* Grid 系统：全部单列 */
   .grid { grid-template-columns: 1fr; }
   .grid-2 { grid-template-columns: 1fr; }
-  .job-card { flex-direction: column; gap: 12px; padding: 16px; }
-  .job-card-star { position: absolute; top: 16px; right: 16px; }
-  .filter-grid { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; gap: 12px; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+
+  /* JobCard：竖向布局，收藏按钮右上角 */
+  .job-card {
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .job-card-star {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+
+  .job-title-row h3 { font-size: 15px; }
+  .job-meta { flex-wrap: wrap; gap: 8px; font-size: 12px; }
+  .job-description { -webkit-line-clamp: 3; font-size: 13px; }
+  .job-tags { gap: 4px; }
+  .badge { padding: 3px 7px; font-size: 11px; }
+
+  /* 筛选区：单列堆叠 */
+  .filter-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-bar > * {
+    max-width: none;
+    width: 100% !important;
+  }
+
+  /* 统计卡片 */
+  .stat-card { padding: 14px; border-radius: var(--radius-md); }
   .stat-card-list { display: none; }
   .stat-card-value { font-size: 22px; }
-  .metric-value { font-size: 26px; }
-  .section-card { border-radius: var(--radius-md); }
-  .pagination-wrapper { flex-direction: column; gap: 8px; }
+  .stat-card-item { padding: 5px 6px; font-size: 12px; }
 
-  .pagination-wrapper {
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-  }
-
-  .pagination-page-display {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-
-  .pagination-input-group {
-    gap: 4px;
-    font-size: 12px;
-  }
-
-  .pagination-input-group span:not(:first-child) {
-    display: none;
-  }
-
-  .pagination-page-input {
-    width: 48px;
-    padding: 4px;
-    font-size: 12px;
-  }
-
-  .pagination-wrapper .btn {
-    padding: 8px 12px;
-    font-size: 12px;
-    min-height: 36px;
-  }
-
-  .empty-state {
-    padding: 32px 16px;
-  }
-
-  .empty-state svg {
-    width: 56px;
-    height: 56px;
-  }
-}
-
-/* 小屏手机专属 */
-@media (max-width: 480px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+  /* MetricCard */
   .metric-card { padding: 14px; }
-  .metric-value { font-size: 22px; }
-  .btn { padding: 10px 14px; font-size: 13px; }
-  .input, .select { padding: 10px 12px; }
-  .panel-head { padding: 16px; flex-direction: column; align-items: flex-start; gap: 8px; }
-  .panel-body { padding: 16px; }
-  .job-detail-modal { margin: 8px; max-height: calc(100vh - 16px); border-radius: var(--radius-lg); }
-  .job-detail-info-grid { grid-template-columns: 1fr; }
-  .tab-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .tab-item { padding: 10px 12px; font-size: 13px; white-space: nowrap; }
+  .metric-value { font-size: 26px; }
+  .metric-label { font-size: 12px; }
+  .metric-hint { font-size: 11px; }
+
+  /* Panel */
+  .panel { border-radius: var(--radius-md); margin-bottom: 16px; }
+  .panel-head { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
+  .panel-head h2 { font-size: 16px; }
+  .panel-body { padding: 14px 16px; }
+
+  /* 分页 */
+  .pagination-wrapper {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pagination-page-display { padding: 8px 12px; font-size: 13px; }
+  .pagination-input-group { gap: 4px; font-size: 12px; }
+  .pagination-input-group span:not(:first-child) { display: none; }
+  .pagination-page-input { width: 52px; padding: 6px; font-size: 13px; }
+  .pagination-wrapper .btn { padding: 10px 14px; font-size: 13px; min-height: 40px; }
+
+  /* Modal 弹窗 */
+  .modal-backdrop { padding: 12px; align-items: flex-end; }
+  .job-detail-modal {
+    width: 100%;
+    max-height: 85vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    animation: slideUpMobile 0.25s ease;
+  }
+
+  @keyframes slideUpMobile {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .job-detail-head { padding: 16px; flex-direction: column; gap: 8px; }
+  .job-detail-head h2 { font-size: 17px; }
+  .job-detail-actions { width: 100%; justify-content: stretch; }
+  .job-detail-actions .btn { flex: 1; }
+  .job-detail-body { padding: 16px; }
+  .job-detail-info-grid { grid-template-columns: 1fr; gap: 12px; }
+  .job-detail-section h3 { font-size: 15px; }
+  .job-detail-description { font-size: 13px; }
+  .job-detail-source-link { padding: 12px; margin-bottom: 12px; }
+  .job-detail-source-url { font-size: 14px; }
+
+  /* AI 分析区域 */
+  .ai-result { padding: 12px; font-size: 13px; }
+  .ai-result pre { padding: 10px; font-size: 12px; overflow-x: auto; }
+  .ai-error-container .notice { padding: 12px; flex-direction: column; gap: 8px; }
+
+  /* 空状态 */
+  .empty-state { padding: 36px 16px; }
+  .empty-state svg { width: 52px; height: 52px; }
+  .empty-state h3 { font-size: 15px; }
+  .empty-state p { font-size: 13px; }
+
+  /* Tab 导航 */
+  .tab-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-item { padding: 10px 14px; font-size: 13px; white-space: nowrap; flex-shrink: 0; }
+
+  /* 按钮 & 表单 */
+  .btn { min-height: 40px; padding: 10px 14px; font-size: 13px; }
+  .input, .select { min-height: 40px; padding: 10px 12px; font-size: 14px; }
+  .textarea { min-height: 120px; }
+
+  /* 文件上传 */
+  .file-upload-zone { padding: 24px 16px; }
+  .file-upload-icon { width: 36px; height: 36px; }
+
+  /* Notice */
+  .notice { padding: 10px 14px; font-size: 13px; }
+
+  /* Skeleton */
+  .skeleton-text { height: 12px; }
 }
 
-/* 推荐页双栏布局响应式 */
+/* ======== 小屏手机 (≤480px) ======== */
+@media (max-width: 480px) {
+  /* 布局 */
+  .main-shell { padding: 10px; }
+  .page-content { padding: 0; }
+
+  /* 顶部栏 */
+  .topbar { margin-bottom: 14px; gap: 6px; }
+  .topbar-title { font-size: 16px; }
+  .topbar-subtitle { display: none; }
+
+  /* Grid 进一步压缩 */
+  .grid-4 { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  .metric-card { padding: 12px; }
+  .metric-value { font-size: 22px; }
+  .metric-hint { font-size: 10px; }
+
+  /* JobCard 更紧凑 */
+  .job-card { padding: 12px; border-radius: var(--radius-md); }
+  .job-title-row h3 { font-size: 14px; }
+  .job-meta { font-size: 11px; gap: 6px; }
+  .job-description { -webkit-line-clamp: 2; margin-bottom: 8px; }
+
+  /* Panel */
+  .panel-head { padding: 12px 14px; }
+  .panel-head h2 { font-size: 15px; }
+  .panel-body { padding: 12px 14px; }
+
+  /* Modal 全屏化 */
+  .modal-backdrop { padding: 0; align-items: flex-end; }
+  .job-detail-modal {
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 90vh;
+  }
+
+  .job-detail-head { padding: 14px; }
+  .job-detail-head h2 { font-size: 16px; }
+  .job-detail-info-grid { gap: 10px; }
+  .job-detail-source-url { font-size: 13px; word-break: break-all; }
+
+  /* 按钮/表单：iOS 触摸优化 */
+  .btn { min-height: 44px; padding: 12px 16px; font-size: 14px; }
+  .input, .select { min-height: 44px; padding: 12px 14px; font-size: 16px; }
+  .star-btn { min-width: 44px; min-height: 44px; }
+
+  /* 分页简化 */
+  .pagination-wrapper .btn { min-height: 38px; padding: 8px 12px; font-size: 12px; }
+  .pagination-page-display { font-size: 12px; padding: 6px 10px; }
+
+  /* Tab */
+  .tab-item { padding: 9px 12px; font-size: 12px; }
+
+  /* 空状态 */
+  .empty-state { padding: 28px 12px; }
+  .empty-state svg { width: 44px; height: 44px; }
+  .empty-state h3 { font-size: 14px; }
+
+  /* 页脚 */
+  .site-footer { padding: 16px 0; }
+  .footer-row { display: block; text-align: center; margin: 4px 0; font-size: 12px; }
+  .footer-version { font-size: 10px; margin-top: 6px; }
+
+  /* 文件上传 */
+  .dropZone { padding: 24px 12px; }
+  .uploadIcon { width: 40px; height: 40px; }
+  .uploadTitle { font-size: 16px; }
+  .resumeTextarea { height: 180px; padding: 12px; font-size: 16px; }
+  .submitBtn { padding: 14px 20px; font-size: 15px; min-height: 48px; }
+}
+
+/* ======== 平板竖屏 (769px ~ 1024px) ======== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .main-shell { padding: 24px 28px; }
+  .job-detail-modal { max-width: 720px; }
+}
+
+/* ======== 超宽屏 (≥1600px) ======== */
+@media (min-width: 1600px) {
+  .main-shell { max-width: 1400px; margin-left: auto; margin-right: auto; }
+}
+
+/* ======== 推荐页双栏响应式 (≤900px) ======== */
 @media (max-width: 900px) {
   .recommendations-layout { flex-direction: column !important; }
-  .recommendations-layout > div:first-child { flex: 1 1 auto !important; width: 100% !important; }
-  .recommendations-layout > div:last-child { flex: 1 1 auto !important; width: 100% !important; }
+  .recommendations-layout > div:first-child,
+  .recommendations-layout > div:last-child {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+  }
 }
 
 .refresh-btn .spin-icon {
