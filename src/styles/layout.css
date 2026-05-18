@@ -44,18 +44,22 @@
   margin-bottom: 20px;
 }
 
+/* ======== Sidebar & Navigation (Mobile-First) ======== */
+/* 基础样式：移动端默认 - 侧边栏隐藏为抽屉 */
 .sidebar {
-  width: 240px;
+  transform: translateX(-100%);
+  width: 100%;
+  max-width: 320px;
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
+  z-index: var(--z-sidebar);
   background: var(--panel);
   border-right: 1px solid var(--panel-border);
   display: flex;
   flex-direction: column;
-  transition: transform 0.25s ease;
+  transition: transform var(--duration-normal) var(--ease-default);
 }
 
 .brand-block {
@@ -186,11 +190,18 @@
   min-height: 34px;
 }
 
+/* 移动端菜单按钮 - 默认显示 */
+.mobile-menu-btn {
+  display: flex;
+}
+
+/* ======== Main Shell 布局 (Mobile-First) ======== */
+/* 基础样式：移动端默认 */
 .main-shell {
   flex: 1;
-  margin-left: 240px;
-  padding: 32px 40px;
-  max-width: calc(100vw - 240px - 80px);
+  margin-left: 0;
+  padding: var(--space-md);
+  width: 100%;
   min-width: 0;
   min-height: 100vh;
 }
@@ -204,7 +215,7 @@
 }
 
 .topbar-title {
-  font-size: 22px;
+  font-size: var(--text-xl);
   font-weight: 700;
   color: var(--text);
 }
@@ -226,6 +237,8 @@
   flex: 1;
 }
 
+/* ======== Footer 页脚 (Mobile-First) ======== */
+/* 基础样式：移动端垂直堆叠 */
 .site-footer {
   margin-top: auto;
   padding: 24px 0;
@@ -238,10 +251,9 @@
 }
 
 .footer-row {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  margin: 0 12px;
+  display: block;
+  text-align: center;
+  margin: 6px 0;
   font-size: 13px;
   color: var(--muted);
 }
@@ -258,10 +270,7 @@
   color: var(--panel-border);
 }
 
-.mobile-menu-btn {
-  display: none;
-}
-
+/* ======== 其他组件 ======== */
 .sidebar-open {
   transform: translateX(0) !important;
 }
@@ -274,8 +283,8 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.35);
-  z-index: 99;
-  animation: fadeIn 0.15s ease;
+  z-index: calc(var(--z-sidebar) - 1);
+  animation: fadeIn var(--duration-fast) var(--ease-default);
 }
 
 .show {
@@ -296,55 +305,85 @@
   to { opacity: 1; }
 }
 
-@media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ======== 响应式断点增强 (Mobile-First) ======== */
+/* 断点策略：
+ * 基础样式: ≤479px (移动端默认)
+ * sm: ≥480px (大屏手机增强)
+ * md: ≥768px (平板)
+ * lg: ≥1024px (平板横屏/桌面)
+ * xl: ≥1280px (大桌面)
+ * 2xl: ≥1600px (超宽屏)
+ */
+
+/* --- sm: 大屏手机增强 (≥480px) --- */
+@media (min-width: 480px) {
+  .main-shell {
+    padding: var(--space-md);
   }
 
-  .sidebar-open {
+  .topbar {
+    margin-bottom: 20px;
+    gap: 10px;
+  }
+}
+
+/* --- md: 平板 (≥768px) --- */
+@media (min-width: 768px) {
+  .sidebar {
     transform: translateX(0);
+    width: 240px;
+    max-width: none;
   }
 
   .main-shell {
-    margin-left: 0;
-    padding: 16px;
-    width: 100%;
+    margin-left: 240px;
+    padding: var(--space-lg) var(--space-xl);
   }
 
   .mobile-menu-btn {
-    display: flex;
+    display: none;
   }
 
   .topbar-title {
-    font-size: 18px;
+    font-size: 20px;
+  }
+
+  .footer-row {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    text-align: left;
+    margin: 0 12px;
   }
 }
 
-/* 平板竖屏 */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .main-shell { padding: 24px 28px; }
-  .topbar-title { font-size: 20px; }
+/* --- lg: 平板横屏/桌面 (≥1024px) --- */
+@media (min-width: 1024px) {
+  .main-shell {
+    padding: 24px 28px;
+  }
+
+  .topbar-title {
+    font-size: 22px;
+  }
 }
 
-/* 小屏手机 */
-@media (max-width: 480px) {
-  .main-shell { padding: 12px; }
-  .topbar { margin-bottom: 18px; gap: 8px; flex-wrap: wrap; }
-  .topbar-title { font-size: 17px; }
-  .page-content { padding: 0; }
-
-  /* 页脚在小屏上简化 */
-  .footer-row { display: block; text-align: center; margin: 6px 0; }
-  .site-footer { padding: 16px 0; }
-
-  /* 用户信息区 */
-  .sidebar-footer { padding: 14px 12px; }
-  .user-chip-name { font-size: 13px; }
+/* --- xl: 大桌面 (≥1280px) --- */
+@media (min-width: 1280px) {
+  .main-shell {
+    padding: var(--space-lg) 36px;
+  }
 }
 
-/* 超宽屏 */
+/* --- 2xl: 超宽屏 (≥1600px) --- */
 @media (min-width: 1600px) {
-  .main-shell { max-width: 1400px; margin-left: auto; margin-right: auto; }
+  .main-shell {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
