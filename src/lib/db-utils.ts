@@ -32,6 +32,41 @@ export function getSourceCode(name: string): string {
   return SOURCE_CODE_MAP[name] || name;
 }
 
+const FAKE_URL_PATTERNS = [
+  /^https?:\/\/example\.com/,
+  /^https?:\/\/localhost/,
+  /^https?:\/\/127\.0\.0\.1/,
+  /^https?:\/\/\[?::1\]?/,
+  /^$/,
+  /^http:\/\/test\./,
+  /^https?:\/\/fake\./,
+  /^\s*$/,
+];
+
+const SOURCE_URL_TEMPLATES: Record<string, (id: number) => string> = {
+  sufe: (id) => `https://career.sufe.edu.cn/career/zpxx/view/zpxx/${id}`,
+  cufe: (id) => `http://scc.cufe.edu.cn/f/recruitmentinfo/ajax_show?id=${id}`,
+  dufe: (id) => `http://scc.dufe.edu.cn/f/recruitmentinfo/ajax_show?id=${id}`,
+  swufe: (id) => `https://job3.swufe.edu.cn/jobs/jobs-show-${id}`,
+  zuel: (id) => `https://jyzx.zuel.edu.cn/api/publicly/recruit/get?id=${id}`,
+  uibe: (id) => `https://career.uibe.edu.cn/front/zpxx.jspa?tid=${id}`,
+  jxufe: (id) => `https://jxx.jxufe.edu.cn/front/zpxx.jspa?tid=${id}`,
+  smartedu: (id) => `https://www.smartedu.cn/job/${id}`,
+  neu: (id) => `https://career.neu.edu.cn/job/${id}`,
+};
+
+export function isFakeUrl(url: string | null | undefined): boolean {
+  if (!url || typeof url !== 'string') return true;
+  return FAKE_URL_PATTERNS.some((p) => p.test(url));
+}
+
+export function resolveSourceUrl(source: string, sourceUrl: string | null | undefined, id: number): string {
+  if (sourceUrl && !isFakeUrl(sourceUrl)) return sourceUrl;
+  const generator = SOURCE_URL_TEMPLATES[source];
+  if (generator) return generator(id);
+  return '';
+}
+
 let dbInstance: Database.Database | null = null;
 
 export function getDb(): Database.Database {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, getSourceName } from '@/lib/db-utils';
+import { getDb, getSourceName, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
 import { logger } from '@/lib/logger';
 
 export async function GET(
@@ -26,6 +26,8 @@ export async function GET(
     return NextResponse.json({
       ...job,
       source: getSourceName(String(job.source || '')),
+      source_url: resolveSourceUrl(String(job.source || ''), job.source_url as string, parseInt(id)),
+      apply_url: (!job.apply_url || isFakeUrl(job.apply_url as string)) ? resolveSourceUrl(String(job.source || ''), job.source_url as string, parseInt(id)) : job.apply_url,
     });
   } catch (error) {
     logger.error('Database error:', error);

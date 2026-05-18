@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, getSourceName, buildJobWhereClause } from '@/lib/db-utils';
+import { getDb, getSourceName, buildJobWhereClause, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
 import { createErrorResponse, handleApiError, validatePagination } from '@/lib/api-response';
 import { logger } from '@/lib/logger';
 import type { JobItem, PagedResponse } from '@/types';
@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
           is_favorite, is_read, created_at, updated_at
         FROM jobs 
         ${whereClause}
-        ORDER BY created_at DESC
+        ORDER BY publish_date DESC, created_at DESC
         LIMIT ? OFFSET ?
       `;
       
@@ -60,6 +60,8 @@ export async function GET(request: NextRequest) {
       const jobsWithSourceName = jobs.map(job => ({
         ...job,
         source: getSourceName(String(job.source || '')),
+        source_url: resolveSourceUrl(String(job.source || ''), job.source_url, job.id),
+        apply_url: (!job.apply_url || isFakeUrl(job.apply_url)) ? resolveSourceUrl(String(job.source || ''), job.source_url, job.id) : job.apply_url,
       }));
       
       const response: PagedResponse<JobItem> = {

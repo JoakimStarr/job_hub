@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, getSourceName, buildJobWhereClause } from '@/lib/db-utils';
+import { getDb, getSourceName, buildJobWhereClause, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
 import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         is_favorite, is_read, created_at, updated_at
       FROM jobs 
       ${whereClause}
-      ORDER BY created_at DESC
+      ORDER BY publish_date DESC, created_at DESC
       LIMIT ? OFFSET ?
     `;
     
@@ -47,6 +47,8 @@ export async function GET(request: NextRequest) {
     const jobsWithSourceName = jobs.map(job => ({
       ...job,
       source: getSourceName(String(job.source || '')),
+      source_url: resolveSourceUrl(String(job.source || ''), job.source_url as string, job.id as number),
+      apply_url: (!job.apply_url || isFakeUrl(job.apply_url as string)) ? resolveSourceUrl(String(job.source || ''), job.source_url as string, job.id as number) : job.apply_url,
     }));
     
     return NextResponse.json({

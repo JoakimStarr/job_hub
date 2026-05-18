@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, getSourceName } from '@/lib/db-utils';
+import { getDb, getSourceName, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
 import { aiService } from '@/lib/ai-service';
 import { logger } from '@/lib/logger';
 import type { ResumeProfile } from '@/lib/resume-types';
@@ -193,6 +193,11 @@ export async function POST(
 
     if (!job) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+    }
+
+    job.source_url = resolveSourceUrl(String(job.source || ''), job.source_url as string, parseInt(id));
+    if (!job.apply_url || isFakeUrl(job.apply_url as string)) {
+      job.apply_url = resolveSourceUrl(String(job.source || ''), job.source_url as string, parseInt(id));
     }
 
     let result: AnalysisResult;

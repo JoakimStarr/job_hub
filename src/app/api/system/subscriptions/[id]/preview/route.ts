@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, buildJobWhereClause } from '@/lib/db-utils';
+import { getDb, buildJobWhereClause, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
 import { logger } from '@/lib/logger';
 
 export async function GET(
@@ -49,7 +49,11 @@ export async function GET(
       LIMIT 20
     `).all(...params) as Record<string, unknown>[];
 
-    return NextResponse.json(jobs);
+    return NextResponse.json(jobs.map(job => ({
+      ...job,
+      source_url: resolveSourceUrl(String(job.source || ''), job.source_url as string, job.id as number),
+      apply_url: (!job.apply_url || isFakeUrl(job.apply_url as string)) ? resolveSourceUrl(String(job.source || ''), job.source_url as string, job.id as number) : job.apply_url,
+    })));
   } catch (error) {
     logger.error('Subscription preview error:', error);
     return NextResponse.json(
