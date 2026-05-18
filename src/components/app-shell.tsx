@@ -207,16 +207,13 @@ export function AppShell({
         <footer className="site-footer">
           <div className="footer-inner">
             <div className="footer-row">
-              <span className="footer-label">网站声明</span>
-              <span>仅为个人学习开发用途</span>
+              <span className="footer-label">网站声明：仅为个人学习开发用途</span>
             </div>
             <div className="footer-row">
-              <span className="footer-label">灵感来源</span>
-              <span>我们伟大的宝宝</span>
+              <span className="footer-label">灵感来源：我们伟大的宝宝</span>
             </div>
             <div className="footer-row">
-              <span className="footer-label">网站作者</span>
-              <span>JoakimStarr / 文人病</span>
+              <span className="footer-label">网站作者：JoakimStarr / 文人病</span>
             </div>
             <div className="footer-version">{APP_VERSION}</div>
           </div>

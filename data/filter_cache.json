@@ -2,75 +2,63 @@
   "locations": [
     {
       "name": "成都",
-      "count": 939,
+      "count": 638,
       "pinyin": "chengdu",
       "firstLetter": "cd"
     },
     {
       "name": "北京",
-      "count": 511,
+      "count": 393,
       "pinyin": "beijing",
       "firstLetter": "bj"
     },
     {
       "name": "上海",
-      "count": 384,
+      "count": 285,
       "pinyin": "shanghai",
       "firstLetter": "sh"
     },
     {
       "name": "深圳",
-      "count": 291,
+      "count": 235,
       "pinyin": "shenzhen",
       "firstLetter": "sz"
     },
     {
-      "name": "重庆",
-      "count": 233,
-      "pinyin": "chongqing",
-      "firstLetter": "cq"
-    },
-    {
       "name": "广州",
-      "count": 216,
+      "count": 188,
       "pinyin": "guangzhou",
       "firstLetter": "gz"
     },
     {
       "name": "大连",
-      "count": 213,
+      "count": 181,
       "pinyin": "dalian",
       "firstLetter": "dl"
     },
     {
-      "name": "杭州",
+      "name": "重庆",
       "count": 171,
+      "pinyin": "chongqing",
+      "firstLetter": "cq"
+    },
+    {
+      "name": "杭州",
+      "count": 136,
       "pinyin": "hangzhou",
       "firstLetter": "hz"
     },
     {
       "name": "天津",
-      "count": 149,
+      "count": 106,
       "pinyin": "tianjin",
       "firstLetter": "tj"
     },
     {
       "name": "广东",
-      "count": 90,
+      "count": 82,
       "pinyin": "广东",
       "firstLetter": "广东"
-    },
-    {
-      "name": "武汉",
-      "count": 86,
-      "pinyin": "wuhan",
-      "firstLetter": "wh"
-    },
-    {
-      "name": "石家庄",
-      "count": 81,
-      "pinyin": "shijiazhuang",
-      "firstLetter": "sjz"
     },
     {
       "name": "浙江",
@@ -80,147 +68,111 @@
     },
     {
       "name": "辽宁",
-      "count": 73,
+      "count": 63,
       "pinyin": "辽宁",
       "firstLetter": "辽宁"
     },
     {
       "name": "青岛",
-      "count": 72,
+      "count": 61,
       "pinyin": "qingdao",
       "firstLetter": "qd"
     },
     {
       "name": "沈阳",
-      "count": 66,
+      "count": 61,
       "pinyin": "shenyang",
       "firstLetter": "sy"
     },
     {
-      "name": "济南",
-      "count": 64,
-      "pinyin": "jinan",
-      "firstLetter": "jn"
+      "name": "石家庄",
+      "count": 61,
+      "pinyin": "shijiazhuang",
+      "firstLetter": "sjz"
     },
     {
-      "name": "绵阳",
-      "count": 60,
-      "pinyin": "绵阳",
-      "firstLetter": "绵阳"
-    },
-    {
-      "name": "合肥",
-      "count": 58,
-      "pinyin": "hefei",
-      "firstLetter": "hf"
-    },
-    {
-      "name": "西安",
-      "count": 57,
-      "pinyin": "xian",
-      "firstLetter": "xa"
+      "name": "武汉",
+      "count": 59,
+      "pinyin": "wuhan",
+      "firstLetter": "wh"
     },
     {
       "name": "山东",
-      "count": 55,
+      "count": 53,
       "pinyin": "山东",
       "firstLetter": "山东"
     },
     {
-      "name": "德阳",
-      "count": 54,
-      "pinyin": "德阳",
-      "firstLetter": "德阳"
+      "name": "合肥",
+      "count": 51,
+      "pinyin": "hefei",
+      "firstLetter": "hf"
+    },
+    {
+      "name": "济南",
+      "count": 48,
+      "pinyin": "jinan",
+      "firstLetter": "jn"
     },
     {
       "name": "江苏",
-      "count": 52,
+      "count": 48,
       "pinyin": "江苏",
       "firstLetter": "江苏"
     },
     {
-      "name": "南京",
-      "count": 49,
-      "pinyin": "nanjing",
-      "firstLetter": "nj"
-    },
-    {
-      "name": "郑州",
-      "count": 48,
-      "pinyin": "zhengzhou",
-      "firstLetter": "zz"
-    },
-    {
       "name": "南昌",
-      "count": 47,
+      "count": 44,
       "pinyin": "nanchang",
       "firstLetter": "nc"
     },
     {
-      "name": "南宁",
-      "count": 45,
-      "pinyin": "nanning",
-      "firstLetter": "nn"
+      "name": "绵阳",
+      "count": 43,
+      "pinyin": "绵阳",
+      "firstLetter": "绵阳"
     },
     {
       "name": "长沙",
-      "count": 44,
+      "count": 42,
       "pinyin": "changsha",
       "firstLetter": "cs"
     },
     {
-      "name": "昆明",
-      "count": 41,
-      "pinyin": "kunming",
-      "firstLetter": "km"
-    },
-    {
-      "name": "宜宾",
-      "count": 41,
-      "pinyin": "宜宾",
-      "firstLetter": "宜宾"
-    },
-    {
-      "name": "乌鲁木齐",
+      "name": "南宁",
       "count": 40,
-      "pinyin": "wulumuqi",
-      "firstLetter": "wlmq"
+      "pinyin": "nanning",
+      "firstLetter": "nn"
+    },
+    {
+      "name": "德阳",
+      "count": 36,
+      "pinyin": "德阳",
+      "firstLetter": "德阳"
+    },
+    {
+      "name": "郑州",
+      "count": 35,
+      "pinyin": "zhengzhou",
+      "firstLetter": "zz"
     },
     {
       "name": "海口",
-      "count": 40,
+      "count": 35,
       "pinyin": "haikou",
       "firstLetter": "hk"
     },
     {
-      "name": "苏州",
-      "count": 35,
-      "pinyin": "苏州",
-      "firstLetter": "苏州"
+      "name": "南京",
+      "count": 34,
+      "pinyin": "nanjing",
+      "firstLetter": "nj"
     },
     {
       "name": "河北",
-      "count": 35,
+      "count": 34,
       "pinyin": "河北",
       "firstLetter": "河北"
-    },
-    {
-      "name": "四川",
-      "count": 35,
-      "pinyin": "四川",
-      "firstLetter": "四川"
-    },
-    {
-      "name": "厦门",
-      "count": 34,
-      "pinyin": "xiamen",
-      "firstLetter": "xm"
-    },
-    {
-      "name": "福州",
-      "count": 34,
-      "pinyin": "fuzhou",
-      "firstLetter": "fz"
     },
     {
       "name": "哈尔滨",
@@ -229,70 +181,94 @@
       "firstLetter": "哈尔"
     },
     {
-      "name": "贵阳",
+      "name": "西安",
+      "count": 32,
+      "pinyin": "xian",
+      "firstLetter": "xa"
+    },
+    {
+      "name": "福州",
+      "count": 32,
+      "pinyin": "fuzhou",
+      "firstLetter": "fz"
+    },
+    {
+      "name": "昆明",
+      "count": 31,
+      "pinyin": "kunming",
+      "firstLetter": "km"
+    },
+    {
+      "name": "四川",
+      "count": 30,
+      "pinyin": "四川",
+      "firstLetter": "四川"
+    },
+    {
+      "name": "厦门",
       "count": 29,
+      "pinyin": "xiamen",
+      "firstLetter": "xm"
+    },
+    {
+      "name": "苏州",
+      "count": 28,
+      "pinyin": "苏州",
+      "firstLetter": "苏州"
+    },
+    {
+      "name": "乌鲁木齐",
+      "count": 26,
+      "pinyin": "wulumuqi",
+      "firstLetter": "wlmq"
+    },
+    {
+      "name": "贵阳",
+      "count": 26,
       "pinyin": "guiyang",
       "firstLetter": "gy"
     },
     {
-      "name": "佛山",
-      "count": 29,
-      "pinyin": "佛山",
-      "firstLetter": "佛山"
+      "name": "宜宾",
+      "count": 22,
+      "pinyin": "宜宾",
+      "firstLetter": "宜宾"
     },
     {
       "name": "东莞",
-      "count": 26,
+      "count": 22,
       "pinyin": "东莞",
       "firstLetter": "东莞"
     },
     {
-      "name": "兰州",
-      "count": 24,
-      "pinyin": "lanzhou",
-      "firstLetter": "lz"
+      "name": "佛山",
+      "count": 22,
+      "pinyin": "佛山",
+      "firstLetter": "佛山"
     },
     {
       "name": "长春",
-      "count": 22,
+      "count": 19,
       "pinyin": "长春",
       "firstLetter": "长春"
     },
     {
       "name": "呼和浩特",
-      "count": 22,
+      "count": 19,
       "pinyin": "huhehaote",
       "firstLetter": "hhht"
     },
     {
-      "name": "湖北",
-      "count": 20,
-      "pinyin": "湖北",
-      "firstLetter": "湖北"
-    },
-    {
-      "name": "泸州",
-      "count": 20,
-      "pinyin": "泸州",
-      "firstLetter": "泸州"
+      "name": "兰州",
+      "count": 17,
+      "pinyin": "lanzhou",
+      "firstLetter": "lz"
     },
     {
       "name": "珠海",
-      "count": 19,
+      "count": 17,
       "pinyin": "珠海",
       "firstLetter": "珠海"
-    },
-    {
-      "name": "安徽",
-      "count": 17,
-      "pinyin": "安徽",
-      "firstLetter": "安徽"
-    },
-    {
-      "name": "吉林",
-      "count": 16,
-      "pinyin": "吉林",
-      "firstLetter": "吉林"
     },
     {
       "name": "江西",
@@ -307,28 +283,10 @@
       "firstLetter": "太原"
     },
     {
-      "name": "唐山",
+      "name": "泸州",
       "count": 16,
-      "pinyin": "唐山",
-      "firstLetter": "唐山"
-    },
-    {
-      "name": "嘉兴",
-      "count": 16,
-      "pinyin": "嘉兴",
-      "firstLetter": "嘉兴"
-    },
-    {
-      "name": "宁波",
-      "count": 16,
-      "pinyin": "宁波",
-      "firstLetter": "宁波"
-    },
-    {
-      "name": "无锡",
-      "count": 16,
-      "pinyin": "无锡",
-      "firstLetter": "无锡"
+      "pinyin": "泸州",
+      "firstLetter": "泸州"
     },
     {
       "name": "河南",
@@ -337,28 +295,34 @@
       "firstLetter": "河南"
     },
     {
+      "name": "湖北",
+      "count": 15,
+      "pinyin": "湖北",
+      "firstLetter": "湖北"
+    },
+    {
+      "name": "安徽",
+      "count": 15,
+      "pinyin": "安徽",
+      "firstLetter": "安徽"
+    },
+    {
+      "name": "吉林",
+      "count": 15,
+      "pinyin": "吉林",
+      "firstLetter": "吉林"
+    },
+    {
       "name": "海南",
       "count": 15,
       "pinyin": "海南",
       "firstLetter": "海南"
     },
     {
-      "name": "南充",
+      "name": "嘉兴",
       "count": 14,
-      "pinyin": "南充",
-      "firstLetter": "南充"
-    },
-    {
-      "name": "金华",
-      "count": 14,
-      "pinyin": "金华",
-      "firstLetter": "金华"
-    },
-    {
-      "name": "洛阳",
-      "count": 13,
-      "pinyin": "洛阳",
-      "firstLetter": "洛阳"
+      "pinyin": "嘉兴",
+      "firstLetter": "嘉兴"
     },
     {
       "name": "柳州",
@@ -367,40 +331,34 @@
       "firstLetter": "柳州"
     },
     {
+      "name": "宁波",
+      "count": 13,
+      "pinyin": "宁波",
+      "firstLetter": "宁波"
+    },
+    {
       "name": "惠州",
       "count": 13,
       "pinyin": "惠州",
       "firstLetter": "惠州"
     },
     {
-      "name": "西宁",
+      "name": "唐山",
       "count": 12,
-      "pinyin": "xining",
-      "firstLetter": "xn"
+      "pinyin": "唐山",
+      "firstLetter": "唐山"
+    },
+    {
+      "name": "无锡",
+      "count": 11,
+      "pinyin": "无锡",
+      "firstLetter": "无锡"
     },
     {
       "name": "攀枝花",
-      "count": 12,
+      "count": 11,
       "pinyin": "攀枝花",
       "firstLetter": "攀枝"
-    },
-    {
-      "name": "乐山",
-      "count": 12,
-      "pinyin": "乐山",
-      "firstLetter": "乐山"
-    },
-    {
-      "name": "常州",
-      "count": 11,
-      "pinyin": "常州",
-      "firstLetter": "常州"
-    },
-    {
-      "name": "自贡",
-      "count": 11,
-      "pinyin": "自贡",
-      "firstLetter": "自贡"
     },
     {
       "name": "山西",
@@ -409,10 +367,10 @@
       "firstLetter": "山西"
     },
     {
-      "name": "温州",
+      "name": "乐山",
       "count": 10,
-      "pinyin": "温州",
-      "firstLetter": "温州"
+      "pinyin": "乐山",
+      "firstLetter": "乐山"
     },
     {
       "name": "徐州",
@@ -421,10 +379,22 @@
       "firstLetter": "徐州"
     },
     {
+      "name": "自贡",
+      "count": 10,
+      "pinyin": "自贡",
+      "firstLetter": "自贡"
+    },
+    {
       "name": "美兰",
       "count": 10,
       "pinyin": "美兰",
       "firstLetter": "美兰"
+    },
+    {
+      "name": "洛阳",
+      "count": 9,
+      "pinyin": "洛阳",
+      "firstLetter": "洛阳"
     },
     {
       "name": "福建",
@@ -433,16 +403,16 @@
       "firstLetter": "福建"
     },
     {
-      "name": "黑龙江",
-      "count": 9,
-      "pinyin": "黑龙江",
-      "firstLetter": "黑龙"
-    },
-    {
       "name": "广西",
       "count": 9,
       "pinyin": "广西",
       "firstLetter": "广西"
+    },
+    {
+      "name": "西宁",
+      "count": 9,
+      "pinyin": "xining",
+      "firstLetter": "xn"
     },
     {
       "name": "中山",
@@ -451,28 +421,28 @@
       "firstLetter": "zh"
     },
     {
+      "name": "常州",
+      "count": 9,
+      "pinyin": "常州",
+      "firstLetter": "常州"
+    },
+    {
       "name": "湖南",
       "count": 8,
       "pinyin": "湖南",
       "firstLetter": "湖南"
     },
     {
-      "name": "包头",
+      "name": "南充",
       "count": 8,
-      "pinyin": "包头",
-      "firstLetter": "包头"
+      "pinyin": "南充",
+      "firstLetter": "南充"
     },
     {
-      "name": "乔口",
+      "name": "金华",
       "count": 8,
-      "pinyin": "乔口",
-      "firstLetter": "乔口"
-    },
-    {
-      "name": "广元",
-      "count": 8,
-      "pinyin": "广元",
-      "firstLetter": "广元"
+      "pinyin": "金华",
+      "firstLetter": "金华"
     },
     {
       "name": "大庆",
@@ -481,76 +451,34 @@
       "firstLetter": "大庆"
     },
     {
-      "name": "昌吉",
-      "count": 7,
-      "pinyin": "昌吉",
-      "firstLetter": "昌吉"
-    },
-    {
       "name": "云南",
       "count": 7,
       "pinyin": "云南",
       "firstLetter": "云南"
     },
     {
-      "name": "芜湖",
+      "name": "包头",
       "count": 7,
-      "pinyin": "芜湖",
-      "firstLetter": "芜湖"
+      "pinyin": "包头",
+      "firstLetter": "包头"
     },
     {
-      "name": "三亚",
+      "name": "黑龙江",
       "count": 7,
-      "pinyin": "sanya",
-      "firstLetter": "sy"
+      "pinyin": "黑龙江",
+      "firstLetter": "黑龙"
+    },
+    {
+      "name": "温州",
+      "count": 7,
+      "pinyin": "温州",
+      "firstLetter": "温州"
     },
     {
       "name": "黄埔",
       "count": 7,
       "pinyin": "黄埔",
       "firstLetter": "黄埔"
-    },
-    {
-      "name": "鄂尔多斯",
-      "count": 6,
-      "pinyin": "鄂尔多斯",
-      "firstLetter": "鄂尔"
-    },
-    {
-      "name": "孝感",
-      "count": 6,
-      "pinyin": "孝感",
-      "firstLetter": "孝感"
-    },
-    {
-      "name": "六盘水",
-      "count": 6,
-      "pinyin": "六盘水",
-      "firstLetter": "六盘"
-    },
-    {
-      "name": "宝鸡",
-      "count": 6,
-      "pinyin": "宝鸡",
-      "firstLetter": "宝鸡"
-    },
-    {
-      "name": "宿迁",
-      "count": 6,
-      "pinyin": "宿迁",
-      "firstLetter": "宿迁"
-    },
-    {
-      "name": "九江",
-      "count": 6,
-      "pinyin": "九江",
-      "firstLetter": "九江"
-    },
-    {
-      "name": "拉萨",
-      "count": 6,
-      "pinyin": "lasa",
-      "firstLetter": "ls"
     },
     {
       "name": "泉州",
@@ -607,6 +535,12 @@
       "firstLetter": "镇江"
     },
     {
+      "name": "昌吉",
+      "count": 5,
+      "pinyin": "昌吉",
+      "firstLetter": "昌吉"
+    },
+    {
       "name": "陕西",
       "count": 5,
       "pinyin": "陕西",
@@ -619,70 +553,16 @@
       "firstLetter": "yc"
     },
     {
-      "name": "铜川",
+      "name": "九江",
       "count": 5,
-      "pinyin": "铜川",
-      "firstLetter": "铜川"
+      "pinyin": "九江",
+      "firstLetter": "九江"
     },
     {
-      "name": "南通",
+      "name": "广元",
       "count": 5,
-      "pinyin": "南通",
-      "firstLetter": "南通"
-    },
-    {
-      "name": "赣州",
-      "count": 5,
-      "pinyin": "赣州",
-      "firstLetter": "赣州"
-    },
-    {
-      "name": "济宁",
-      "count": 5,
-      "pinyin": "济宁",
-      "firstLetter": "济宁"
-    },
-    {
-      "name": "临沂",
-      "count": 5,
-      "pinyin": "临沂",
-      "firstLetter": "临沂"
-    },
-    {
-      "name": "淄博",
-      "count": 5,
-      "pinyin": "淄博",
-      "firstLetter": "淄博"
-    },
-    {
-      "name": "景德镇",
-      "count": 5,
-      "pinyin": "景德镇",
-      "firstLetter": "景德"
-    },
-    {
-      "name": "遵义",
-      "count": 5,
-      "pinyin": "遵义",
-      "firstLetter": "遵义"
-    },
-    {
-      "name": "秦皇岛",
-      "count": 5,
-      "pinyin": "秦皇岛",
-      "firstLetter": "秦皇"
-    },
-    {
-      "name": "遂宁",
-      "count": 5,
-      "pinyin": "遂宁",
-      "firstLetter": "遂宁"
-    },
-    {
-      "name": "江门",
-      "count": 5,
-      "pinyin": "江门",
-      "firstLetter": "江门"
+      "pinyin": "广元",
+      "firstLetter": "广元"
     },
     {
       "name": "武侯",
@@ -709,40 +589,76 @@
       "firstLetter": "咸阳"
     },
     {
-      "name": "青海",
+      "name": "鄂尔多斯",
       "count": 4,
-      "pinyin": "青海",
-      "firstLetter": "青海"
+      "pinyin": "鄂尔多斯",
+      "firstLetter": "鄂尔"
     },
     {
-      "name": "株洲",
+      "name": "芜湖",
       "count": 4,
-      "pinyin": "株洲",
-      "firstLetter": "株洲"
+      "pinyin": "芜湖",
+      "firstLetter": "芜湖"
     },
     {
-      "name": "韶关",
+      "name": "三亚",
       "count": 4,
-      "pinyin": "韶关",
-      "firstLetter": "韶关"
+      "pinyin": "sanya",
+      "firstLetter": "sy"
     },
     {
-      "name": "清远",
+      "name": "六盘水",
       "count": 4,
-      "pinyin": "清远",
-      "firstLetter": "清远"
+      "pinyin": "六盘水",
+      "firstLetter": "六盘"
     },
     {
-      "name": "崂山",
+      "name": "宝鸡",
       "count": 4,
-      "pinyin": "崂山",
-      "firstLetter": "崂山"
+      "pinyin": "宝鸡",
+      "firstLetter": "宝鸡"
     },
     {
-      "name": "淮安",
+      "name": "南通",
       "count": 4,
-      "pinyin": "淮安",
-      "firstLetter": "淮安"
+      "pinyin": "南通",
+      "firstLetter": "南通"
+    },
+    {
+      "name": "济宁",
+      "count": 4,
+      "pinyin": "济宁",
+      "firstLetter": "济宁"
+    },
+    {
+      "name": "乔口",
+      "count": 4,
+      "pinyin": "乔口",
+      "firstLetter": "乔口"
+    },
+    {
+      "name": "临沂",
+      "count": 4,
+      "pinyin": "临沂",
+      "firstLetter": "临沂"
+    },
+    {
+      "name": "淄博",
+      "count": 4,
+      "pinyin": "淄博",
+      "firstLetter": "淄博"
+    },
+    {
+      "name": "景德镇",
+      "count": 4,
+      "pinyin": "景德镇",
+      "firstLetter": "景德"
+    },
+    {
+      "name": "秦皇岛",
+      "count": 4,
+      "pinyin": "秦皇岛",
+      "firstLetter": "秦皇"
     },
     {
       "name": "三明",
@@ -757,10 +673,28 @@
       "firstLetter": "眉山"
     },
     {
+      "name": "拉萨",
+      "count": 4,
+      "pinyin": "lasa",
+      "firstLetter": "ls"
+    },
+    {
       "name": "山南",
       "count": 4,
       "pinyin": "山南",
       "firstLetter": "山南"
+    },
+    {
+      "name": "遵义",
+      "count": 4,
+      "pinyin": "遵义",
+      "firstLetter": "遵义"
+    },
+    {
+      "name": "遂宁",
+      "count": 4,
+      "pinyin": "遂宁",
+      "firstLetter": "遂宁"
     },
     {
       "name": "雅安",
@@ -793,12 +727,6 @@
       "firstLetter": "贵州"
     },
     {
-      "name": "博尔塔拉",
-      "count": 3,
-      "pinyin": "博尔塔拉",
-      "firstLetter": "博尔"
-    },
-    {
       "name": "新疆",
       "count": 3,
       "pinyin": "新疆",
@@ -823,46 +751,58 @@
       "firstLetter": "甘肃"
     },
     {
-      "name": "泰安",
+      "name": "青海",
       "count": 3,
-      "pinyin": "泰安",
-      "firstLetter": "泰安"
+      "pinyin": "青海",
+      "firstLetter": "青海"
     },
     {
-      "name": "黄石",
+      "name": "孝感",
       "count": 3,
-      "pinyin": "黄石",
-      "firstLetter": "黄石"
+      "pinyin": "孝感",
+      "firstLetter": "孝感"
     },
     {
-      "name": "湖州",
+      "name": "铜川",
       "count": 3,
-      "pinyin": "huzhou",
-      "firstLetter": "hu"
+      "pinyin": "铜川",
+      "firstLetter": "铜川"
     },
     {
-      "name": "蜀山",
+      "name": "宿迁",
       "count": 3,
-      "pinyin": "蜀山",
-      "firstLetter": "蜀山"
+      "pinyin": "宿迁",
+      "firstLetter": "宿迁"
     },
     {
-      "name": "湘潭",
+      "name": "赣州",
       "count": 3,
-      "pinyin": "湘潭",
-      "firstLetter": "湘潭"
+      "pinyin": "赣州",
+      "firstLetter": "赣州"
     },
     {
-      "name": "阜阳",
+      "name": "株洲",
       "count": 3,
-      "pinyin": "阜阳",
-      "firstLetter": "阜阳"
+      "pinyin": "株洲",
+      "firstLetter": "株洲"
     },
     {
       "name": "汕头",
       "count": 3,
       "pinyin": "汕头",
       "firstLetter": "汕头"
+    },
+    {
+      "name": "崂山",
+      "count": 3,
+      "pinyin": "崂山",
+      "firstLetter": "崂山"
+    },
+    {
+      "name": "江门",
+      "count": 3,
+      "pinyin": "江门",
+      "firstLetter": "江门"
     },
     {
       "name": "资阳",
@@ -919,6 +859,12 @@
       "firstLetter": "克拉"
     },
     {
+      "name": "博尔塔拉",
+      "count": 2,
+      "pinyin": "博尔塔拉",
+      "firstLetter": "博尔"
+    },
+    {
       "name": "沈河",
       "count": 2,
       "pinyin": "沈河",
@@ -931,100 +877,40 @@
       "firstLetter": "伊犁"
     },
     {
-      "name": "香港",
+      "name": "泰安",
       "count": 2,
-      "pinyin": "xianggang",
-      "firstLetter": "xg"
+      "pinyin": "泰安",
+      "firstLetter": "泰安"
     },
     {
-      "name": "城西",
+      "name": "蜀山",
       "count": 2,
-      "pinyin": "城西",
-      "firstLetter": "城西"
+      "pinyin": "蜀山",
+      "firstLetter": "蜀山"
     },
     {
-      "name": "双流",
+      "name": "湘潭",
       "count": 2,
-      "pinyin": "双流",
-      "firstLetter": "双流"
+      "pinyin": "湘潭",
+      "firstLetter": "湘潭"
     },
     {
-      "name": "营口",
+      "name": "韶关",
       "count": 2,
-      "pinyin": "营口",
-      "firstLetter": "营口"
+      "pinyin": "韶关",
+      "firstLetter": "韶关"
     },
     {
-      "name": "潍坊",
+      "name": "清远",
       "count": 2,
-      "pinyin": "潍坊",
-      "firstLetter": "潍坊"
-    },
-    {
-      "name": "荆州",
-      "count": 2,
-      "pinyin": "荆州",
-      "firstLetter": "荆州"
-    },
-    {
-      "name": "梅州",
-      "count": 2,
-      "pinyin": "梅州",
-      "firstLetter": "梅州"
-    },
-    {
-      "name": "广汉",
-      "count": 2,
-      "pinyin": "广汉",
-      "firstLetter": "广汉"
-    },
-    {
-      "name": "锦江",
-      "count": 2,
-      "pinyin": "锦江",
-      "firstLetter": "锦江"
-    },
-    {
-      "name": "龙岩",
-      "count": 2,
-      "pinyin": "龙岩",
-      "firstLetter": "龙岩"
-    },
-    {
-      "name": "阿坝",
-      "count": 2,
-      "pinyin": "阿坝",
-      "firstLetter": "阿坝"
-    },
-    {
-      "name": "宜昌",
-      "count": 2,
-      "pinyin": "宜昌",
-      "firstLetter": "宜昌"
-    },
-    {
-      "name": "广安",
-      "count": 2,
-      "pinyin": "广安",
-      "firstLetter": "广安"
-    },
-    {
-      "name": "南山",
-      "count": 2,
-      "pinyin": "南山",
-      "firstLetter": "南山"
+      "pinyin": "清远",
+      "firstLetter": "清远"
     },
     {
       "name": "廊坊",
       "count": 2,
       "pinyin": "廊坊",
       "firstLetter": "廊坊"
-    },
-    {
-      "name": "湛江",
-      "count": 2,
-      "pinyin": "湛江",
-      "firstLetter": "湛江"
     },
     {
       "name": "十堰",
@@ -1055,6 +941,12 @@
       "count": 2,
       "pinyin": "朔州",
       "firstLetter": "朔州"
+    },
+    {
+      "name": "阜阳",
+      "count": 2,
+      "pinyin": "阜阳",
+      "firstLetter": "阜阳"
     },
     {
       "name": "甘孜",
@@ -1153,6 +1045,12 @@
       "firstLetter": "宁夏"
     },
     {
+      "name": "香港",
+      "count": 1,
+      "pinyin": "xianggang",
+      "firstLetter": "xg"
+    },
+    {
       "name": "安哥拉",
       "count": 1,
       "pinyin": "安哥拉",
@@ -1183,28 +1081,52 @@
       "firstLetter": "大理"
     },
     {
-      "name": "连云港",
+      "name": "黄石",
       "count": 1,
-      "pinyin": "连云港",
-      "firstLetter": "连云"
+      "pinyin": "黄石",
+      "firstLetter": "黄石"
     },
     {
-      "name": "吐鲁番",
+      "name": "城西",
       "count": 1,
-      "pinyin": "吐鲁番",
-      "firstLetter": "吐鲁"
+      "pinyin": "城西",
+      "firstLetter": "城西"
     },
     {
-      "name": "巴中",
+      "name": "双流",
       "count": 1,
-      "pinyin": "巴中",
-      "firstLetter": "巴中"
+      "pinyin": "双流",
+      "firstLetter": "双流"
     },
     {
-      "name": "东西湖",
+      "name": "湖州",
       "count": 1,
-      "pinyin": "东西湖",
-      "firstLetter": "东西"
+      "pinyin": "huzhou",
+      "firstLetter": "hu"
+    },
+    {
+      "name": "营口",
+      "count": 1,
+      "pinyin": "营口",
+      "firstLetter": "营口"
+    },
+    {
+      "name": "潍坊",
+      "count": 1,
+      "pinyin": "潍坊",
+      "firstLetter": "潍坊"
+    },
+    {
+      "name": "荆州",
+      "count": 1,
+      "pinyin": "荆州",
+      "firstLetter": "荆州"
+    },
+    {
+      "name": "梅州",
+      "count": 1,
+      "pinyin": "梅州",
+      "firstLetter": "梅州"
     },
     {
       "name": "内江",
@@ -1271,6 +1193,18 @@
       "count": 1,
       "pinyin": "崇州",
       "firstLetter": "崇州"
+    },
+    {
+      "name": "阿坝",
+      "count": 1,
+      "pinyin": "阿坝",
+      "firstLetter": "阿坝"
+    },
+    {
+      "name": "龙岩",
+      "count": 1,
+      "pinyin": "龙岩",
+      "firstLetter": "龙岩"
     },
     {
       "name": "温江",
@@ -1375,6 +1309,12 @@
       "firstLetter": "齐齐"
     },
     {
+      "name": "宜昌",
+      "count": 1,
+      "pinyin": "宜昌",
+      "firstLetter": "宜昌"
+    },
+    {
       "name": "衢州",
       "count": 1,
       "pinyin": "衢州",
@@ -1429,6 +1369,12 @@
       "firstLetter": "东营"
     },
     {
+      "name": "湛江",
+      "count": 1,
+      "pinyin": "湛江",
+      "firstLetter": "湛江"
+    },
+    {
       "name": "保定",
       "count": 1,
       "pinyin": "保定",
@@ -1451,6 +1397,12 @@
       "count": 1,
       "pinyin": "达州",
       "firstLetter": "达州"
+    },
+    {
+      "name": "广安",
+      "count": 1,
+      "pinyin": "广安",
+      "firstLetter": "广安"
     },
     {
       "name": "历下",
@@ -1492,140 +1444,132 @@
   "job_types": [
     {
       "name": "实习",
-      "count": 2497
+      "count": 1763
     },
     {
       "name": "全职",
-      "count": 1677
-    },
-    {
-      "name": "兼职",
-      "count": 20
-    },
-    {
-      "name": "校招",
-      "count": 16
+      "count": 1534
     }
   ],
   "industries": [
     {
       "name": "金融业",
-      "count": 621
+      "count": 476
     },
     {
       "name": "国有企业",
-      "count": 484
+      "count": 463
     },
     {
       "name": "其他企业",
-      "count": 483
+      "count": 423
     },
     {
       "name": "制造业",
-      "count": 412
+      "count": 335
     },
     {
       "name": "信息传输",
-      "count": 347
+      "count": 223
     },
     {
       "name": "软件和信息技术服务业",
-      "count": 347
+      "count": 223
     },
     {
       "name": "批发和零售业",
-      "count": 261
-    },
-    {
-      "name": "教育",
-      "count": 218
+      "count": 221
     },
     {
       "name": "其他",
-      "count": 186
+      "count": 166
     },
     {
-      "name": "建筑业",
-      "count": 144
-    },
-    {
-      "name": "科学研究和技术服务业",
-      "count": 142
-    },
-    {
-      "name": "租赁和商务服务业",
-      "count": 139
+      "name": "教育",
+      "count": 153
     },
     {
       "name": "交通运输",
-      "count": 137
+      "count": 115
     },
     {
       "name": "仓储和邮政业",
-      "count": 137
+      "count": 115
     },
     {
-      "name": "房地产业",
+      "name": "科学研究和技术服务业",
       "count": 101
     },
     {
-      "name": "电力",
-      "count": 69
+      "name": "建筑业",
+      "count": 89
     },
     {
-      "name": "热力",
-      "count": 69
+      "name": "房地产业",
+      "count": 84
     },
     {
-      "name": "燃气及水生产和供应业",
-      "count": 69
+      "name": "租赁和商务服务业",
+      "count": 82
     },
     {
       "name": "三资企业",
-      "count": 60
+      "count": 58
+    },
+    {
+      "name": "电力",
+      "count": 47
+    },
+    {
+      "name": "热力",
+      "count": 47
+    },
+    {
+      "name": "燃气及水生产和供应业",
+      "count": 47
     },
     {
       "name": "文化",
-      "count": 45
+      "count": 44
     },
     {
       "name": "体育和娱乐业",
-      "count": 45
-    },
-    {
-      "name": "水利",
-      "count": 42
-    },
-    {
-      "name": "环境和公共设施管理业",
-      "count": 42
-    },
-    {
-      "name": "公共管理",
-      "count": 41
-    },
-    {
-      "name": "社会保障和社会组织",
-      "count": 41
-    },
-    {
-      "name": "渔业",
-      "count": 34
+      "count": 44
     },
     {
       "name": "居民服务",
-      "count": 29
+      "count": 27
     },
     {
       "name": "修理和其他服务业",
-      "count": 29
+      "count": 27
     },
     {
-      "name": "采矿业",
-      "count": 29
+      "name": "渔业",
+      "count": 26
+    },
+    {
+      "name": "公共管理",
+      "count": 24
+    },
+    {
+      "name": "社会保障和社会组织",
+      "count": 24
+    },
+    {
+      "name": "水利",
+      "count": 24
+    },
+    {
+      "name": "环境和公共设施管理业",
+      "count": 24
     },
     {
       "name": "高等教育单位",
+      "count": 22
+    },
+    {
+      "name": "采矿业",
       "count": 22
     },
     {
@@ -1634,75 +1578,27 @@
     },
     {
       "name": "科研设计单位",
-      "count": 13
-    },
-    {
-      "name": "卫生和社会工作",
-      "count": 13
-    },
-    {
-      "name": "投资",
-      "count": 13
-    },
-    {
-      "name": "PEVC",
-      "count": 13
-    },
-    {
-      "name": "信托",
-      "count": 12
-    },
-    {
-      "name": "咨询",
-      "count": 12
-    },
-    {
-      "name": "基金",
-      "count": 10
-    },
-    {
-      "name": "资管",
-      "count": 10
-    },
-    {
-      "name": "保险",
-      "count": 10
+      "count": 11
     },
     {
       "name": "机关",
       "count": 9
     },
     {
-      "name": "互联网金融",
-      "count": 8
-    },
-    {
-      "name": "证券",
-      "count": 8
+      "name": "卫生和社会工作",
+      "count": 9
     },
     {
       "name": "中初教育单位",
-      "count": 6
+      "count": 5
     },
     {
       "name": "金融(银行",
-      "count": 6
-    },
-    {
-      "name": "保险)",
-      "count": 6
-    },
-    {
-      "name": "银行",
-      "count": 6
-    },
-    {
-      "name": "期货",
       "count": 3
     },
     {
-      "name": "国际组织",
-      "count": 2
+      "name": "保险)",
+      "count": 3
     },
     {
       "name": "其他企业(含民营企业等)",
@@ -1713,6 +1609,10 @@
       "count": 1
     },
     {
+      "name": "国际组织",
+      "count": 1
+    },
+    {
       "name": "住宿和餐饮业",
       "count": 1
     }
@@ -1720,79 +1620,55 @@
   "education": [
     {
       "name": "本科",
-      "count": 2610
+      "count": 2133
     },
     {
       "name": "硕士",
-      "count": 1590
+      "count": 1323
     },
     {
       "name": "博士",
-      "count": 796
+      "count": 721
     },
     {
       "name": "不限",
-      "count": 646
+      "count": 463
     },
     {
       "name": "博士后",
-      "count": 2
+      "count": 1
     }
   ],
   "sources": [
     {
       "name": "西南财经大学",
-      "count": 2747,
+      "count": 2013,
       "pinyin": "xinancaijingdaxue",
       "firstLetter": "xcjdx"
     },
     {
       "name": "东北财经大学",
-      "count": 1278,
+      "count": 1176,
       "pinyin": "dongbeicaijingdaxue",
       "firstLetter": "dbcjdx"
     },
     {
       "name": "上海财经大学",
-      "count": 111,
+      "count": 94,
       "pinyin": "shanghaicaijingdaxue",
       "firstLetter": "shcjdx"
     },
     {
-      "name": "江西财经大学",
-      "count": 17,
-      "pinyin": "jiangxicaijingdaxue",
-      "firstLetter": "jxcjdx"
-    },
-    {
-      "name": "中央财经大学",
-      "count": 16,
-      "pinyin": "zhongyangcaijingdaxue",
-      "firstLetter": "zycjdx"
-    },
-    {
       "name": "中南财经政法大学",
-      "count": 15,
+      "count": 10,
       "pinyin": "zhongnancaijingzhengfadaxue",
       "firstLetter": "zncjzfdx"
     },
     {
-      "name": "国家智慧教育平台",
-      "count": 12,
-      "pinyin": "guojiazhihuijiaoyupingtai",
-      "firstLetter": "gjzhjypt"
-    },
-    {
-      "name": "东北大学",
-      "count": 8,
-      "pinyin": "dongbeidaxue",
-      "firstLetter": "dbdx"
-    },
-    {
-      "name": "对外经济贸易大学",
-      "count": 6,
-      "pinyin": "duiwaijingjimaoyidaxue",
-      "firstLetter": "dwjjmydx"
+      "name": "中央财经大学",
+      "count": 4,
+      "pinyin": "zhongyangcaijingdaxue",
+      "firstLetter": "zycjdx"
     }
   ],
   "provinces": [
@@ -1801,7 +1677,7 @@
       "cities": [
         {
           "name": "成都",
-          "count": 939,
+          "count": 638,
           "pinyin": "chengdu",
           "firstLetter": "cd"
         },
@@ -1813,81 +1689,45 @@
         },
         {
           "name": "德阳",
-          "count": 54,
+          "count": 36,
           "pinyin": "德阳",
           "firstLetter": "德阳"
         },
         {
           "name": "南充",
-          "count": 14,
+          "count": 8,
           "pinyin": "南充",
           "firstLetter": "南充"
         },
         {
           "name": "宜宾",
-          "count": 41,
+          "count": 22,
           "pinyin": "宜宾",
           "firstLetter": "宜宾"
         },
         {
           "name": "泸州",
-          "count": 20,
+          "count": 16,
           "pinyin": "泸州",
           "firstLetter": "泸州"
         },
         {
           "name": "绵阳",
-          "count": 60,
+          "count": 43,
           "pinyin": "绵阳",
           "firstLetter": "绵阳"
         },
         {
           "name": "广元",
-          "count": 8,
+          "count": 5,
           "pinyin": "广元",
           "firstLetter": "广元"
         },
         {
-          "name": "攀枝花",
-          "count": 12,
-          "pinyin": "攀枝花",
-          "firstLetter": "攀枝"
-        },
-        {
-          "name": "巴中",
-          "count": 1,
-          "pinyin": "巴中",
-          "firstLetter": "巴中"
-        },
-        {
-          "name": "阿坝",
-          "count": 2,
-          "pinyin": "阿坝",
-          "firstLetter": "阿坝"
-        },
-        {
           "name": "乐山",
-          "count": 12,
+          "count": 10,
           "pinyin": "乐山",
           "firstLetter": "乐山"
-        },
-        {
-          "name": "遂宁",
-          "count": 5,
-          "pinyin": "遂宁",
-          "firstLetter": "遂宁"
-        },
-        {
-          "name": "广安",
-          "count": 2,
-          "pinyin": "广安",
-          "firstLetter": "广安"
-        },
-        {
-          "name": "自贡",
-          "count": 11,
-          "pinyin": "自贡",
-          "firstLetter": "自贡"
         },
         {
           "name": "内江",
@@ -1896,16 +1736,40 @@
           "firstLetter": "内江"
         },
         {
+          "name": "攀枝花",
+          "count": 11,
+          "pinyin": "攀枝花",
+          "firstLetter": "攀枝"
+        },
+        {
           "name": "资阳",
           "count": 3,
           "pinyin": "资阳",
           "firstLetter": "资阳"
         },
         {
+          "name": "阿坝",
+          "count": 1,
+          "pinyin": "阿坝",
+          "firstLetter": "阿坝"
+        },
+        {
           "name": "眉山",
           "count": 4,
           "pinyin": "眉山",
           "firstLetter": "眉山"
+        },
+        {
+          "name": "自贡",
+          "count": 10,
+          "pinyin": "自贡",
+          "firstLetter": "自贡"
+        },
+        {
+          "name": "遂宁",
+          "count": 4,
+          "pinyin": "遂宁",
+          "firstLetter": "遂宁"
         },
         {
           "name": "雅安",
@@ -1924,66 +1788,66 @@
           "count": 1,
           "pinyin": "达州",
           "firstLetter": "达州"
+        },
+        {
+          "name": "广安",
+          "count": 1,
+          "pinyin": "广安",
+          "firstLetter": "广安"
         }
       ],
-      "count": 1233
+      "count": 852
     },
     {
       "province": "广东",
       "cities": [
         {
           "name": "深圳",
-          "count": 291,
+          "count": 235,
           "pinyin": "shenzhen",
           "firstLetter": "sz"
         },
         {
           "name": "广州",
-          "count": 216,
+          "count": 188,
           "pinyin": "guangzhou",
           "firstLetter": "gz"
         },
         {
           "name": "东莞",
-          "count": 26,
+          "count": 22,
           "pinyin": "东莞",
           "firstLetter": "东莞"
         },
         {
           "name": "珠海",
-          "count": 19,
+          "count": 17,
           "pinyin": "珠海",
           "firstLetter": "珠海"
         },
         {
           "name": "佛山",
-          "count": 29,
+          "count": 22,
           "pinyin": "佛山",
           "firstLetter": "佛山"
         },
         {
           "name": "韶关",
-          "count": 4,
+          "count": 2,
           "pinyin": "韶关",
           "firstLetter": "韶关"
         },
         {
           "name": "梅州",
-          "count": 2,
+          "count": 1,
           "pinyin": "梅州",
           "firstLetter": "梅州"
         },
         {
           "name": "清远",
-          "count": 4,
+          "count": 2,
           "pinyin": "清远",
           "firstLetter": "清远"
-        },
-        {
-          "name": "江门",
-          "count": 5,
-          "pinyin": "江门",
-          "firstLetter": "江门"
         },
         {
           "name": "惠州",
@@ -1998,16 +1862,16 @@
           "firstLetter": "zh"
         },
         {
-          "name": "湛江",
-          "count": 2,
-          "pinyin": "湛江",
-          "firstLetter": "湛江"
-        },
-        {
           "name": "汕头",
           "count": 3,
           "pinyin": "汕头",
           "firstLetter": "汕头"
+        },
+        {
+          "name": "江门",
+          "count": 3,
+          "pinyin": "江门",
+          "firstLetter": "江门"
         },
         {
           "name": "茂名",
@@ -2032,52 +1896,46 @@
           "count": 1,
           "pinyin": "阳江",
           "firstLetter": "阳江"
+        },
+        {
+          "name": "湛江",
+          "count": 1,
+          "pinyin": "湛江",
+          "firstLetter": "湛江"
         }
       ],
-      "count": 718
+      "count": 605
     },
     {
       "province": "北京",
       "cities": [
         {
           "name": "北京",
-          "count": 511,
+          "count": 393,
           "pinyin": "beijing",
           "firstLetter": "bj"
         }
       ],
-      "count": 511
-    },
-    {
-      "province": "上海",
-      "cities": [
-        {
-          "name": "上海",
-          "count": 384,
-          "pinyin": "shanghai",
-          "firstLetter": "sh"
-        }
-      ],
-      "count": 384
+      "count": 393
     },
     {
       "province": "辽宁",
       "cities": [
         {
           "name": "大连",
-          "count": 213,
+          "count": 181,
           "pinyin": "dalian",
           "firstLetter": "dl"
         },
         {
           "name": "沈阳",
-          "count": 66,
+          "count": 61,
           "pinyin": "shenyang",
           "firstLetter": "sy"
         },
         {
           "name": "营口",
-          "count": 2,
+          "count": 1,
           "pinyin": "营口",
           "firstLetter": "营口"
         },
@@ -2088,52 +1946,64 @@
           "firstLetter": "本溪"
         }
       ],
-      "count": 355
+      "count": 307
+    },
+    {
+      "province": "上海",
+      "cities": [
+        {
+          "name": "上海",
+          "count": 285,
+          "pinyin": "shanghai",
+          "firstLetter": "sh"
+        }
+      ],
+      "count": 285
     },
     {
       "province": "浙江",
       "cities": [
         {
           "name": "杭州",
-          "count": 171,
+          "count": 136,
           "pinyin": "hangzhou",
           "firstLetter": "hz"
         },
         {
           "name": "嘉兴",
-          "count": 16,
+          "count": 14,
           "pinyin": "嘉兴",
           "firstLetter": "嘉兴"
         },
         {
           "name": "金华",
-          "count": 14,
+          "count": 8,
           "pinyin": "金华",
           "firstLetter": "金华"
         },
         {
           "name": "湖州",
-          "count": 3,
+          "count": 1,
           "pinyin": "huzhou",
           "firstLetter": "hu"
         },
         {
           "name": "宁波",
-          "count": 16,
+          "count": 13,
           "pinyin": "宁波",
           "firstLetter": "宁波"
-        },
-        {
-          "name": "温州",
-          "count": 10,
-          "pinyin": "温州",
-          "firstLetter": "温州"
         },
         {
           "name": "绍兴",
           "count": 6,
           "pinyin": "绍兴",
           "firstLetter": "绍兴"
+        },
+        {
+          "name": "温州",
+          "count": 7,
+          "pinyin": "温州",
+          "firstLetter": "温州"
         },
         {
           "name": "舟山",
@@ -2148,62 +2018,50 @@
           "firstLetter": "衢州"
         }
       ],
-      "count": 316
-    },
-    {
-      "province": "重庆",
-      "cities": [
-        {
-          "name": "重庆",
-          "count": 233,
-          "pinyin": "chongqing",
-          "firstLetter": "cq"
-        }
-      ],
-      "count": 233
+      "count": 265
     },
     {
       "province": "山东",
       "cities": [
         {
           "name": "济南",
-          "count": 64,
+          "count": 48,
           "pinyin": "jinan",
           "firstLetter": "jn"
         },
         {
           "name": "青岛",
-          "count": 72,
+          "count": 61,
           "pinyin": "qingdao",
           "firstLetter": "qd"
         },
         {
           "name": "泰安",
-          "count": 3,
+          "count": 2,
           "pinyin": "泰安",
           "firstLetter": "泰安"
         },
         {
           "name": "济宁",
-          "count": 5,
+          "count": 4,
           "pinyin": "济宁",
           "firstLetter": "济宁"
         },
         {
           "name": "潍坊",
-          "count": 2,
+          "count": 1,
           "pinyin": "潍坊",
           "firstLetter": "潍坊"
         },
         {
           "name": "临沂",
-          "count": 5,
+          "count": 4,
           "pinyin": "临沂",
           "firstLetter": "临沂"
         },
         {
           "name": "淄博",
-          "count": 5,
+          "count": 4,
           "pinyin": "淄博",
           "firstLetter": "淄博"
         },
@@ -2238,64 +2096,64 @@
           "firstLetter": "东营"
         }
       ],
-      "count": 218
+      "count": 184
+    },
+    {
+      "province": "重庆",
+      "cities": [
+        {
+          "name": "重庆",
+          "count": 171,
+          "pinyin": "chongqing",
+          "firstLetter": "cq"
+        }
+      ],
+      "count": 171
     },
     {
       "province": "江苏",
       "cities": [
         {
           "name": "苏州",
-          "count": 35,
+          "count": 28,
           "pinyin": "苏州",
           "firstLetter": "苏州"
         },
         {
           "name": "南京",
-          "count": 49,
+          "count": 34,
           "pinyin": "nanjing",
           "firstLetter": "nj"
         },
         {
           "name": "南通",
-          "count": 5,
+          "count": 4,
           "pinyin": "南通",
           "firstLetter": "南通"
         },
         {
           "name": "宿迁",
-          "count": 6,
+          "count": 3,
           "pinyin": "宿迁",
           "firstLetter": "宿迁"
         },
         {
           "name": "无锡",
-          "count": 16,
+          "count": 11,
           "pinyin": "无锡",
           "firstLetter": "无锡"
-        },
-        {
-          "name": "常州",
-          "count": 11,
-          "pinyin": "常州",
-          "firstLetter": "常州"
-        },
-        {
-          "name": "连云港",
-          "count": 1,
-          "pinyin": "连云港",
-          "firstLetter": "连云"
-        },
-        {
-          "name": "淮安",
-          "count": 4,
-          "pinyin": "淮安",
-          "firstLetter": "淮安"
         },
         {
           "name": "徐州",
           "count": 10,
           "pinyin": "徐州",
           "firstLetter": "徐州"
+        },
+        {
+          "name": "常州",
+          "count": 9,
+          "pinyin": "常州",
+          "firstLetter": "常州"
         },
         {
           "name": "扬州",
@@ -2316,46 +2174,34 @@
           "firstLetter": "镇江"
         }
       ],
-      "count": 198
-    },
-    {
-      "province": "天津",
-      "cities": [
-        {
-          "name": "天津",
-          "count": 149,
-          "pinyin": "tianjin",
-          "firstLetter": "tj"
-        }
-      ],
-      "count": 149
+      "count": 156
     },
     {
       "province": "河北",
       "cities": [
         {
           "name": "石家庄",
-          "count": 81,
+          "count": 61,
           "pinyin": "shijiazhuang",
           "firstLetter": "sjz"
         },
         {
           "name": "唐山",
-          "count": 16,
+          "count": 12,
           "pinyin": "唐山",
           "firstLetter": "唐山"
-        },
-        {
-          "name": "秦皇岛",
-          "count": 5,
-          "pinyin": "秦皇岛",
-          "firstLetter": "秦皇"
         },
         {
           "name": "廊坊",
           "count": 2,
           "pinyin": "廊坊",
           "firstLetter": "廊坊"
+        },
+        {
+          "name": "秦皇岛",
+          "count": 4,
+          "pinyin": "秦皇岛",
+          "firstLetter": "秦皇"
         },
         {
           "name": "邯郸",
@@ -2376,82 +2222,34 @@
           "firstLetter": "张家"
         }
       ],
-      "count": 144
+      "count": 118
     },
     {
-      "province": "湖北",
+      "province": "天津",
       "cities": [
         {
-          "name": "武汉",
-          "count": 86,
-          "pinyin": "wuhan",
-          "firstLetter": "wh"
-        },
-        {
-          "name": "孝感",
-          "count": 6,
-          "pinyin": "孝感",
-          "firstLetter": "孝感"
-        },
-        {
-          "name": "黄石",
-          "count": 3,
-          "pinyin": "黄石",
-          "firstLetter": "黄石"
-        },
-        {
-          "name": "荆州",
-          "count": 2,
-          "pinyin": "荆州",
-          "firstLetter": "荆州"
-        },
-        {
-          "name": "宜昌",
-          "count": 2,
-          "pinyin": "宜昌",
-          "firstLetter": "宜昌"
-        },
-        {
-          "name": "十堰",
-          "count": 2,
-          "pinyin": "十堰",
-          "firstLetter": "十堰"
-        },
-        {
-          "name": "荆门",
-          "count": 2,
-          "pinyin": "荆门",
-          "firstLetter": "荆门"
-        },
-        {
-          "name": "襄阳",
-          "count": 1,
-          "pinyin": "xiangyang",
-          "firstLetter": "xi"
+          "name": "天津",
+          "count": 106,
+          "pinyin": "tianjin",
+          "firstLetter": "tj"
         }
       ],
-      "count": 124
+      "count": 106
     },
     {
       "province": "福建",
       "cities": [
         {
           "name": "厦门",
-          "count": 34,
+          "count": 29,
           "pinyin": "xiamen",
           "firstLetter": "xm"
         },
         {
           "name": "福州",
-          "count": 34,
+          "count": 32,
           "pinyin": "fuzhou",
           "firstLetter": "fz"
-        },
-        {
-          "name": "龙岩",
-          "count": 2,
-          "pinyin": "龙岩",
-          "firstLetter": "龙岩"
         },
         {
           "name": "泉州",
@@ -2472,32 +2270,92 @@
           "firstLetter": "三明"
         },
         {
+          "name": "龙岩",
+          "count": 1,
+          "pinyin": "龙岩",
+          "firstLetter": "龙岩"
+        },
+        {
           "name": "宁德",
           "count": 1,
           "pinyin": "宁德",
           "firstLetter": "宁德"
         }
       ],
-      "count": 96
+      "count": 88
+    },
+    {
+      "province": "湖北",
+      "cities": [
+        {
+          "name": "武汉",
+          "count": 59,
+          "pinyin": "wuhan",
+          "firstLetter": "wh"
+        },
+        {
+          "name": "孝感",
+          "count": 3,
+          "pinyin": "孝感",
+          "firstLetter": "孝感"
+        },
+        {
+          "name": "黄石",
+          "count": 1,
+          "pinyin": "黄石",
+          "firstLetter": "黄石"
+        },
+        {
+          "name": "荆州",
+          "count": 1,
+          "pinyin": "荆州",
+          "firstLetter": "荆州"
+        },
+        {
+          "name": "十堰",
+          "count": 2,
+          "pinyin": "十堰",
+          "firstLetter": "十堰"
+        },
+        {
+          "name": "荆门",
+          "count": 2,
+          "pinyin": "荆门",
+          "firstLetter": "荆门"
+        },
+        {
+          "name": "宜昌",
+          "count": 1,
+          "pinyin": "宜昌",
+          "firstLetter": "宜昌"
+        },
+        {
+          "name": "襄阳",
+          "count": 1,
+          "pinyin": "xiangyang",
+          "firstLetter": "xi"
+        }
+      ],
+      "count": 85
     },
     {
       "province": "安徽",
       "cities": [
         {
           "name": "合肥",
-          "count": 58,
+          "count": 51,
           "pinyin": "hefei",
           "firstLetter": "hf"
         },
         {
           "name": "芜湖",
-          "count": 7,
+          "count": 4,
           "pinyin": "芜湖",
           "firstLetter": "芜湖"
         },
         {
           "name": "阜阳",
-          "count": 3,
+          "count": 2,
           "pinyin": "阜阳",
           "firstLetter": "阜阳"
         },
@@ -2532,49 +2390,7 @@
           "firstLetter": "淮北"
         }
       ],
-      "count": 91
-    },
-    {
-      "province": "河南",
-      "cities": [
-        {
-          "name": "洛阳",
-          "count": 13,
-          "pinyin": "洛阳",
-          "firstLetter": "洛阳"
-        },
-        {
-          "name": "郑州",
-          "count": 48,
-          "pinyin": "zhengzhou",
-          "firstLetter": "zz"
-        },
-        {
-          "name": "平顶山",
-          "count": 1,
-          "pinyin": "平顶山",
-          "firstLetter": "平顶"
-        },
-        {
-          "name": "开封",
-          "count": 1,
-          "pinyin": "开封",
-          "firstLetter": "开封"
-        },
-        {
-          "name": "焦作",
-          "count": 5,
-          "pinyin": "焦作",
-          "firstLetter": "焦作"
-        },
-        {
-          "name": "三门峡",
-          "count": 1,
-          "pinyin": "三门峡",
-          "firstLetter": "三门"
-        }
-      ],
-      "count": 84
+      "count": 78
     },
     {
       "province": "广西",
@@ -2587,7 +2403,7 @@
         },
         {
           "name": "南宁",
-          "count": 45,
+          "count": 40,
           "pinyin": "nanning",
           "firstLetter": "nn"
         },
@@ -2622,32 +2438,32 @@
           "firstLetter": "贺州"
         }
       ],
-      "count": 81
+      "count": 76
     },
     {
       "province": "江西",
       "cities": [
         {
           "name": "南昌",
-          "count": 47,
+          "count": 44,
           "pinyin": "nanchang",
           "firstLetter": "nc"
         },
         {
           "name": "赣州",
-          "count": 5,
+          "count": 3,
           "pinyin": "赣州",
           "firstLetter": "赣州"
         },
         {
           "name": "景德镇",
-          "count": 5,
+          "count": 4,
           "pinyin": "景德镇",
           "firstLetter": "景德"
         },
         {
           "name": "九江",
-          "count": 6,
+          "count": 5,
           "pinyin": "九江",
           "firstLetter": "九江"
         },
@@ -2658,37 +2474,49 @@
           "firstLetter": "上饶"
         }
       ],
-      "count": 80
+      "count": 73
     },
     {
-      "province": "陕西",
+      "province": "河南",
       "cities": [
         {
-          "name": "西安",
-          "count": 57,
-          "pinyin": "xian",
-          "firstLetter": "xa"
+          "name": "洛阳",
+          "count": 9,
+          "pinyin": "洛阳",
+          "firstLetter": "洛阳"
         },
         {
-          "name": "铜川",
+          "name": "郑州",
+          "count": 35,
+          "pinyin": "zhengzhou",
+          "firstLetter": "zz"
+        },
+        {
+          "name": "平顶山",
+          "count": 1,
+          "pinyin": "平顶山",
+          "firstLetter": "平顶"
+        },
+        {
+          "name": "开封",
+          "count": 1,
+          "pinyin": "开封",
+          "firstLetter": "开封"
+        },
+        {
+          "name": "焦作",
           "count": 5,
-          "pinyin": "铜川",
-          "firstLetter": "铜川"
+          "pinyin": "焦作",
+          "firstLetter": "焦作"
         },
         {
-          "name": "宝鸡",
-          "count": 6,
-          "pinyin": "宝鸡",
-          "firstLetter": "宝鸡"
-        },
-        {
-          "name": "咸阳",
-          "count": 5,
-          "pinyin": "咸阳",
-          "firstLetter": "咸阳"
+          "name": "三门峡",
+          "count": 1,
+          "pinyin": "三门峡",
+          "firstLetter": "三门"
         }
       ],
-      "count": 78
+      "count": 67
     },
     {
       "province": "湖南",
@@ -2701,114 +2529,24 @@
         },
         {
           "name": "长沙",
-          "count": 44,
+          "count": 42,
           "pinyin": "changsha",
           "firstLetter": "cs"
         },
         {
           "name": "株洲",
-          "count": 4,
+          "count": 3,
           "pinyin": "株洲",
           "firstLetter": "株洲"
         },
         {
           "name": "湘潭",
-          "count": 3,
+          "count": 2,
           "pinyin": "湘潭",
           "firstLetter": "湘潭"
         }
       ],
-      "count": 61
-    },
-    {
-      "province": "新疆",
-      "cities": [
-        {
-          "name": "乌鲁木齐",
-          "count": 40,
-          "pinyin": "wulumuqi",
-          "firstLetter": "wlmq"
-        },
-        {
-          "name": "昌吉",
-          "count": 7,
-          "pinyin": "昌吉",
-          "firstLetter": "昌吉"
-        },
-        {
-          "name": "克孜勒苏",
-          "count": 1,
-          "pinyin": "克孜勒苏",
-          "firstLetter": "克孜"
-        },
-        {
-          "name": "哈密",
-          "count": 1,
-          "pinyin": "哈密",
-          "firstLetter": "哈密"
-        },
-        {
-          "name": "克拉玛依",
-          "count": 2,
-          "pinyin": "克拉玛依",
-          "firstLetter": "克拉"
-        },
-        {
-          "name": "博尔塔拉",
-          "count": 3,
-          "pinyin": "博尔塔拉",
-          "firstLetter": "博尔"
-        },
-        {
-          "name": "伊犁",
-          "count": 2,
-          "pinyin": "伊犁",
-          "firstLetter": "伊犁"
-        },
-        {
-          "name": "喀什",
-          "count": 1,
-          "pinyin": "喀什",
-          "firstLetter": "喀什"
-        },
-        {
-          "name": "吐鲁番",
-          "count": 1,
-          "pinyin": "吐鲁番",
-          "firstLetter": "吐鲁"
-        }
-      ],
-      "count": 61
-    },
-    {
-      "province": "云南",
-      "cities": [
-        {
-          "name": "昆明",
-          "count": 41,
-          "pinyin": "kunming",
-          "firstLetter": "km"
-        },
-        {
-          "name": "大理",
-          "count": 1,
-          "pinyin": "大理",
-          "firstLetter": "大理"
-        },
-        {
-          "name": "曲靖",
-          "count": 1,
-          "pinyin": "曲靖",
-          "firstLetter": "曲靖"
-        },
-        {
-          "name": "玉溪",
-          "count": 1,
-          "pinyin": "玉溪",
-          "firstLetter": "玉溪"
-        }
-      ],
-      "count": 51
+      "count": 57
     },
     {
       "province": "黑龙江",
@@ -2832,44 +2570,140 @@
           "firstLetter": "齐齐"
         }
       ],
-      "count": 51
+      "count": 49
     },
     {
-      "province": "海南",
+      "province": "陕西",
       "cities": [
         {
-          "name": "海口",
-          "count": 40,
-          "pinyin": "haikou",
-          "firstLetter": "hk"
+          "name": "西安",
+          "count": 32,
+          "pinyin": "xian",
+          "firstLetter": "xa"
         },
         {
-          "name": "三亚",
-          "count": 7,
-          "pinyin": "sanya",
-          "firstLetter": "sy"
+          "name": "铜川",
+          "count": 3,
+          "pinyin": "铜川",
+          "firstLetter": "铜川"
+        },
+        {
+          "name": "宝鸡",
+          "count": 4,
+          "pinyin": "宝鸡",
+          "firstLetter": "宝鸡"
+        },
+        {
+          "name": "咸阳",
+          "count": 5,
+          "pinyin": "咸阳",
+          "firstLetter": "咸阳"
         }
       ],
-      "count": 47
+      "count": 49
+    },
+    {
+      "province": "新疆",
+      "cities": [
+        {
+          "name": "乌鲁木齐",
+          "count": 26,
+          "pinyin": "wulumuqi",
+          "firstLetter": "wlmq"
+        },
+        {
+          "name": "昌吉",
+          "count": 5,
+          "pinyin": "昌吉",
+          "firstLetter": "昌吉"
+        },
+        {
+          "name": "克孜勒苏",
+          "count": 1,
+          "pinyin": "克孜勒苏",
+          "firstLetter": "克孜"
+        },
+        {
+          "name": "哈密",
+          "count": 1,
+          "pinyin": "哈密",
+          "firstLetter": "哈密"
+        },
+        {
+          "name": "克拉玛依",
+          "count": 2,
+          "pinyin": "克拉玛依",
+          "firstLetter": "克拉"
+        },
+        {
+          "name": "博尔塔拉",
+          "count": 2,
+          "pinyin": "博尔塔拉",
+          "firstLetter": "博尔"
+        },
+        {
+          "name": "伊犁",
+          "count": 2,
+          "pinyin": "伊犁",
+          "firstLetter": "伊犁"
+        },
+        {
+          "name": "喀什",
+          "count": 1,
+          "pinyin": "喀什",
+          "firstLetter": "喀什"
+        }
+      ],
+      "count": 43
+    },
+    {
+      "province": "云南",
+      "cities": [
+        {
+          "name": "昆明",
+          "count": 31,
+          "pinyin": "kunming",
+          "firstLetter": "km"
+        },
+        {
+          "name": "大理",
+          "count": 1,
+          "pinyin": "大理",
+          "firstLetter": "大理"
+        },
+        {
+          "name": "曲靖",
+          "count": 1,
+          "pinyin": "曲靖",
+          "firstLetter": "曲靖"
+        },
+        {
+          "name": "玉溪",
+          "count": 1,
+          "pinyin": "玉溪",
+          "firstLetter": "玉溪"
+        }
+      ],
+      "count": 41
     },
     {
       "province": "贵州",
       "cities": [
         {
           "name": "贵阳",
-          "count": 29,
+          "count": 26,
           "pinyin": "guiyang",
           "firstLetter": "gy"
         },
         {
           "name": "六盘水",
-          "count": 6,
+          "count": 4,
           "pinyin": "六盘水",
           "firstLetter": "六盘"
         },
         {
           "name": "遵义",
-          "count": 5,
+          "count": 4,
           "pinyin": "遵义",
           "firstLetter": "遵义"
         },
@@ -2880,61 +2714,25 @@
           "firstLetter": "毕节"
         }
       ],
-      "count": 45
+      "count": 39
     },
     {
-      "province": "内蒙古",
+      "province": "海南",
       "cities": [
         {
-          "name": "呼和浩特",
-          "count": 22,
-          "pinyin": "huhehaote",
-          "firstLetter": "hhht"
+          "name": "海口",
+          "count": 35,
+          "pinyin": "haikou",
+          "firstLetter": "hk"
         },
         {
-          "name": "包头",
-          "count": 8,
-          "pinyin": "包头",
-          "firstLetter": "包头"
-        },
-        {
-          "name": "乌兰察布",
-          "count": 1,
-          "pinyin": "乌兰察布",
-          "firstLetter": "乌兰"
-        },
-        {
-          "name": "鄂尔多斯",
-          "count": 6,
-          "pinyin": "鄂尔多斯",
-          "firstLetter": "鄂尔"
-        },
-        {
-          "name": "巴彦淖尔",
-          "count": 1,
-          "pinyin": "巴彦淖尔",
-          "firstLetter": "巴彦"
+          "name": "三亚",
+          "count": 4,
+          "pinyin": "sanya",
+          "firstLetter": "sy"
         }
       ],
-      "count": 41
-    },
-    {
-      "province": "吉林",
-      "cities": [
-        {
-          "name": "长春",
-          "count": 22,
-          "pinyin": "长春",
-          "firstLetter": "长春"
-        },
-        {
-          "name": "吉林",
-          "count": 16,
-          "pinyin": "吉林",
-          "firstLetter": "吉林"
-        }
-      ],
-      "count": 38
+      "count": 39
     },
     {
       "province": "山西",
@@ -2973,11 +2771,89 @@
       "count": 36
     },
     {
+      "province": "内蒙古",
+      "cities": [
+        {
+          "name": "呼和浩特",
+          "count": 19,
+          "pinyin": "huhehaote",
+          "firstLetter": "hhht"
+        },
+        {
+          "name": "包头",
+          "count": 7,
+          "pinyin": "包头",
+          "firstLetter": "包头"
+        },
+        {
+          "name": "乌兰察布",
+          "count": 1,
+          "pinyin": "乌兰察布",
+          "firstLetter": "乌兰"
+        },
+        {
+          "name": "鄂尔多斯",
+          "count": 4,
+          "pinyin": "鄂尔多斯",
+          "firstLetter": "鄂尔"
+        },
+        {
+          "name": "巴彦淖尔",
+          "count": 1,
+          "pinyin": "巴彦淖尔",
+          "firstLetter": "巴彦"
+        }
+      ],
+      "count": 35
+    },
+    {
+      "province": "吉林",
+      "cities": [
+        {
+          "name": "长春",
+          "count": 19,
+          "pinyin": "长春",
+          "firstLetter": "长春"
+        },
+        {
+          "name": "吉林",
+          "count": 15,
+          "pinyin": "吉林",
+          "firstLetter": "吉林"
+        }
+      ],
+      "count": 34
+    },
+    {
+      "province": "青海",
+      "cities": [
+        {
+          "name": "海南",
+          "count": 15,
+          "pinyin": "海南",
+          "firstLetter": "海南"
+        },
+        {
+          "name": "西宁",
+          "count": 9,
+          "pinyin": "xining",
+          "firstLetter": "xn"
+        },
+        {
+          "name": "海西",
+          "count": 1,
+          "pinyin": "海西",
+          "firstLetter": "海西"
+        }
+      ],
+      "count": 28
+    },
+    {
       "province": "甘肃",
       "cities": [
         {
           "name": "兰州",
-          "count": 24,
+          "count": 17,
           "pinyin": "lanzhou",
           "firstLetter": "lz"
         },
@@ -3000,38 +2876,14 @@
           "firstLetter": "武威"
         }
       ],
-      "count": 33
-    },
-    {
-      "province": "青海",
-      "cities": [
-        {
-          "name": "海南",
-          "count": 15,
-          "pinyin": "海南",
-          "firstLetter": "海南"
-        },
-        {
-          "name": "西宁",
-          "count": 12,
-          "pinyin": "xining",
-          "firstLetter": "xn"
-        },
-        {
-          "name": "海西",
-          "count": 1,
-          "pinyin": "海西",
-          "firstLetter": "海西"
-        }
-      ],
-      "count": 32
+      "count": 26
     },
     {
       "province": "西藏",
       "cities": [
         {
           "name": "拉萨",
-          "count": 6,
+          "count": 4,
           "pinyin": "lasa",
           "firstLetter": "ls"
         },
@@ -3054,7 +2906,7 @@
           "firstLetter": "日喀"
         }
       ],
-      "count": 13
+      "count": 11
     },
     {
       "province": "宁夏",
@@ -3085,12 +2937,12 @@
       "cities": [
         {
           "name": "香港",
-          "count": 2,
+          "count": 1,
           "pinyin": "xianggang",
           "firstLetter": "xg"
         }
       ],
-      "count": 2
+      "count": 1
     },
     {
       "province": "澳门",
@@ -5963,5 +5815,5 @@
       "alias": []
     }
   ],
-  "updated_at": 1779007636321
+  "updated_at": 1779070782614
 }

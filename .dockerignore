@@ -1,32 +1,44 @@
-.next
+# Node / build artifacts
 node_modules
+.next
+build
+dist
+.cache
+.npm
+.buildcache
+
+# Logs and runtime data
 npm-debug.log
-Dockerfile
-docker-compose.yml
-.git
-.gitignore
-.env.local
-.env*.local
-*.md
-.vscode
-.idea
 *.log
-log/*
-!log/.gitkeep
-output/*
-!output/.gitkeep
-data/*
+log/
+output/
+data/
 !data/.gitkeep
 !data/skill_dictionary.json
 !data/major_similarity.json
 !data/jobs.db
-tests
-trash
+
+# Git / IDE
+.git
+.gitignore
+.vscode
+.idea
+
+# Env / secrets
+.env
+.env.*
+
+# Python artifacts
 *.pyc
 __pycache__
 .pytest_cache
 .coverage
-htmlcov
-dist
-build
+
+# Misc
 *.egg-info
+htmlcov
+tests
+trash
+
+# Databases
+*.db

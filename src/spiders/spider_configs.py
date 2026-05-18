@@ -351,7 +351,7 @@ def get_lite_http_sources():
 
     lite_sources["swufe"] = {
         "name": "西南财经大学",
-        "base_url": "https://job.swufe.edu.cn",
+        "base_url": "https://job3.swufe.edu.cn",
         "list_url": "/news/web/list2?type=1&page={page}",
         "detail_url": "/news/web/info/{id}",
         "field_mapping": {
