@@ -108,6 +108,10 @@
   touch-action: manipulation;
 }
 
+.btn:active {
+  transform: scale(0.97);
+}
+
 .btn-primary {
   background: var(--primary);
   color: white;
@@ -115,6 +119,10 @@
 
 .btn-primary:hover {
   background: var(--primary-hover);
+}
+
+.btn-primary:active {
+  background: var(--primary);
 }
 
 .btn-secondary {
@@ -148,12 +156,13 @@
 .input,
 .select {
   width: 100%;
-  padding: 6px 10px;
+  padding: 10px 12px;
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   background: var(--panel);
   color: var(--text);
-  font-size: 13px;
+  font-size: 14px;
+  min-height: 42px;
   transition: border-color var(--transition);
 }
 
@@ -1003,6 +1012,17 @@
 }
 
 @media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .job-card { flex-direction: column; gap: 12px; padding: 16px; }
+  .job-card-star { position: absolute; top: 16px; right: 16px; }
+  .filter-grid { grid-template-columns: 1fr; }
+  .stat-card-list { display: none; }
+  .stat-card-value { font-size: 22px; }
+  .metric-value { font-size: 26px; }
+  .section-card { border-radius: var(--radius-md); }
+  .pagination-wrapper { flex-direction: column; gap: 8px; }
+
   .pagination-wrapper {
     flex-wrap: wrap;
     gap: 8px;
@@ -1043,4 +1063,26 @@
     width: 56px;
     height: 56px;
   }
+}
+
+/* 小屏手机专属 */
+@media (max-width: 480px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+  .metric-card { padding: 14px; }
+  .metric-value { font-size: 22px; }
+  .btn { padding: 10px 14px; font-size: 13px; }
+  .input, .select { padding: 10px 12px; }
+  .panel-head { padding: 16px; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .panel-body { padding: 16px; }
+  .job-detail-modal { margin: 8px; max-height: calc(100vh - 16px); border-radius: var(--radius-lg); }
+  .job-detail-info-grid { grid-template-columns: 1fr; }
+  .tab-nav { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab-item { padding: 10px 12px; font-size: 13px; white-space: nowrap; }
+}
+
+/* 推荐页双栏布局响应式 */
+@media (max-width: 900px) {
+  .recommendations-layout { flex-direction: column !important; }
+  .recommendations-layout > div:first-child { flex: 1 1 auto !important; width: 100% !important; }
+  .recommendations-layout > div:last-child { flex: 1 1 auto !important; width: 100% !important; }
 }

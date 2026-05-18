@@ -140,7 +140,7 @@ export default function RecommendationsPage() {
     <AppShell title="智能推荐" description="AI 分析、简历建议和投递辅助" requiredPermission="use_recommendations">
       {message ? <div className="notice notice-error" style={{ marginBottom: 20 }}>{message}</div> : null}
 
-      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
+      <div className="recommendations-layout" style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
         <div style={{ flex: '0 0 40%', minWidth: 0 }}>
           <SectionCard title="简历上传" description="上传简历文件辅助 AI 进行精准分析">
             <FileUpload

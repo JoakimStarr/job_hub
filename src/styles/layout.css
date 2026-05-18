@@ -319,3 +319,32 @@
     font-size: 18px;
   }
 }
+
+/* 平板竖屏 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .main-shell { padding: 24px 28px; }
+  .topbar-title { font-size: 20px; }
+}
+
+/* 小屏手机 */
+@media (max-width: 480px) {
+  .main-shell { padding: 12px; }
+  .topbar { margin-bottom: 18px; gap: 8px; flex-wrap: wrap; }
+  .topbar-title { font-size: 17px; }
+  .page-content { padding: 0; }
+
+  /* 页脚在小屏上简化 */
+  .footer-row { display: block; text-align: center; margin: 6px 0; }
+  .site-footer { padding: 16px 0; }
+
+  /* 用户信息区 */
+  .sidebar-footer { padding: 14px 12px; }
+  .user-chip-name { font-size: 13px; }
+}
+
+/* 超宽屏 */
+@media (min-width: 1600px) {
+  .main-shell { max-width: 1400px; margin-left: auto; margin-right: auto; }
+}

@@ -84,3 +84,27 @@
   padding-top: 24px;
   border-top: 1px solid var(--panel-border);
 }
+
+.demo-hint {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--panel-border);
+}
+
+@media (max-width: 768px) {
+  .auth-page { padding: 16px; align-items: stretch; }
+  .auth-grid { grid-template-columns: 1fr; gap: 24px; }
+  .auth-hero { display: none; }
+  .auth-main { max-width: 100%; }
+  .auth-form-title { font-size: 22px; }
+  .auth-form-subtitle { font-size: 13px; }
+  .auth-card { border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+}
+
+@media (max-width: 480px) {
+  .auth-page { padding: 12px; }
+  .auth-card { padding: 24px 16px; border-radius: var(--radius-md); }
+  .auth-form-title { font-size: 19px; }
+  .input, .select { padding: 12px 14px; font-size: 16px; }
+  .btn { padding: 14px 20px; font-size: 16px; min-height: 48px; }
+}
