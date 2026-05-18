@@ -5,6 +5,18 @@
   margin-bottom: 32px;
 }
 
+@media (max-width: 1200px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+}
+
+@media (max-width: 768px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+}
+
+@media (max-width: 480px) {
+  .grid-4 { grid-template-columns: 1fr; gap: 12px; }
+}
+
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -750,12 +762,16 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-height: 180px;
+  box-sizing: border-box;
 }
 
 .stat-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--panel-border);
 }
 
 .stat-card-title {
@@ -773,7 +789,9 @@
 .stat-card-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .stat-card-item {
@@ -781,22 +799,29 @@
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  padding: 6px 8px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
   transition: background-color var(--transition);
+  cursor: pointer;
 }
 
 .stat-card-item:hover {
-  background-color: rgba(59, 130, 246, 0.06);
+  background-color: rgba(59, 130, 246, 0.08);
 }
 
 .stat-card-item-name {
   color: var(--muted);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 8px;
 }
 
 .stat-card-item-count {
   font-weight: 600;
   color: var(--text);
+  flex-shrink: 0;
 }
 
 .history-card {
@@ -1017,7 +1042,6 @@
   .grid { grid-template-columns: 1fr; }
   .grid-2 { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr; gap: 12px; }
-  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
 
   /* JobCard：竖向布局，收藏按钮右上角 */
   .job-card {
@@ -1056,11 +1080,35 @@
     width: 100% !important;
   }
 
-  /* 统计卡片 */
-  .stat-card { padding: 14px; border-radius: var(--radius-md); }
-  .stat-card-list { display: none; }
-  .stat-card-value { font-size: 22px; }
-  .stat-card-item { padding: 5px 6px; font-size: 12px; }
+  /* 统计卡片 - 优化移动端显示 */
+  .stat-card {
+    padding: 14px;
+    border-radius: var(--radius-md);
+    min-height: 140px;
+  }
+
+  .stat-card-header {
+    padding-bottom: 6px;
+  }
+
+  .stat-card-title { font-size: 13px; }
+  .stat-card-value { font-size: 20px; }
+  .stat-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+  }
+
+  .stat-card-item {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .stat-card-item-name {
+    font-size: 11px;
+  }
 
   /* MetricCard */
   .metric-card { padding: 14px; }
@@ -1154,8 +1202,7 @@
   .topbar-title { font-size: 16px; }
   .topbar-subtitle { display: none; }
 
-  /* Grid 进一步压缩 */
-  .grid-4 { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+  /* Grid 进一步压缩 - 移除重复的 grid-4 定义，已在上方统一定义 */
   .metric-card { padding: 12px; }
   .metric-value { font-size: 22px; }
   .metric-hint { font-size: 10px; }
@@ -1215,7 +1262,6 @@
 
 /* ======== 平板竖屏 (769px ~ 1024px) ======== */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .main-shell { padding: 24px 28px; }
   .job-detail-modal { max-width: 720px; }
