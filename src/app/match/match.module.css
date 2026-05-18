@@ -54,16 +54,16 @@
 
 .stepActive {
   background: var(--primary);
-  color: #fff;
+  color: var(--panel);
 }
 
 .stepDone {
   background: var(--primary);
-  color: #fff;
+  color: var(--panel);
 }
 
 .stepPending {
-  background: #e2e8f0;
+  background: var(--bg-subtle);
   color: var(--muted);
 }
 
@@ -78,7 +78,7 @@
 }
 
 .stepLinePending {
-  background: #e2e8f0;
+  background: var(--bg-subtle);
 }
 
 .stepLabel {
@@ -91,9 +91,9 @@
 .errorNotice {
   max-width: 672px;
   margin: 0 auto 24px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #b91c1c;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: var(--danger);
   padding: 12px 16px;
   border-radius: var(--radius-md);
   font-size: 14px;
@@ -205,8 +205,8 @@
 .skillTag {
   display: inline-block;
   padding: 4px 10px;
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: rgba(59,130,246,0.12);
+  color: var(--primary-hover);
   border-radius: var(--radius-sm);
   font-size: 13px;
   margin: 4px 4px 4px 0;
@@ -249,13 +249,13 @@
 }
 
 .confirmBtnOutline:hover {
-  background: #f1f5f9;
+  background: var(--bg-subtle);
 }
 
 .confirmBtnPrimary {
   flex: 1;
   background: var(--primary);
-  color: #fff;
+  color: var(--panel);
   padding: 12px 24px;
   border: none;
   border-radius: var(--radius-md);
@@ -357,11 +357,11 @@
 }
 
 .reportMetricBlue {
-  background: #eff6ff;
+  background: rgba(59,130,246,0.08);
 }
 
 .reportMetricGreen {
-  background: #f0fdf4;
+  background: rgba(16,185,129,0.08);
 }
 
 .reportMetricLabel {
@@ -400,8 +400,8 @@
 .resetBtn {
   display: block;
   margin: 32px auto 0;
-  background: #64748b;
-  color: #fff;
+  background: var(--muted);
+  color: var(--panel);
   padding: 12px 24px;
   border: none;
   border-radius: var(--radius-md);
@@ -410,5 +410,5 @@
 }
 
 .resetBtn:hover {
-  background: #475569;
+  background: var(--text);
 }

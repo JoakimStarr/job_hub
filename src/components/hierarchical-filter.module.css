@@ -1,0 +1,156 @@
+.hierarchicalFilter {
+  position: relative;
+  min-width: 180px;
+}
+
+.filterLabel {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.filterTrigger {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  background: var(--panel);
+  cursor: pointer;
+  min-height: 38px;
+}
+
+.filterTrigger:hover {
+  border-color: var(--primary);
+}
+
+.filterValue {
+  flex: 1;
+  color: var(--text);
+}
+
+.filterPlaceholder {
+  flex: 1;
+  color: var(--muted);
+}
+
+.filterClear {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 0 4px;
+  font-size: 16px;
+}
+
+.filterClear:hover {
+  color: var(--danger);
+}
+
+.filterArrow {
+  color: var(--muted);
+  font-size: 10px;
+  margin-left: 8px;
+}
+
+.filterDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.filterSearch {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  border-bottom: 1px solid var(--panel-border);
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+  color: var(--text);
+}
+
+.filterOption {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.filterOption:hover {
+  background: var(--bg-subtle);
+}
+
+.filterOptionSelected {
+  background: rgba(59,130,246,0.08);
+  color: var(--primary);
+}
+
+.filterOptionName {
+  flex: 1;
+}
+
+.filterOptionCount {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.filterHierarchical {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.filterGroupHeader {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-subtle);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.filterGroupHeader:hover {
+  background: var(--panel-border);
+}
+
+.filterExpandIcon {
+  width: 16px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.filterGroupName {
+  flex: 1;
+}
+
+.filterGroupCount {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.filterGroupItems {
+  padding-left: 16px;
+}
+
+.filterOptionChild {
+  padding-left: 24px;
+}
+
+.filterMore {
+  padding: 8px 12px;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  background: var(--bg-subtle);
+}

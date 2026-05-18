@@ -48,23 +48,23 @@
 }
 
 .statCardGreen {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
 }
 
 .statCardBlue {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: rgba(59,130,246,0.08);
+  border: 1px solid rgba(59,130,246,0.2);
 }
 
 .statCardYellow {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.2);
 }
 
 .statCardRed {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
 }
 
 .statValue {
@@ -93,19 +93,19 @@
 }
 
 .statLabelGreen {
-  color: #065f46;
+  color: rgba(6,95,70,1);
 }
 
 .statLabelBlue {
-  color: #1e40af;
+  color: rgba(30,64,175,1);
 }
 
 .statLabelYellow {
-  color: #92400e;
+  color: rgba(146,64,14,1);
 }
 
 .statLabelRed {
-  color: #991b1b;
+  color: rgba(153,27,27,1);
 }
 
 .cardList {
@@ -182,7 +182,7 @@
 
 .progressBarBg {
   width: 100%;
-  background: #e2e8f0;
+  background: var(--bg-subtle);
   border-radius: 9999px;
   height: 8px;
   margin-bottom: 16px;
@@ -235,16 +235,16 @@
 
 .matchTag {
   padding: 4px 8px;
-  background: #d1fae5;
-  color: #065f46;
+  background: rgba(16,185,129,0.12);
+  color: rgba(6,95,70,1);
   border-radius: var(--radius-sm);
   font-size: 12px;
 }
 
 .gapTag {
   padding: 4px 8px;
-  background: #fee2e2;
-  color: #991b1b;
+  background: rgba(239,68,68,0.08);
+  color: rgba(153,27,27,1);
   border-radius: var(--radius-sm);
   font-size: 12px;
 }
@@ -257,7 +257,7 @@
 .viewBtn {
   flex: 1;
   background: var(--primary);
-  color: #fff;
+  color: var(--panel);
   padding: 8px 16px;
   border-radius: var(--radius-sm);
   border: none;
@@ -272,7 +272,7 @@
 
 .exportBtn {
   padding: 8px 16px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--panel-border);
   border-radius: var(--radius-sm);
   background: transparent;
   font-size: 14px;
@@ -281,5 +281,5 @@
 }
 
 .exportBtn:hover {
-  background: #f9fafb;
+  background: var(--bg-subtle);
 }

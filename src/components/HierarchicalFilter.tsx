@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react';
 import type { FilterOption, ProvinceWithCities, EducationMapping } from '@/types';
+import styles from './hierarchical-filter.module.css';
 
 interface HierarchicalFilterProps {
   label: string;
@@ -115,59 +116,54 @@ export function HierarchicalFilter({
   const selectedOption = options.find((opt) => opt.name === value);
 
   return (
-    <div className="hierarchical-filter" ref={containerRef}>
-      <label className="filter-label">{label}</label>
-      <div className="filter-trigger" onClick={() => setIsOpen(!isOpen)}>
-        <span className={value ? 'filter-value' : 'filter-placeholder'}>
+    <div className={styles.hierarchicalFilter} ref={containerRef}>
+      <label className={styles.filterLabel}>{label}</label>
+      <div className={styles.filterTrigger} onClick={() => setIsOpen(!isOpen)}>
+        <span className={value ? styles.filterValue : styles.filterPlaceholder}>
           {selectedOption ? `${selectedOption.name} (${selectedOption.count})` : placeholder}
         </span>
         {value && (
-          <button className="filter-clear" onClick={handleClear}>
+          <button className={styles.filterClear} onClick={handleClear}>
             ×
           </button>
         )}
-        <span className="filter-arrow">{isOpen ? '▲' : '▼'}</span>
+        <span className={styles.filterArrow}>{isOpen ? '▲' : '▼'}</span>
       </div>
 
       {isOpen && (
-        <div className="filter-dropdown">
+        <div className={styles.filterDropdown}>
           <input
             type="text"
-            className="filter-search"
+            className={styles.filterSearch}
             placeholder="搜索..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             autoFocus
           />
 
-          <div className="filter-option" onClick={() => handleSelect('')}>
-            <span className="filter-option-name">{placeholder}</span>
+          <div className={styles.filterOption} onClick={() => handleSelect('')}>
+            <span className={styles.filterOptionName}>{placeholder}</span>
           </div>
 
           {mode === 'hierarchical' && filteredProvinces.length > 0 ? (
-            <div className="filter-hierarchical">
+            <div className={styles.filterHierarchical}>
               {filteredProvinces.map((province) => (
-                <div key={province.province} className="filter-group">
-                  <div
-                    className="filter-group-header"
-                    onClick={() => toggleProvince(province.province)}
-                  >
-                    <span className="filter-expand-icon">
-                      {expandedProvinces.has(province.province) ? '▼' : '▶'}
-                    </span>
-                    <span className="filter-group-name">{province.province}</span>
-                    <span className="filter-group-count">({province.count})</span>
-                  </div>
+                <div key={province.province} className={styles.filterGroupHeader} onClick={() => toggleProvince(province.province)}>
+                  <span className={styles.filterExpandIcon}>
+                    {expandedProvinces.has(province.province) ? '▼' : '▶'}
+                  </span>
+                  <span className={styles.filterGroupName}>{province.province}</span>
+                  <span className={styles.filterGroupCount}>({province.count})</span>
                   {expandedProvinces.has(province.province) && (
-                    <div className="filter-group-items">
+                    <div className={styles.filterGroupItems}>
                       {province.cities.map((city) => (
                         <div
                           key={city.name}
-                          className={`filter-option filter-option-child ${value === city.name ? 'selected' : ''}`}
+                          className={`${styles.filterOption} ${styles.filterOptionChild} ${value === city.name ? styles.filterOptionSelected : ''}`}
                           onClick={() => handleSelect(city.name)}
                         >
-                          <span className="filter-option-name">{city.name}</span>
-                          <span className="filter-option-count">({city.count})</span>
+                          <span className={styles.filterOptionName}>{city.name}</span>
+                          <span className={styles.filterOptionCount}>({city.count})</span>
                         </div>
                       ))}
                     </div>
@@ -176,168 +172,35 @@ export function HierarchicalFilter({
               ))}
             </div>
           ) : mode === 'education' && educationLevels.length > 0 ? (
-            <div className="filter-education">
+            <div className={styles.filterHierarchical}>
               {educationLevels.map((level) => (
-                <div key={level.level} className="filter-option" onClick={() => handleSelect(level.name)}>
-                  <span className="filter-option-name">{level.name}</span>
-                  <span className="filter-option-count">
+                <div key={level.level} className={styles.filterOption} onClick={() => handleSelect(level.name)}>
+                  <span className={styles.filterOptionName}>{level.name}</span>
+                  <span className={styles.filterOptionCount}>
                     ({level.options.reduce((sum, o) => sum + o.count, 0)})
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="filter-list">
+            <div className={styles.filterHierarchical}>
               {filteredOptions.slice(0, 50).map((option) => (
                 <div
                   key={option.name}
-                  className={`filter-option ${value === option.name ? 'selected' : ''}`}
+                  className={`${styles.filterOption} ${value === option.name ? styles.filterOptionSelected : ''}`}
                   onClick={() => handleSelect(option.name)}
                 >
-                  <span className="filter-option-name">{option.name}</span>
-                  <span className="filter-option-count">({option.count})</span>
+                  <span className={styles.filterOptionName}>{option.name}</span>
+                  <span className={styles.filterOptionCount}>({option.count})</span>
                 </div>
               ))}
               {filteredOptions.length > 50 && (
-                <div className="filter-more">还有 {filteredOptions.length - 50} 个选项，请输入关键词搜索</div>
+                <div className={styles.filterMore}>还有 {filteredOptions.length - 50} 个选项，请输入关键词搜索</div>
               )}
             </div>
           )}
         </div>
       )}
-
-      <style jsx>{`
-        .hierarchical-filter {
-          position: relative;
-          min-width: 180px;
-        }
-        .filter-label {
-          display: block;
-          font-size: 12px;
-          color: #666;
-          margin-bottom: 4px;
-        }
-        .filter-trigger {
-          display: flex;
-          align-items: center;
-          padding: 8px 12px;
-          border: 1px solid #e0e0e0;
-          border-radius: 6px;
-          background: white;
-          cursor: pointer;
-          min-height: 38px;
-        }
-        .filter-trigger:hover {
-          border-color: #1890ff;
-        }
-        .filter-value {
-          flex: 1;
-          color: #333;
-        }
-        .filter-placeholder {
-          flex: 1;
-          color: #999;
-        }
-        .filter-clear {
-          background: none;
-          border: none;
-          color: #999;
-          cursor: pointer;
-          padding: 0 4px;
-          font-size: 16px;
-        }
-        .filter-clear:hover {
-          color: #ff4d4f;
-        }
-        .filter-arrow {
-          color: #999;
-          font-size: 10px;
-          margin-left: 8px;
-        }
-        .filter-dropdown {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          margin-top: 4px;
-          background: white;
-          border: 1px solid #e0e0e0;
-          border-radius: 6px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-          z-index: 1000;
-          max-height: 320px;
-          overflow-y: auto;
-        }
-        .filter-search {
-          width: 100%;
-          padding: 8px 12px;
-          border: none;
-          border-bottom: 1px solid #e0e0e0;
-          outline: none;
-          font-size: 14px;
-        }
-        .filter-option {
-          display: flex;
-          justify-content: space-between;
-          padding: 8px 12px;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-        .filter-option:hover {
-          background: #f5f5f5;
-        }
-        .filter-option.selected {
-          background: #e6f7ff;
-          color: #1890ff;
-        }
-        .filter-option-name {
-          flex: 1;
-        }
-        .filter-option-count {
-          color: #999;
-          font-size: 12px;
-        }
-        .filter-hierarchical {
-          max-height: 280px;
-          overflow-y: auto;
-        }
-        .filter-group-header {
-          display: flex;
-          align-items: center;
-          padding: 8px 12px;
-          background: #fafafa;
-          cursor: pointer;
-          font-weight: 500;
-        }
-        .filter-group-header:hover {
-          background: #f0f0f0;
-        }
-        .filter-expand-icon {
-          width: 16px;
-          font-size: 10px;
-          color: #999;
-        }
-        .filter-group-name {
-          flex: 1;
-        }
-        .filter-group-count {
-          color: #999;
-          font-size: 12px;
-        }
-        .filter-group-items {
-          padding-left: 16px;
-        }
-        .filter-option-child {
-          padding-left: 24px;
-        }
-        .filter-more {
-          padding: 8px 12px;
-          color: #999;
-          font-size: 12px;
-          text-align: center;
-          background: #fafafa;
-        }
-      `}</style>
     </div>
   );
 }

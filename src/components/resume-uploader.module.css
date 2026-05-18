@@ -13,7 +13,7 @@
 }
 
 .dropZone {
-  border: 2px dashed #d1d5db;
+  border: 2px dashed var(--panel-border);
   border-radius: var(--radius-lg);
   padding: 32px;
   text-align: center;
@@ -22,7 +22,7 @@
 
 .dropZoneActive {
   border-color: var(--primary);
-  background: #eff6ff;
+  background: rgba(59,130,246,0.08);
 }
 
 .parsing {
@@ -36,7 +36,7 @@
 
 .progressBarBg {
   width: 100%;
-  background: #e2e8f0;
+  background: var(--bg-subtle);
   border-radius: 9999px;
   height: 16px;
 }
@@ -58,7 +58,7 @@
   margin: 0 auto;
   height: 48px;
   width: 48px;
-  color: #9ca3af;
+  color: var(--muted);
 }
 
 .uploadTitle {
@@ -79,7 +79,7 @@
 .uploadBtn {
   cursor: pointer;
   background: var(--primary);
-  color: #fff;
+  color: var(--panel);
   padding: 8px 24px;
   border-radius: var(--radius-lg);
   transition: background var(--transition);
@@ -104,7 +104,7 @@
 
 .dividerLine {
   flex: 1;
-  border-top: 1px solid #d1d5db;
+  border-top: 1px solid var(--panel-border);
 }
 
 .dividerText {
@@ -117,7 +117,7 @@
   width: 100%;
   height: 256px;
   padding: 16px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--panel-border);
   border-radius: var(--radius-lg);
   outline: none;
   resize: none;
@@ -136,7 +136,7 @@
   margin-top: 16px;
   width: 100%;
   background: var(--success);
-  color: #fff;
+  color: var(--panel);
   padding: 12px 24px;
   border-radius: var(--radius-lg);
   border: none;
@@ -146,10 +146,10 @@
 }
 
 .submitBtn:hover {
-  background: #059669;
+  background: rgba(5,150,105,1);
 }
 
 .submitBtn:disabled {
-  background: #d1d5db;
+  background: var(--panel-border);
   cursor: not-allowed;
 }

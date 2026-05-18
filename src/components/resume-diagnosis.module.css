@@ -19,7 +19,7 @@
 }
 
 .pulseLine {
-  background: #e2e8f0;
+  background: var(--bg-subtle);
   border-radius: var(--radius-sm);
 }
 
@@ -58,19 +58,19 @@
 }
 
 .scoreCardGreen {
-  background: #d1fae5;
+  background: rgba(16,185,129,0.12);
 }
 
 .scoreCardBlue {
-  background: #dbeafe;
+  background: rgba(59,130,246,0.12);
 }
 
 .scoreCardYellow {
-  background: #fef3c7;
+  background: rgba(245,158,11,0.12);
 }
 
 .scoreCardRed {
-  background: #fee2e2;
+  background: rgba(239,68,68,0.08);
 }
 
 .scoreCardHeader {
@@ -118,12 +118,12 @@
 .scoreMaxValue {
   font-size: 24px;
   font-weight: 700;
-  color: #9ca3af;
+  color: var(--muted);
 }
 
 .scoreBarBg {
   width: 100%;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.3);
   border-radius: 9999px;
   height: 12px;
 }
@@ -220,7 +220,7 @@
 .actionBtn {
   width: 100%;
   background: var(--primary);
-  color: #fff;
+  color: var(--panel);
   padding: 12px 24px;
   border-radius: var(--radius-lg);
   border: none;
