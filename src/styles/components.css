@@ -1086,3 +1086,7 @@
   .recommendations-layout > div:first-child { flex: 1 1 auto !important; width: 100% !important; }
   .recommendations-layout > div:last-child { flex: 1 1 auto !important; width: 100% !important; }
 }
+
+.refresh-btn .spin-icon {
+  animation: spin 0.8s linear infinite;
+}

@@ -130,6 +130,7 @@ export default function SystemPage() {
   }
 
   async function handleCleanHistory() {
+    if (!window.confirm(`确定要清洗历史岗位数据吗？这将清除约 ${status?.database?.total_jobs ?? 0} 条记录，且不可撤销。`)) return;
     setCleaning(true);
     try {
       await API.cleanHistoricalData(500);
@@ -178,7 +179,7 @@ export default function SystemPage() {
 
         {activeTab === 'config' && (
           loading ? <Skeleton type="card" /> : (
-            <div style={{ marginTop: 10 }}>
+            <div id="panel-config" role="tabpanel" aria-labelledby="tab-config" style={{ marginTop: 10 }}>
               <div className="grid-2" style={{ gap: 24 }}>
                 <label>
                   <div style={{ marginBottom: 8, fontWeight: 700 }}>配置 JSON</div>
@@ -235,7 +236,7 @@ export default function SystemPage() {
 
         {activeTab === 'subscriptions' && (
           loading ? <Skeleton type="card" /> : (
-            <div style={{ marginTop: 10 }}>
+            <div id="panel-subscriptions" role="tabpanel" aria-labelledby="tab-subscriptions" style={{ marginTop: 10 }}>
               <SubscriptionPanel
                 subscriptions={subscriptions}
                 reload={loadSystemData}
@@ -257,7 +258,7 @@ export default function SystemPage() {
 
         {activeTab === 'diagnostics' && (
           loading ? <Skeleton type="card" /> : (
-            <div className="grid-2" style={{ marginTop: 10 }}>
+            <div id="panel-diagnostics" role="tabpanel" aria-labelledby="tab-diagnostics" className="grid-2" style={{ marginTop: 10 }}>
               <div className="glass-card" style={{ padding: 18, borderRadius: 22 }}>
                 <div style={{ fontWeight: 800, marginBottom: 12 }}>最近错误</div>
                 {(status?.recent_errors || []).length === 0 ? (
@@ -379,6 +380,7 @@ function SubscriptionPanel({
   }
 
   async function handleDelete(item: SubscriptionItem) {
+    if (!window.confirm('确定要删除此订阅配置吗？此操作不可撤销。')) return;
     setDeletingId(item.id);
     try {
       await API.deleteSubscription(item.id);

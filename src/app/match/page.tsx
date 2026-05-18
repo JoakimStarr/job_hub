@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AppShell } from '@/components/app-shell';
 import ResumeUploader from '@/components/ResumeUploader';
 import MatchResults from '@/components/MatchResults';
 import ResumeDiagnosis from '@/components/ResumeDiagnosis';
@@ -117,7 +118,7 @@ export default function MatchPage() {
   };
 
   return (
-    <div className={styles.matchPage}>
+    <AppShell title="简历匹配" description="上传简历分析并匹配最佳岗位" requiredPermission="view_jobs">
       <div className={styles.matchInner}>
         <div className={styles.matchHeader}>
           <h1 className={styles.matchTitle}>简历智能匹配</h1>
@@ -126,7 +127,14 @@ export default function MatchPage() {
           </p>
         </div>
 
-        <div className={styles.steps}>
+        <div
+          className={styles.steps}
+          role="progressbar"
+          aria-valuenow={currentStepIndex + 1}
+          aria-valuemin={1}
+          aria-valuemax={STEP_ORDER.length}
+          aria-label="简历匹配进度"
+        >
           {STEP_ORDER.map((step, index) => (
             <div key={step} className={styles.stepItem}>
               <div
@@ -316,6 +324,6 @@ export default function MatchPage() {
           </div>
         )}
       </div>
-    </div>
+    </AppShell>
   );
 }

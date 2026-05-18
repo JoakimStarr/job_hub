@@ -110,7 +110,8 @@ export function LoginClient() {
             <Button type="submit" disabled={loading}>{loading ? '正在登录...' : '登录并进入平台'}</Button>
           </form>
 
-          <div className="auth-note">
+          {process.env.NODE_ENV === 'development' && (
+          <div className="demo-hint">
             <div style={{ fontWeight: 800, marginBottom: 8 }}>默认账号</div>
             <div style={{ color: 'var(--muted)', lineHeight: 1.8, fontSize: 13 }}>
               <div><strong>admin</strong> / <code style={{ background: 'var(--panel)', padding: '2px 6px', borderRadius: 4 }}>finintern-admin-2024</code> — 全部权限</div>
@@ -118,6 +119,7 @@ export function LoginClient() {
               <div><strong>viewer</strong> / <code style={{ background: 'var(--panel)', padding: '2px 6px', borderRadius: 4 }}>finintern-viewer-2024</code> — 只读权限</div>
             </div>
           </div>
+          )}
         </section>
       </div>
     </main>

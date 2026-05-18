@@ -152,6 +152,7 @@ export default function CrawlerPage() {
               variant="danger"
               disabled={runningAction || !status?.is_running}
               onClick={async () => {
+                if (!window.confirm('确定要停止爬虫任务吗？正在采集的数据可能不完整。')) return;
                 setRunningAction(true);
                 try {
                   await API.stopCrawler();
