@@ -153,3 +153,30 @@
   background: var(--panel-border);
   cursor: not-allowed;
 }
+
+/* ======== 移动端适配 ======== */
+@media (max-width: 768px) {
+  .container { max-width: none; padding: 20px 16px; }
+  .title { font-size: 20px; margin-bottom: 20px; }
+  .dropZone { padding: 24px 16px; border-radius: var(--radius-md); }
+  .uploadIcon { width: 40px; height: 40px; }
+  .uploadTitle { font-size: 16px; }
+  .uploadHint { font-size: 13px; }
+  .parsingText { font-size: 16px; }
+  .progressBarBg { height: 12px; }
+  .resumeTextarea { height: 200px; padding: 14px; font-size: 14px; }
+  .submitBtn { padding: 14px 20px; font-size: 15px; min-height: 46px; }
+  .dividerText { font-size: 13px; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 16px 10px; }
+  .title { font-size: 18px; text-align: center; }
+  .dropZone { padding: 20px 12px; }
+  .uploadIcon { width: 36px; height: 36px; }
+  .uploadTitle { font-size: 15px; }
+  .parsingText { font-size: 15px; }
+  .progressBarBg { height: 10px; }
+  .resumeTextarea { height: 160px; padding: 12px; font-size: 16px; }
+  .submitBtn { padding: 14px 20px; font-size: 15px; min-height: 48px; }
+}

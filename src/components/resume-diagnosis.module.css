@@ -232,3 +232,43 @@
 .actionBtn:hover {
   background: var(--primary-hover);
 }
+
+/* ======== 移动端适配 ======== */
+@media (max-width: 768px) {
+  .container { max-width: none; padding: 20px 16px; }
+  .title { font-size: 20px; margin-bottom: 20px; }
+  
+  .scoreCard { padding: 18px; margin-bottom: 18px; border-radius: var(--radius-md); }
+  .scoreValue { font-size: 40px; }
+  .scoreMaxValue { font-size: 20px; }
+  .scoreBarBg, .scoreBarFill { height: 10px; }
+  
+  .section { margin-bottom: 18px; }
+  .sectionTitle { font-size: 16px; margin-bottom: 10px; }
+  .sectionList { gap: 6px; }
+  .sectionItem { font-size: 14px; }
+  
+  .actionBtn { padding: 14px 20px; font-size: 15px; min-height: 46px; border-radius: var(--radius-md); }
+  
+  .loading { padding: 20px 16px; }
+  .pulseLineSm { height: 24px; }
+  .pulseLineMd { height: 96px; }
+  .pulseLineLg { height: 72px; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 16px 12px; }
+  .title { font-size: 18px; margin-bottom: 16px; text-align: center; }
+  
+  .scoreCard { padding: 14px; margin-bottom: 14px; }
+  .scoreValue { font-size: 36px; }
+  .scoreMaxValue { font-size: 18px; }
+  .scoreLabel, .scoreMaxLabel { font-size: 12px; }
+  .scoreBarBg, .scoreBarFill { height: 8px; }
+  
+  .section { margin-bottom: 16px; }
+  .sectionTitle { font-size: 15px; margin-bottom: 8px; }
+  .sectionText { font-size: 13px; }
+  
+  .actionBtn { min-height: 48px; padding: 14px 20px; font-size: 15px; }
+}
