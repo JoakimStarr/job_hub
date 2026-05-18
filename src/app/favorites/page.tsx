@@ -52,66 +52,27 @@ export default function FavoritesPage() {
     void loadFavorites(1, '');
   }, [loadFavorites]);
 
-  const handleToggleFavorite = useCallback(async (job: JobItem) => {
+  const handleToggleFavorite = useCallback(async (job: JobItem, source?: 'list' | 'detail') => {
+    const newFavoriteState = job.is_favorite ? 0 : 1;
+
     setFavorites((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
         items: prev.items.filter((item) => item.id !== job.id),
-        total: prev.total - 1,
+        total: Math.max(0, prev.total - 1),
       };
     });
 
-    if (selectedJob?.id === job.id) {
-      setSelectedJob((prev) => (prev ? { ...prev, is_favorite: 0 } : null));
+    if (source === 'detail') {
+      setSelectedJob((prev) =>
+        prev && prev.id === job.id ? { ...prev, is_favorite: newFavoriteState } : null
+      );
     }
 
     try {
       await API.toggleFavorite(job.id);
-      toast.success('已取消收藏');
-    } catch (err) {
-      void loadFavorites(page, query);
-      const errorMsg = err instanceof Error ? err.message : '操作失败';
-      if (err instanceof APIError && err.status === 404) {
-        toast.error('收藏接口不存在，请检查后端服务');
-      } else if (err instanceof APIError && err.status === 500) {
-        toast.error('服务器内部错误，收藏操作失败');
-      } else if (err instanceof APIError && err.status === 401) {
-        toast.error('登录已过期，请重新登录');
-      } else {
-        toast.error(errorMsg);
-      }
-    }
-  }, [page, query, loadFavorites, selectedJob, toast]);
-
-  const handleJobClick = useCallback((job: JobItem) => {
-    setSelectedJob(job);
-  }, []);
-
-  const handleCloseDetail = useCallback(() => {
-    setSelectedJob(null);
-  }, []);
-
-  const handleDetailToggleFavorite = useCallback(async (job: JobItem) => {
-    setFavorites((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        items: prev.items.filter((item) => item.id !== job.id),
-        total: prev.total - 1,
-      };
-    });
-
-    setSelectedJob((prev) => {
-      if (prev && prev.id === job.id) {
-        return { ...prev, is_favorite: 0 };
-      }
-      return prev;
-    });
-
-    try {
-      await API.toggleFavorite(job.id);
-      toast.success('已取消收藏');
+      toast.success(newFavoriteState ? '已添加到收藏' : '已取消收藏');
     } catch (err) {
       void loadFavorites(page, query);
       const errorMsg = err instanceof Error ? err.message : '操作失败';
@@ -126,6 +87,14 @@ export default function FavoritesPage() {
       }
     }
   }, [page, query, loadFavorites, toast]);
+
+  const handleJobClick = useCallback((job: JobItem) => {
+    setSelectedJob(job);
+  }, []);
+
+  const handleCloseDetail = useCallback(() => {
+    setSelectedJob(null);
+  }, []);
 
   const items = favorites?.items || [];
   const statsLoading = loading && !favorites;
@@ -205,7 +174,7 @@ export default function FavoritesPage() {
         <JobDetailModal
           job={selectedJob}
           onClose={handleCloseDetail}
-          onToggleFavorite={handleDetailToggleFavorite}
+          onToggleFavorite={(job) => handleToggleFavorite(job, 'detail')}
         />
       ) : null}
     </AppShell>

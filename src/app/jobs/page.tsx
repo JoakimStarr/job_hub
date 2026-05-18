@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, SectionCard, Skeleton } from '@/components/ui';
 import { Pagination } from '@/components/Pagination';
+import { RefreshButton } from '@/components/RefreshButton';
 import { HierarchicalFilter } from '@/components/HierarchicalFilter';
 import { LoadingSpinner, SkeletonCard, SkeletonMetric } from '@/components/Loading';
 import { ErrorMessage, useToast } from '@/components/Toast';
@@ -45,6 +46,7 @@ export default function JobsPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
+  const [statsExpanded, setStatsExpanded] = useState(false);
   const requestIdRef = useRef(0);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -234,127 +236,111 @@ export default function JobsPage() {
       {loading ? (
         <SkeletonMetric count={4} />
       ) : (
-        <div className="grid-4">
-          <div className="stat-card">
-            <div className="stat-card-header">
-              <div className="stat-card-title">来源分布</div>
-              <Badge tone="blue">TOP 5</Badge>
+        <SectionCard
+          title={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>数据概览</span>
+              <button
+                onClick={() => setStatsExpanded((v) => !v)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: 12 }}
+                aria-label={statsExpanded ? '收起统计面板' : '展开统计面板'}
+              >
+                {statsExpanded ? '▲ 收起' : '▼ 展开'}
+              </button>
             </div>
-            <div className="stat-card-list">
-              {(filters.sources || []).slice(0, 5).map((item) => (
-                <div
-                  key={item.name}
-                  className="stat-card-item"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => { setSource(item.name); setPage(1); }}
-                >
-                  <span className="stat-card-item-name">{item.name}</span>
-                  <span className="stat-card-item-count">{item.count}</span>
+          }
+        >
+          {statsExpanded ? (
+            <div className="grid-4">
+              <div className="stat-card">
+                <div className="stat-card-header">
+                  <div className="stat-card-title">来源分布</div>
+                  <Badge tone="blue">TOP 5</Badge>
                 </div>
-              ))}
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-card-header">
-              <div className="stat-card-title">岗位类型</div>
-              <Badge tone="emerald">TOP 5</Badge>
-            </div>
-            <div className="stat-card-list">
-              {(filters.job_types || []).slice(0, 5).map((item) => (
-                <div
-                  key={item.name}
-                  className="stat-card-item"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => { setJobType(item.name); setPage(1); }}
-                >
-                  <span className="stat-card-item-name">{item.name}</span>
-                  <span className="stat-card-item-count">{item.count}</span>
+                <div className="stat-card-list">
+                  {(filters.sources || []).slice(0, 5).map((item) => (
+                    <div
+                      key={item.name}
+                      className="stat-card-item"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => { setSource(item.name); setPage(1); }}
+                    >
+                      <span className="stat-card-item-name">{item.name}</span>
+                      <span className="stat-card-item-count">{item.count}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-card-header">
-              <div className="stat-card-title">地点热度</div>
-              <Badge tone="amber">TOP 5</Badge>
-            </div>
-            <div className="stat-card-list">
-              {(filters.locations || []).slice(0, 5).map((item) => (
-                <div
-                  key={item.name}
-                  className="stat-card-item"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => { setLocation(item.name); setPage(1); }}
-                >
-                  <span className="stat-card-item-name">{item.name}</span>
-                  <span className="stat-card-item-count">{item.count}</span>
+              </div>
+              <div className="stat-card">
+                <div className="stat-card-header">
+                  <div className="stat-card-title">岗位类型</div>
+                  <Badge tone="emerald">TOP 5</Badge>
                 </div>
-              ))}
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-card-header">
-              <div className="stat-card-title">行业分布</div>
-              <Badge tone="violet">TOP 5</Badge>
-            </div>
-            <div className="stat-card-list">
-              {(filters.industries || []).slice(0, 5).map((item) => (
-                <div
-                  key={item.name}
-                  className="stat-card-item"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => { setIndustry(item.name); setPage(1); }}
-                >
-                  <span className="stat-card-item-name">{item.name}</span>
-                  <span className="stat-card-item-count">{item.count}</span>
+                <div className="stat-card-list">
+                  {(filters.job_types || []).slice(0, 5).map((item) => (
+                    <div
+                      key={item.name}
+                      className="stat-card-item"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => { setJobType(item.name); setPage(1); }}
+                    >
+                      <span className="stat-card-item-name">{item.name}</span>
+                      <span className="stat-card-item-count">{item.count}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+              <div className="stat-card">
+                <div className="stat-card-header">
+                  <div className="stat-card-title">地点热度</div>
+                  <Badge tone="amber">TOP 5</Badge>
+                </div>
+                <div className="stat-card-list">
+                  {(filters.locations || []).slice(0, 5).map((item) => (
+                    <div
+                      key={item.name}
+                      className="stat-card-item"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => { setLocation(item.name); setPage(1); }}
+                    >
+                      <span className="stat-card-item-name">{item.name}</span>
+                      <span className="stat-card-item-count">{item.count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="stat-card">
+                <div className="stat-card-header">
+                  <div className="stat-card-title">行业分布</div>
+                  <Badge tone="violet">TOP 5</Badge>
+                </div>
+                <div className="stat-card-list">
+                  {(filters.industries || []).slice(0, 5).map((item) => (
+                    <div
+                      key={item.name}
+                      className="stat-card-item"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => { setIndustry(item.name); setPage(1); }}
+                    >
+                      <span className="stat-card-item-name">{item.name}</span>
+                      <span className="stat-card-item-count">{item.count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          ) : (
+            <div style={{ padding: '16px 0', textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>
+              数据概览面板已折叠 · 共 {(filters.sources || []).length} 个来源 · {(filters.job_types || []).length} 个类型 · {(filters.locations || []).length} 个地点 · {(filters.industries || []).length} 个行业
+            </div>
+          )}
+        </SectionCard>
       )}
 
       <SectionCard
         title="岗位结果"
         description="点击卡片查看详情，点击星星切换收藏状态"
-        action={
-          <button
-            onClick={() => void loadJobs(true)}
-            disabled={refreshing}
-            className="refresh-icon-btn"
-            aria-label="刷新数据"
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: refreshing ? 'not-allowed' : 'pointer',
-              padding: '8px',
-              borderRadius: 'var(--radius-md)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all var(--transition)',
-              color: 'var(--muted)',
-            }}
-            onMouseEnter={(e) => { if (!refreshing) e.currentTarget.style.color = 'var(--primary)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--muted)'; }}
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }}
-            >
-              <path d="M23 4v6h-6"></path>
-              <path d="M1 20v-6h6"></path>
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-          </button>
-        }
+        action={<RefreshButton onRefresh={() => void loadJobs(true)} />}
       >
         {loading ? (
           <SkeletonCard count={5} />

@@ -16,7 +16,7 @@ export const SectionCard = memo(function SectionCard({
   children,
   className,
 }: {
-  title: string;
+  title: ReactNode;
   description?: string;
   action?: ReactNode;
   children: ReactNode;
@@ -114,25 +114,8 @@ export const Badge = memo(function Badge({ children, tone = 'slate', style, onCl
 });
 
 export const EmptyState = memo(function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
-  const isNetworkError = /网络|连接|超时|timeout|network/i.test(description);
-  const isError = /错误|失败|error|404|500/i.test(title) || isNetworkError;
-
   return (
     <div className="empty-state">
-      {isError ? (
-        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="2.5" opacity="0.15" />
-          <path d="M40 26v20M40 54v2" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.4" />
-          <circle cx="40" cy="44" r="4" fill="currentColor" opacity="0.15" />
-        </svg>
-      ) : (
-        <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="16" y="22" width="48" height="36" rx="6" stroke="currentColor" strokeWidth="2.5" opacity="0.15" />
-          <line x1="28" y1="34" x2="52" y2="34" stroke="currentColor" strokeWidth="2" opacity="0.2" />
-          <line x1="28" y1="42" x2="45" y2="42" stroke="currentColor" strokeWidth="2" opacity="0.15" />
-          <line x1="28" y1="50" x2="38" y2="50" stroke="currentColor" strokeWidth="2" opacity="0.12" />
-        </svg>
-      )}
       <h3>{title}</h3>
       <p>{description}</p>
       {action ? <div className="empty-action">{action}</div> : null}
@@ -149,7 +132,7 @@ export const StarButton = memo(function StarButton({ active, onClick, size = 'md
       aria-label={active ? '取消收藏' : '收藏'}
       title={active ? '取消收藏' : '收藏'}
     >
-      <span className={joinClassNames('star-icon', active && 'star-icon-active')} key={active ? 'active' : 'inactive'}>
+      <span className={joinClassNames('star-icon', active && 'star-icon-active')}>
         {active ? '★' : '☆'}
       </span>
     </button>
@@ -209,30 +192,9 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
   const [aiResult, setAiResult] = useState<string | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
-  const [fullJob, setFullJob] = useState<JobItem | null>(null);
-  const [loadingDetail, setLoadingDetail] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
 
   const detailDate = formatDate(job.publish_date || job.created_at);
-
-  useEffect(() => {
-    async function loadFullJob() {
-      if (!job.source_url && !job.apply_url) {
-        setLoadingDetail(true);
-        try {
-          const detail = await API.getJobDetail(job.id);
-          setFullJob(detail);
-        } catch (err) {
-          console.error('Failed to load job detail:', err);
-        } finally {
-          setLoadingDetail(false);
-        }
-      }
-    }
-    void loadFullJob();
-  }, [job.id, job.source_url, job.apply_url]);
-
-  const displayJob = fullJob || job;
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -321,6 +283,18 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
             {onToggleFavorite ? (
               <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} />
             ) : null}
+            {job.source_url || job.apply_url ? (
+              <a
+                href={job.apply_url || job.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+                style={{ fontSize: 13, textDecoration: 'none' }}
+                aria-label="查看原网页"
+              >
+                查看原网页 ↗
+              </a>
+            ) : null}
             <button type="button" className="modal-close-btn" onClick={onClose} aria-label="关闭">
               ✕
             </button>
@@ -355,33 +329,20 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
                 <span>{detailDate}</span>
               </div>
             ) : null}
-          </div>
-
-          {(displayJob.source_url || displayJob.apply_url) ? (
-            <div className="job-detail-source-link">
-              <span className="job-detail-source-label">🔗 来源链接</span>
-              {loadingDetail ? (
-                <span style={{ color: 'var(--muted)', fontSize: 13 }}>正在加载来源链接...</span>
-              ) : (
+            {(job.source_url || job.apply_url) ? (
+              <div className="job-detail-info-item">
+                <span className="job-detail-info-label">来源链接</span>
                 <a
-                  href={displayJob.apply_url || displayJob.source_url}
+                  href={job.apply_url || job.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="job-detail-source-url"
+                  style={{ color: 'var(--primary)', wordBreak: 'break-all' }}
                 >
-                  {(() => {
-                    const url = displayJob.apply_url || displayJob.source_url || '';
-                    return url.length > 80 ? url.substring(0, 80) + '...' : url;
-                  })()}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <line x1="10" y1="14" x2="21" y2="3"></line>
-                  </svg>
+                  {job.apply_url || job.source_url}
                 </a>
-              )}
-            </div>
-          ) : null}
+              </div>
+            ) : null}
+          </div>
 
           <div className="job-detail-section">
             <h3>岗位描述</h3>
@@ -400,16 +361,7 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
               </div>
             ) : null}
             {aiError ? (
-              <div className="ai-error-container">
-                <div className="notice notice-error">
-                  <div className="ai-error-icon">⚠️</div>
-                  <div className="ai-error-content">
-                    <div className="ai-error-title">AI 分析失败</div>
-                    <div className="ai-error-message">{aiError}</div>
-                  </div>
-                </div>
-                <Button variant="secondary" onClick={handleAnalyze} style={{ marginTop: 12 }}>重试</Button>
-              </div>
+              <div className="notice notice-error">{aiError}</div>
             ) : null}
             {aiResult ? (
               <div className="ai-result"><MarkdownRenderer content={aiResult} /></div>
