@@ -132,14 +132,26 @@ export function HierarchicalFilter({
 
       {isOpen && (
         <div className={styles.filterDropdown}>
-          <input
-            type="text"
-            className={styles.filterSearch}
-            placeholder="搜索..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            autoFocus
-          />
+          <div style={{ position: 'relative' }}>
+            <input
+              type="text"
+              className={styles.filterSearch}
+              placeholder="搜索..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                className={`${styles.searchClearBtn} ${styles.visible}`}
+                onClick={() => setSearchQuery('')}
+                aria-label="清除搜索"
+              >
+                ×
+              </button>
+            )}
+          </div>
 
           <div className={styles.filterOption} onClick={() => handleSelect('')}>
             <span className={styles.filterOptionName}>{placeholder}</span>

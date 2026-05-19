@@ -1,11 +1,12 @@
 .hierarchicalFilter {
   position: relative;
   min-width: 180px;
+  width: 100%;
 }
 
 .filterLabel {
   display: block;
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--muted);
   margin-bottom: 4px;
 }
@@ -13,26 +14,40 @@
 .filterTrigger {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 12px 16px;
   border: 1px solid var(--panel-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--panel);
   cursor: pointer;
-  min-height: 38px;
+  min-height: 48px;
+  transition: all var(--duration-fast) var(--ease-out);
+  position: relative;
 }
 
 .filterTrigger:hover {
   border-color: var(--primary);
 }
 
+.filterTrigger:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filterTrigger:active {
+  transform: scale(0.98);
+}
+
 .filterValue {
   flex: 1;
   color: var(--text);
+  font-size: 16px;
 }
 
 .filterPlaceholder {
   flex: 1;
   color: var(--muted);
+  font-size: 16px;
 }
 
 .filterClear {
@@ -40,18 +55,32 @@
   border: none;
   color: var(--muted);
   cursor: pointer;
-  padding: 0 4px;
-  font-size: 16px;
+  padding: 4px 8px;
+  font-size: 18px;
+  min-width: 28px;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition: all var(--duration-fast);
+  margin-right: 4px;
 }
 
 .filterClear:hover {
   color: var(--danger);
+  background-color: rgba(239, 68, 68, 0.08);
+}
+
+.filterClear:active {
+  transform: scale(0.9);
 }
 
 .filterArrow {
   color: var(--muted);
   font-size: 10px;
   margin-left: 8px;
+  transition: transform var(--duration-fast);
 }
 
 .filterDropdown {
@@ -62,34 +91,83 @@
   margin-top: 4px;
   background: var(--panel);
   border: 1px solid var(--panel-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   z-index: 1000;
   max-height: 320px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .filterSearch {
   width: 100%;
-  padding: 8px 12px;
+  padding: 12px 40px 12px 16px;
   border: none;
   border-bottom: 1px solid var(--panel-border);
   outline: none;
-  font-size: 14px;
+  font-size: 16px;
   background: transparent;
+  color: var(--text);
+  min-height: 48px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.filterSearch::placeholder {
+  color: var(--muted);
+}
+
+.filterSearch:focus {
+  background-color: rgba(59, 130, 246, 0.02);
+}
+
+.searchClearBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  border-radius: var(--radius-full);
+  opacity: 0;
+  transition: opacity var(--duration-fast), background-color var(--duration-fast);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.searchClearBtn.visible {
+  opacity: 1;
+}
+
+.searchClearBtn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
   color: var(--text);
 }
 
 .filterOption {
   display: flex;
   justify-content: space-between;
-  padding: 8px 12px;
+  align-items: center;
+  padding: 12px 16px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background var(--duration-fast);
+  min-height: 48px;
+  font-size: 16px;
 }
 
 .filterOption:hover {
   background: var(--bg-subtle);
+}
+
+.filterOption:active {
+  background: rgba(59, 130, 246, 0.08);
 }
 
 .filterOptionSelected {
@@ -109,34 +187,45 @@
 .filterHierarchical {
   max-height: 280px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .filterGroupHeader {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 12px 16px;
   background: var(--bg-subtle);
   cursor: pointer;
   font-weight: 500;
+  min-height: 48px;
+  transition: background var(--duration-fast);
 }
 
 .filterGroupHeader:hover {
   background: var(--panel-border);
 }
 
+.filterGroupHeader:active {
+  background: rgba(59, 130, 246, 0.08);
+}
+
 .filterExpandIcon {
-  width: 16px;
+  width: 20px;
   font-size: 10px;
   color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .filterGroupName {
   flex: 1;
+  font-size: 16px;
 }
 
 .filterGroupCount {
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-xs);
 }
 
 .filterGroupItems {
@@ -148,9 +237,13 @@
 }
 
 .filterMore {
-  padding: 8px 12px;
+  padding: 12px 16px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: var(--text-sm);
   text-align: center;
   background: var(--bg-subtle);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
