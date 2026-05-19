@@ -3,8 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, memo, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
 import type { JobItem } from '@/lib/types';
 import { API } from '@/lib/api';
-import { useIsMobile } from '@/hooks/useIsMobile';
-import { BottomSheet } from './BottomSheet';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 function joinClassNames(...values: Array<string | false | null | undefined>) {
@@ -18,7 +16,7 @@ export const SectionCard = memo(function SectionCard({
   children,
   className,
 }: {
-  title: ReactNode;
+  title: string;
   description?: string;
   action?: ReactNode;
   children: ReactNode;
@@ -195,7 +193,6 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
 
   const detailDate = formatDate(job.publish_date || job.created_at);
 
@@ -210,7 +207,7 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
   }, [onClose]);
 
   useEffect(() => {
-    if (!modalRef.current || isMobile) return;
+    if (!modalRef.current) return;
 
     const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     const focusableElements = Array.from(modalRef.current.querySelectorAll<HTMLElement>(focusableSelectors));
@@ -240,7 +237,7 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
       document.removeEventListener('keydown', handleTabKey);
       previousActiveElement?.focus();
     };
-  }, [isMobile]);
+  }, []);
 
   const handleAnalyze = useCallback(async () => {
     setAiLoading(true);
@@ -262,111 +259,6 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
       setAiLoading(false);
     }
   }, [job.id]);
-
-  if (isMobile) {
-    return (
-      <BottomSheet isOpen={true} onClose={onClose} title={job.title}>
-        <div className="job-detail-head">
-          <div>
-            <h2 id="job-detail-title">{job.title}</h2>
-            <div className="job-detail-meta">
-              {job.company ? <span>{job.company}</span> : null}
-              {job.location ? <span>📍 {job.location}</span> : null}
-              {detailDate ? <span>📅 {detailDate}</span> : null}
-            </div>
-          </div>
-          <div className="job-detail-actions">
-            {onToggleFavorite ? (
-              <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} />
-            ) : null}
-            {job.source_url || job.apply_url ? (
-              <a
-                href={job.apply_url || job.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-                style={{ fontSize: 13, textDecoration: 'none' }}
-                aria-label="查看原网页"
-              >
-                查看原网页 ↗
-              </a>
-            ) : null}
-            <button type="button" className="modal-close-btn" onClick={onClose} aria-label="关闭">
-              ✕
-            </button>
-          </div>
-        </div>
-
-        <div className="job-detail-body">
-          <div className="job-detail-info-grid">
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">薪资</span>
-              <span>{job.salary || '薪资面议'}</span>
-            </div>
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">类型</span>
-              <span>{job.job_type || '未指定'}</span>
-            </div>
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">行业</span>
-              <span>{job.industry || '未指定'}</span>
-            </div>
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">学历</span>
-              <span>{job.education || '未指定'}</span>
-            </div>
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">来源</span>
-              <span>{job.source || '未知'}</span>
-            </div>
-            {detailDate ? (
-              <div className="job-detail-info-item">
-                <span className="job-detail-info-label">日期</span>
-                <span>{detailDate}</span>
-              </div>
-            ) : null}
-            {(job.source_url || job.apply_url) ? (
-              <div className="job-detail-info-item">
-                <span className="job-detail-info-label">来源链接</span>
-                <a
-                  href={job.apply_url || job.source_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: 'var(--primary)', wordBreak: 'break-all' }}
-                >
-                  {job.apply_url || job.source_url}
-                </a>
-              </div>
-            ) : null}
-          </div>
-
-          <div className="job-detail-section">
-            <h3>岗位描述</h3>
-            <p className="job-detail-description">{job.description || '暂无描述'}</p>
-          </div>
-
-          <div className="job-detail-section">
-            <h3>AI 分析</h3>
-            {!aiResult && !aiLoading && !aiError ? (
-              <Button variant="secondary" onClick={handleAnalyze}>AI 分析</Button>
-            ) : null}
-            {aiLoading ? (
-              <div className="ai-loading">
-                <div className="loading-orb" style={{ width: 28, height: 28, borderWidth: 3 }} />
-                <span>AI 分析中...</span>
-              </div>
-            ) : null}
-            {aiError ? (
-              <div className="notice notice-error">{aiError}</div>
-            ) : null}
-            {aiResult ? (
-              <div className="ai-result"><MarkdownRenderer content={aiResult} /></div>
-            ) : null}
-          </div>
-        </div>
-      </BottomSheet>
-    );
-  }
 
   return (
     <div className="modal-backdrop" onClick={onClose} role="presentation">

@@ -1,0 +1,560 @@
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:87 | ================================================================================
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:88 | 开始 SUFE 数据源端到端测试
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:89 | 测试参数: max_items=3
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:90 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:91 | ================================================================================
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:101 | 
+================================================================================
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:102 | 测试1: 爬虫实例创建与配置验证
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:103 | ================================================================================
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:167 | [PASS] sufe数据源已注册: 上海财经大学
+2026-05-19 19:49:24 | DEBUG    | spiders.unified_spider:__init__:57 | [sufe] 初始化策略: api_post
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:189 | [PASS] source = sufe
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:189 | [PASS] base_url = https://career.sufe.edu.cn
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:189 | [PASS] university = 上海财经大学
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:189 | [PASS] spider_type = api_post
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:189 | [PASS] strategy_type = api_post
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:196 | [INFO] 发现 3 个板块配置:
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:198 |   板块1: 招聘信息
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:198 |   板块2: 实习信息
+2026-05-19 19:49:24 | INFO     | __main__:_test_spider_creation:198 |   板块3: 招聘公告
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:108 | 
+================================================================================
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:109 | 测试2: 完整爬取流程 (crawl_stream 异步生成器)
+2026-05-19 19:49:24 | INFO     | __main__:test_sufe_crawler:110 | ================================================================================
+2026-05-19 19:49:24 | INFO     | spiders.crawler:__init__:47 | 已创建共享HTTP连接池 (limit=100, limit_per_host=20)
+2026-05-19 19:49:24 | INFO     | __main__:_test_crawl_stream:227 | [INFO] 开始调用 crawl_source(sufe, stream_mode=False)...
+2026-05-19 19:49:24 | DEBUG    | spiders.unified_spider:__init__:57 | [sufe] 初始化策略: api_post
+2026-05-19 19:49:24 | DEBUG    | spiders.unified_spider:initialize:76 | sufe: 复用共享HTTP Session
+2026-05-19 19:49:24 | INFO     | spiders.strategies.api_post:execute:72 | [sufe] ApiPostStrategy 开始执行
+2026-05-19 19:49:24 | INFO     | spiders.strategies.api_post:execute:83 | [sufe] 检测到 3 个板块配置
+2026-05-19 19:49:24 | INFO     | spiders.strategies.api_post:_crawl_section:142 | [sufe] 开始爬取板块: 招聘信息 (zpxx)
+2026-05-19 19:49:25 | INFO     | spiders.database:connect:78 | SQLite日志模式: wal
+2026-05-19 19:49:25 | INFO     | spiders.database:connect:81 | 本地数据库已连接: /home/joakim/Project/job_hub/data/jobs.db (WAL模式)
+2026-05-19 19:49:26 | INFO     | spiders.unified_spider:crawl_stream:140 | [sufe] 爬取完成: 6 条, 去重统计: 总数 0 条, 唯一 0 条
+2026-05-19 19:49:26 | INFO     | spiders.base:close:346 | [sufe_jobs] HTTP会话已关闭
+2026-05-19 19:49:26 | INFO     | __main__:record_performance:78 | 性能指标: 爬取耗时 = 1.9687821865081787s
+2026-05-19 19:49:26 | INFO     | __main__:_test_crawl_stream:241 | [INFO] 爬取完成，获得 3 条数据
+2026-05-19 19:49:26 | INFO     | __main__:_test_crawl_stream:246 | [INFO] 开始测试流式模式 crawl_stream...
+2026-05-19 19:49:26 | DEBUG    | spiders.unified_spider:__init__:57 | [sufe] 初始化策略: api_post
+2026-05-19 19:49:26 | DEBUG    | spiders.unified_spider:initialize:76 | sufe: 复用共享HTTP Session
+2026-05-19 19:49:26 | INFO     | spiders.strategies.api_post:execute:72 | [sufe] ApiPostStrategy 开始执行
+2026-05-19 19:49:26 | INFO     | spiders.strategies.api_post:execute:83 | [sufe] 检测到 3 个板块配置
+2026-05-19 19:49:26 | INFO     | spiders.strategies.api_post:_crawl_section:142 | [sufe] 开始爬取板块: 招聘信息 (zpxx)
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=1): Session is closed
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=2): Session is closed
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=3): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 3 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=4): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 4 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=5): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 5 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=6): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 6 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=7): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 7 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=8): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 8 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=9): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 9 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=10): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 10 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=11): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 11 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=12): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 12 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=13): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 13 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=14): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 14 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=15): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 15 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=16): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 16 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=17): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 17 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=18): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 18 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=19): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 19 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=20): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 20 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=21): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 21 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=22): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 22 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=23): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 23 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=24): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 24 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=25): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 25 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=26): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 26 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=27): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 27 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=28): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 28 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=29): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 29 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=30): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 30 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=31): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 31 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=32): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 32 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=33): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 33 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=34): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 34 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=35): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 35 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=36): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 36 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=37): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 37 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=38): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 38 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=39): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 39 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=40): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 40 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=41): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 41 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=42): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 42 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=43): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 43 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=44): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 44 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=45): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 45 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=46): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 46 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=47): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 47 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=48): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 48 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=49): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 49 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=50): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 50 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=51): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 51 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=52): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 52 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=53): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 53 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=54): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 54 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=55): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 55 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=56): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 56 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=57): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 57 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=58): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 58 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=59): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 59 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=60): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 60 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=61): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 61 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=62): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 62 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=63): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 63 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=64): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 64 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=65): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 65 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=66): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 66 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=67): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 67 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=68): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 68 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=69): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 69 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=70): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 70 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=71): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 71 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=72): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 72 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=73): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 73 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=74): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 74 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=75): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 75 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=76): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 76 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=77): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 77 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=78): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 78 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=79): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 79 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpxx, page=80): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpxx 连续 80 页空响应，停止
+2026-05-19 19:49:26 | INFO     | spiders.strategies.api_post:_crawl_section:142 | [sufe] 开始爬取板块: 实习信息 (sxzpxx)
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=1): Session is closed
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=2): Session is closed
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=3): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 3 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=4): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 4 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=5): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 5 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=6): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 6 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=7): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 7 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=8): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 8 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=9): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 9 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=10): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 10 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=11): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 11 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=12): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 12 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=13): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 13 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=14): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 14 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=15): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 15 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=16): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 16 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=17): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 17 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=18): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 18 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=19): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 19 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=20): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 20 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=21): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 21 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=22): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 22 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=23): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 23 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=24): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 24 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=25): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 25 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=26): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 26 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=27): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 27 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=28): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 28 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=29): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 29 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=30): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 30 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=31): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 31 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=32): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 32 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=33): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 33 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=34): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 34 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=35): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 35 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=36): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 36 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=37): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 37 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=38): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 38 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=39): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 39 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=40): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 40 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=41): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 41 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=42): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 42 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=43): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 43 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=44): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 44 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=45): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 45 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=46): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 46 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=47): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 47 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=48): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 48 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=49): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 49 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=50): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 50 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=51): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 51 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=52): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 52 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=53): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 53 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=54): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 54 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=55): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 55 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=56): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 56 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=57): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 57 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=58): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 58 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=59): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 59 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=60): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 60 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=61): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 61 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=62): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 62 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=63): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 63 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=64): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 64 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=65): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 65 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=66): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 66 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=67): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 67 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=68): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 68 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=69): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 69 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=70): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 70 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=71): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 71 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=72): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 72 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=73): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 73 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=74): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 74 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=75): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 75 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=76): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 76 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=77): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 77 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=78): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 78 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=79): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 79 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=sxzpxx, page=80): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 sxzpxx 连续 80 页空响应，停止
+2026-05-19 19:49:26 | INFO     | spiders.strategies.api_post:_crawl_section:142 | [sufe] 开始爬取板块: 招聘公告 (zpgg)
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=1): Session is closed
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=2): Session is closed
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=3): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 3 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=4): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 4 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=5): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 5 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=6): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 6 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=7): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 7 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=8): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 8 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=9): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 9 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=10): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 10 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=11): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 11 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=12): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 12 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=13): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 13 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=14): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 14 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=15): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 15 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=16): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 16 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=17): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 17 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=18): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 18 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=19): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 19 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=20): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 20 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=21): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 21 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=22): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 22 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=23): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 23 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=24): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 24 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=25): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 25 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=26): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 26 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=27): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 27 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=28): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 28 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=29): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 29 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=30): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 30 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=31): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 31 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=32): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 32 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=33): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 33 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=34): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 34 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=35): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 35 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=36): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 36 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=37): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 37 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=38): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 38 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=39): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 39 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=40): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 40 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=41): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 41 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=42): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 42 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=43): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 43 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=44): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 44 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=45): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 45 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=46): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 46 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=47): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 47 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=48): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 48 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=49): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 49 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=50): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 50 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=51): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 51 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=52): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 52 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=53): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 53 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=54): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 54 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=55): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 55 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=56): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 56 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=57): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 57 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=58): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 58 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=59): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 59 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=60): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 60 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=61): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 61 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=62): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 62 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=63): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 63 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=64): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 64 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=65): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 65 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=66): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 66 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=67): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 67 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=68): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 68 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=69): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 69 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=70): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 70 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=71): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 71 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=72): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 72 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=73): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 73 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=74): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 74 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=75): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 75 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=76): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 76 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=77): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 77 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=78): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 78 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=79): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 79 页空响应，停止
+2026-05-19 19:49:26 | WARNING  | spiders.strategies.api_post:_fetch_sufe_page:350 | [sufe] SUFE列表异常 (section=zpgg, page=80): Session is closed
+2026-05-19 19:49:26 | DEBUG    | spiders.strategies.api_post:_crawl_section:160 | [sufe] 板块 zpgg 连续 80 页空响应，停止
+2026-05-19 19:49:26 | INFO     | spiders.strategies.api_post:execute:114 | [sufe] ApiPostStrategy 执行完成，共产出 0 条数据
+2026-05-19 19:49:26 | INFO     | spiders.unified_spider:crawl_stream:140 | [sufe] 爬取完成: 0 条, 去重统计: 总数 0 条, 唯一 0 条
+2026-05-19 19:49:26 | INFO     | spiders.base:close:346 | [sufe_jobs] HTTP会话已关闭
+2026-05-19 19:49:26 | INFO     | spiders.crawler:_crawl_and_save_stream:183 | [sufe] 流式爬取完成: 总计 0 条, 保存 0 条
+2026-05-19 19:49:26 | INFO     | __main__:record_performance:78 | 性能指标: 流式模式耗时 = 0.08574938774108887s
+2026-05-19 19:49:26 | INFO     | __main__:_test_crawl_stream:260 | [INFO] 流式模式完成，获得 0 条数据
+2026-05-19 19:49:26 | INFO     | spiders.crawler:close:288 | HTTP连接池已关闭
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:115 | 
+================================================================================
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:116 | 测试3: 数据质量验证
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:117 | ================================================================================
+2026-05-19 19:49:26 | INFO     | __main__:_validate_data_quality:283 | [INFO] 开始验证 3 条数据的质量...
+2026-05-19 19:49:26 | INFO     | __main__:record_performance:78 | 性能指标: 平均数据质量分 = 100.0分
+2026-05-19 19:49:26 | INFO     | __main__:_validate_data_quality:342 | [SUMMARY] 数据质量评分: 平均 100.0/100, 优秀率 3/3
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:122 | 
+================================================================================
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:123 | 测试4: 数据库写入验证
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:124 | ================================================================================
+2026-05-19 19:49:26 | INFO     | spiders.database:connect:78 | SQLite日志模式: wal
+2026-05-19 19:49:26 | INFO     | spiders.database:connect:81 | 本地数据库已连接: /home/joakim/Project/job_hub/data/jobs.db (WAL模式)
+2026-05-19 19:49:26 | INFO     | __main__:_verify_database_writes:358 | [DB] 数据库总记录数: 5311
+2026-05-19 19:49:26 | INFO     | __main__:_verify_database_writes:361 | [DB] sufe数据源记录数: 94
+2026-05-19 19:49:26 | WARNING  | __main__:record_warning:73 | [DB_INTEGRITY] 标题匹配 不一致: 测试=红塔证券股份有限公司  2026年度招聘公告, DB=财务专员 | 上海汇雅特集团有限公司
+2026-05-19 19:49:26 | WARNING  | __main__:record_warning:73 | [DB_INTEGRITY] 公司匹配 不一致: 测试=红塔证券股份有限公司, DB=上海汇雅特集团有限公司
+2026-05-19 19:49:26 | INFO     | __main__:_verify_database_writes:377 | [PASS] 来源匹配: sufe
+2026-05-19 19:49:26 | INFO     | __main__:_verify_database_writes:383 | [DB] 去重统计: 总数=94, 唯一=94, 重复=0
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:129 | 
+================================================================================
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:130 | 测试5: 中间件/插件集成检查
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:131 | ================================================================================
+2026-05-19 19:49:26 | DEBUG    | spiders.unified_spider:__init__:57 | [sufe] 初始化策略: api_post
+2026-05-19 19:49:26 | ERROR    | __main__:record_error:63 | [MINOR] _check_middleware_plugins: 中间件/插件集成检查失败: Can't instantiate abstract class TestMiddleware without an implementation for abstract method 'process'
+2026-05-19 19:49:26 | INFO     | __main__:record_performance:78 | 性能指标: 总耗时 = 2.0776302814483643s
+2026-05-19 19:49:26 | INFO     | __main__:record_performance:78 | 性能指标: 初始内存 = 0.0MB
+2026-05-19 19:49:26 | INFO     | __main__:record_performance:78 | 性能指标: 峰值内存 = 2.287045478820801MB
+2026-05-19 19:49:26 | INFO     | __main__:record_performance:78 | 性能指标: 内存增长 = 2.287045478820801MB
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:153 | 
+================================================================================
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:154 | 测试完成 - 生成分析报告
+2026-05-19 19:49:26 | INFO     | __main__:test_sufe_crawler:155 | ================================================================================
+2026-05-19 19:49:26 | INFO     | __main__:_generate_report:538 | [REPORT] 报告已保存至: /home/joakim/Project/job_hub/logs/sufe_test_report_20260519_194926.txt

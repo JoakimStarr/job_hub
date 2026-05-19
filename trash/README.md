@@ -1,19 +1,49 @@
-# Trash Directory - 归档文件说明
+# 🗑️ Trash - 废弃文件存档
 
-本目录存放已废弃的文件，不再被项目使用。
+本目录存放从项目根目录清理的不需要的文件。
 
-## 归档时间: 2026-05-19
+## 📋 文件清单
 
-## 归档原因
-这3个数据清洗脚本已被 `scripts/clean_data.js` 完全替代，功能更全面且维护更好。
+### 临时测试脚本 (2026-05-19 整理)
+- `test_fixes.py` - 爬虫修复验证脚本（已完成验证）
+- `test_sufe_e2e.py` - SUFE端到端测试脚本
+- `create_test_db.py` - 测试数据库创建脚本
 
-## 归档文件列表
-- scripts_clean_locations.js (原v1版本，最简实现)
-- scripts_clean_locations.ts (JS版的TypeScript移植，功能等价)
-- scripts_clean_locations_v2.js (增强版，功能被子集覆盖)
+### 旧版本文件 (2026-05-19 整理)
+- `lite_crawler.py` - 轻量级爬虫（已被 unified_spider.py 替代）
 
-## 当前推荐使用
-- `scripts/clean_data.js` - 唯一的数据清洗入口，同时处理地点+学历数据
+### 构建和运维脚本 (2026-05-19 整理)
+- `build.log` - Docker/Next.js构建日志
+- `push-image.sh` - Docker镜像推送脚本
 
-## 恢复方法
-如需恢复，将文件移回 `scripts/` 目录即可。
+### 日志文件 (2026-05-19 整理)
+**位置**: `logs_archive/`
+- `crawler_20260518.log` - 爬虫运行日志
+- `sufe_test_*.log` - SUFE测试日志
+- `sufe_test_report_*.txt` - 测试报告文本
+
+### 数据库备份 (历史)
+- `jobs.db.bak.20260518_093625` - 数据库备份1
+- `jobs.db.bak.20260518_101656_before_cleanup` - 清理前备份
+
+### 清理的旧脚本 (更早时期)
+**位置**: `scripts/`
+- `scripts_clean_locations.js/.ts/.v2.js` - 旧的位置数据清洗脚本
+
+## ⚠️ 重要提示
+
+1. **这些文件不再被项目使用**
+2. **如需恢复，请从此目录复制回原位**
+3. **定期清理此目录以节省空间**
+4. **建议保留最近3个月的备份**
+
+## 📅 整理记录
+
+| 日期 | 操作 | 文件数 | 原因 |
+|------|------|--------|------|
+| 2026-05-19 | 移入 trash | 15个 | 项目整理，根目录瘦身 |
+
+---
+
+**维护者**: AI Assistant  
+**最后更新**: 2026-05-19 20:15
