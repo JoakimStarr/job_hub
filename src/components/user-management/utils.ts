@@ -153,7 +153,7 @@ export function exportToCSV(data: Record<string, unknown>[], filename: string): 
   URL.revokeObjectURL(link.href);
 }
 
-export function debounce<T extends (...args: unknown[]) => unknown>(
+export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

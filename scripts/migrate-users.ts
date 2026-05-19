@@ -70,7 +70,7 @@ async function migrateUsers() {
   console.log(`🔑 默认密码: ${DEFAULT_PASSWORD}`);
   console.log('');
 
-  let db: Database.Database;
+  let db: Database.Database | undefined;
 
   try {
     // 连接数据库

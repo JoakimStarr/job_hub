@@ -15,6 +15,7 @@
 import Database from 'better-sqlite3';
 import { createHash, randomBytes, timingSafeEqual } from 'crypto';
 import path from 'path';
+import { parseUserAgent } from './user-agent';
 
 // ==================== 类型定义 ====================
 
@@ -49,6 +50,40 @@ export interface AuthResult {
 export interface LoginCredentials {
   username: string;
   password: string;
+}
+
+export interface LoginLog {
+  id: number;
+  userId?: number;
+  username: string;
+  action: 'login_success' | 'login_failed' | 'logout' | 'password_changed';
+  ipAddress?: string;
+  userAgent?: string;
+  deviceType?: string;
+  browser?: string;
+  os?: string;
+  success: number;
+  errorCode?: string;
+  errorMessage?: string;
+  createdAt: string;
+}
+
+export interface LoginLogQueryParams {
+  userId?: number;
+  action?: string;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface LoginLogStatistics {
+  totalLogins: number;
+  successfulLogins: number;
+  failedLogins: number;
+  uniqueUsers: number;
+  topIPs: Array<{ ip: string; count: number }>;
+  loginByHour: number[];
 }
 
 // ==================== AuthDatabase 类 ====================
@@ -137,6 +172,34 @@ class AuthDatabase {
       CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
       CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
       CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+    `);
+
+    // 登录日志表
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS login_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        username TEXT NOT NULL,
+        action TEXT NOT NULL,
+        ip_address TEXT,
+        user_agent TEXT,
+        device_type TEXT,
+        browser TEXT,
+        os TEXT,
+        success INTEGER DEFAULT 1,
+        error_code TEXT,
+        error_message TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+      )
+    `);
+
+    // 日志索引
+    db.exec(`
+      CREATE INDEX IF NOT EXISTS idx_login_logs_user_id ON login_logs(user_id);
+      CREATE INDEX IF NOT EXISTS idx_login_logs_created_at ON login_logs(created_at);
+      CREATE INDEX IF NOT EXISTS idx_login_logs_action ON login_logs(action);
+      CREATE INDEX IF NOT EXISTS idx_login_logs_ip_address ON login_logs(ip_address);
     `);
 
     console.log('✅ 认证表创建/验证完成');
@@ -281,7 +344,7 @@ class AuthDatabase {
       if (key === 'password') {
         const salt = AuthDatabase.generateSalt();
         setClauses.push('password_hash = ?', 'salt = ?');
-        values.push(AuthDatabase.hashPassword(value, salt), salt);
+        values.push(AuthDatabase.hashPassword(value as string, salt), salt);
       } else if (key === 'permissions') {
         setClauses.push(`${key} = ?`);
         values.push(JSON.stringify(value));
@@ -340,6 +403,17 @@ class AuthDatabase {
     ).get(username) as any;
 
     if (!userRow) {
+      // 记录登录失败日志 (用户不存在)
+      this.logLoginEvent({
+        username,
+        action: 'login_failed',
+        ipAddress,
+        userAgent,
+        success: false,
+        errorCode: 'INVALID_CREDENTIALS',
+        errorMessage: '用户名或密码错误',
+      });
+
       return {
         success: false,
         error: '用户名或密码错误',
@@ -354,6 +428,18 @@ class AuthDatabase {
         const remainingMinutes = Math.ceil(
           (lockedUntil.getTime() - Date.now()) / 60000
         );
+        
+        this.logLoginEvent({
+          userId: userRow.id,
+          username,
+          action: 'login_failed',
+          ipAddress,
+          userAgent,
+          success: false,
+          errorCode: 'ACCOUNT_LOCKED',
+          errorMessage: `账户已锁定，请 ${remainingMinutes} 分钟后重试`,
+        });
+
         return {
           success: false,
           error: `账户已锁定，请 ${remainingMinutes} 分钟后重试`,
@@ -364,6 +450,17 @@ class AuthDatabase {
 
     // 检查账户激活状态
     if (!userRow.is_active) {
+      this.logLoginEvent({
+        userId: userRow.id,
+        username,
+        action: 'login_failed',
+        ipAddress,
+        userAgent,
+        success: false,
+        errorCode: 'ACCOUNT_DISABLED',
+        errorMessage: '账户已被禁用',
+      });
+
       return {
         success: false,
         error: '账户已被禁用',
@@ -376,6 +473,18 @@ class AuthDatabase {
       this.incrementFailedLoginAttempts(userRow.id);
 
       const remainingAttempts = this.MAX_LOGIN_ATTEMPTS - userRow.failed_login_count - 1;
+      
+      // 记录登录失败日志
+      this.logLoginEvent({
+        userId: userRow.id,
+        username,
+        action: 'login_failed',
+        ipAddress,
+        userAgent,
+        success: false,
+        errorCode: 'INVALID_CREDENTIALS',
+        errorMessage: `用户名或密码错误，剩余尝试次数: ${remainingAttempts}`,
+      });
       
       if (remainingAttempts <= 0) {
         this.lockUserAccount(userRow.id);
@@ -406,6 +515,16 @@ class AuthDatabase {
         locked_until = NULL
       WHERE id = ?
     `).run(userRow.id);
+
+    // 记录登录成功日志
+    this.logLoginEvent({
+      userId: userRow.id,
+      username,
+      action: 'login_success',
+      ipAddress,
+      userAgent,
+      success: true,
+    });
 
     // 返回安全的用户信息
     const user: User = {
@@ -469,7 +588,6 @@ class AuthDatabase {
       permissions: JSON.parse(row.permissions || '[]'),
       isActive: true,
       createdAt: row.created_at,
-      expiresAt: newExpires,
     };
   }
 
@@ -554,7 +672,7 @@ class AuthDatabase {
     const now = new Date().toISOString();
 
     const rows = this.database.prepare(`
-      SELECT id, ip_address, user_agent, created_at, expires_at
+      SELECT id, token, ip_address, user_agent, created_at, expires_at
       FROM sessions 
       WHERE user_id = ? AND expires_at > ?
       ORDER BY created_at DESC
@@ -563,6 +681,7 @@ class AuthDatabase {
     return rows.map(row => ({
       id: row.id,
       userId,
+      token: row.token,
       ipAddress: row.ip_address,
       userAgent: row.user_agent,
       expiresAt: row.expires_at,
@@ -582,6 +701,228 @@ class AuthDatabase {
 
     return result.changes;
   }
+
+  // ==================== 登录日志方法 ====================
+
+  logLoginEvent(params: {
+    userId?: number;
+    username: string;
+    action: 'login_success' | 'login_failed' | 'logout' | 'password_changed';
+    ipAddress?: string;
+    userAgent?: string;
+    success?: boolean;
+    errorCode?: string;
+    errorMessage?: string;
+  }): number {
+    const db = this.database;
+
+    // 解析 User-Agent
+    let deviceType: string | undefined;
+    let browser: string | undefined;
+    let os: string | undefined;
+
+    if (params.userAgent) {
+      const parsed = parseUserAgent(params.userAgent);
+      deviceType = parsed.deviceType;
+      browser = parsed.browser;
+      os = parsed.os;
+    }
+
+    const result = db.prepare(`
+      INSERT INTO login_logs (
+        user_id, username, action, ip_address, user_agent,
+        device_type, browser, os, success, error_code, error_message
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      params.userId,
+      params.username,
+      params.action,
+      params.ipAddress,
+      params.userAgent,
+      deviceType,
+      browser,
+      os,
+      params.success !== false ? 1 : 0,
+      params.errorCode || null,
+      params.errorMessage || null
+    );
+
+    const logId = result.lastInsertRowid as number;
+    
+    const actionEmoji = params.action === 'login_success' ? '✅' :
+                        params.action === 'login_failed' ? '❌' :
+                        params.action === 'logout' ? '🚪' : '🔑';
+    console.log(`${actionEmoji} 登录日志已记录: action=${params.action}, user=${params.username}, ip=${params.ipAddress}`);
+    
+    return logId;
+  }
+
+  getLoginLogs(params: LoginLogQueryParams): { logs: LoginLog[]; total: number } {
+    const db = this.database;
+    const conditions: string[] = [];
+    const values: any[] = [];
+
+    if (params.userId) {
+      conditions.push('user_id = ?');
+      values.push(params.userId);
+    }
+
+    if (params.action) {
+      conditions.push('action = ?');
+      values.push(params.action);
+    }
+
+    if (params.startDate) {
+      conditions.push("created_at >= ?");
+      values.push(params.startDate);
+    }
+
+    if (params.endDate) {
+      conditions.push("created_at <= ?");
+      values.push(params.endDate);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const page = params.page || 1;
+    const limit = params.limit || 20;
+    const offset = (page - 1) * limit;
+
+    // 查询总数
+    const countResult = db.prepare(
+      `SELECT COUNT(*) as count FROM login_logs ${whereClause}`
+    ).get(...values) as { count: number };
+    const total = countResult.count;
+
+    // 查询日志
+    const rows = db.prepare(`
+      SELECT * FROM login_logs 
+      ${whereClause}
+      ORDER BY created_at DESC
+      LIMIT ? OFFSET ?
+    `).all(...values, limit, offset) as any[];
+
+    const logs: LoginLog[] = rows.map(row => ({
+      id: row.id,
+      userId: row.user_id,
+      username: row.username,
+      action: row.action,
+      ipAddress: row.ip_address,
+      userAgent: row.user_agent,
+      deviceType: row.device_type,
+      browser: row.browser,
+      os: row.os,
+      success: row.success,
+      errorCode: row.error_code,
+      errorMessage: row.error_message,
+      createdAt: row.created_at,
+    }));
+
+    return { logs, total };
+  }
+
+  getLoginLogStatistics(params?: {
+    startDate?: string;
+    endDate?: string;
+  }): LoginLogStatistics {
+    const db = this.database;
+    const conditions: string[] = [];
+    const values: any[] = [];
+
+    if (params?.startDate) {
+      conditions.push("created_at >= ?");
+      values.push(params.startDate);
+    }
+
+    if (params?.endDate) {
+      conditions.push("created_at <= ?");
+      values.push(params.endDate);
+    }
+
+    const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+    const whereForLogin = `${whereClause}${whereClause ? ' AND' : 'WHERE'} action IN ('login_success', 'login_failed')`;
+
+    // 总登录次数
+    const totalResult = db.prepare(
+      `SELECT COUNT(*) as count FROM login_logs ${whereForLogin}`
+    ).get(...values) as { count: number };
+
+    // 成功登录
+    const successResult = db.prepare(
+      `SELECT COUNT(*) as count FROM login_logs ${whereForLogin} AND success = 1`
+    ).get(...values) as { count: number };
+
+    // 失败登录
+    const failedResult = db.prepare(
+      `SELECT COUNT(*) as count FROM login_logs ${whereForLogin} AND success = 0`
+    ).get(...values) as { count: number };
+
+    // 唯一用户数
+    const uniqueUsersResult = db.prepare(
+      `SELECT COUNT(DISTINCT user_id) as count FROM login_logs ${whereForLogin}`
+    ).get(...values) as { count: number };
+
+    // Top IP 地址
+    const topIPsRows = db.prepare(`
+      SELECT ip_address as ip, COUNT(*) as count 
+      FROM login_logs ${whereForLogin} 
+      GROUP BY ip_address 
+      ORDER BY count DESC 
+      LIMIT 10
+    `).all(...values) as Array<{ ip: string; count: number }>;
+
+    // 按小时统计 (24小时)
+    const hourlyStats = new Array(24).fill(0);
+    const hourlyRows = db.prepare(`
+      SELECT strftime('%H', created_at) as hour, COUNT(*) as count
+      FROM login_logs ${whereForLogin}
+      GROUP BY hour
+    `).all(...values) as Array<{ hour: string; count: number }>;
+
+    for (const row of hourlyRows) {
+      const hour = parseInt(row.hour, 10);
+      if (!isNaN(hour) && hour >= 0 && hour < 24) {
+        hourlyStats[hour] = row.count;
+      }
+    }
+
+    return {
+      totalLogins: totalResult.count,
+      successfulLogins: successResult.count,
+      failedLogins: failedResult.count,
+      uniqueUsers: uniqueUsersResult.count,
+      topIPs: topIPsRows.filter(row => row.ip),
+      loginByHour: hourlyStats,
+    };
+  }
+
+  getRecentFailedAttempts(username: string, minutes: number = 15, maxAttempts: number = 5): LoginLog[] {
+    const since = new Date(Date.now() - minutes * 60000).toISOString();
+    
+    const rows = this.database.prepare(`
+      SELECT * FROM login_logs 
+      WHERE username = ? 
+        AND action = 'login_failed'
+        AND created_at >= ?
+      ORDER BY created_at DESC
+      LIMIT ?
+    `).all(username, since, maxAttempts) as any[];
+
+    return rows.map(row => ({
+      id: row.id,
+      userId: row.user_id,
+      username: row.username,
+      action: row.action,
+      ipAddress: row.ip_address,
+      userAgent: row.user_agent,
+      deviceType: row.device_type,
+      browser: row.browser,
+      os: row.os,
+      success: row.success,
+      errorCode: row.error_code,
+      errorMessage: row.error_message,
+      createdAt: row.created_at,
+    }));
+  }
 }
 
 // ==================== 单例导出 ====================
@@ -600,4 +941,3 @@ function getAuthDb(): AuthDatabase {
 }
 
 export { AuthDatabase, getAuthDb };
-export type { Session };
