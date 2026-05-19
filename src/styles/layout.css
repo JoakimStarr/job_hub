@@ -250,11 +250,31 @@
   flex-wrap: wrap;
   position: sticky;
   top: 0;
-  z-index: var(--z-sticky);
+  z-index: var(--z-tooltip); /* 提升至700，高于所有组件(overlay:400, modal:500, toast:600) */
   backdrop-filter: blur(8px);
-  background-color: rgba(var(--bg-rgb), 0.9);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(var(--bg-rgb), 0.95);
   height: 56px;
   padding: 0 var(--space-md);
+}
+
+/* 移动端导航栏必须使用fixed定位，避免sticky被transform子元素创建的层叠上下文影响 */
+@media (max-width: 768px) {
+  .topbar {
+    position: fixed; /* 改为固定定位 */
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 999; /* 移动端最高层级，确保不被任何元素遮挡 */
+    margin-bottom: 0; /* 移除margin，由main-shell的padding-top代替 */
+    background-color: rgb(var(--bg-rgb)); /* 移动端使用不透明背景 */
+  }
+  
+  /* 为固定导航栏预留空间：main-shell需要额外的padding-top */
+  .main-shell {
+    padding-top: calc(var(--space-md) + 56px); /* 原padding + 导航栏高度 */
+  }
 }
 
 .topbar-title {
