@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set
 
+import aiohttp
 from loguru import logger
 
 from .base import BaseSpider, JobData, SpiderStatus
@@ -32,6 +33,18 @@ class AsyncMultiCrawler:
         self._visited_urls_file = self.output_dir / "visited_urls.json"
         self._failed_queue_file = self.output_dir / "failed_queue.json"
         self._source_results: Dict[str, Dict[str, Any]] = {}
+        
+        self.session = aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(
+                limit=100,
+                limit_per_host=20,
+                ttl_dns_cache=300,
+                force_close=False,
+                enable_cleanup_closed=True,
+            ),
+            timeout=aiohttp.ClientTimeout(total=30),
+        )
+        logger.info(f"已创建共享HTTP连接池 (limit=100, limit_per_host=20)")
 
     async def _load_visited_urls(self):
         try:
@@ -73,7 +86,7 @@ class AsyncMultiCrawler:
                 "existing_url_lookup": self.db.get_existing_urls,
                 "headless": headless,
             }
-            spider = create_spider(source_key, config=config, headless=headless)
+            spider = create_spider(source_key, config=config, headless=headless, session=self.session)
             try:
                 return await spider.crawl(max_items=max_items)
             except Exception as e:
@@ -150,7 +163,14 @@ class AsyncMultiCrawler:
 
         await self._save_visited_urls()
         await self.db.close()
+        await self.close()
         return results
+
+    async def close(self):
+        """关闭连接池和所有资源"""
+        if hasattr(self, 'session') and self.session:
+            await self.session.close()
+            logger.info("HTTP连接池已关闭")
 
     def get_summary(self) -> Dict[str, Any]:
         total = sum(r.get("count", 0) for r in self._source_results.values())

@@ -18,12 +18,22 @@ dist
 # ============================================
 # 2. 数据文件 (运行时通过 volume 挂载)
 # ============================================
-data/
-!data/.gitkeep
+# 排除数据库文件，但保留必要的JSON配置文件
 *.db
 *.db.bak*
 *.sqlite
 *.sqlite3
+
+# 排除用户上传的数据 (简历等)
+data/user_profiles/records/
+data/user_profiles/uploads/
+
+# 保留必要的配置文件 (不要排除这些):
+# ✅ data/skill_dictionary.json      - 技能字典 (resume-parser, diagnose依赖)
+# ✅ data/major_similarity.json       - 专业相似度 (match-engine依赖)
+# ✅ data/filter_cache.json           - 过滤器缓存
+# ✅ data/user_profiles/quality_metrics_1.json           - 质量指标配置
+# ✅ data/user_profiles/recommendation_weight_profiles.json - 推荐权重配置
 
 # ============================================
 # 3. Python 爬虫文件 (不需要打包到镜像中)

@@ -29,7 +29,7 @@ from .utils import (
 class UnifiedSpider(BaseSpider):
     """统一爬虫类，根据配置动态处理不同数据源"""
 
-    def __init__(self, source: str, config: Optional[Dict[str, Any]] = None, headless: bool = True):
+    def __init__(self, source: str, config: Optional[Dict[str, Any]] = None, headless: bool = True, session=None):
         self.source = source
         self.spider_config = get_spider_config(source)
         
@@ -41,6 +41,8 @@ class UnifiedSpider(BaseSpider):
         self.university = self.spider_config["university"]
         self.location = self.spider_config["location"]
         self.spider_type = self.spider_config["spider_type"]
+        
+        self.external_session = session
         
         self.detail_concurrency = int(self.config.get("detail_concurrency", 
                                       self.spider_config.get("detail_concurrency", 8)))
@@ -69,11 +71,17 @@ class UnifiedSpider(BaseSpider):
             if "Origin" not in headers and self.spider_type in ["api_post", "api_get"]:
                 headers["Origin"] = self.base_url
             
-            self.session = aiohttp.ClientSession(
-                headers=headers,
-                timeout=aiohttp.ClientTimeout(total=20),
-                cookie_jar=aiohttp.CookieJar(unsafe=True),
-            )
+            if self.external_session:
+                logger.debug(f"{self.source}: 复用共享HTTP Session")
+                self.session = self.external_session
+                self.session.headers.update(headers)
+            else:
+                logger.debug(f"{self.source}: 创建独立HTTP Session")
+                self.session = aiohttp.ClientSession(
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=20),
+                    cookie_jar=aiohttp.CookieJar(unsafe=True),
+                )
             
             if self.spider_type == "api_post" and self.source in ["cufe", "dufe"]:
                 try:
@@ -965,6 +973,6 @@ class UnifiedSpider(BaseSpider):
             return []
 
 
-def create_spider(source: str, config: Optional[Dict[str, Any]] = None, headless: bool = True) -> UnifiedSpider:
+def create_spider(source: str, config: Optional[Dict[str, Any]] = None, headless: bool = True, session=None) -> UnifiedSpider:
     """创建统一爬虫实例"""
-    return UnifiedSpider(source, config, headless)
+    return UnifiedSpider(source, config, headless, session)
