@@ -340,10 +340,25 @@ class BaseSpider(ABC):
         return visited
 
     async def close(self) -> None:
-        if self.session:
-            await self.session.close()
-            self.session = None
-            logger.info(f"[{self.name}] HTTP会话已关闭")
+        """
+        关闭HTTP会话
+        
+        注意: 只关闭spider自身创建的Session，
+        不关闭通过 external_session 注入的共享Session
+        """
+        # 检查是否拥有此Session（非外部注入）
+        owns_session = not hasattr(self, 'external_session') or not self.external_session
+        
+        if self.session and owns_session:
+            try:
+                await self.session.close()
+                logger.debug(f"[{self.name}] HTTP会话已关闭 (自有)")
+            except Exception as e:
+                logger.warning(f"[{self.name}] 关闭Session时出错: {e}")
+            finally:
+                self.session = None
+        elif self.session and not owns_session:
+            logger.debug(f"[{self.name}] 保留共享HTTP会话")
 
     async def __aenter__(self):
         await self.initialize()

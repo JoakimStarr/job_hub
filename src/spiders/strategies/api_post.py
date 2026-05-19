@@ -157,7 +157,11 @@ class ApiPostStrategy(BaseCrawlStrategy):
             if not list_data:
                 consecutive_empty += 1
                 if consecutive_empty >= max_consecutive_empty:
-                    log.debug(f"[{spider.source}] 板块 {section} 连续 {consecutive_empty} 页空响应，停止")
+                    log.warning(
+                        f"[{spider.source}] 板块 {section} 连续 {consecutive_empty} 页空响应，"
+                        f"达到阈值({max_consecutive_empty})，停止爬取此板块"
+                    )
+                    break  # 添加break，停止当前板块的爬取
                 continue
             consecutive_empty = 0
             
