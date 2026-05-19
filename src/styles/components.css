@@ -1,39 +1,93 @@
-.grid-4 {
+/*
+ * Grid布局系统使用指南：
+ *
+ * .grid     - 自适应网格，最小宽度280px，适用于卡片列表
+ * .grid-2   - 固定2列，适用于对比展示
+ * .grid-3   - 固定3列，适用于特性介绍
+ * .grid-4   - 固定4列，适用于统计卡片、指标展示
+ * .grid-auto - auto-fill自适应，自动填充可用空间
+ * .grid-fit  - auto-fit自适应，拉伸填满容器
+ *
+ * 响应式行为（Mobile-First）：
+ * - ≤479px: 所有网格单列（.grid-4除外特殊处理）
+ * - ≥480px: .grid-4变为2列
+ * - ≥768px: .grid-2/3/4均为2列
+ * - ≥1024px: .grid-3恢复3列，.grid-4保持2列
+ * - ≥1280px: .grid-4恢复4列
+ */
+
+/* ======== Grid布局系统 ======== */
+
+/* 自适应网格（auto-fill） */
+.grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-md); /* 16px */
 }
 
-@media (max-width: 1200px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-}
-
-@media (max-width: 768px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-}
-
-@media (max-width: 480px) {
-  .grid-4 { grid-template-columns: 1fr; gap: 12px; }
+/* 固定列数网格 */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg); /* 24px */
 }
 
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 20px; /* 使用设计令牌或固定值 */
 }
 
-.grid-2 {
+.grid-4 {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md); /* 16px */
+  margin-bottom: var(--space-xl);
 }
 
-.grid {
+/* 新增实用类 */
+.grid-auto {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  gap: var(--space-md);
+}
+
+.grid-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+/* ======== 响应式断点：Mobile-First策略 ======== */
+
+/* 小屏手机增强 (≥480px) */
+@media (min-width: 480px) {
+  .grid { gap: var(--space-md); } /* 保持16px */
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm); /* 8-10px */
+  }
+}
+
+/* 平板 (≥768px) */
+@media (min-width: 768px) {
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+}
+
+/* 平板横屏/小桌面 (≥1024px) */
+@media (min-width: 1024px) {
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* 大桌面 (≥1280px) */
+@media (min-width: 1280px) {
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
 }
 
 .row-gap {
@@ -1038,11 +1092,6 @@
 
 /* ======== 平板 & 手机横屏 (≤768px) ======== */
 @media (max-width: 768px) {
-  /* Grid 系统：全部单列 */
-  .grid { grid-template-columns: 1fr; }
-  .grid-2 { grid-template-columns: 1fr; }
-  .grid-3 { grid-template-columns: 1fr; gap: 12px; }
-
   /* JobCard：竖向布局，收藏按钮右上角 */
   .job-card {
     flex-direction: column;
@@ -1262,7 +1311,6 @@
 
 /* ======== 平板竖屏 (769px ~ 1024px) ======== */
 @media (min-width: 769px) and (max-width: 1024px) {
-  .grid-3 { grid-template-columns: repeat(2, 1fr); }
   .main-shell { padding: 24px 28px; }
   .job-detail-modal { max-width: 720px; }
 }
