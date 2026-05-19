@@ -59,7 +59,14 @@
   border-right: 1px solid var(--panel-border);
   display: flex;
   flex-direction: column;
-  transition: transform var(--duration-normal) var(--ease-default);
+  transition: transform var(--duration-slow) var(--ease-out);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
 }
 
 .brand-block {
@@ -193,6 +200,35 @@
 /* 移动端菜单按钮 - 默认显示 */
 .mobile-menu-btn {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  min-height: 44px;
+  font-size: 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--duration-fast);
+  position: absolute;
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.mobile-menu-btn:hover {
+  background-color: rgba(59, 130, 246, 0.08);
+}
+
+.mobile-menu-btn:active {
+  background-color: rgba(59, 130, 246, 0.12);
+  transform: translateY(-50%) scale(0.97);
+}
+
+.mobile-menu-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* ======== Main Shell 布局 (Mobile-First) ======== */
@@ -212,12 +248,21 @@
   gap: 12px;
   margin-bottom: 28px;
   flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  backdrop-filter: blur(8px);
+  background-color: rgba(var(--bg-rgb), 0.9);
+  height: 56px;
+  padding: 0 var(--space-md);
 }
 
 .topbar-title {
   font-size: var(--text-xl);
   font-weight: 700;
   color: var(--text);
+  margin-left: 52px;
+  flex: 1;
 }
 
 .topbar-subtitle {
@@ -276,19 +321,28 @@
 }
 
 .sidebar-backdrop {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: calc(var(--z-sidebar) - 1);
-  animation: fadeIn var(--duration-fast) var(--ease-default);
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-overlay);
+  opacity: 0;
+  animation: fadeIn var(--duration-normal) var(--ease-out) forwards;
 }
 
-.show {
-  display: block;
+.sidebar-backdrop.closing {
+  animation: fadeOut var(--duration-fast) var(--ease-in) forwards;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 .loading-orb {

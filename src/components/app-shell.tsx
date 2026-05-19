@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { APP_NAME, APP_TAGLINE, APP_VERSION, NAV_ITEMS, ROUTE_TITLES } from '@/lib/constants';
 import { clearSession, getCachedUser, hasPermission, loadCurrentUser } from '@/lib/auth';
@@ -35,8 +35,47 @@ export function AppShell({
   const [user, setUser] = useState<AppUser | null>(null);
   const [ready, setReady] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { setUser: setStoreUser } = useAppStore();
   const visibleItems = useMemo(() => NAV_ITEMS.filter((item) => !item.permission || hasPermission(user, item.permission)), [user]);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (mobileOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+      const firstFocusable = sidebarRef.current?.querySelector<HTMLElement>(
+        'a, button, input, [tabindex]:not([tabindex="-1"])'
+      );
+      firstFocusable?.focus();
+    } else {
+      document.body.style.overflow = '';
+      if (mobileOpen === false && isMobile) {
+        menuButtonRef.current?.focus();
+      }
+    }
+  }, [mobileOpen, isMobile]);
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileOpen) {
+        setMobileOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [mobileOpen]);
 
   useEffect(() => {
     let cancelled = false;
@@ -137,7 +176,19 @@ export function AppShell({
 
   return (
     <div className="app-root">
-      <aside className={joinClassNames('sidebar', mobileOpen && 'sidebar-open')}>
+      {isMobile && mobileOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        ref={sidebarRef}
+        className={joinClassNames('sidebar', mobileOpen && 'sidebar-open')}
+        aria-label="主导航菜单"
+      >
         <div className="brand-block">
           <div className="brand-mark">FH</div>
           <div>
@@ -186,13 +237,19 @@ export function AppShell({
         </div>
       </aside>
 
-      <div className={joinClassNames('sidebar-backdrop', mobileOpen && 'show')} onClick={() => setMobileOpen(false)} />
-
       <main className="main-shell">
         <header className="topbar">
-          <button className="btn btn-secondary mobile-menu-btn" onClick={() => setMobileOpen((value) => !value)} aria-label="打开菜单" aria-expanded={mobileOpen}>
-            ☰
-          </button>
+          {isMobile && (
+            <button
+              ref={menuButtonRef}
+              className="btn btn-secondary mobile-menu-btn"
+              onClick={() => setMobileOpen((value) => !value)}
+              aria-label={mobileOpen ? "关闭菜单" : "打开菜单"}
+              aria-expanded={mobileOpen}
+            >
+              ☰
+            </button>
+          )}
           <div>
             <div className="topbar-title">{currentRouteTitle}</div>
             <div className="topbar-subtitle">{description || '统一账号、岗位和系统控制中心'}</div>
