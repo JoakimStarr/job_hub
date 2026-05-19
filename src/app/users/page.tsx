@@ -31,9 +31,19 @@ export default function UsersPage() {
     setLoadingUsers(true);
     try {
       const [roleResponse, userResponse] = await Promise.all([API.getRoles(), API.getUsers()]);
-      setRoles(roleResponse.roles || []);
-      setUsers(userResponse || []);
-      setRole((current) => current || (roleResponse.roles?.[0]?.id || ''));
+      // roles API 返回数组格式: [{ id, name }, ...]
+      const rolesArray = Array.isArray(roleResponse) ? roleResponse : (roleResponse.roles || []);
+      setRoles(rolesArray);
+      // users API 返回 { success, users } 或直接返回数组
+      let usersData: AppUser[];
+      if (Array.isArray(userResponse)) {
+        usersData = userResponse;
+      } else {
+        const responseObj = userResponse as { users?: AppUser[] };
+        usersData = responseObj.users || (userResponse as AppUser[]) || [];
+      }
+      setUsers(usersData);
+      setRole((current) => current || (rolesArray[0]?.id || ''));
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '加载用户失败');
     } finally {

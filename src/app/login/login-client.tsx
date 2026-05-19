@@ -26,13 +26,14 @@ export function LoginClient() {
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false); // 防止重复跳转
+  
+  // 🔄 简单的防循环标记（从sessionStorage读取）
+  const isRedirecting = sessionStorage.getItem('auth_is_redirecting') === 'true';
 
   useEffect(() => {
-    // 如果正在跳转中，不再检查认证（防止循环）
+    // 如果正在跳转中，跳过检查
     if (isRedirecting) return;
     
-    // 检查是否已登录 (通过 Cookie，由后端 /api/auth/me 验证)
     let cancelled = false;
 
     const checkAuth = async () => {
@@ -41,7 +42,7 @@ export function LoginClient() {
         const data = await response.json();
 
         if (!cancelled && data.authenticated) {
-          setIsRedirecting(true); // 标记正在跳转
+          sessionStorage.setItem('auth_is_redirecting', 'true');
           router.replace(redirect);
         }
       } catch (error) {
@@ -54,7 +55,7 @@ export function LoginClient() {
     return () => {
       cancelled = true;
     };
-  }, [redirect, router, isRedirecting]); // 添加 isRedirecting 依赖
+  }, [redirect, router, isRedirecting]);
 
   return (
     <main className="auth-page">
@@ -117,13 +118,14 @@ export function LoginClient() {
 
                 if (data.success) {
                   setIsError(false);
-                  setIsRedirecting(true); // 标记正在跳转，防止useEffect干扰
+                  
+                  // ✅ 设置防循环标记
+                  sessionStorage.setItem('auth_is_redirecting', 'true');
+                  
                   setMessage(data.message || '登录成功，正在跳转...');
                   
-                  // 延迟跳转，让用户看到成功消息
-                  setTimeout(() => {
-                    router.replace(redirect);
-                  }, 500);
+                  // 立即跳转（无延迟）
+                  router.replace(redirect);
                 } else {
                   throw new Error(data.error || '登录失败');
                 }

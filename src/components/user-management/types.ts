@@ -1,6 +1,11 @@
-import type { User, Session } from '@/lib/auth-db';
-
-export interface UserInfo extends User {
+export interface UserInfo {
+  id: number;
+  username: string;
+  role: 'admin' | 'operator' | 'viewer';
+  permissions: string[];
+  isActive: boolean;
+  createdAt: string;
+  lastLoginAt?: string;
   failedLoginCount?: number;
 }
 
@@ -24,9 +29,16 @@ export interface PasswordFormData {
   confirmPassword: string;
 }
 
-export interface SessionInfo extends Session {
+export interface SessionInfo {
+  id: string;
+  userId: number;
+  token: string;
+  ipAddress?: string;
+  userAgent?: string;
   deviceInfo?: string;
   location?: string;
+  expiresAt: string;
+  createdAt: string;
 }
 
 export interface AuthLogEntry {

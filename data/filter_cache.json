@@ -1,6 +1,12 @@
 {
   "locations": [
     {
+      "name": "上海",
+      "count": 2285,
+      "pinyin": "shanghai",
+      "firstLetter": "sh"
+    },
+    {
       "name": "成都",
       "count": 638,
       "pinyin": "chengdu",
@@ -8,15 +14,9 @@
     },
     {
       "name": "北京",
-      "count": 393,
+      "count": 403,
       "pinyin": "beijing",
       "firstLetter": "bj"
-    },
-    {
-      "name": "上海",
-      "count": 285,
-      "pinyin": "shanghai",
-      "firstLetter": "sh"
     },
     {
       "name": "深圳",
@@ -1444,7 +1444,7 @@
   "job_types": [
     {
       "name": "实习",
-      "count": 1763
+      "count": 3773
     },
     {
       "name": "全职",
@@ -1452,6 +1452,10 @@
     }
   ],
   "industries": [
+    {
+      "name": "金融",
+      "count": 2000
+    },
     {
       "name": "金融业",
       "count": 476
@@ -1620,7 +1624,7 @@
   "education": [
     {
       "name": "本科",
-      "count": 2136
+      "count": 4136
     },
     {
       "name": "硕士",
@@ -1653,10 +1657,22 @@
       "firstLetter": "dbcjdx"
     },
     {
+      "name": "benchmark",
+      "count": 1000
+    },
+    {
+      "name": "benchmark_test",
+      "count": 1000
+    },
+    {
       "name": "上海财经大学",
       "count": 94,
       "pinyin": "shanghaicaijingdaxue",
       "firstLetter": "shcjdx"
+    },
+    {
+      "name": "test",
+      "count": 10
     },
     {
       "name": "中南财经政法大学",
@@ -1672,6 +1688,18 @@
     }
   ],
   "provinces": [
+    {
+      "province": "上海",
+      "cities": [
+        {
+          "name": "上海",
+          "count": 2285,
+          "pinyin": "shanghai",
+          "firstLetter": "sh"
+        }
+      ],
+      "count": 2285
+    },
     {
       "province": "四川",
       "cities": [
@@ -1911,12 +1939,12 @@
       "cities": [
         {
           "name": "北京",
-          "count": 393,
+          "count": 403,
           "pinyin": "beijing",
           "firstLetter": "bj"
         }
       ],
-      "count": 393
+      "count": 403
     },
     {
       "province": "辽宁",
@@ -1947,18 +1975,6 @@
         }
       ],
       "count": 307
-    },
-    {
-      "province": "上海",
-      "cities": [
-        {
-          "name": "上海",
-          "count": 285,
-          "pinyin": "shanghai",
-          "firstLetter": "sh"
-        }
-      ],
-      "count": 285
     },
     {
       "province": "浙江",
@@ -5815,5 +5831,5 @@
       "alias": []
     }
   ],
-  "updated_at": 1779169626514
+  "updated_at": 1779200841559
 }

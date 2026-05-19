@@ -81,6 +81,19 @@ export function AppShell({
     let cancelled = false;
 
     function redirectToLogin() {
+      // 🚨 简单防循环机制：使用时间戳锁（1秒内不重复跳转）
+      const lastRedirect = parseInt(sessionStorage.getItem('auth_last_redirect') || '0');
+      const now = Date.now();
+      
+      if (now - lastRedirect < 1000) {
+        sessionStorage.removeItem('auth_last_redirect');
+        window.location.reload();
+        return;
+      }
+      
+      // 记录本次跳转时间
+      sessionStorage.setItem('auth_last_redirect', String(now));
+
       clearSession();
       setUser(null);
       setStoreUser(null);
@@ -89,32 +102,82 @@ export function AppShell({
       router.replace(`/login?redirect=${redirect}`);
     }
 
+    /**
+     * 用户身份验证引导函数（极速版）
+     * 
+     * 设计原则：
+     * - 单次检查，快速响应（无重试、无延迟）
+     * - 简单的防循环机制（1秒时间戳锁）
+     * - 优先Cookie认证，回退Token认证
+     */
     async function bootstrap() {
-      const cached = getCachedUser();
-      if (cached?.id) {
-        if (cancelled) return;
-        setUser(cached);
-        setStoreUser(cached);
-        setReady(true);
-        void loadCurrentUser(true).then((current) => {
-          if (!cancelled && current) {
-            setUser(current);
-            setStoreUser(current);
-          }
+      try {
+        // ===== 方式1: Cookie 认证（单次检查） =====
+        const authMeResponse = await fetch('/api/auth/me', {
+          credentials: 'same-origin',
         });
-        return;
-      }
+        
+        if (authMeResponse.ok) {
+          const authData = await authMeResponse.json();
+          
+          if (authData.authenticated && authData.user) {
+            if (cancelled) return;
+            
+            // ✅ 认证成功！清除所有锁
+            sessionStorage.removeItem('auth_last_redirect');
+            sessionStorage.removeItem('auth_is_redirecting');
+            
+            const user: AppUser = {
+              id: authData.user.id,
+              username: authData.user.username,
+              role: authData.user.role as any,
+              permissions: authData.user.permissions || [],
+            };
+            
+            setUser(user);
+            setStoreUser(user);
+            setReady(true);
+            
+            localStorage.setItem('finintern_hub_auth_token', 'cookie-session');
+            localStorage.setItem('finintern_hub_auth_user', JSON.stringify(user));
+            
+            return;
+          }
+        }
+        
+        // ===== 方式2: Token 认证（向后兼容） =====
+        const cached = getCachedUser();
+        if (cached?.id) {
+          if (cancelled) return;
+          setUser(cached);
+          setStoreUser(cached);
+          setReady(true);
+          void loadCurrentUser(true).then((current) => {
+            if (!cancelled && current) {
+              setUser(current);
+              setStoreUser(current);
+            }
+          });
+          return;
+        }
 
-      const current = await loadCurrentUser(true);
-      if (cancelled) return;
-      if (!current) {
-        redirectToLogin();
-        return;
-      }
+        const current = await loadCurrentUser(true);
+        if (cancelled) return;
+        
+        if (!current) {
+          redirectToLogin();
+          return;
+        }
 
-      setUser(current);
-      setStoreUser(current);
-      setReady(true);
+        setUser(current);
+        setStoreUser(current);
+        setReady(true);
+        
+      } catch (error) {
+        if (!cancelled) {
+          redirectToLogin();
+        }
+      }
     }
 
     const onAuthExpired = () => {
@@ -127,7 +190,7 @@ export function AppShell({
       cancelled = true;
       window.removeEventListener(AUTH_EXPIRED_EVENT, onAuthExpired);
     };
-  }, [pathname, router]);
+  }, [router]); // ✅ 移除 pathname 依赖，只在组件挂载时认证一次
 
   useEffect(() => {
     setMobileOpen(false);

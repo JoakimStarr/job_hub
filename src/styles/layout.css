@@ -197,7 +197,7 @@
   min-height: 34px;
 }
 
-/* 移动端菜单按钮 - 默认显示 */
+/* 移动端菜单按钮 - 作为导航栏正常子元素 */
 .mobile-menu-btn {
   display: flex;
   align-items: center;
@@ -211,10 +211,8 @@
   color: var(--text);
   border-radius: var(--radius-sm);
   transition: background-color var(--duration-fast);
-  position: absolute;
-  left: var(--space-md);
-  top: 50%;
-  transform: translateY(-50%);
+  z-index: auto; /* 继承父容器层级，不创建独立层叠上下文 */
+  position: relative; /* 正常文档流定位 */
 }
 
 .mobile-menu-btn:hover {
@@ -223,7 +221,7 @@
 
 .mobile-menu-btn:active {
   background-color: rgba(59, 130, 246, 0.12);
-  transform: translateY(-50%) scale(0.97);
+  transform: scale(0.97);
 }
 
 .mobile-menu-btn:focus-visible {
@@ -281,7 +279,6 @@
   font-size: var(--text-xl);
   font-weight: 700;
   color: var(--text);
-  margin-left: 52px;
   flex: 1;
 }
 
