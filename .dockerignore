@@ -1,4 +1,12 @@
-# Node / build artifacts
+# ============================================
+# Docker 镜像构建排除文件 (.dockerignore)
+# ============================================
+# 只包含: Next.js前端应用 + API路由
+# 排除: 数据库/爬虫/文档/日志等非必要文件
+
+# ============================================
+# 1. Node.js / 构建产物
+# ============================================
 node_modules
 .next
 build
@@ -7,38 +15,92 @@ dist
 .npm
 .buildcache
 
-# Logs and runtime data
-npm-debug.log
-*.log
-log/
-output/
+# ============================================
+# 2. 数据文件 (运行时通过 volume 挂载)
+# ============================================
 data/
 !data/.gitkeep
-!data/skill_dictionary.json
-!data/major_similarity.json
-!data/jobs.db
+*.db
+*.db.bak*
+*.sqlite
+*.sqlite3
 
-# Git / IDE
-.git
-.gitignore
-.vscode
-.idea
-
-# Env / secrets
-.env
-.env.*
-
-# Python artifacts
+# ============================================
+# 3. Python 爬虫文件 (不需要打包到镜像中)
+# ============================================
+src/spiders/
+lite_crawler.py
+run_spiders.py
+create_test_db.py
+init_db.py
 *.pyc
 __pycache__
 .pytest_cache
 .coverage
-
-# Misc
 *.egg-info
-htmlcov
-tests
-trash
 
-# Databases
-*.db
+# ============================================
+# 4. 文档文件
+# ============================================
+*.md
+docs/
+README*
+CHANGELOG*
+LICENSE*
+API_USAGE_GUIDE*
+SKILLS_USAGE_GUIDE*
+SPIDER_*
+PROJECT_ANALYSIS_REPORT*
+
+# ============================================
+# 5. 日志和输出文件
+# ============================================
+logs/
+log/
+output/
+*.log
+build.log
+structured_*.json
+visited_urls.json
+
+# ============================================
+# 6. Git / IDE 配置
+# ============================================
+.git
+.gitignore
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# ============================================
+# 7. 环境变量和密钥
+# ============================================
+.env
+.env.*
+!.env.example
+!.env.ai.example
+.secrets
+
+# ============================================
+# 8. Trae 项目配置 (开发工具)
+# ============================================
+.trae/
+
+# ============================================
+# 9. 脚本工具 (本地开发用)
+# ============================================
+scripts/
+push-image.sh
+docker-compose.yml
+.dockerignore
+
+# ============================================
+# 10. 缓存和临时文件
+# ============================================
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+.cache/
