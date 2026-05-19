@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
-import { requirePermission, AuthError } from '@/lib/auth';
+import { requirePermissionUnified, AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
-    requirePermission(request, 'system:write');
+    requirePermissionUnified(request, 'system:write');
 
     const searchParams = request.nextUrl.searchParams;
     const rawLimit = parseInt(searchParams.get('limit') || '500');

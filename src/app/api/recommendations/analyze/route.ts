@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aiService } from '@/lib/ai-service';
 import { getDb } from '@/lib/db-utils';
-import { requireAuth, AuthError } from '@/lib/auth';
+import { requireAuthUnified, AuthError } from '@/lib/auth';
 import type { ResumeProfile, JobItem } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
@@ -9,7 +9,7 @@ import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
-    requireAuth(request);
+    requireAuthUnified(request);
 
     const body = await request.json();
     const { job_id, profile, prompt } = body;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
-import { requirePermission, AuthError } from '@/lib/auth';
+import { requirePermissionUnified, AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
 function initSubscriptionsTable(db: ReturnType<typeof getDb>) {
@@ -63,7 +63,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    requirePermission(request, 'system:write');
+    requirePermissionUnified(request, 'system:write');
 
     const body = await request.json();
     const { name, keyword, locations, industries, job_types, education, enabled } = body;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
-import { requirePermission, AuthError } from '@/lib/auth';
+import { requirePermissionUnified, AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
 export async function PUT(
@@ -9,7 +9,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
-    requirePermission(request, 'system:write');
+    requirePermissionUnified(request, 'system:write');
 
     const body = await request.json();
     const { name, keyword, locations, industries, job_types, education, enabled } = body;
@@ -82,7 +82,7 @@ export async function DELETE(
 ) {
   const { id } = await params;
   try {
-    requirePermission(request, 'system:write');
+    requirePermissionUnified(request, 'system:write');
 
     const db = getDb();
 

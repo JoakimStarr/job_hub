@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
 import { APP_VERSION } from '@/lib/constants';
-import { requirePermission, AuthError } from '@/lib/auth';
+import { requirePermissionUnified, AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
 const CONFIG_FILE = path.join(process.cwd(), 'data', 'system_config.json');
@@ -59,7 +59,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    requirePermission(request, 'system:write');
+    requirePermissionUnified(request, 'system:write');
 
     const body = await request.json();
 

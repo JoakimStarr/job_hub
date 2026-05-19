@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
-import { requireAuth, AuthError } from '@/lib/auth';
+import { requireAuthUnified, AuthError } from '@/lib/auth';
 import type { ResumeProfile } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
@@ -11,7 +11,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    requireAuth(request);
+    requireAuthUnified(request);
 
     const { id } = await params;
     const jobId = parseInt(id);
