@@ -108,3 +108,42 @@
   .input, .select { padding: 12px 14px; font-size: 16px; }
   .btn { padding: 14px 20px; font-size: 16px; min-height: 48px; }
 }
+
+.settings-password-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.settings-password-page .page-header {
+  margin-bottom: 32px;
+}
+
+.settings-password-page .page-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 0 0 8px 0;
+}
+
+.settings-password-page .page-header p {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.settings-password-page .settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (max-width: 768px) {
+  .settings-password-page {
+    padding: 16px;
+  }
+
+  .settings-password-page .page-header h1 {
+    font-size: 24px;
+  }
+}
