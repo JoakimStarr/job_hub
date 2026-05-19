@@ -24,6 +24,8 @@ export async function GET(request: NextRequest) {
     const education = searchParams.get('education') || '';
     const sourceParam = searchParams.get('source') || '';
     const isFavorite = searchParams.get('is_favorite');
+    const sort = searchParams.get('sort') || 'created_at';
+    const order = searchParams.get('order') || 'desc';
 
     const db = getDb();
     
@@ -43,15 +45,22 @@ export async function GET(request: NextRequest) {
       const total = countResult.total;
       
       const offset = (page - 1) * pageSize;
+
+      const allowedSortFields = ['created_at', 'publish_date', 'updated_at', 'salary'];
+      const allowedOrderDirections = ['asc', 'desc'];
+
+      const safeSortField = allowedSortFields.includes(sort) ? sort : 'created_at';
+      const safeOrderDirection = allowedOrderDirections.includes(order.toLowerCase()) ? order.toLowerCase() : 'desc';
+
       const dataSql = `
-        SELECT 
+        SELECT
           id, title, company, location, salary, description, requirements,
           job_type, industry, education, experience, source, university,
           source_url, apply_url, publish_date, deadline, category, tags,
           is_favorite, is_read, created_at, updated_at
-        FROM jobs 
+        FROM jobs
         ${whereClause}
-        ORDER BY publish_date DESC, created_at DESC
+        ORDER BY ${safeSortField} ${safeOrderDirection}
         LIMIT ? OFFSET ?
       `;
       
@@ -76,6 +85,8 @@ export async function GET(request: NextRequest) {
         total,
         page,
         pageSize,
+        sort: safeSortField,
+        order: safeOrderDirection,
         filters: { location, keyword, jobType, industry, education, source: sourceParam },
       });
       
