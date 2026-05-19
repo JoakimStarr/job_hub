@@ -53,7 +53,7 @@ _UPSERT_SQL_TEMPLATE = f"""
 
 _IGNORE_SQL_TEMPLATE = f"""
     INSERT OR IGNORE INTO jobs ({_INSERT_FIELDS_STR}, is_favorite, is_read)
-    VALUES {{placeholders}}, 0, 0
+    VALUES {{placeholders}}
 """
 
 
@@ -168,8 +168,12 @@ class LocalDatabase:
             d = job.to_dict()
             d["content_hash"] = self._compute_content_hash(d)
             flat_values.extend(d[f] for f in _INSERT_FIELDS)
+            if not replace_existing:
+                flat_values.extend([0, 0])
 
-        placeholders = ",".join([_PLACEHOLDERS] * len(jobs))
+        num_params_per_row = len(_INSERT_FIELDS) + (0 if replace_existing else 2)
+        row_placeholder = "(" + ",".join(["?"] * num_params_per_row) + ")"
+        placeholders = ",".join([row_placeholder] * len(jobs))
 
         if replace_existing:
             sql = _UPSERT_SQL_TEMPLATE.format(placeholders=placeholders)
