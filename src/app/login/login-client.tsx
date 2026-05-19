@@ -26,8 +26,12 @@ export function LoginClient() {
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false); // 防止重复跳转
 
   useEffect(() => {
+    // 如果正在跳转中，不再检查认证（防止循环）
+    if (isRedirecting) return;
+    
     // 检查是否已登录 (通过 Cookie，由后端 /api/auth/me 验证)
     let cancelled = false;
 
@@ -37,6 +41,7 @@ export function LoginClient() {
         const data = await response.json();
 
         if (!cancelled && data.authenticated) {
+          setIsRedirecting(true); // 标记正在跳转
           router.replace(redirect);
         }
       } catch (error) {
@@ -49,7 +54,7 @@ export function LoginClient() {
     return () => {
       cancelled = true;
     };
-  }, [redirect, router]);
+  }, [redirect, router, isRedirecting]); // 添加 isRedirecting 依赖
 
   return (
     <main className="auth-page">
@@ -112,6 +117,7 @@ export function LoginClient() {
 
                 if (data.success) {
                   setIsError(false);
+                  setIsRedirecting(true); // 标记正在跳转，防止useEffect干扰
                   setMessage(data.message || '登录成功，正在跳转...');
                   
                   // 延迟跳转，让用户看到成功消息

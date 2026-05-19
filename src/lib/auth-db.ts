@@ -319,7 +319,7 @@ class AuthDatabase {
       id: row.id,
       username: row.username,
       role: row.role,
-      permissions: JSON.parse(row.permissions || '[]'),
+      permissions: this.parsePermissions(row.permissions),
       isActive: !!row.is_active,
       createdAt: row.created_at,
       lastLoginAt: row.last_login_at,
@@ -531,7 +531,7 @@ class AuthDatabase {
       id: userRow.id,
       username: userRow.username,
       role: userRow.role,
-      permissions: JSON.parse(userRow.permissions || '[]'),
+      permissions: this.parsePermissions(userRow.permissions),
       isActive: true,
       createdAt: userRow.created_at,
       lastLoginAt: new Date().toISOString(),
@@ -585,7 +585,7 @@ class AuthDatabase {
       id: row.user_id,
       username: row.username,
       role: row.role,
-      permissions: JSON.parse(row.permissions || '[]'),
+      permissions: this.parsePermissions(row.permissions),
       isActive: true,
       createdAt: row.created_at,
     };
@@ -661,11 +661,47 @@ class AuthDatabase {
       id: row.id,
       username: row.username,
       role: row.role,
-      permissions: JSON.parse(row.permissions || '[]'),
+      permissions: this.parsePermissions(row.permissions),
       isActive: !!row.is_active,
       createdAt: row.created_at,
       lastLoginAt: row.last_login_at,
     };
+  }
+
+  /**
+   * 安全解析权限字符串
+   * 
+   * 支持两种格式:
+   * 1. 标准JSON (双引号): ["view_jobs", "view_stats"]
+   * 2. Python列表格式 (单引号): ['view_jobs', 'view_stats']
+   * 
+   * @param permissionsStr 数据库中的权限字符串
+   * @returns 解析后的权限数组
+   */
+  private parsePermissions(permissionsStr: string | null | undefined): string[] {
+    if (!permissionsStr || permissionsStr.trim() === '') {
+      return [];
+    }
+
+    try {
+      // 尝试标准 JSON 解析
+      return JSON.parse(permissionsStr);
+    } catch {
+      // 如果失败，尝试解析 Python 格式 (单引号)
+      try {
+        // 替换单引号为双引号，然后解析
+        const normalized = permissionsStr
+          .replace(/'/g, '"')  // 单引号 → 双引号
+          .replace(/\s+/g, ''); // 移除空白字符
+        
+        return JSON.parse(normalized);
+      } catch (secondError) {
+        // 如果还是失败，返回空数组并记录警告
+        console.warn(`⚠️ 无法解析权限字段，使用空数组。原始值: ${permissionsStr.substring(0, 100)}...`);
+        console.warn(`   错误详情:`, secondError);
+        return [];
+      }
+    }
   }
 
   getUserSessions(userId: number): Session[] {
