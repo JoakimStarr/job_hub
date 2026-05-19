@@ -197,7 +197,7 @@
   min-height: 34px;
 }
 
-/* 移动端菜单按钮 - 作为导航栏正常子元素 */
+/* 移动端菜单按钮 - 默认显示 */
 .mobile-menu-btn {
   display: flex;
   align-items: center;
@@ -211,8 +211,10 @@
   color: var(--text);
   border-radius: var(--radius-sm);
   transition: background-color var(--duration-fast);
-  z-index: auto; /* 继承父容器层级，不创建独立层叠上下文 */
-  position: relative; /* 正常文档流定位 */
+  position: absolute;
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .mobile-menu-btn:hover {
@@ -221,7 +223,7 @@
 
 .mobile-menu-btn:active {
   background-color: rgba(59, 130, 246, 0.12);
-  transform: scale(0.97);
+  transform: translateY(-50%) scale(0.97);
 }
 
 .mobile-menu-btn:focus-visible {
@@ -267,11 +269,37 @@
     z-index: 999; /* 移动端最高层级，确保不被任何元素遮挡 */
     margin-bottom: 0; /* 移除margin，由main-shell的padding-top代替 */
     background-color: rgb(var(--bg-rgb)); /* 移动端使用不透明背景 */
+    height: auto; /* 允许高度自适应 */
+    min-height: 56px; /* 最小高度保持56px */
+    padding: 12px var(--space-md); /* 增加上下padding */
+    flex-wrap: wrap; /* 允许换行，按钮在第二行 */
   }
-  
+
+  /* 移动端菜单按钮 - 显示在导航栏下方（第二行） */
+  .mobile-menu-btn {
+    position: static; /* 取消绝对定位 */
+    transform: none; /* 重置transform */
+    order: -1; /* 排在第一行最前面 */
+    margin-right: auto; /* 靠左对齐 */
+    flex-shrink: 0; /* 不压缩 */
+  }
+
+  .topbar-title {
+    font-size: var(--text-lg);
+    margin-left: 0; /* 移动端不需要左侧margin */
+    flex: 1; /* 占据剩余空间 */
+    text-align: center; /* 标题居中 */
+    min-width: 0; /* 允许文本截断 */
+  }
+
+  .topbar-actions {
+    order: 1; /* 右侧操作按钮排在最后 */
+    flex-shrink: 0;
+  }
+
   /* 为固定导航栏预留空间：main-shell需要额外的padding-top */
   .main-shell {
-    padding-top: calc(var(--space-md) + 56px); /* 原padding + 导航栏高度 */
+    padding-top: calc(var(--space-md) + 72px); /* 原padding + 导航栏高度(约72px) */
   }
 }
 
@@ -279,6 +307,7 @@
   font-size: var(--text-xl);
   font-weight: 700;
   color: var(--text);
+  margin-left: 52px;
   flex: 1;
 }
 

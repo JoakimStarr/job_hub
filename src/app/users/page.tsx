@@ -35,12 +35,12 @@ export default function UsersPage() {
       const rolesArray = Array.isArray(roleResponse) ? roleResponse : (roleResponse.roles || []);
       setRoles(rolesArray);
       // users API 返回 { success, users } 或直接返回数组
-      let usersData: AppUser[];
-      if (Array.isArray(userResponse)) {
-        usersData = userResponse;
-      } else {
-        const responseObj = userResponse as { users?: AppUser[] };
-        usersData = responseObj.users || (userResponse as AppUser[]) || [];
+      const rawResponse = userResponse as Record<string, unknown> | AppUser[];
+      let usersData: AppUser[] = [];
+      if (Array.isArray(rawResponse)) {
+        usersData = rawResponse as AppUser[];
+      } else if (rawResponse && typeof rawResponse === 'object' && 'users' in rawResponse && Array.isArray(rawResponse.users)) {
+        usersData = rawResponse.users as AppUser[];
       }
       setUsers(usersData);
       setRole((current) => current || (rolesArray[0]?.id || ''));
