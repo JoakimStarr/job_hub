@@ -16,24 +16,22 @@
     # 或使用工厂函数
     strategy = get_strategy('api_post')
 """
-
 from .base import BaseCrawlStrategy
+from .browser_strategy import BrowserStrategy
 
 # 以下策略类的导入将在对应实现文件创建后启用
 # from .api_post import ApiPostStrategy
-# from .api_get import ApiGetStrategy
+from .api_get import ApiGetStrategy
 # from .html_strategy import HtmlStrategy
-# from .browser_strategy import BrowserStrategy
 
 # 策略注册表: spider_type -> Strategy类
-# 注意：当前仅注册基础策略类，具体实现将在后续步骤中添加
 STRATEGY_MAP = {
-    'api_post': None,  # 将替换为 ApiPostStrategy
-    'api_get': None,   # 将替换为 ApiGetStrategy
-    'html': None,      # 将替换为 HtmlStrategy
-    'browser_js': None,        # 将替换为 BrowserStrategy
-    'browser_encrypted': None,  # 将替换为 BrowserStrategy
-    'browser_api': None,        # 将替换为 BrowserStrategy
+    'api_post': None,       # 将替换为 ApiPostStrategy
+    'api_get': ApiGetStrategy,   # GET API (zuel)
+    'html': None,           # 将替换为 HtmlStrategy
+    'browser_js': BrowserStrategy,
+    'browser_encrypted': BrowserStrategy,
+    'browser_api': BrowserStrategy,
 }
 
 # 支持的类型列表（包含所有已注册的策略类型标识）
@@ -72,9 +70,9 @@ def get_strategy(spider_type: str) -> BaseCrawlStrategy:
 __all__ = [
     'BaseCrawlStrategy',
     # 'ApiPostStrategy',     # 待实现
-    # 'ApiGetStrategy',      # 待实现
+    'ApiGetStrategy',      # GET API (zuel)
     # 'HtmlStrategy',        # 待实现
-    # 'BrowserStrategy',     # 待实现
+    'BrowserStrategy',
     'STRATEGY_MAP',
     'SUPPORTED_TYPES',
     'get_strategy',
