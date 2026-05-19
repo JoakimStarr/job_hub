@@ -18,20 +18,18 @@
 """
 from .base import BaseCrawlStrategy
 from .api_post import ApiPostStrategy
-
-# 以下策略类的导入将在对应实现文件创建后启用
-# from .api_get import ApiGetStrategy
-# from .html_strategy import HtmlStrategy
-# from .browser_strategy import BrowserStrategy
+from .api_get import ApiGetStrategy
+from .html_strategy import HtmlStrategy
+from .browser_strategy import BrowserStrategy
 
 # 策略注册表: spider_type -> Strategy类
 STRATEGY_MAP = {
     'api_post': ApiPostStrategy,
-    'api_get': None,   # 将替换为 ApiGetStrategy
-    'html': None,      # 将替换为 HtmlStrategy
-    'browser_js': None,        # 将替换为 BrowserStrategy
-    'browser_encrypted': None,  # 将替换为 BrowserStrategy
-    'browser_api': None,        # 将替换为 BrowserStrategy
+    'api_get': ApiGetStrategy,
+    'html': HtmlStrategy,
+    'browser_js': BrowserStrategy,
+    'browser_encrypted': BrowserStrategy,
+    'browser_api': BrowserStrategy,
 }
 
 # 支持的类型列表（包含所有已注册的策略类型标识）
@@ -49,7 +47,7 @@ def get_strategy(spider_type: str) -> BaseCrawlStrategy:
         BaseCrawlStrategy 实例
     
     Raises:
-        ValueError: 不支持的spider_type或策略尚未实现
+        ValueError: 不支持的spider_type
     """
     if spider_type not in STRATEGY_MAP:
         raise ValueError(
@@ -57,22 +55,15 @@ def get_strategy(spider_type: str) -> BaseCrawlStrategy:
             f"支持的类型: {SUPPORTED_TYPES}"
         )
     
-    strategy_cls = STRATEGY_MAP[spider_type]
-    if strategy_cls is None:
-        raise NotImplementedError(
-            f"策略 '{spider_type}' 已注册但尚未实现。"
-            f"请等待对应的策略实现文件创建完成。"
-        )
-    
-    return strategy_cls()
+    return STRATEGY_MAP[spider_type]()
 
 
 __all__ = [
     'BaseCrawlStrategy',
     'ApiPostStrategy',
-    # 'ApiGetStrategy',      # 待实现
-    # 'HtmlStrategy',        # 待实现
-    # 'BrowserStrategy',     # 待实现
+    'ApiGetStrategy',
+    'HtmlStrategy',
+    'BrowserStrategy',
     'STRATEGY_MAP',
     'SUPPORTED_TYPES',
     'get_strategy',

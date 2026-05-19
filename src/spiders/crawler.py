@@ -78,7 +78,30 @@ class AsyncMultiCrawler:
         except Exception as e:
             logger.warning(f"保存失败队列失败: {e}")
 
-    async def crawl_source(self, source_key: str, headless: bool = True, max_items: int = 0) -> List[JobData]:
+    async def crawl_source(
+        self,
+        source_key: str,
+        headless: bool = True,
+        max_items: int = 0,
+        stream_mode: bool = False
+    ) -> List[JobData]:
+        """
+        爬取单个数据源
+        
+        Args:
+            source_key: 数据源标识 (如 'sufe', 'zuel')
+            headless: 是否无头浏览器模式
+            max_items: 最大爬取数量, 0表示不限制
+            stream_mode: 是否使用流式模式 (边爬边写，降低内存占用)
+            
+        Returns:
+            List[JobData]: 爬取到的岗位数据列表
+            
+        注意事项:
+            - stream_mode=True 时使用异步生成器，内存占用从O(N)降至O(1)
+            - stream_mode=False 时保持原有行为，一次性返回所有数据
+            - 浏览器类爬虫自动获取信号量控制并发
+        """
         is_browser = source_key in BROWSER_SPIDERS
 
         async def _run_spider():
@@ -88,7 +111,10 @@ class AsyncMultiCrawler:
             }
             spider = create_spider(source_key, config=config, headless=headless, session=self.session)
             try:
-                return await spider.crawl(max_items=max_items)
+                if stream_mode:
+                    return await self._crawl_and_save_stream(spider, source_key, max_items)
+                else:
+                    return await spider.crawl(max_items=max_items)
             except Exception as e:
                 logger.error(f"[{source_key}] 爬取异常: {e}")
                 return []
@@ -102,21 +128,102 @@ class AsyncMultiCrawler:
         else:
             return await _run_spider()
 
+    async def _crawl_and_save_stream(
+        self,
+        spider: 'UnifiedSpider',
+        source_key: str,
+        max_items: int = 0
+    ) -> List[JobData]:
+        """
+        流式爬取并实时保存到数据库
+        
+        使用异步生成器边爬取边写入数据库，
+        避免将所有数据累积在内存中。
+        
+        Args:
+            spider: UnifiedSpider实例
+            source_key: 数据源标识
+            max_items: 最大数量限制
+            
+        Returns:
+            所有保存的JobData列表 (用于兼容性)
+        """
+        all_jobs: List[JobData] = []
+        batch: List[JobData] = []
+        saved_count = 0
+        
+        async for job in spider.crawl_stream(max_items):
+            all_jobs.append(job)
+            batch.append(job)
+            
+            if len(batch) >= self.BATCH_SIZE:
+                inserted = await self.db.insert_jobs_batch(batch)
+                saved_count += inserted
+                
+                if self.on_batch_saved:
+                    self.on_batch_saved(inserted, SOURCE_NAMES.get(source_key, source_key))
+                
+                if self.on_progress:
+                    self.on_progress(
+                        source=source_key,
+                        current=saved_count,
+                        batch_size=len(batch),
+                    )
+                
+                batch.clear()
+        
+        # 保存剩余的数据
+        if batch:
+            inserted = await self.db.insert_jobs_batch(batch)
+            saved_count += inserted
+            
+            if self.on_batch_saved:
+                self.on_batch_saved(inserted, SOURCE_NAMES.get(source_key, source_key))
+        
+        logger.info(
+            f"[{source_key}] 流式爬取完成: "
+            f"总计 {len(all_jobs)} 条, 保存 {saved_count} 条"
+        )
+        
+        return all_jobs
+
     async def crawl_all_parallel(
         self,
         sources: Optional[List[str]] = None,
         headless: bool = True,
         max_items: int = 0,
+        stream_mode: bool = False
     ) -> Dict[str, List[JobData]]:
+        """
+        并发爬取多个数据源
+        
+        Args:
+            sources: 要爬取的数据源列表, None表示全部
+            headless: 是否无头浏览器模式
+            max_items: 每个数据源最大爬取数量
+            stream_mode: 是否使用流式模式 (边爬边写)
+            
+        Returns:
+            Dict[source_key, List[JobData]]: 各数据源的爬取结果
+            
+        性能对比:
+            - batch_mode (stream_mode=False): 内存O(N), 适合小规模数据
+            - stream_mode (stream_mode=True): 内存O(1), 适合大规模数据
+        """
         await self.db.connect()
         await self._load_visited_urls()
 
         source_keys = sources or get_all_spider_names()
-        logger.info(f"开始并发爬取 {len(source_keys)} 个数据源: {source_keys}")
+        logger.info(
+            f"开始并发爬取 {len(source_keys)} 个数据源: {source_keys} "
+            f"{'(流式模式)' if stream_mode else '(批处理模式)'}"
+        )
 
         tasks = {}
         for key in source_keys:
-            tasks[key] = asyncio.create_task(self.crawl_source(key, headless=headless, max_items=max_items))
+            tasks[key] = asyncio.create_task(
+                self.crawl_source(key, headless=headless, max_items=max_items, stream_mode=stream_mode)
+            )
 
         results: Dict[str, List[JobData]] = {}
         for key, task in tasks.items():
@@ -129,16 +236,19 @@ class AsyncMultiCrawler:
                     "status": "completed",
                     "count": len(jobs),
                     "elapsed": round(elapsed, 1),
+                    "mode": "stream" if stream_mode else "batch",
                 }
                 logger.info(f"[{key}] 爬取完成: {len(jobs)} 条, 耗时 {elapsed:.1f}s")
 
-                batch = jobs[: self.BATCH_SIZE]
-                while batch:
-                    inserted = await self.db.insert_jobs_batch(batch)
-                    if self.on_batch_saved:
-                        self.on_batch_saved(inserted, SOURCE_NAMES.get(key, key))
-                    jobs = jobs[self.BATCH_SIZE:]
+                # 非流式模式下需要手动分批保存
+                if not stream_mode:
                     batch = jobs[: self.BATCH_SIZE]
+                    while batch:
+                        inserted = await self.db.insert_jobs_batch(batch)
+                        if self.on_batch_saved:
+                            self.on_batch_saved(inserted, SOURCE_NAMES.get(key, key))
+                        jobs = jobs[self.BATCH_SIZE:]
+                        batch = jobs[: self.BATCH_SIZE]
 
                 await self.db.log_crawl(
                     source=SOURCE_NAMES.get(key, key),
@@ -151,7 +261,12 @@ class AsyncMultiCrawler:
             except Exception as e:
                 elapsed = time.time() - start
                 results[key] = []
-                self._source_results[key] = {"status": "error", "count": 0, "elapsed": round(elapsed, 1), "error": str(e)}
+                self._source_results[key] = {
+                    "status": "error",
+                    "count": 0,
+                    "elapsed": round(elapsed, 1),
+                    "error": str(e)
+                }
                 logger.error(f"[{key}] 爬取失败: {e}")
                 await self.db.log_crawl(
                     source=SOURCE_NAMES.get(key, key), status="error", error_message=str(e),
