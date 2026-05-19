@@ -1,0 +1,42 @@
+# ============================================
+# FinIntern Hub - Python爬虫依赖
+# ============================================
+#
+# 安装方式:
+#   pip install -r requirements.txt
+#
+# 可选依赖:
+#   pip install -r requirements.txt  # 核心依赖（不含浏览器）
+#   pip install -r requirements.txt  # 全部依赖（含Playwright）
+#
+# ============================================
+
+# --- 核心依赖（必需）---
+
+# 异步SQLite驱动（爬虫端数据库操作）
+aiosqlite>=0.19.0,<1.0.0
+
+# 结构化日志框架
+loguru>=0.7.0,<1.0.0
+
+# 异步HTTP客户端（API类型爬虫）
+aiohttp>=3.9.0,<4.0.0
+
+# HTML解析器（HTML类型爬虫）
+beautifulsoup4>=4.12.0,<5.0.0
+
+# --- 浏览器自动化（可选，仅browser_*类型需要）---
+
+# Playwright浏览器自动化（UIBE/JXUFE/NEU/SMARTEDU等数据源）
+playwright>=1.40.0,<2.0.0
+
+# --- 开发工具（可选）---
+
+# 代码质量检查
+flake8>=6.0.0
+black>=23.0.0
+mypy>=1.0.0
+
+# 测试框架
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
