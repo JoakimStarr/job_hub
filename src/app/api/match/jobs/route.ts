@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
-import { requireAuthUnified, AuthError } from '@/lib/auth';
+import { requireAuthUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import type { ResumeProfile, MatchResult, JobItem } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';

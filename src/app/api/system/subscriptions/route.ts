@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
-import { requirePermissionUnified, AuthError } from '@/lib/auth';
+import { requirePermissionUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
 function initSubscriptionsTable(db: ReturnType<typeof getDb>) {

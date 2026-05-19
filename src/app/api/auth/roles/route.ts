@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requirePermission } from '@/lib/auth';
+import { requirePermissionUnified } from '@/lib/auth-server';
 import { AuthError } from '@/lib/auth';
 import { handleApiError } from '@/lib/api-response';
 import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
-    requirePermission(request, 'users:read');
+    requirePermissionUnified(request, 'users:read');
 
     const roles = [
       { id: 'admin', name: '管理员' },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
-import { requireAuthUnified, AuthError } from '@/lib/auth';
+import { requireAuthUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import type { ResumeProfile } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
