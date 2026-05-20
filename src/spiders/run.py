@@ -96,6 +96,7 @@ def main():
     parser.add_argument("--max-items", type=int, default=0, help="每个数据源最大爬取数量 (0=不限)")
     parser.add_argument("--output", type=str, default=None, help="输出目录")
     parser.add_argument("--db-path", type=str, default=None, help="数据库文件路径")
+    parser.add_argument("--reset-incremental", action="store_true", help="清除增量爬取状态，强制从头开始爬取")
     parser.add_argument("--interactive", "-i", action="store_true", help="交互式选择爬虫")
     args = parser.parse_args()
 
@@ -126,6 +127,24 @@ def main():
             sys.exit(1)
 
     logger.info(f"爬虫系统启动 | headless={headless} | sources={sources or '全部'} | max_items={args.max_items}")
+
+    # 清除增量爬取状态（在创建crawler之前）
+    if args.reset_incremental:
+        import sqlite3 as sqlite3_mod
+        from .config import get_config
+        config = get_config()
+        db_path = args.db_path or str(Path(config.log_dir).parent / "data" / "jobs.db")
+        if not Path(db_path).exists():
+            # 尝试默认路径
+            db_path = str(Path(__file__).parent.parent.parent / "data" / "jobs.db")
+        if Path(db_path).exists():
+            conn = sqlite3_mod.connect(db_path)
+            conn.execute("DELETE FROM crawl_state")
+            conn.commit()
+            conn.close()
+            print("已清除所有增量爬取状态，将从头开始爬取")
+        else:
+            print("数据库文件不存在，跳过增量状态清除")
 
     crawler = AsyncMultiCrawler(output_dir=args.output, db_path=args.db_path)
 

@@ -11,6 +11,7 @@ ApiPostStrategy - POST JSON API 爬取策略
 """
 
 import asyncio
+import json
 import random
 import re
 import time
@@ -49,69 +50,88 @@ class ApiPostStrategy(BaseCrawlStrategy):
 
     async def execute(self, spider, max_items: int = 0) -> AsyncIterator[JobData]:
         """
-        执行POST API爬取策略
-        
-        流程:
-        1. 创建或复用HTTP Session
-        2. 检查是否有 sections 配置 (sufe需要分板块)
-        3. 如果有sections: 遍历每个section调用 _crawl_section()
-        4. 如果无sections: 调用 _crawl_platform() (cufe/dufe通用)
-        5. 对每个section/platform进行分页循环
-        6. 并发获取详情页
-        7. 解析每条数据为 JobData
-        8. 校验、评分、计算哈希后 yield
-        9. 检查 max_items 和 spider._should_stop
-        
+        执行POST API爬取策略（支持增量爬取）
+
+        增量爬取流程:
+        1. 从数据库加载上次爬取状态（extra中存储各子分类的页码）
+        2. 遍历每个子分类时，从上次页码开始
+        3. 已存在的URL自动跳过
+        4. 爬取完成后保存各子分类的当前页码到数据库
+
         Args:
             spider: UnifiedSpider实例(提供session/config/source_key等上下文)
             max_items: 最大产出数量(0表示不限制)
-            
+
         Yields:
             JobData: 解析后的岗位数据
         """
         log = logger.bind(source=spider.source)
         log.info(f"[{spider.source}] ApiPostStrategy 开始执行")
-        
+
         session = await self._create_session(spider)
-        
+
         spider_config = spider.spider_config
         sections = spider_config.get("sections", [])
         position_types = spider_config.get("position_types", [])
-        
+
+        # 加载增量爬取状态
+        state = {}
+        if hasattr(spider, 'db') and spider.db:
+            state = await spider.db.load_crawl_state(spider.source)
+        state_extra = json.loads(state.get("extra", "{}")) if state else {}
+
         total_yielded = 0
-        
+
         if sections:
             log.info(f"[{spider.source}] 检测到 {len(sections)} 个板块配置")
+            sections_progress = state_extra.get("sections", {})
             for section_config in sections:
                 if spider.is_time_limit_exceeded():
                     log.info(f"[{spider.source}] 运行时间超限，停止爬取")
                     break
                 if max_items > 0 and total_yielded >= max_items:
                     break
-                    
-                async for job in self._crawl_section(session, section_config, spider, max_items, total_yielded):
+
+                section_key = section_config.get("section", "unknown")
+                start_page = sections_progress.get(section_key, 1)
+                if start_page > 1:
+                    log.info(f"[{spider.source}] 增量爬取板块 {section_key}: 从第 {start_page} 页开始")
+
+                async for job in self._crawl_section(session, section_config, spider, max_items, total_yielded, start_page=start_page):
                     yield job
                     total_yielded += 1
                     if max_items > 0 and total_yielded >= max_items:
                         break
-                        
+
         elif position_types:
             log.info(f"[{spider.source}] 检测到 {len(position_types)} 个岗位类型")
+            types_progress = state_extra.get("position_types", {})
             for pt in position_types:
                 if spider.is_time_limit_exceeded():
                     log.info(f"[{spider.source}] 运行时间超限，停止爬取")
                     break
                 if max_items > 0 and total_yielded >= max_items:
                     break
-                    
-                async for job in self._crawl_platform_type(session, pt, spider, max_items, total_yielded):
+
+                type_key = pt.get("type", "unknown")
+                start_page = types_progress.get(type_key, 1)
+                if start_page > 1:
+                    log.info(f"[{spider.source}] 增量爬取类型 {type_key}: 从第 {start_page} 页开始")
+
+                async for job in self._crawl_platform_type(session, pt, spider, max_items, total_yielded, start_page=start_page):
                     yield job
                     total_yielded += 1
                     if max_items > 0 and total_yielded >= max_items:
                         break
         else:
             log.warning(f"[{spider.source}] 未找到 sections 或 position_types 配置")
-        
+
+        # 保存增量爬取状态（重新加载以获取子分类更新的进度）
+        if hasattr(spider, 'db') and spider.db:
+            state = await spider.db.load_crawl_state(spider.source)
+            state_extra = json.loads(state.get("extra", "{}"))
+            await spider.db.save_crawl_state(spider.source, 0, total_yielded, extra=json.dumps(state_extra))
+
         log.info(f"[{spider.source}] ApiPostStrategy 执行完成，共产出 {total_yielded} 条数据")
 
     async def _crawl_section(
@@ -120,18 +140,20 @@ class ApiPostStrategy(BaseCrawlStrategy):
         section_config: Dict,
         spider,
         max_items: int = 0,
-        current_total: int = 0
+        current_total: int = 0,
+        start_page: int = 1
     ) -> AsyncIterator[JobData]:
         """
-        爬取单个板块的所有分页数据 (SUFE专用)
-        
+        爬取单个板块的所有分页数据 (SUFE专用，支持增量爬取)
+
         Args:
             session: aiohttp ClientSession实例
-            section_config: 板块配置字典，包含section/list_url/detail_url/view_url/referer等字段
+            section_config: 板块配置字典
             spider: UnifiedSpider实例
             max_items: 最大产出数量限制
             current_total: 当前已产出的总数
-            
+            start_page: 起始页码（增量爬取时从该页开始）
+
         Yields:
             JobData: 解析后的岗位数据
         """
@@ -139,21 +161,22 @@ class ApiPostStrategy(BaseCrawlStrategy):
         section = section_config.get("section", "unknown")
         label = section_config.get("label", section)
         max_pages = getattr(spider, 'max_pages', 80)
-        
+
         log.info(f"[{spider.source}] 开始爬取板块: {label} ({section})")
-        
+
         consecutive_empty = 0
         max_consecutive_empty = 3
-        
-        for page_num in range(1, max_pages + 1):
+        last_completed_page = start_page - 1
+
+        for page_num in range(start_page, max_pages + 1):
             if spider.is_time_limit_exceeded():
                 log.debug(f"[{spider.source}] 板块 {section} 运行时间超限")
                 break
-                
+
             current_count = current_total + self._count
             if max_items > 0 and current_count >= max_items:
                 break
-            
+
             list_data = await self._fetch_sufe_page(session, section_config, page_num, spider)
             if not list_data:
                 consecutive_empty += 1
@@ -162,30 +185,31 @@ class ApiPostStrategy(BaseCrawlStrategy):
                         f"[{spider.source}] 板块 {section} 连续 {consecutive_empty} 页空响应，"
                         f"达到阈值({max_consecutive_empty})，停止爬取此板块"
                     )
-                    break  # 添加break，停止当前板块的爬取
+                    break
                 continue
             consecutive_empty = 0
-            
+
             page_items = list_data.get("list") or []
             if not page_items:
                 log.debug(f"[{spider.source}] 板块 {section} 第{page_num}页无数据，停止翻页")
                 break
-            
+
             detail_urls = [self._build_sufe_view_url(section_config, item, spider) for item in page_items]
             existing_urls = await spider.get_existing_urls(detail_urls)
-            
+
             candidates = []
             for item in page_items:
                 view_url = self._build_sufe_view_url(section_config, item, spider)
                 if view_url and view_url not in existing_urls:
                     candidates.append(item)
-            
+
             if not candidates:
                 log.debug(f"[{spider.source}] 板块 {section} 第{page_num}页全部已存在({len(page_items)}条)")
+                last_completed_page = page_num
                 continue
-            
+
             concurrency = 4 if section == "zpgg" else getattr(spider, 'detail_concurrency', 8)
-            
+
             if section == "zpgg":
                 page_jobs = await gather_limited(
                     candidates,
@@ -198,7 +222,7 @@ class ApiPostStrategy(BaseCrawlStrategy):
                     lambda item: self._fetch_sufe_detail_job(session, item, section_config, spider),
                     concurrency=concurrency
                 )
-            
+
             for job in page_jobs:
                 if job is None:
                     continue
@@ -206,6 +230,20 @@ class ApiPostStrategy(BaseCrawlStrategy):
                     job.quality_score = self._calculate_quality_score(job)
                     job.content_hash = self._compute_content_hash(job)
                     spider.stats.items_extracted += 1
+
+                    # 在 yield 前保存增量状态（确保即使消费者停止也能保存）
+                    last_completed_page = page_num
+                    if hasattr(spider, 'db') and spider.db:
+                        try:
+                            state = await spider.db.load_crawl_state(spider.source)
+                            state_extra = json.loads(state.get("extra", "{}"))
+                            sections_progress = state_extra.get("sections", {})
+                            sections_progress[section] = page_num + 1
+                            state_extra["sections"] = sections_progress
+                            await spider.db.save_crawl_state(spider.source, 0, 0, extra=json.dumps(state_extra))
+                        except Exception:
+                            pass
+
                     yield job
                 else:
                     log.debug(f"[{spider.source}] 数据校验未通过: {job.title}")
@@ -216,18 +254,20 @@ class ApiPostStrategy(BaseCrawlStrategy):
         type_config: Dict,
         spider,
         max_items: int = 0,
-        current_total: int = 0
+        current_total: int = 0,
+        start_page: int = 1
     ) -> AsyncIterator[JobData]:
         """
-        爬取单个岗位类型的所有数据 (CUFE/DUFE通用)
-        
+        爬取单个岗位类型的所有数据 (CUFE/DUFE通用，支持增量爬取)
+
         Args:
             session: aiohttp ClientSession实例
-            type_config: 岗位类型配置字典，包含type/label等字段
+            type_config: 岗位类型配置字典
             spider: UnifiedSpider实例
             max_items: 最大产出数量限制
             current_total: 当前已产出的总数
-            
+            start_page: 起始页码（增量爬取时从该页开始）
+
         Yields:
             JobData: 解析后的岗位数据
         """
@@ -235,21 +275,22 @@ class ApiPostStrategy(BaseCrawlStrategy):
         position_type = type_config.get("type", "")
         label = type_config.get("label", position_type)
         max_pages = getattr(spider, 'max_pages', 80)
-        
+
         log.info(f"[{spider.source}] 开始爬取岗位类型: {label} ({position_type})")
-        
+
         consecutive_empty = 0
         max_consecutive_empty = 3
-        
-        for page_num in range(1, max_pages + 1):
+        last_completed_page = start_page - 1
+
+        for page_num in range(start_page, max_pages + 1):
             if spider.is_time_limit_exceeded():
                 log.debug(f"[{spider.source}] 类型 {position_type} 运行时间超限")
                 break
-                
+
             current_count = current_total + self._count
             if max_items > 0 and current_count >= max_items:
                 break
-            
+
             list_data = await self._fetch_platform_page(session, position_type, page_num, spider)
             if not list_data or list_data.get("state") != 1:
                 consecutive_empty += 1
@@ -257,39 +298,40 @@ class ApiPostStrategy(BaseCrawlStrategy):
                     log.debug(f"[{spider.source}] 类型 {position_type} 连续空响应，停止")
                 continue
             consecutive_empty = 0
-            
+
             obj = list_data.get("object") or {}
             items = obj.get("list") or []
-            
+
             if not items:
                 log.debug(f"[{spider.source}] 类型 {position_type} 第{page_num}页无数据，停止翻页")
                 break
-            
+
             page_urls = []
             for item in items:
                 url_path = item.get("url", "")
                 if url_path:
                     page_urls.append(urljoin(spider.base_url, url_path))
             existing_urls = await spider.get_existing_urls(page_urls)
-            
+
             candidates = []
             for item in items:
                 url_path = item.get("url", "")
                 full_url = urljoin(spider.base_url, url_path) if url_path else ""
                 if full_url and full_url not in existing_urls:
                     candidates.append(item)
-            
+
             if not candidates:
                 log.debug(f"[{spider.source}] 类型 {position_type} 第{page_num}页全部已存在({len(items)}条)")
+                last_completed_page = page_num
                 continue
-            
+
             concurrency = getattr(spider, 'detail_concurrency', 4)
             page_jobs = await gather_limited(
                 candidates,
                 lambda item: self._fetch_platform_detail(session, item, position_type, spider),
                 concurrency=concurrency
             )
-            
+
             for job in page_jobs:
                 if job is None:
                     continue
@@ -297,6 +339,20 @@ class ApiPostStrategy(BaseCrawlStrategy):
                     job.quality_score = self._calculate_quality_score(job)
                     job.content_hash = self._compute_content_hash(job)
                     spider.stats.items_extracted += 1
+
+                    # 在 yield 前保存增量状态
+                    last_completed_page = page_num
+                    if hasattr(spider, 'db') and spider.db:
+                        try:
+                            state = await spider.db.load_crawl_state(spider.source)
+                            state_extra = json.loads(state.get("extra", "{}"))
+                            types_progress = state_extra.get("position_types", {})
+                            types_progress[position_type] = page_num + 1
+                            state_extra["position_types"] = types_progress
+                            await spider.db.save_crawl_state(spider.source, 0, 0, extra=json.dumps(state_extra))
+                        except Exception:
+                            pass
+
                     yield job
                 else:
                     log.debug(f"[{spider.source}] 数据校验未通过: {job.title}")

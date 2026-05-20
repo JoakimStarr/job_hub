@@ -12,6 +12,7 @@ ApiGetStrategy - GET API 爬取策略
 """
 
 import asyncio
+import json
 from typing import Any, AsyncIterator, Dict, List, Optional
 
 from loguru import logger
@@ -48,24 +49,24 @@ class ApiGetStrategy(BaseCrawlStrategy):
         max_items: int = 0
     ) -> AsyncIterator['JobData']:
         """
-        执行GET API爬取策略
-        
-        流程:
-        1. 创建Session
-        2. 检查是否配置了 categories (zuel按学院/类别分类)
-        3. 遍历每个category:
-           a. 构造带参数的GET URL (?page=1&limit=20&type=xxx)
-           b. 循环分页直到返回空列表或达到max_pages
-           c. 解析每页响应提取 data 数组
-           d. 对每行数据调用 _parse_item()
-           e. 如需详情则并发获取
-           f. 校验、评分、哈希后 yield
-        4. 检查 max_items 和 should_stop
+        执行GET API爬取策略（支持增量爬取）
+
+        增量爬取流程:
+        1. 从数据库加载上次爬取状态（extra中存储各category的页码）
+        2. 遍历每个category时，从上次页码开始
+        3. 已存在的URL自动跳过
+        4. 爬取完成后保存各category的当前页码到数据库
         """
         from ..base import JobData
 
         session = await self._create_session(spider)
         close_session = not (hasattr(spider, 'external_session') and spider.external_session)
+
+        # 加载增量爬取状态
+        state = {}
+        if hasattr(spider, 'db') and spider.db:
+            state = await spider.db.load_crawl_state(spider.source)
+        state_extra = json.loads(state.get("extra", "{}")) if state else {}
 
         try:
             categories = spider.spider_config.get("categories", [])
@@ -73,11 +74,18 @@ class ApiGetStrategy(BaseCrawlStrategy):
                 logger.warning(f"[{spider.source}] 未配置 categories，跳过 api_get 策略")
                 return
 
+            categories_progress = state_extra.get("categories", {})
+
             for cat_config in categories:
                 if self._should_stop(spider):
                     break
 
-                async for job in self._crawl_category(session, cat_config, spider, max_items):
+                api_type = cat_config.get("api_type", "")
+                start_page = categories_progress.get(api_type, 1)
+                if start_page > 1:
+                    logger.info(f"[{spider.source}] 增量爬取类别 {api_type}: 从第 {start_page} 页开始")
+
+                async for job in self._crawl_category(session, cat_config, spider, max_items, start_page=start_page):
                     if job:
                         yield job
                         self._count += 1
@@ -85,6 +93,9 @@ class ApiGetStrategy(BaseCrawlStrategy):
                             logger.info(f"[{spider.source}] 已达到最大数量限制: {max_items}")
                             return
         finally:
+            # 保存增量爬取状态
+            if hasattr(spider, 'db') and spider.db:
+                await spider.db.save_crawl_state(spider.source, 0, self._count, extra=json.dumps(state_extra))
             if close_session:
                 await session.close()
 
@@ -93,17 +104,19 @@ class ApiGetStrategy(BaseCrawlStrategy):
         session,
         cat_config: Dict[str, Any],
         spider: 'UnifiedSpider',
-        max_items: int = 0
+        max_items: int = 0,
+        start_page: int = 1
     ) -> AsyncIterator['JobData']:
         """
-        爬取单个类别的所有分页数据
-        
+        爬取单个类别的所有分页数据（支持增量爬取）
+
         Args:
             session: aiohttp ClientSession 实例
-            cat_config: 类别配置字典，包含 api_type, job_type, label 等
+            cat_config: 类别配置字典
             spider: UnifiedSpider 实例
             max_items: 最大产出数量
-            
+            start_page: 起始页码（增量爬取时从该页开始）
+
         Yields:
             JobData: 解析后的岗位数据
         """
@@ -113,8 +126,9 @@ class ApiGetStrategy(BaseCrawlStrategy):
         list_api = spider.spider_config.get("list_api", "")
         page_size = spider.spider_config.get("page_size", 10)
         max_pages = getattr(spider, 'max_pages', 80)
+        last_completed_page = start_page - 1
 
-        for page_num in range(1, max_pages + 1):
+        for page_num in range(start_page, max_pages + 1):
             if self._should_stop(spider):
                 break
             if max_items > 0 and self._count >= max_items:
@@ -146,10 +160,24 @@ class ApiGetStrategy(BaseCrawlStrategy):
                     candidates.append(item)
 
             if not candidates:
+                last_completed_page = page_num
                 continue
 
             async for job in self._fetch_details_concurrent(session, candidates, spider):
                 if job:
+                    # 在 yield 前保存增量状态
+                    last_completed_page = page_num
+                    if hasattr(spider, 'db') and spider.db:
+                        try:
+                            state = await spider.db.load_crawl_state(spider.source)
+                            state_extra = json.loads(state.get("extra", "{}"))
+                            categories_progress = state_extra.get("categories", {})
+                            categories_progress[api_type] = page_num + 1
+                            state_extra["categories"] = categories_progress
+                            await spider.db.save_crawl_state(spider.source, 0, 0, extra=json.dumps(state_extra))
+                        except Exception:
+                            pass
+
                     yield job
 
     async def _fetch_list_page(
