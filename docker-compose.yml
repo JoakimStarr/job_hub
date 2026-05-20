@@ -1,88 +1,67 @@
 # ============================================
-# FinIntern Hub - Docker 多阶段构建
+# FinIntern Hub - Docker Compose 配置
 # ============================================
 #
 # 使用方式:
-#   docker compose up -d          # 启动所有服务
-#   docker compose logs -f web    # 查看Web日志
-#   docker compose exec spider python3 src/spiders/run.py --sources sufe  # 运行爬虫
+#   docker compose up -d          # 启动服务
+#   docker compose logs -f        # 查看日志
+#   docker compose down           # 停止服务
+#
+# 认证说明:
+#   - 使用数据库用户认证 (替代环境变量TOKEN)
+#   - 首次运行需初始化默认用户: npx ts-node scripts/init-default-users.ts
+#   - 默认账号: admin/admin123, operator/operator123, viewer/viewer123
 #
 # ============================================
 
 services:
   # ====================
-  # Web 应用 (Next.js)
+  # Next.js Web 应用
   # ====================
-  web:
+  finintern-next:
     build:
       context: .
-      dockerfile: Dockerfile.web
+      dockerfile: Dockerfile
       args:
-        - NODE_ENV=production
-    container_name: job-hub-web
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+        NPM_REGISTRY: ${NPM_REGISTRY:-https://registry.npmjs.org}
+    container_name: job-hub
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "${NEXT_APP_PORT:-3001}:3000"
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - DATABASE_PATH=/app/data/jobs.db
-      - SESSION_TIMEOUT_HOURS=24
+      # 基础配置
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+      
+      # 数据库路径
+      DATABASE_PATH: /app/data/jobs.db
+      
+      # 会话配置 (不再使用环境变量TOKEN)
+      SESSION_TIMEOUT_HOURS: ${SESSION_TIMEOUT_HOURS:-24}
+      MAX_LOGIN_ATTEMPTS: ${MAX_LOGIN_ATTEMPTS:-5}
+      LOGIN_LOCKOUT_MINUTES: ${LOGIN_LOCKOUT_MINUTES:-15}
+      
+      # AI服务配置 (可选)
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_MODEL: ${AI_MODEL:-}
+      
     volumes:
+      # 数据持久化
       - ./data:/app/data
-      - ./.env:/app/.env:ro
-    networks:
-      - job-hub-network
+      - ./log:/app/log
+      - ./output:/app/output
+      
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
-  # ====================
-  # Nginx 反向代理
-  # ====================
-  nginx:
-    image: nginx:alpine
-    container_name: job-hub-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./certbot/conf:/etc/letsencrypt:ro
-      - ./certbot/www:/var/www/certbot:ro
-    depends_on:
-      - web
-    networks:
-      - job-hub-network
-
-  # ====================
-  # 爬虫执行器 (按需启动)
-  # ====================
-  spider:
-    build:
-      context: .
-      dockerfile: Dockerfile.spider
-    container_name: job-hub-spider
-    profiles:
-      - spider  # 默认不启动，使用 --profile spider 启动
-    environment:
-      - DATABASE_PATH=/app/data/jobs.db
-    volumes:
-      - ./data:/app/data
-      - ./.env:/app/.env:ro
-    networks:
-      - job-hub-network
-    command: ["python3", "src/spiders/run.py", "--sources", "sufe,zuel,cufe,dufe,swufe"]
-
-networks:
-  job-hub-network:
-    driver: bridge
-
-volumes:
-  certbot-conf:
-  certbot-www:
+# 可选: 使用外部网络
+# networks:
+#   default:
+#     external:
+#       name: job-hub-network

@@ -15,6 +15,7 @@ COMPOSE_FILE="docker-compose.build.yml"
 DOCKERFILE="Dockerfile.push"
 
 USE_VPC=false
+DRY_RUN="false"  # 默认非预览模式
 
 # 从 package.json 读取版本号
 PACKAGE_VERSION=$(grep '"version"' "${PROJECT_DIR}/package.json" | head -1 | sed 's/.*: *"\([^"]*\)".*/\1/' || echo "unknown")
@@ -54,7 +55,7 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-if [ "$USE_VPC" = true ]; then
+if [[ "$USE_VPC" == "true" ]]; then
     REGISTRY="$REGISTRY_VPC"
     REMOTE_IMAGE="${REGISTRY}/${NAMESPACE}/${REPO}:${VERSION_TAG}"
     REMOTE_IMAGE_LATEST="${REGISTRY}/${NAMESPACE}/${REPO}:latest"
@@ -75,7 +76,7 @@ echo "========================================="
 echo ""
 
 run_cmd() {
-    if [ "${DRY_RUN:-false}" = true ]; then
+    if [[ "${DRY_RUN}" == "true" ]]; then
         echo "[DRY RUN] $*"
     else
         echo "$ $*"
@@ -83,7 +84,7 @@ run_cmd() {
     fi
 }
 
-if [ "${DO_CLEAN:-false} = true ]; then
+if [[ "${DO_CLEAN}" == "true" ]]; then
     echo "[1/6] 清理构建缓存"
     run_cmd docker builder prune -f
     run_cmd docker system prune -f --volumes
@@ -91,10 +92,10 @@ if [ "${DO_CLEAN:-false} = true ]; then
     echo ""
 fi
 
-if [ "${DO_BUILD:-false} = true ]; then
+if [[ "${DO_BUILD}" == "true" ]]; then
     echo "[2/6] 构建 Docker 镜像"
     
-    if [ "${DRY_RUN:-false}" = false ]; then
+    if [[ "${DRY_RUN}" == "false" ]]; then
         if ! command -v docker >/dev/null 2>&1; then
             echo "ERROR Docker 未安装"
             exit 1
@@ -111,7 +112,7 @@ if [ "${DO_BUILD:-false} = true ]; then
     
     run_cmd docker compose -f "${PROJECT_DIR}/${COMPOSE_FILE}" build --no-cache finintern-next
     
-    if [ "${DRY_RUN:-false}" = false ]; then
+    if [[ "${DRY_RUN}" == "false" ]]; then
         if ! docker image inspect "$LOCAL_IMAGE" >/dev/null 2>&1; then
             echo "ERROR 镜像构建失败"
             exit 1
@@ -137,7 +138,7 @@ else
 fi
 
 echo "[3/6] 登录阿里云 ACR"
-if [ "${DRY_RUN:-false}" = true ]; then
+if [[ "${DRY_RUN}" == "true" ]]; then
     echo "[DRY RUN] docker login --username=${USERNAME} ${REGISTRY}"
 else
     if ! docker login --username="$USERNAME" "$REGISTRY"; then

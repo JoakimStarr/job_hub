@@ -1,4 +1,4 @@
-# 依赖
+# 依赖目录
 node_modules
 venv
 __pycache__
@@ -9,28 +9,31 @@ __pycache__
 out
 dist
 
-# 数据
-data
-*.db
-*.db-journal
-*.db-wal
+# 数据文件（排除所有，但保留构建必需的 JSON 文件）
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/user_profiles
+data/user_profiles/*
+!data/skill_dictionary.json
+!data/major_similarity.json
 
-# 日志
+# 日志文件
 logs
 *.log
 
-# 环境变量（不要提交到镜像）
+# 环境变量
 .env
 .env.local
 .env.production
 
-# IDE
+# IDE 配置
 .idea
 .vscode
 *.swp
 *.swo
 
-# Git
+# Git 相关
 .git
 .gitignore
 
