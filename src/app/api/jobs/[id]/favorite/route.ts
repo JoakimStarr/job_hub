@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
 import { logger } from '@/lib/logger';
+import { requireAuthUnified } from '@/lib/auth-server';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  try {
+    await requireAuthUnified(request);
+  } catch {
+    return NextResponse.json({ error: '未授权访问，请先登录' }, { status: 401 });
+  }
+
   const { id } = await params;
   try {
     const db = getDb();

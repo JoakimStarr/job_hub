@@ -169,6 +169,14 @@ export function LoginClient() {
             <Button type="submit" disabled={loading}>
               {loading ? '正在登录...' : '登录并进入平台'}
             </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => router.push('/')}
+              style={{ width: '100%', marginTop: 8 }}
+            >
+              游客访问
+            </Button>
           </form>
 
           {/* 开发环境显示默认账号 */}
