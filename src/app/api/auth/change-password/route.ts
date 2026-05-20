@@ -172,7 +172,7 @@ export async function POST(request: NextRequest) {
 
     response.cookies.set('session_token', newSessionToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,  // 允许 HTTP 访问
       sameSite: 'lax',
       maxAge: authDb.SESSION_TIMEOUT_HOURS * 3600,
       path: '/',

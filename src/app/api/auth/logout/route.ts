@@ -22,7 +22,7 @@ export async function POST() {
     // 清除 Session Cookie
     response.cookies.set('session_token', '', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: false,  // 允许 HTTP 访问
       sameSite: 'lax',
       maxAge: 0,  // 立即过期
       path: '/',

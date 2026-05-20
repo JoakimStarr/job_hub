@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     // 设置 Session Cookie
     response.cookies.set('session_token', result.sessionToken!, {
       httpOnly: true,        // 防止 XSS 攻击
-      secure: process.env.NODE_ENV === 'production',  // 生产环境强制 HTTPS
+      secure: false,  // 允许 HTTP 访问
       sameSite: 'lax',       // CSRF 防护
       maxAge: authDb.SESSION_TIMEOUT_HOURS * 3600,   // 过期时间（秒）
       path: '/',             // 全站可用
