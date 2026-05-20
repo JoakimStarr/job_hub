@@ -19,7 +19,7 @@ BATCH_CHUNK_SIZE = 500
 
 _INSERT_FIELDS = [
     "title", "company", "location", "salary", "description", "requirements",
-    "job_type", "industry", "education", "experience", "source", "university",
+    "job_type", "industry", "education", "experience", "contact", "source", "university",
     "source_url", "apply_url", "publish_date", "deadline", "category", "tags",
     "content_hash",
 ]
@@ -42,6 +42,7 @@ _UPSERT_SQL_TEMPLATE = f"""
         industry = excluded.industry,
         education = excluded.education,
         experience = excluded.experience,
+        contact = excluded.contact,
         source = excluded.source,
         university = excluded.university,
         apply_url = excluded.apply_url,
@@ -101,6 +102,7 @@ class LocalDatabase:
                 industry TEXT DEFAULT '',
                 education TEXT DEFAULT '',
                 experience TEXT DEFAULT '',
+                contact TEXT DEFAULT '',
                 source TEXT DEFAULT '',
                 university TEXT DEFAULT '',
                 source_url TEXT UNIQUE,
@@ -150,6 +152,13 @@ class LocalDatabase:
         await self._conn.execute('CREATE INDEX IF NOT EXISTS idx_jobs_source_url ON jobs(source_url)')
         await self._conn.execute('CREATE INDEX IF NOT EXISTS idx_jobs_company ON jobs(company)')
         await self._conn.execute('CREATE INDEX IF NOT EXISTS idx_jobs_publish_date ON jobs(publish_date)')
+
+        # 迁移: 添加 contact 列（如果不存在）
+        try:
+            await self._conn.execute('ALTER TABLE jobs ADD COLUMN contact TEXT DEFAULT ""')
+        except Exception:
+            pass  # 列已存在，忽略
+
         await self._conn.commit()
 
     @staticmethod

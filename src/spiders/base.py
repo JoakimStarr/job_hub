@@ -74,6 +74,7 @@ class JobData:
     industry: str = ""
     education: str = ""
     experience: str = ""
+    contact: str = ""
     source: str = ""
     university: str = ""
     source_url: str = ""
@@ -97,6 +98,7 @@ class JobData:
             "industry": self.industry,
             "education": self.education,
             "experience": self.experience,
+            "contact": self.contact,
             "source": self.source,
             "university": self.university,
             "source_url": self.source_url,

@@ -12,6 +12,7 @@ ApiPostStrategy - POST JSON API 爬取策略
 
 import asyncio
 import random
+import re
 import time
 from typing import Any, AsyncIterator, Dict, List, Optional
 from urllib.parse import urljoin
@@ -609,53 +610,79 @@ class ApiPostStrategy(BaseCrawlStrategy):
     def _parse_sufe_job(self, detail: Dict, list_item: Dict, spider) -> Optional[JobData]:
         """
         解析SUFE岗位数据为JobData
-        
+
+        字段匹配规则（与lite_crawler.py保持一致）:
+        - title: 优先使用 zwmc（职位名称），否则使用 zpzt
+        - company: dwmc
+        - location: 优先 gzszxmc，其次 gzszssmc，最后 szxmc
+        - salary: 优先 yxmc，默认"面议"
+        - education: 优先 zwxx.xlyqmc，其次 detail.xlyqmc
+        - description: zwms（含招聘人数前缀），补充 dwjs
+        - requirements: zyyqmc
+        - industry: hyyjmc
+        - job_type: gzlxmc
+        - publish_date: fbrq
+        - deadline: zpjzrq
+
         Args:
             detail: 详情API返回的数据字典
             list_item: 列表项原始数据(用于补充信息)
             spider: UnifiedSpider实例(提供source/location/university等上下文)
-            
+
         Returns:
             解析后的JobData，无效数据返回None
         """
         try:
+            # title: 优先使用 zwmc（职位名称），否则使用 zpzt
             title = detail.get("zpzt", "")
             company = detail.get("dwmc", "")
-            
+
             if not title:
                 return None
-            
+
             company = clean_company_name(company)
-            
+
             position_list = detail.get("zwxxList", [])
             if position_list:
                 pos = position_list[0]
-                location = pos.get("gzszxmc", "") or detail.get("szxmc", spider.location)
-                salary = pos.get("yxmc", "面议")
-                education = pos.get("xlyqmc", "")
+                # title: 优先使用 zwmc（职位名称）
+                title = pos.get("zwmc") or title
+                # location: 优先 gzszxmc，其次 gzszssmc，最后 szxmc
+                location = pos.get("gzszxmc") or pos.get("gzszssmc") or detail.get("szxmc", spider.location)
+                # salary: 优先 yxmc，默认"面议"
+                salary = pos.get("yxmc") or "面议"
+                education = pos.get("xlyqmc") or detail.get("xlyqmc", "")
                 experience = ""
-                job_type = pos.get("gzlxmc", "全职")
-                description = pos.get("zwms", "")
+                job_type = pos.get("gzlxmc") or detail.get("gzlxmc", "全职")
+                # description: zwms + 招聘人数前缀
+                description = pos.get("zwms") or ""
+                recruit_count = pos.get("xqrs", "")
+                if recruit_count and recruit_count != "0":
+                    description = f"【招聘人数】{recruit_count}人\n\n{description}"
+                # requirements: zyyqmc
+                requirements = pos.get("zyyqmc", "")
+                # industry: 优先 zwxx.hyyjmc，其次 detail.hyyjmc
+                industry = pos.get("hyyjmc") or detail.get("hyyjmc", "")
             else:
                 location = detail.get("szxmc", spider.location)
-                salary = "面议"
+                salary = detail.get("yxmc", "面议")
                 education = detail.get("xlyqmc", "")
                 experience = ""
-                job_type = "全职"
+                job_type = detail.get("gzlxmc", "全职")
                 description = ""
-            
+                requirements = detail.get("zyyqmc", "")
+                industry = detail.get("hyyjmc", "")
+
             company_intro = detail.get("dwjs", "")
             if company_intro:
                 description = f"{description}\n\n公司介绍：{company_intro}" if description else company_intro
-            
+
             publish_date = normalize_publish_date(detail.get("fbrq", ""))
             deadline = normalize_publish_date(detail.get("zpjzrq", ""))
-            industry = detail.get("hyyjmc", "")
-            requirements = detail.get("zyyqmc", "")
-            
+
             item_id = detail.get("zpxxid", "")
             view_url = f"{spider.base_url}/career/zpxx/view/zpxx/{item_id}"
-            
+
             return JobData(
                 title=title,
                 company=company,
@@ -736,69 +763,123 @@ class ApiPostStrategy(BaseCrawlStrategy):
     ) -> Optional[JobData]:
         """
         解析CUFE/DUFE平台岗位数据为JobData
-        
+
+        字段匹配规则（与lite_crawler.py保持一致）:
+        - title: 格式为 "raw_title | company"
+        - company: corporationinfo.name
+        - location: recruitmentPositionList[0].cityName
+        - salary: 从content/shortContent中提取薪资关键词，默认"面议"
+        - education: recruitmentPositionList[0].studentType
+        - requirements: recruitmentPositionList[0].majorName
+        - description: positionDescription（含placeholder检测，回退到shortContent/content）
+        - contact: resumeReceiveEmail
+        - industry: corporationinfo.corporationNatureValue
+        - tags: labelValue（数组转字符串）
+        - publish_date: startTime
+        - deadline: endTime
+        - job_type: positionTypeValue
+
         Args:
             detail: 详情API返回的recruitmentinfo数据字典
             list_item: 列表项原始数据
             position_type: 岗位类型标识
             spider: UnifiedSpider实例
-            
+
         Returns:
             解析后的JobData，无效数据返回None
         """
         try:
-            title = detail.get("title", "")
-            if not title:
+            raw_title = detail.get("title", "")
+            if not raw_title:
                 return None
-            
+
             corp_info = detail.get("corporationinfo", {})
             company = clean_company_name(corp_info.get("name", ""))
-            
+
+            # title格式: raw_title | company
+            title = f"{raw_title} | {company}" if raw_title and company else (raw_title or company)
+
             position_list = detail.get("recruitmentPositionList", [])
-            if position_list:
-                pos = position_list[0]
-                location = pos.get("cityName", spider.location)
-                description = pos.get("positionDescription", "")
-            else:
-                location = spider.location
-                description = ""
-            
-            content = html_to_text(detail.get("content", ""))
-            company_intro = corp_info.get("introduction", "")
-            
-            full_description = description
-            if content:
-                full_description = f"{full_description}\n\n{content}" if full_description else content
-            if company_intro:
-                full_description = f"{full_description}\n\n公司介绍：{company_intro}" if full_description else company_intro
-            
-            publish_date = normalize_publish_date(detail.get("startTime", ""))
+            position_info = position_list[0] if position_list else {}
+
+            # location: cityName
+            location = position_info.get("cityName", spider.location)
+
+            # deadline: endTime
             deadline = normalize_publish_date(detail.get("endTime", ""))
-            
+
+            # tags: labelValue（数组转字符串）
+            label_value = detail.get("labelValue", [])
+            tags = ", ".join(label_value) if isinstance(label_value, list) else str(label_value) if label_value else ""
+
+            # publish_date: startTime
+            publish_date = normalize_publish_date(detail.get("startTime", ""))
+
+            # description: positionDescription（含placeholder检测，回退到shortContent/content）
+            description = position_info.get("positionDescription", "")
+            placeholder_texts = ['详见招聘简章', '详见公告', '详见附件', '请查看详情']
+
+            if not description or any(p in description for p in placeholder_texts):
+                description = detail.get("shortContent", "") or detail.get("content", "")
+                if description:
+                    description = html_to_text(description)
+
+            # education: studentType
+            education = position_info.get("studentType", "")
+
+            # requirements: majorName
+            requirements = position_info.get("majorName", "")
+
+            # contact: resumeReceiveEmail
+            contact = ""
+            email = detail.get("resumeReceiveEmail", "")
+            if email:
+                contact = f"邮箱: {email}"
+
+            # industry: corporationNatureValue
+            industry = corp_info.get("corporationNatureValue", "")
+
+            # salary: 从content/shortContent中提取薪资关键词
+            salary = "面议"
+            content = detail.get("content", "") or detail.get("shortContent", "")
+            salary_patterns = [
+                r'(\d+\s*[Kk千]\s*[-~～]\s*\d+\s*[Kk千])',
+                r'(\d+\s*万\s*[-~～]\s*\d+\s*万)',
+                r'(\d{3,4}\s*[-~～]\s*\d{3,4}\s*元?\s*/\s*(月|年|天))',
+                r'(\d+\s*[-~～]\s*\d+\s*元?\s*/\s*(月|年|天))',
+            ]
+            for pattern in salary_patterns:
+                salary_match = re.search(pattern, content)
+                if salary_match:
+                    salary = salary_match.group()
+                    break
+
             position_type_value = detail.get("positionTypeValue", "")
             job_type = "全职" if "招聘" in position_type_value else "实习"
-            
+
             recruitment_id = detail.get("id", "")
             view_url = f"{spider.base_url}/f/recruitmentinfo/show?recruitmentId={recruitment_id}"
             apply_url = detail.get("onlineApplicationUrl", "") or view_url
-            
+
             return JobData(
                 title=title,
                 company=company,
                 location=location or spider.location,
-                description=truncate_text(full_description) or title,
-                salary="面议",
-                requirements=detail.get("majorName", ""),
+                description=truncate_text(description) or title,
+                salary=salary,
+                requirements=requirements,
                 job_type=job_type,
-                industry=corp_info.get("corporationNatureValue", ""),
-                education=detail.get("education", ""),
+                industry=industry,
+                education=education,
                 experience="",
+                contact=contact,
                 source=spider.source,
                 university=spider.university,
                 source_url=view_url,
                 apply_url=apply_url,
                 publish_date=publish_date,
                 deadline=deadline,
+                tags=tags,
             )
         except Exception as e:
             logger.warning(f"[{spider.source}] 解析平台岗位失败: {e}")

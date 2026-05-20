@@ -269,112 +269,159 @@ class HtmlStrategy(BaseCrawlStrategy):
     ) -> Optional['JobData']:
         """
         使用BeautifulSoup解析HTML为JobData
-        
-        针对SWUFE网站的特定DOM结构进行解析。
-        
+
+        字段匹配规则（与lite_crawler.py保持一致）:
+        - title: 格式为 "岗位名 | 公司名"
+        - company: div.com-name
+        - location: div.job_msg span（工作地）
+        - salary: div.job_msg span（薪酬）
+        - education: div.job_msg span（学历）
+        - industry: div.com-class
+        - description: 从多个 div.describe 中提取（职位描述等）
+        - requirements: 从 div.describe 中提取（投递要求等）
+        - contact: 从页面文本提取邮箱和电话
+        - publish_date: div.job_date span.cutom_font
+        - tags: div.lab div.li
+
         Args:
             html: HTML文本内容
             url: 页面URL
             spider: UnifiedSpider实例 (提供source/location等上下文)
             job_type: 岗位类型 (实习/全职)
-            
+
         Returns:
             JobData对象或None (如果页面无效或解析失败)
         """
         source = getattr(spider, 'source', 'unknown')
-        
+
         try:
             soup = BeautifulSoup(html, "lxml")
-            
+
             no_page = soup.find("div", class_="no_page_group")
             if no_page:
                 self.logger.debug(f"[{source}] 检测到'页面不存在'标记: {url}")
                 del soup
                 return None
-            
+
+            # 提取岗位名称
             title_el = soup.select_one("div.j-n-txt")
-            title = title_el.get_text(strip=True) if title_el else ""
-            
-            if not title:
+            position_name = title_el.get_text(strip=True) if title_el else ""
+
+            if not position_name:
                 del soup
                 return None
-            
+
+            # 提取发布时间
             date_el = soup.select_one("div.job_date span.cutom_font")
             date_raw = date_el.get_text(strip=True) if date_el else ""
             publish_date = normalize_publish_date(date_raw) if date_raw else ""
-            
+
+            # 提取公司信息
             company_el = soup.select_one("div.com-name")
             company_raw = company_el.get_text(strip=True) if company_el else ""
             company = clean_company_name(company_raw.lstrip(">").strip()) if company_raw else "未知公司"
-            
-            salary = ""
-            experience = ""
-            
-            job_money_el = soup.select_one("span.job_money")
-            if job_money_el:
-                money_text = job_money_el.get_text(strip=True)
-                label_div = job_money_el.find("div", class_="txt2")
-                label = label_div.get_text(strip=True) if label_div else ""
-                value = money_text.replace(label, "").strip() if label else money_text
-                
-                if label.startswith("招聘对象"):
-                    experience = value
-                else:
-                    salary = value
-            
-            if not salary:
-                for span in soup.select("div.job_msg span"):
-                    label_div = span.find("div", class_="txt2")
-                    if label_div and "薪酬" in label_div.get_text():
-                        full_text = span.get_text(strip=True)
-                        salary = full_text.replace(label_div.get_text(strip=True), "").strip()
-                        break
-            
-            salary = salary if salary and salary not in ("应届生", "社会人员", "不限") else "面议"
-            
-            location = ""
-            location_el = soup.select_one("span.job_position")
-            if location_el:
-                location = location_el.get("title", "") or location_el.get_text(strip=True)
-            
-            education = ""
-            edu_el = soup.select_one("span.job_academic")
-            if edu_el:
-                edu_text = edu_el.get_text(strip=True)
-                education = edu_text.replace("学历：", "").strip()
-            
+
+            # 提取行业
             industry = ""
             industry_el = soup.select_one("div.com-class")
             if industry_el:
                 industry = industry_el.get_text(strip=True)
-            
+
+            # 提取薪资、学历、工作地点 - 从 job_msg span
+            salary = "面议"
+            education = ""
+            location = ""
+
+            for span in soup.select("div.job_msg span"):
+                span_text = span.get_text(strip=True)
+                if '薪酬：' in span_text:
+                    salary_txt = span_text.replace('薪酬：', '')
+                    if salary_txt:
+                        salary = salary_txt
+                elif '学历：' in span_text:
+                    edu_txt = span_text.replace('学历：', '')
+                    if edu_txt:
+                        education = edu_txt
+                elif '工作地：' in span_text:
+                    loc_txt = span_text.replace('工作地：', '')
+                    if loc_txt:
+                        location = loc_txt
+
+            # title格式: 岗位 | 公司
+            title = f"{position_name} | {company}" if position_name and company else (position_name or company)
+
+            # 提取职位描述和投递要求 - 从 describe divs
+            description_parts = []
+            requirements = ""
+
+            describe_divs = soup.find_all('div', class_='describe')
+            for desc_div in describe_divs:
+                tit = desc_div.find('div', class_='tit')
+                if tit:
+                    tit_text = tit.get_text(strip=True)
+                    txt = desc_div.find('div', class_='txt')
+                    req = desc_div.find('div', class_='req')
+
+                    if '职位描述' in tit_text and txt:
+                        description_parts.append(f"【职位描述】{txt.get_text(strip=True)}")
+                    elif '投递' in tit_text or '要求' in tit_text:
+                        req_text = ""
+                        if req:
+                            req_text = req.get_text(strip=True)
+                        elif txt:
+                            req_text = txt.get_text(strip=True)
+                        if not req_text:
+                            req_text = desc_div.get_text(strip=True).replace(tit_text, '').strip()
+                        if req_text:
+                            requirements = req_text
+
+            # 如果没有从 describe divs 提取到 description，回退到原有的单 div.describe div.txt
+            if not description_parts:
+                desc_el = soup.select_one("div.describe div.txt")
+                if desc_el:
+                    description_parts.append(desc_el.get_text(strip=True))
+
+            # 提取联系方式 - 从整个页面文本
+            contact_parts = []
+            page_text = soup.get_text()
+
+            email_match = re.search(r'[\w.-]+@[\w.-]+\.\w+', page_text)
+            if email_match:
+                contact_parts.append(f"邮箱: {email_match.group()}")
+
+            phone_match = re.search(r'1[3-9]\d{9}', page_text)
+            if phone_match:
+                contact_parts.append(f"电话: {phone_match.group()}")
+
+            contact = " | ".join(contact_parts)
+
+            # 提取标签
             tags = []
             for tag_el in soup.select("div.lab div.li"):
                 tag_text = tag_el.get_text(strip=True)
                 if tag_text:
                     tags.append(tag_text)
             tags_str = ",".join(tags) if tags else ""
-            
-            description = ""
-            desc_el = soup.select_one("div.describe div.txt")
-            if desc_el:
-                description = desc_el.get_text(strip=True)
-            
+
+            # 合并描述
+            description = "\n\n".join(description_parts)
+
             del soup
-            
+
             from ..base import JobData
-            
+
             return JobData(
                 title=title,
                 company=company,
                 location=location or getattr(spider, 'location', ''),
                 description=truncate_text(description) or title,
                 salary=salary,
-                requirements="",
+                requirements=requirements,
                 job_type=job_type,
                 industry=industry,
                 education=education,
-                experience=experience,
+                experience="",
+                contact=contact,
                 source=source,
                 university=getattr(spider, 'university', ''),
                 source_url=url,
@@ -382,7 +429,7 @@ class HtmlStrategy(BaseCrawlStrategy):
                 publish_date=publish_date,
                 tags=tags_str,
             )
-            
+
         except Exception as e:
             self.logger.warning(f"[{source}] 解析岗位失败: {e}")
             return None

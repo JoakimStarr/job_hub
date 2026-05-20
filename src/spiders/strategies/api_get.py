@@ -294,40 +294,75 @@ class ApiGetStrategy(BaseCrawlStrategy):
     ) -> Optional['JobData']:
         """
         解析ZUEL岗位数据
-        
-        将原始API响应映射为 JobData 数据结构
-        
+
+        字段匹配规则（与lite_crawler.py保持一致）:
+        - title: 格式为 "岗位名 | 公司名"（jobName | companyName）
+        - company: companyName，备选 title
+        - location: 优先 area，备选 workCity
+        - salary: salary
+        - description: zpgw(岗位职责) + xcfl(薪酬福利)
+        - requirements: zpdxjtj(招聘对象及条件)
+        - contact: recruitContact + recruitMobile + lxfs(邮箱)
+        - education: education
+        - industry: nature
+        - publish_date: createTime
+        - deadline: validTime
+
         Args:
             detail: 详情API返回的数据字典
             list_item: 列表项数据(包含 _job_type 等附加信息)
             spider: UnifiedSpider实例(提供 source/university/location 等上下文)
-            
+
         Returns:
             JobData 实例或 None(解析失败时)
         """
         from ..base import JobData
 
         try:
-            title = detail.get("title", "")
+            # 公司名: companyName，备选 title
+            company_name = detail.get("companyName") or detail.get("title", "")
+
+            # 岗位名称: jobName
+            position_name = detail.get("jobName", "")
+
+            # title格式: 岗位 | 公司
+            title = f"{position_name} | {company_name}" if position_name and company_name else (position_name or company_name)
+
             if not title:
                 return None
 
-            company = detail.get("companyName", "")
-            location = detail.get("area", spider.location if hasattr(spider, 'location') else "")
+            # location: 优先 area，备选 workCity
+            location = detail.get("area", "") or detail.get("workCity", spider.location if hasattr(spider, 'location') else "")
+
             salary = detail.get("salary", "面议")
             education = detail.get("education", "")
-            requirements = detail.get("majors", "")
+
+            # requirements: zpdxjtj(招聘对象及条件)
+            requirements = detail.get("zpdxjtj", "")
             industry = detail.get("nature", "")
 
+            # description: zpgw(岗位职责) + xcfl(薪酬福利)
             description_parts = []
-            if detail.get("companyContent"):
-                description_parts.append(html_to_text(detail["companyContent"]))
-            if detail.get("dwjj"):
-                description_parts.append(detail["dwjj"])
-            if detail.get("zpgw"):
-                description_parts.append(detail["zpgw"])
-
+            zpgw = detail.get("zpgw", "")
+            if zpgw:
+                description_parts.append(f"【岗位职责】{zpgw}")
+            xcfl = detail.get("xcfl", "")
+            if xcfl:
+                description_parts.append(f"【薪酬福利】{xcfl}")
             description = "\n\n".join(description_parts)
+
+            # contact: recruitContact + recruitMobile + lxfs(邮箱)
+            contact_parts = []
+            recruit_contact = detail.get("recruitContact", "")
+            recruit_mobile = detail.get("recruitMobile", "")
+            lxfs = detail.get("lxfs", "")
+            if recruit_contact:
+                contact_parts.append(f"联系人: {recruit_contact}")
+            if recruit_mobile:
+                contact_parts.append(f"电话: {recruit_mobile}")
+            if lxfs:
+                contact_parts.append(f"邮箱: {lxfs}")
+            contact = " | ".join(contact_parts)
 
             publish_date = normalize_publish_date(detail.get("createTime", ""))
             deadline = normalize_publish_date(detail.get("validTime", ""))
@@ -338,7 +373,7 @@ class ApiGetStrategy(BaseCrawlStrategy):
 
             return JobData(
                 title=title,
-                company=company,
+                company=company_name,
                 location=location or (spider.location if hasattr(spider, 'location') else ""),
                 description=truncate_text(description) or title,
                 salary=salary,
@@ -347,6 +382,7 @@ class ApiGetStrategy(BaseCrawlStrategy):
                 industry=industry,
                 education=education,
                 experience="",
+                contact=contact,
                 source=spider.source,
                 university=spider.university if hasattr(spider, 'university') else "",
                 source_url=view_url,
