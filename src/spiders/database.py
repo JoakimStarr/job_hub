@@ -1,7 +1,9 @@
 import aiosqlite
 import hashlib
 import json
+import os
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
@@ -90,7 +92,7 @@ class LocalDatabase:
             CREATE TABLE IF NOT EXISTS jobs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title TEXT NOT NULL,
-                company TEXT NOT NULL,
+                company TEXT NOT NULL DEFAULT '',
                 location TEXT DEFAULT '',
                 salary TEXT DEFAULT '面议',
                 description TEXT DEFAULT '',
@@ -125,6 +127,24 @@ class LocalDatabase:
                 end_time TIMESTAMP,
                 duration REAL DEFAULT 0
             )
+        ''')
+        await self._conn.execute('''
+            CREATE TABLE IF NOT EXISTS crawler_status (
+                id INTEGER PRIMARY KEY CHECK (id = 1),
+                is_running INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'idle',
+                current_source TEXT,
+                total_sources INTEGER DEFAULT 0,
+                completed_sources INTEGER DEFAULT 0,
+                total_jobs INTEGER DEFAULT 0,
+                start_time TIMESTAMP,
+                last_update TIMESTAMP,
+                pid INTEGER
+            )
+        ''')
+        await self._conn.execute('''
+            INSERT OR IGNORE INTO crawler_status (id, is_running, status) 
+            VALUES (1, 0, 'idle')
         ''')
         await self._conn.execute('CREATE INDEX IF NOT EXISTS idx_jobs_source ON jobs(source)')
         await self._conn.execute('CREATE INDEX IF NOT EXISTS idx_jobs_source_url ON jobs(source_url)')
@@ -310,6 +330,48 @@ class LocalDatabase:
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (source, status, jobs_count, error_message, start_time, end_time, duration))
         await self._conn.commit()
+
+    async def set_crawler_status(self, status: str, current_source: str = None,
+                                  total_sources: int = 0, completed_sources: int = 0,
+                                  total_jobs: int = 0):
+        """更新爬虫全局状态"""
+        import os
+        if not self._conn:
+            await self.connect()
+        now = datetime.now().isoformat() if 'datetime' in dir() else time.strftime('%Y-%m-%dT%H:%M:%S')
+        await self._conn.execute('''
+            UPDATE crawler_status SET
+                is_running = ?,
+                status = ?,
+                current_source = ?,
+                total_sources = ?,
+                completed_sources = ?,
+                total_jobs = ?,
+                last_update = ?,
+                pid = ?
+            WHERE id = 1
+        ''', (
+            1 if status == 'running' else 0,
+            status,
+            current_source,
+            total_sources,
+            completed_sources,
+            total_jobs,
+            now,
+            os.getpid() if status == 'running' else None
+        ))
+        await self._conn.commit()
+        logger.debug(f"爬虫状态更新: {status}" + (f" [{current_source}]" if current_source else ""))
+
+    async def get_crawler_status(self) -> Dict[str, Any]:
+        """获取爬虫全局状态"""
+        if not self._conn:
+            await self.connect()
+        cursor = await self._conn.execute("SELECT * FROM crawler_status WHERE id = 1")
+        row = await cursor.fetchone()
+        if row:
+            return dict(row)
+        return {"is_running": 0, "status": "idle"}
 
 if __name__ == "__main__":
     import asyncio

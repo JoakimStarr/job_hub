@@ -224,9 +224,6 @@ SPIDER_CONFIGS: Dict[str, Dict[str, Any]] = {
             "detail_content": "div.details-content",
         },
     },
-}
-
-SPIDER_CONFIGS_DISABLED = {
     "smartedu": {
         "name": "smartedu_jobs",
         "university": "国家大学生就业服务平台",

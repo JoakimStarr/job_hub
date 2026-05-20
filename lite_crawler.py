@@ -124,7 +124,7 @@ def preload_existing_urls():
     try:
         row = db.execute("SELECT source_url FROM jobs").fetchall()
         _url_cache = {r[0] for r in row}
-        logger.debug(f"预加载 {_url_cache.size()} 条已存在URL到内存")
+        logger.debug(f"预加载 {len(_url_cache)} 条已存在URL到内存")
     except Exception as e:
         logger.warning(f"预加载URL失败: {e}")
         _url_cache = set()
@@ -441,37 +441,82 @@ def truncate_text(text: str, max_len: int = 500) -> str:
 
 
 def init_database():
-    """初始化数据库"""
+    """初始化数据库 - 与主爬虫 database.py 保持一致的表结构"""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     
     db.execute("""
         CREATE TABLE IF NOT EXISTS jobs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
-            company TEXT,
-            location TEXT,
-            salary TEXT,
-            education TEXT,
-            requirements TEXT,
-            description TEXT,
-            publish_date TEXT,
-            source TEXT NOT NULL,
-            university TEXT,
+            company TEXT NOT NULL DEFAULT '',
+            location TEXT DEFAULT '',
+            salary TEXT DEFAULT '面议',
+            description TEXT DEFAULT '',
+            requirements TEXT DEFAULT '',
+            job_type TEXT DEFAULT '实习',
+            industry TEXT DEFAULT '',
+            education TEXT DEFAULT '',
+            experience TEXT DEFAULT '',
+            contact TEXT DEFAULT '',
+            source TEXT DEFAULT '',
+            university TEXT DEFAULT '',
             source_url TEXT UNIQUE,
-            apply_url TEXT,
-            job_type TEXT,
-            industry TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            apply_url TEXT DEFAULT '',
+            publish_date TEXT DEFAULT '',
+            deadline TEXT DEFAULT '',
+            category TEXT DEFAULT '',
+            tags TEXT DEFAULT '',
+            is_favorite INTEGER DEFAULT 0,
+            is_read INTEGER DEFAULT 0,
+            content_hash TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
     
-    db.execute("CREATE INDEX IF NOT EXISTS idx_source ON jobs(source)")
-    db.execute("CREATE INDEX IF NOT EXISTS idx_source_url ON jobs(source_url)")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_jobs_source ON jobs(source)")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_jobs_source_url ON jobs(source_url)")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_jobs_company ON jobs(company)")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_jobs_publish_date ON jobs(publish_date)")
+    
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS crawl_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source TEXT NOT NULL,
+            status TEXT NOT NULL,
+            jobs_count INTEGER DEFAULT 0,
+            error_message TEXT,
+            start_time TIMESTAMP,
+            end_time TIMESTAMP,
+            duration REAL DEFAULT 0
+        )
+    """)
+    
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS crawler_status (
+            id INTEGER PRIMARY KEY CHECK (id = 1),
+            is_running INTEGER DEFAULT 0,
+            status TEXT DEFAULT 'idle',
+            current_source TEXT,
+            total_sources INTEGER DEFAULT 0,
+            completed_sources INTEGER DEFAULT 0,
+            total_jobs INTEGER DEFAULT 0,
+            start_time TIMESTAMP,
+            last_update TIMESTAMP,
+            pid INTEGER
+        )
+    """)
+    
+    db.execute("""
+        INSERT OR IGNORE INTO crawler_status (id, is_running, status) 
+        VALUES (1, 0, 'idle')
+    """)
+    
     db.commit()
     
     preload_existing_urls()
-    crawl_logger.log_database_operation("初始化", "jobs", True)
-    logger.info("✓ 数据库初始化完成")
+    crawl_logger.log_database_operation("初始化", "jobs/crawl_logs/crawler_status", True)
+    logger.info("✓ 数据库初始化完成（与主爬虫表结构一致）")
 
 
 def is_within_date_range(publish_date: str, months: int = 2) -> bool:
@@ -549,25 +594,30 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
         
         db.execute("""
             INSERT INTO jobs 
-            (title, company, location, salary, education, description, 
-             publish_date, source, university, source_url, apply_url, job_type)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (title, company, location, salary, education, requirements, description, 
+             contact, publish_date, deadline, industry, job_type, source, university, source_url, apply_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             job.get("title", ""),
             job.get("company", ""),
             job.get("location", ""),
             job.get("salary", "面议"),
             job.get("education", ""),
+            job.get("requirements", ""),
             job.get("description", ""),
+            job.get("contact", ""),
             job.get("publish_date", ""),
+            job.get("deadline", ""),
+            job.get("industry", ""),
+            job.get("job_type", "全职"),
             job.get("source", ""),
             job.get("university", ""),
             job.get("source_url", ""),
             job.get("apply_url", ""),
-            job.get("job_type", "全职"),
         ))
         
-        job_id = db.conn.lastrowid
+        cursor = db.execute("SELECT last_insert_rowid()")
+        job_id = cursor.fetchone()[0]
         db.commit()
         
         mark_url_exists([job.get("source_url", "")])
@@ -674,39 +724,93 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                     logger.debug(f"列表项缺少 zpxxid 字段，跳过")
                     continue
                 
-                detail_url = urljoin(base_url, source_config["detail_url"].format(item_id=item_id))
+                # 数据接口URL（用于获取详情）
+                detail_api_url = urljoin(base_url, source_config["detail_url"].format(item_id=item_id))
+                # 页面展示URL（用于source_url）
+                view_url = urljoin(base_url, f"/career/zpxx/view/zpxx/{item_id}")
                 
-                if url_exists(detail_url):
+                if url_exists(view_url):
                     continue
                 
-                detail_response = fetch_with_retry(detail_url, method="POST")
+                detail_response = fetch_with_retry(detail_api_url, method="POST")
                 if not detail_response:
                     continue
                 
                 try:
                     detail_data = detail_response.json().get("data", {})
                     
-                    job = {
-                        "title": detail_data.get(field_mapping.get("title", "zpzt"), ""),
-                        "company": detail_data.get(field_mapping.get("company", "dwmc"), ""),
-                        "location": detail_data.get(field_mapping.get("location", "gzdd"), ""),
-                        "salary": detail_data.get(field_mapping.get("salary", "xzdy"), "面议"),
-                        "education": detail_data.get(field_mapping.get("education", "xlyq"), ""),
-                        "description": truncate_text(detail_data.get(field_mapping.get("description", "zwms"), "")),
-                        "source": source,
-                        "university": source_name,
-                        "source_url": detail_url,
-                        "apply_url": detail_url,
-                    }
+                    # 获取职位列表 zwxxList
+                    zwxx_list = detail_data.get("zwxxList", [])
+                    if not zwxx_list:
+                        # 如果没有职位列表，使用根级别数据（兼容旧格式）
+                        zwxx_list = [detail_data]
                     
-                    yield job
-                    count += 1
-                    
-                    if count % 20 == 0:
-                        logger.info(f"  已完成: {count} 条")
+                    for zwxx in zwxx_list:
+                        if max_items > 0 and count >= max_items:
+                            break
+                        
+                        # 合并数据：zwxx 中的字段优先，否则从 detail_data 获取
+                        merged_data = {**detail_data, **zwxx}
+                        
+                        # 处理可能为列表的字段映射
+                        def get_field_value(data, mapping):
+                            if isinstance(mapping, list):
+                                for key in mapping:
+                                    value = data.get(key)
+                                    if value:
+                                        return value
+                                return ""
+                            return data.get(mapping, "")
+                        
+                        # 职位名称优先使用 zwmc，否则使用 zpzt
+                        title = zwxx.get("zwmc") or detail_data.get("zpzt", "")
+                        # 公司名
+                        company = detail_data.get("dwmc", "")
+                        # 工作地点优先使用 zwxx 中的 gzszxmc
+                        location = zwxx.get("gzszxmc") or zwxx.get("gzszssmc") or detail_data.get("szxmc", "")
+                        # 薪资
+                        salary = zwxx.get("yxmc") or detail_data.get("yxmc", "面议")
+                        # 学历要求
+                        education = zwxx.get("xlyqmc") or detail_data.get("xlyqmc", "")
+                        # 职位描述 (zwms 包含岗位职责和招聘要求)
+                        description = zwxx.get("zwms") or detail_data.get("dwjs", "")
+                        # 专业要求 -> requirements 字段
+                        requirements = zwxx.get("zyyqmc", "")
+                        # 行业 -> industry 字段 (hyyjmc)
+                        industry = zwxx.get("hyyjmc") or detail_data.get("hyyjmc", "")
+                        # 工作类型
+                        job_type = zwxx.get("gzlxmc") or detail_data.get("gzlxmc", "全职")
+                        # 招聘人数
+                        recruit_count = zwxx.get("xqrs", "")
+                        if recruit_count and recruit_count != "0":
+                            description = f"【招聘人数】{recruit_count}人\n\n{description}"
+                        
+                        job = {
+                            "title": title,
+                            "company": company,
+                            "location": location,
+                            "salary": salary,
+                            "education": education,
+                            "requirements": requirements,
+                            "description": truncate_text(description),
+                            "publish_date": detail_data.get("fbrq", ""),
+                            "deadline": detail_data.get("zpjzrq", ""),
+                            "industry": industry,
+                            "job_type": job_type,
+                            "source": source,
+                            "university": source_name,
+                            "source_url": view_url,
+                            "apply_url": view_url,
+                        }
+                        
+                        yield job
+                        count += 1
+                        
+                        if count % 20 == 0:
+                            logger.info(f"  已完成: {count} 条")
                         
                 except Exception as e:
-                    crawl_logger.log_error(source, e, f"解析详情页: {detail_url}")
+                    crawl_logger.log_error(source, e, f"解析详情页: {detail_api_url}")
                     continue
             
             page += 1
@@ -719,91 +823,134 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
 
 def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
-    """爬取 ZUEL"""
+    """爬取 ZUEL - 中南财经政法大学"""
     source = "zuel"
     source_name = source_config["name"]
     base_url = source_config["base_url"]
     field_mapping = source_config["field_mapping"]
-    
+
     crawl_logger.log_source_start(source, source_name)
-    
+
     page = 1
     count = 0
-    
+
     while True:
         if max_items > 0 and count >= max_items:
             logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
             break
-        
+
         list_url = source_config["list_url"].format(page=page, limit=10)
         full_url = urljoin(base_url, list_url)
-        
+
         response = fetch_with_retry(full_url)
         if not response:
             logger.warning(f"第 {page} 页列表获取失败，停止爬取")
             break
-        
+
         try:
             result = response.json()
             if result.get("code") != 0:
                 crawl_logger.log_error(source, Exception(f"API返回code={result.get('code')}"), f"列表页 {page}")
                 break
-            
+
             items = result.get("data", [])
             if not items:
                 logger.debug(f"第 {page} 页无数据，爬取结束")
                 break
-            
+
             logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
-            
+
             for item in items:
                 if max_items > 0 and count >= max_items:
                     break
-                
+
                 item_id = item.get("id")
                 if not item_id:
                     logger.debug(f"列表项缺少 id 字段，跳过")
                     continue
-                
+
+                # 使用页面展示URL作为source_url
+                view_url = f"https://jyzx.zuel.edu.cn/home/career/internship?id={item_id}"
+
                 detail_url = source_config["detail_url"].format(id=item_id)
                 full_detail_url = urljoin(base_url, detail_url)
-                
-                if url_exists(full_detail_url):
+
+                if url_exists(view_url):
                     continue
-                
+
                 detail_response = fetch_with_retry(full_detail_url)
                 if not detail_response:
                     continue
-                
+
                 try:
                     detail_data = detail_response.json().get("data", {})
-                    
+
+                    # 公司名
+                    company_name = detail_data.get("companyName") or detail_data.get("title", "")
+
+                    # 岗位名称: jobName
+                    position_name = detail_data.get("jobName", "")
+
+                    # title格式: 岗位 | 公司
+                    title = f"{position_name} | {company_name}" if position_name and company_name else (position_name or company_name)
+
+                    # 构建description: zpgw(岗位职责) + xcfl(薪酬福利)
+                    description_parts = []
+                    zpgw = detail_data.get("zpgw", "")
+                    if zpgw:
+                        description_parts.append(f"【岗位职责】{zpgw}")
+                    xcfl = detail_data.get("xcfl", "")
+                    if xcfl:
+                        description_parts.append(f"【薪酬福利】{xcfl}")
+                    description = "\n\n".join(description_parts)
+
+                    # requirements: zpdxjtj(招聘对象及条件)
+                    requirements = detail_data.get("zpdxjtj", "")
+
+                    # contact: recruitContact + recruitMobile + lxfs(邮箱)
+                    contact_parts = []
+                    recruit_contact = detail_data.get("recruitContact", "")
+                    recruit_mobile = detail_data.get("recruitMobile", "")
+                    lxfs = detail_data.get("lxfs", "")  # 邮箱
+                    if recruit_contact:
+                        contact_parts.append(f"联系人: {recruit_contact}")
+                    if recruit_mobile:
+                        contact_parts.append(f"电话: {recruit_mobile}")
+                    if lxfs:
+                        contact_parts.append(f"邮箱: {lxfs}")
+                    contact = " | ".join(contact_parts)
+
+                    # location: 优先使用 area 字段，如果没有则使用 workCity
+                    location = detail_data.get("area", "") or detail_data.get("workCity", "")
+
                     job = {
-                        "title": detail_data.get(field_mapping.get("title", "title"), ""),
-                        "company": detail_data.get(field_mapping.get("company", "companyName"), ""),
-                        "location": detail_data.get(field_mapping.get("location", "workCity"), ""),
-                        "salary": detail_data.get(field_mapping.get("salary", "salary"), "面议"),
-                        "education": detail_data.get(field_mapping.get("education", "education"), ""),
-                        "description": truncate_text(detail_data.get(field_mapping.get("description", "positionDescription"), "")),
-                        "publish_date": normalize_date(detail_data.get(field_mapping.get("publish_date", "createTime"), "")),
+                        "title": title,
+                        "company": company_name,
+                        "location": location,
+                        "salary": detail_data.get("salary", "面议"),
+                        "education": detail_data.get("education", ""),
+                        "requirements": requirements,
+                        "description": truncate_text(description),
+                        "contact": contact,
+                        "publish_date": normalize_date(detail_data.get("createTime", "")),
                         "source": source,
                         "university": source_name,
-                        "source_url": full_detail_url,
-                        "apply_url": full_detail_url,
+                        "source_url": view_url,
+                        "apply_url": view_url,
                     }
-                    
+
                     yield job
                     count += 1
-                    
+
                     if count % 20 == 0:
                         logger.info(f"  已完成: {count} 条")
-                        
+
                 except Exception as e:
                     crawl_logger.log_error(source, e, f"解析详情页: {full_detail_url}")
                     continue
-            
+
             page += 1
-            
+
         except Exception as e:
             crawl_logger.log_error(source, e, f"解析列表页: {page}")
             break
@@ -878,17 +1025,100 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
                         logger.debug(f"详情API返回异常 state={detail_result.get('state')}")
                         continue
                     
-                    detail = detail_result.get("object", {}).get("recruitmentinfo", {})
-                    corp_info = detail_result.get("object", {}).get("corporationinfo", {})
+                    # 获取主要数据对象
+                    obj = detail_result.get("object", {})
+                    detail = obj.get("recruitmentinfo", {})
+                    # corporationinfo 可能在 object 下，也可能在 recruitmentinfo 下
+                    corp_info = obj.get("corporationinfo", {}) or detail.get("corporationinfo", {})
                     
-                    company = get_nested_value({"corporationinfo": corp_info}, field_mapping.get("company", "corporationinfo.name"))
+                    # 提取公司名
+                    company = corp_info.get("name", "")
+                    
+                    # 提取岗位列表（recruitmentPositionList）
+                    position_list = detail.get("recruitmentPositionList", [])
+                    
+                    # 获取第一个岗位的信息（通常只有一个）
+                    position_info = position_list[0] if position_list else {}
+                    
+                    # 构建 title: 原title | company
+                    raw_title = detail.get("title", "")
+                    title = f"{raw_title} | {company}" if raw_title and company else (raw_title or company)
+                    
+                    # 提取 location: cityName
+                    location = position_info.get("cityName", "")
+                    
+                    # 提取 deadline: endTime
+                    deadline = detail.get("endTime", "")
+                    
+                    # 提取 tags: labelValue (数组转字符串)
+                    label_value = detail.get("labelValue", [])
+                    tags = ", ".join(label_value) if isinstance(label_value, list) else str(label_value)
+                    
+                    # 提取 publish_date: startTime
+                    publish_date = detail.get("startTime", "")
+                    if publish_date and len(publish_date) > 10:
+                        publish_date = publish_date[:10]  # 取日期部分
+                    
+                    # 提取 description: positionDescription
+                    # 如果为空或者是占位符（如"详见招聘简章"），则使用 content 或 shortContent
+                    description = position_info.get("positionDescription", "")
+                    placeholder_texts = ['详见招聘简章', '详见公告', '详见附件', '请查看详情']
+                    
+                    if not description or any(p in description for p in placeholder_texts):
+                        # 尝试从 recruitmentinfo 的 shortContent 或 content 获取
+                        description = detail.get("shortContent", "") or detail.get("content", "")
+                        # 清理 HTML 标签
+                        if description:
+                            import re
+                            description = re.sub(r'<[^>]+>', '', description)
+                            description = description.replace('\r\n', '\n').replace('\r', '\n').strip()
+                    
+                    # 提取 education: studentType
+                    education = position_info.get("studentType", "")
+                    
+                    # 提取 requirements: majorName
+                    requirements = position_info.get("majorName", "")
+                    
+                    # 提取 contact: resumeReceiveEmail
+                    contact = ""
+                    email = detail.get("resumeReceiveEmail", "")
+                    if email:
+                        contact = f"邮箱: {email}"
+                    
+                    # 提取 industry: corporationNatureValue
+                    industry = corp_info.get("corporationNatureValue", "")
+                    
+                    # 提取 salary: 从 content 或 shortContent 中提取薪资信息
+                    salary = "面议"
+                    content = detail.get("content", "") or detail.get("shortContent", "")
+                    # 尝试从内容中提取薪资关键词（排除电话号码和年份）
+                    import re
+                    # 匹配薪资格式：数字+单位（K/千/万/元/月/年/天）
+                    salary_patterns = [
+                        r'(\d+\s*[Kk千]\s*[-~～]\s*\d+\s*[Kk千])',  # 8K-20K, 8千-20千
+                        r'(\d+\s*万\s*[-~～]\s*\d+\s*万)',  # 8万-20万
+                        r'(\d{3,4}\s*[-~～]\s*\d{3,4}\s*元?\s*/\s*(月|年|天))',  # 4000-8000元/月
+                        r'(\d+\s*[-~～]\s*\d+\s*元?\s*/\s*(月|年|天))',  # 4000-8000/月
+                    ]
+                    for pattern in salary_patterns:
+                        salary_match = re.search(pattern, content)
+                        if salary_match:
+                            salary = salary_match.group()
+                            break
                     
                     job = {
-                        "title": detail.get(field_mapping.get("title", "title"), ""),
-                        "company": company or "",
-                        "location": detail.get(field_mapping.get("location", "cityName"), ""),
-                        "education": detail.get(field_mapping.get("education", "education"), ""),
-                        "description": truncate_text(detail.get(field_mapping.get("description", "majorName"), "")),
+                        "title": title,
+                        "company": company,
+                        "location": location,
+                        "salary": salary,
+                        "education": education,
+                        "requirements": requirements,
+                        "description": truncate_text(description),
+                        "contact": contact,
+                        "industry": industry,
+                        "tags": tags,
+                        "deadline": deadline,
+                        "publish_date": publish_date,
                         "source": source,
                         "university": source_name,
                         "source_url": urljoin(base_url, url_path),
@@ -914,72 +1144,263 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
     crawl_logger.log_source_end(source, source_name, count)
 
 
-def crawl_swufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
-    """爬取 SWUFE"""
+def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
+    """爬取 SWUFE - 西南财经大学
+    
+    通过HTML页面解析获取列表，检查发布时间后决定是否爬取详情页。
+    列表页: https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm
+    """
+    from bs4 import BeautifulSoup
+    import re
+    from datetime import datetime, timedelta
+    
     source = "swufe"
     source_name = source_config["name"]
     base_url = source_config["base_url"]
-    field_mapping = source_config["field_mapping"]
     
     crawl_logger.log_source_start(source, source_name)
     
     page = 1
     count = 0
+    cutoff_date = datetime.now() - timedelta(days=date_filter_months * 30)
     
     while True:
         if max_items > 0 and count >= max_items:
             logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
             break
         
-        list_url = source_config["list_url"].format(page=page)
-        full_url = urljoin(base_url, list_url)
+        list_url = f"https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm"
         
-        response = fetch_with_retry(full_url)
+        response = fetch_with_retry(list_url)
         if not response:
             logger.warning(f"第 {page} 页列表获取失败，停止爬取")
             break
         
         try:
-            result = response.json()
-            items = result.get("list", [])
+            soup = BeautifulSoup(response.text, 'html.parser')
             
-            if not items:
-                logger.debug(f"第 {page} 页无数据，爬取结束")
+            # 查找列表容器
+            list_box = soup.find('div', class_='listb J_allListBox')
+            if not list_box:
+                logger.debug(f"第 {page} 页未找到列表容器，爬取结束")
                 break
             
-            logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
+            # 获取所有岗位项
+            job_items = list_box.find_all('div', class_='td-j-name')
+            if not job_items:
+                logger.debug(f"第 {page} 页无岗位数据，爬取结束")
+                break
             
-            for item in items:
+            logger.info(f"第 {page} 页: 获取到 {len(job_items)} 条列表项")
+            
+            # 标记是否需要停止（遇到过期数据）
+            should_stop = False
+            
+            for item in job_items:
+                # 检查发布时间（在获取详情前）
+                job_row = item.find_parent('div', class_='yli')
+                publish_date_str = ""
+                is_expired = False
+                if job_row:
+                    detail_div = job_row.find('div', class_='detail')
+                    if detail_div:
+                        # 查找所有包含 "发布时间" 的 span
+                        for span in detail_div.find_all('span'):
+                            txt2 = span.find('div', class_='txt2')
+                            if txt2 and '发布时间' in txt2.get_text():
+                                # 获取 span 的文本内容（不包括 txt2）
+                                publish_text = span.get_text(strip=True).replace('发布时间：', '')
+                                
+                                # 处理相对时间格式
+                                if '小时前' in publish_text or '天前' in publish_text or '分钟前' in publish_text:
+                                    # 相对时间表示是最近的数据，不过期
+                                    is_expired = False
+                                    # 尝试提取数字作为日期字符串
+                                    num_match = re.search(r'(\d+)', publish_text)
+                                    if num_match:
+                                        days_ago = int(num_match.group(1))
+                                        if '小时前' in publish_text or '分钟前' in publish_text:
+                                            days_ago = 0
+                                        publish_date = datetime.now() - timedelta(days=days_ago)
+                                        publish_date_str = publish_date.strftime('%Y-%m-%d')
+                                else:
+                                    # 处理绝对日期格式
+                                    date_match = re.search(r'(\d{4}-\d{2}-\d{2})', publish_text)
+                                    if date_match:
+                                        publish_date_str = date_match.group(1)
+                                        try:
+                                            publish_date = datetime.strptime(publish_date_str, '%Y-%m-%d')
+                                            # 检查是否在时间范围内
+                                            if publish_date < cutoff_date:
+                                                is_expired = True
+                                                logger.info(f"遇到过期数据 ({publish_date_str})，停止爬取")
+                                                should_stop = True
+                                        except ValueError:
+                                            pass
+                                break
+                    
+                    if should_stop:
+                        break
+                
                 if max_items > 0 and count >= max_items:
                     break
                 
-                item_id = item.get("id")
-                if not item_id:
-                    logger.debug(f"列表项缺少 id 字段，跳过")
+                # 获取详情页链接
+                a_tag = item.find('a', href=True)
+                if not a_tag:
                     continue
                 
-                detail_url = source_config["detail_url"].format(id=item_id)
-                full_detail_url = urljoin(base_url, detail_url)
-                
-                if url_exists(full_detail_url):
+                detail_path = a_tag.get('href', '')
+                if not detail_path:
                     continue
                 
-                detail_response = fetch_with_retry(full_detail_url)
+                detail_url = urljoin(base_url, detail_path)
+                
+                if url_exists(detail_url):
+                    continue
+                
+                # 爬取详情页（保持原有逻辑不变）
+                detail_response = fetch_with_retry(detail_url)
                 if not detail_response:
                     continue
                 
                 try:
-                    detail_data = detail_response.json()
-                    
+                    detail_soup = BeautifulSoup(detail_response.text, 'html.parser')
+
+                    # 详情页解析 - SWUFE详情页结构
+                    # 页面可能有多个主要容器，需要分别查找
+                    new_se_main = detail_soup.find('div', class_='new-se-main')
+                    main_div = detail_soup.find('div', class_='main')
+                    jobsshow = detail_soup.find('div', class_='jobsshow')
+
+                    # 使用第一个找到的作为主容器
+                    main_content = new_se_main or main_div or jobsshow or detail_soup
+
+                    # 提取岗位名称 - 优先从 new-se-main 查找
+                    position_name = ""
+                    if new_se_main:
+                        jobname_elem = new_se_main.find('div', class_='jobname')
+                        if jobname_elem:
+                            j_n_txt = jobname_elem.find('div', class_='j-n-txt')
+                            position_name = j_n_txt.get_text(strip=True) if j_n_txt else ""
+
+                    # 提取发布时间 - 优先从 new-se-main 查找
+                    if new_se_main:
+                        job_date = new_se_main.find('div', class_='job_date')
+                        if job_date:
+                            date_span = job_date.find('span', class_='cutom_font')
+                            if date_span:
+                                publish_date_str = date_span.get_text(strip=True)[:10]
+
+                    # 提取薪资、学历、工作地点 - 优先从 new-se-main 的 job_msg 查找
+                    salary = "面议"
+                    education = ""
+                    location = ""
+
+                    if new_se_main:
+                        job_msg = new_se_main.find('div', class_='job_msg')
+                        if job_msg:
+                            for span in job_msg.find_all('span'):
+                                span_text = span.get_text(strip=True)
+                                if '薪酬：' in span_text:
+                                    salary_txt = span_text.replace('薪酬：', '')
+                                    if salary_txt:
+                                        salary = salary_txt
+                                elif '学历：' in span_text:
+                                    edu_txt = span_text.replace('学历：', '')
+                                    if edu_txt:
+                                        education = edu_txt
+                                elif '工作地：' in span_text:
+                                    loc_txt = span_text.replace('工作地：', '')
+                                    if loc_txt:
+                                        location = loc_txt
+
+                    # 提取公司信息 - 优先从 new-se-main 查找
+                    company = ""
+                    industry = ""
+
+                    if new_se_main:
+                        job_com = new_se_main.find('div', class_='job-com')
+                        if job_com:
+                            com_name = job_com.find('div', class_='com-name')
+                            if com_name:
+                                for comment in com_name.find_all(string=lambda text: isinstance(text, str) and '<!--' in text):
+                                    comment.extract()
+                                company = com_name.get_text(strip=True)
+
+                            com_class = job_com.find('div', class_='com-class')
+                            if com_class:
+                                industry = com_class.get_text(strip=True)
+
+                    # 如果 new-se-main 中没有找到公司名，尝试 main_div
+                    if not company and main_div:
+                        com_name_alt = main_div.find('div', class_='com-name')
+                        if com_name_alt:
+                            company = com_name_alt.get_text(strip=True)
+
+                    # title格式: 岗位 | 公司
+                    title = f"{position_name} | {company}" if position_name and company else (position_name or company)
+
+                    # 提取职位描述和投递要求 - 从 main_div 或 jobsshow 查找 describe
+                    description_parts = []
+                    requirements = ""
+
+                    # 优先从 main_div 查找 describe
+                    describe_container = main_div or jobsshow or detail_soup
+                    describe_divs = describe_container.find_all('div', class_='describe')
+
+                    for desc_div in describe_divs:
+                        tit = desc_div.find('div', class_='tit')
+                        if tit:
+                            tit_text = tit.get_text(strip=True)
+                            txt = desc_div.find('div', class_='txt')
+                            req = desc_div.find('div', class_='req')
+
+                            if '职位描述' in tit_text and txt:
+                                description_parts.append(f"【职位描述】{txt.get_text(strip=True)}")
+                            elif '投递' in tit_text or '要求' in tit_text:
+                                req_text = ""
+                                if req:
+                                    req_text = req.get_text(strip=True)
+                                elif txt:
+                                    req_text = txt.get_text(strip=True)
+                                if not req_text:
+                                    req_text = desc_div.get_text(strip=True).replace(tit_text, '').strip()
+                                if req_text:
+                                    requirements = req_text
+
+                    # 提取联系方式 - 从整个页面文本
+                    contact_parts = []
+                    page_text = detail_soup.get_text()
+
+                    email_match = re.search(r'[\w.-]+@[\w.-]+\.\w+', page_text)
+                    if email_match:
+                        contact_parts.append(f"邮箱: {email_match.group()}")
+
+                    phone_match = re.search(r'1[3-9]\d{9}', page_text)
+                    if phone_match:
+                        contact_parts.append(f"电话: {phone_match.group()}")
+
+                    contact = " | ".join(contact_parts)
+
+                    # 合并描述
+                    description = "\n\n".join(description_parts)
+
                     job = {
-                        "title": detail_data.get(field_mapping.get("title", "title"), ""),
-                        "company": detail_data.get(field_mapping.get("company", "company"), ""),
-                        "location": detail_data.get(field_mapping.get("location", "location"), ""),
-                        "description": truncate_text(detail_data.get(field_mapping.get("description", "content"), "")),
+                        "title": title,
+                        "company": company,
+                        "location": location,
+                        "salary": salary,
+                        "education": education,
+                        "requirements": requirements,
+                        "description": truncate_text(description),
+                        "contact": contact,
+                        "industry": industry,
+                        "publish_date": publish_date_str,
                         "source": source,
                         "university": source_name,
-                        "source_url": full_detail_url,
-                        "apply_url": full_detail_url,
+                        "source_url": detail_url,
+                        "apply_url": detail_url,
                     }
                     
                     yield job
@@ -987,10 +1408,16 @@ def crawl_swufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                     
                     if count % 20 == 0:
                         logger.info(f"  已完成: {count} 条")
+                    
+                    # 短暂延迟避免请求过快
+                    time.sleep(0.5)
                         
                 except Exception as e:
-                    crawl_logger.log_error(source, e, f"解析详情页: {full_detail_url}")
+                    crawl_logger.log_error(source, e, f"解析详情页: {detail_url}")
                     continue
+            
+            if should_stop:
+                break
             
             page += 1
             
@@ -1002,6 +1429,53 @@ def crawl_swufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
 
 _running = True
+
+
+def set_crawler_status(status: str, current_source: str = None, 
+                        total_sources: int = 0, completed_sources: int = 0,
+                        total_jobs: int = 0):
+    """更新爬虫全局状态"""
+    import os
+    try:
+        now = datetime.now().isoformat()
+        db.execute("""
+            UPDATE crawler_status SET
+                is_running = ?,
+                status = ?,
+                current_source = ?,
+                total_sources = ?,
+                completed_sources = ?,
+                total_jobs = ?,
+                last_update = ?,
+                pid = ?
+            WHERE id = 1
+        """, (
+            1 if status == 'running' else 0,
+            status,
+            current_source,
+            total_sources,
+            completed_sources,
+            total_jobs,
+            now,
+            os.getpid() if status == 'running' else None
+        ))
+        db.commit()
+        logger.debug(f"爬虫状态更新: {status}" + (f" [{current_source}]" if current_source else ""))
+    except Exception as e:
+        logger.warning(f"更新爬虫状态失败: {e}")
+
+
+def get_crawler_status() -> dict:
+    """获取爬虫全局状态"""
+    try:
+        row = db.execute("SELECT * FROM crawler_status WHERE id = 1").fetchone()
+        if row:
+            columns = [desc[0] for desc in db.execute("PRAGMA table_info(crawler_status)").fetchall()]
+            return dict(zip(columns, row))
+        return {"is_running": 0, "status": "idle"}
+    except Exception as e:
+        logger.warning(f"获取爬虫状态失败: {e}")
+        return {"is_running": 0, "status": "idle"}
 
 
 def signal_handler(signum, frame):
@@ -1119,7 +1593,7 @@ def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -
     elif source in ("cufe", "dufe"):
         job_iterator = crawl_platform(source, source_config, max_items)
     elif source == "swufe":
-        job_iterator = crawl_swufe(source_config, max_items)
+        job_iterator = crawl_swufe(source_config, max_items, date_filter_months)
     else:
         return 0
     
@@ -1165,6 +1639,8 @@ def main():
     
     crawl_logger.start_session()
     
+    set_crawler_status('running', total_sources=len(sources))
+    
     logger.info(f"数据源: {', '.join(sources)}")
     if args.max_items > 0:
         logger.info(f"每个源最多: {args.max_items} 条")
@@ -1173,13 +1649,22 @@ def main():
     
     start_time = time.time()
     total_count = 0
-    filtered_count = 0  # 被时间筛选过滤掉的记录数
+    filtered_count = 0
+    completed_sources = 0
     
     for source in sources:
+        set_crawler_status('running', current_source=source, 
+                           total_sources=len(sources), 
+                           completed_sources=completed_sources,
+                           total_jobs=total_count)
         count = crawl_source(source, args.max_items, date_filter_months=date_filter_months)
         total_count += count
+        completed_sources += 1
     
     elapsed = time.time() - start_time
+    
+    set_crawler_status('completed', total_sources=len(sources), 
+                       completed_sources=completed_sources, total_jobs=total_count)
     
     logger.info("\n" + "=" * 70)
     logger.info(f"爬取完成 | 总耗时 {elapsed:.1f}s")

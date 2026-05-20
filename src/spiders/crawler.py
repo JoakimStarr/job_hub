@@ -12,10 +12,19 @@ from .base import BaseSpider, JobData, SpiderStatus
 from .constants import SOURCE_NAMES, SPIDERS, BATCH_SIZE, MAX_BROWSER_CONCURRENCY
 from .database import LocalDatabase
 from .unified_spider import UnifiedSpider, create_spider
-from .spider_configs import get_all_spider_names, get_spider_display_name
+from .spider_configs import get_all_spider_names, get_spider_display_name, SPIDER_CONFIGS
 
 
-BROWSER_SPIDERS = {'smartedu', 'uibe', 'jxufe', 'neu'}
+def get_browser_spiders() -> Set[str]:
+    """动态识别浏览器爬虫（根据 spider_type 以 browser 开头判断）"""
+    return {
+        key for key, config in SPIDER_CONFIGS.items()
+        if config.get("spider_type", "").startswith("browser")
+    }
+
+
+# 向后兼容：保持 BROWSER_SPIDERS 变量名
+BROWSER_SPIDERS = get_browser_spiders()
 
 
 class AsyncMultiCrawler:
@@ -219,6 +228,8 @@ class AsyncMultiCrawler:
             f"{'(流式模式)' if stream_mode else '(批处理模式)'}"
         )
 
+        await self.db.set_crawler_status('running', total_sources=len(source_keys))
+
         tasks = {}
         for key in source_keys:
             tasks[key] = asyncio.create_task(
@@ -226,12 +237,21 @@ class AsyncMultiCrawler:
             )
 
         results: Dict[str, List[JobData]] = {}
+        completed_sources = 0
+        total_jobs = 0
+        
         for key, task in tasks.items():
             start = time.time()
             try:
+                await self.db.set_crawler_status('running', current_source=key,
+                                                  total_sources=len(source_keys),
+                                                  completed_sources=completed_sources,
+                                                  total_jobs=total_jobs)
                 jobs = await task
                 elapsed = time.time() - start
                 results[key] = jobs
+                total_jobs += len(jobs)
+                completed_sources += 1
                 self._source_results[key] = {
                     "status": "completed",
                     "count": len(jobs),
@@ -261,6 +281,7 @@ class AsyncMultiCrawler:
             except Exception as e:
                 elapsed = time.time() - start
                 results[key] = []
+                completed_sources += 1
                 self._source_results[key] = {
                     "status": "error",
                     "count": 0,
@@ -276,6 +297,9 @@ class AsyncMultiCrawler:
             if self.on_source_complete:
                 self.on_source_complete(key, self._source_results[key])
 
+        await self.db.set_crawler_status('completed', total_sources=len(source_keys),
+                                          completed_sources=completed_sources, total_jobs=total_jobs)
+        
         await self._save_visited_urls()
         await self.db.close()
         await self.close()

@@ -6,6 +6,8 @@ SOURCE_NAMES = {
     'dufe': '东北财经大学',
     'jxufe': '江西财经大学',
     'zuel': '中南财经政法大学',
+    'smartedu': '国家大学生就业服务平台',
+    'neu': '东北大学',
 }
 
 SPIDERS = {source: source for source in SOURCE_NAMES.keys()}

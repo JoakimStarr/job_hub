@@ -72,6 +72,9 @@ let dbInstance: Database.Database | null = null;
 export function getDb(): Database.Database {
   if (!dbInstance) {
     dbInstance = new Database(DB_PATH, { readonly: false, fileMustExist: false });
+    dbInstance.pragma('journal_mode = WAL');
+    dbInstance.pragma('synchronous = NORMAL');
+    dbInstance.pragma('busy_timeout = 5000');
   }
   return dbInstance;
 }

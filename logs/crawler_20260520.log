@@ -1,0 +1,1395 @@
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 14:56:46 | [33mWARNING[0m | lite_crawler | preload_existing_urls:129 | 预加载URL失败: 'set' object has no attribute 'size'
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 14:56:46
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | main:1261 | 数据源: sufe
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | main:1263 | 每个源最多: 5 条
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | main:1264 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | main:1265 | ======================================================================
+
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | crawl_source:1204 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 14:56:46 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 14:57:17 | [32mINFO[0m | lite_crawler | crawl_sufe:710 | 第 1 页: 获取到 10 条列表项
+2026-05-20 14:57:48 | [31mERROR[0m | lite_crawler | log_error:350 | [sufe] 错误: AttributeError: 'sqlite3.Connection' object has no attribute 'lastrowid' | 上下文: 插入岗位: 2026年度春季校园招聘 | 中国电气装备集团供应链科技有限公司
+2026-05-20 14:58:18 | [31mERROR[0m | lite_crawler | log_error:350 | [sufe] 错误: AttributeError: 'sqlite3.Connection' object has no attribute 'lastrowid' | 上下文: 插入岗位: 华融控股集团招聘投资经理助理
+2026-05-20 14:58:49 | [31mERROR[0m | lite_crawler | log_error:350 | [sufe] 错误: AttributeError: 'sqlite3.Connection' object has no attribute 'lastrowid' | 上下文: 插入岗位: 斐意特咨询(Fitt Consulting Group) 2026春季校园招聘
+2026-05-20 14:59:20 | [31mERROR[0m | lite_crawler | log_error:350 | [sufe] 错误: AttributeError: 'sqlite3.Connection' object has no attribute 'lastrowid' | 上下文: 插入岗位: 2026年上海市金山区高校毕业生“三支一扶”计划岗位报名
+2026-05-20 14:59:51 | [31mERROR[0m | lite_crawler | log_error:350 | [sufe] 错误: AttributeError: 'sqlite3.Connection' object has no attribute 'lastrowid' | 上下文: 插入岗位: 红塔证券股份有限公司  2026年度招聘公告
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | crawl_sufe:689 | 达到最大数量限制 (5)，停止爬取
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 5 条 | 获取:5 | 耗时:184.8s
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | main:1286 | 
+======================================================================
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | main:1287 | 爬取完成 | 总耗时 184.8s
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | main:1288 | 成功入库: 0 条 (已过滤过期数据)
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | main:1289 | ======================================================================
+
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 184.81秒
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 5
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 0
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 5
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   5 | 成功:   0 | 重复:   0 | 错误:   5
+2026-05-20 14:59:51 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 15:00:22
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | main:1262 | 数据源: sufe
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | main:1264 | 每个源最多: 3 条
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | main:1265 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | main:1266 | ======================================================================
+
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | crawl_source:1205 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 15:00:22 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 15:00:53 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 1 页: 获取到 10 条列表项
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | crawl_sufe:690 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 3 条 | 获取:3 | 耗时:123.1s
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | main:1287 | 
+======================================================================
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | main:1288 | 爬取完成 | 总耗时 123.1s
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | main:1289 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | main:1290 | ======================================================================
+
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 123.13秒
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 15:02:25 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 15:04:34
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | main:1262 | 数据源: zuel
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | main:1264 | 每个源最多: 2 条
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | main:1265 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | main:1266 | ======================================================================
+
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | crawl_source:1205 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 15:04:34 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中南财经政法大学] (source: zuel)
+2026-05-20 15:04:37 | [32mINFO[0m | lite_crawler | crawl_zuel:802 | 第 1 页: 获取到 10 条列表项
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | crawl_zuel:780 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中南财经政法大学] 完成: 2 条 | 获取:2 | 耗时:3.9s
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | main:1287 | 
+======================================================================
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | main:1288 | 爬取完成 | 总耗时 3.9s
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | main:1289 | 成功入库: 2 条 (已过滤过期数据)
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | main:1290 | ======================================================================
+
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 3.88秒
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 2
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:280 |   [      zuel] 获取:   2 | 成功:   2 | 重复:   0 | 错误:   0
+2026-05-20 15:04:38 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 15:08:52
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | main:1262 | 数据源: sufe, zuel, cufe, dufe, swufe
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | main:1265 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | main:1266 | ======================================================================
+
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | crawl_source:1205 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 15:08:52 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 15:08:53 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 1 页: 获取到 10 条列表项
+2026-05-20 15:08:56 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 2 页: 获取到 10 条列表项
+2026-05-20 15:08:56 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 3 页: 获取到 10 条列表项
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 16:00:12
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | main:1279 | 数据源: sufe
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | main:1281 | 每个源最多: 2 条
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | main:1282 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | main:1283 | ======================================================================
+
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | crawl_source:1222 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 16:00:12 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 16:00:43 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 1 页: 获取到 10 条列表项
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | crawl_sufe:690 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 2 条 | 获取:2 | 耗时:92.0s
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | main:1304 | 
+======================================================================
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | main:1305 | 爬取完成 | 总耗时 92.0s
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | main:1306 | 成功入库: 0 条 (已过滤过期数据)
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | main:1307 | ======================================================================
+
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 91.97秒
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 0
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 2
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   2 | 成功:   0 | 重复:   2 | 错误:   0
+2026-05-20 16:01:44 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 16:01:53
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | main:1279 | 数据源: sufe
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | main:1281 | 每个源最多: 2 条
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | main:1282 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | main:1283 | ======================================================================
+
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | crawl_source:1222 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 16:01:53 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 16:02:24 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 1 页: 获取到 10 条列表项
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | crawl_sufe:690 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 2 条 | 获取:2 | 耗时:91.8s
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | main:1304 | 
+======================================================================
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | main:1305 | 爬取完成 | 总耗时 91.8s
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | main:1306 | 成功入库: 0 条 (已过滤过期数据)
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | main:1307 | ======================================================================
+
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 91.82秒
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 0
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 2
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   2 | 成功:   0 | 重复:   2 | 错误:   0
+2026-05-20 16:03:25 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 16:03:47
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | main:1279 | 数据源: sufe
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | main:1281 | 每个源最多: 2 条
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | main:1282 | 📅 时间筛选: 只入库最近 12 个月的数据
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | main:1283 | ======================================================================
+
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | crawl_source:1222 | 📅 时间筛选: 只入库最近 12 个月的数据
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 16:03:47 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 16:04:18 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 1 页: 获取到 10 条列表项
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | crawl_sufe:690 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 2 条 | 获取:2 | 耗时:91.8s
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | main:1304 | 
+======================================================================
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | main:1305 | 爬取完成 | 总耗时 91.8s
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | main:1306 | 成功入库: 0 条 (已过滤过期数据)
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | main:1307 | ======================================================================
+
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 91.83秒
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 0
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 2
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   2 | 成功:   0 | 重复:   2 | 错误:   0
+2026-05-20 16:05:19 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 16:05:33
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | main:1279 | 数据源: sufe
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | main:1281 | 每个源最多: 2 条
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | main:1282 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | main:1283 | ======================================================================
+
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | crawl_source:1222 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 16:05:33 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 16:06:03 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 1 页: 获取到 10 条列表项
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | crawl_sufe:690 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 2 条 | 获取:2 | 耗时:92.0s
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | main:1304 | 
+======================================================================
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | main:1305 | 爬取完成 | 总耗时 92.0s
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | main:1306 | 成功入库: 2 条 (已过滤过期数据)
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | main:1307 | ======================================================================
+
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 92.03秒
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 2
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   2 | 成功:   2 | 重复:   0 | 错误:   0
+2026-05-20 16:07:05 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 16:10:03
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | main:1307 | 数据源: sufe
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | main:1309 | 每个源最多: 2 条
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | main:1310 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | main:1311 | ======================================================================
+
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | crawl_source:1250 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 16:10:03 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 16:10:33
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | main:1307 | 数据源: sufe
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | main:1309 | 每个源最多: 2 条
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | main:1310 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | main:1311 | ======================================================================
+
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | crawl_source:1250 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 16:10:33 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 16:11:03 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 1 页: 获取到 10 条列表项
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | crawl_sufe:690 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 2 条 | 获取:2 | 耗时:91.8s
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | main:1332 | 
+======================================================================
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | main:1333 | 爬取完成 | 总耗时 91.8s
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | main:1334 | 成功入库: 2 条 (已过滤过期数据)
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | main:1335 | ======================================================================
+
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 91.85秒
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 2
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   2 | 成功:   2 | 重复:   0 | 错误:   0
+2026-05-20 16:12:04 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 16:14:14
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | main:1315 | 数据源: sufe
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | main:1317 | 每个源最多: 2 条
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | main:1318 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | main:1319 | ======================================================================
+
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | crawl_source:1258 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 16:14:14 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 16:14:45 | [32mINFO[0m | lite_crawler | crawl_sufe:711 | 第 1 页: 获取到 10 条列表项
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | crawl_sufe:690 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 2 条 | 获取:2 | 耗时:92.2s
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | main:1340 | 
+======================================================================
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | main:1341 | 爬取完成 | 总耗时 92.2s
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | main:1342 | 成功入库: 2 条 (已过滤过期数据)
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | main:1343 | ======================================================================
+
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 92.20秒
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 2
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   2 | 成功:   2 | 重复:   0 | 错误:   0
+2026-05-20 16:15:46 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | init_database:518 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 16:29:43
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | main:1319 | 数据源: sufe
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | main:1321 | 每个源最多: 3 条
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | main:1322 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | main:1323 | ======================================================================
+
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | crawl_source:1262 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 16:29:43 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 16:30:14 | [32mINFO[0m | lite_crawler | crawl_sufe:714 | 第 1 页: 获取到 10 条列表项
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | crawl_sufe:693 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 3 条 | 获取:3 | 耗时:122.4s
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | main:1344 | 
+======================================================================
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | main:1345 | 爬取完成 | 总耗时 122.4s
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | main:1346 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | main:1347 | ======================================================================
+
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 122.40秒
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 16:31:45 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 17:46:58
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | main:1359 | 数据源: zuel
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | main:1361 | 每个源最多: 2 条
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | main:1362 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | main:1363 | ======================================================================
+
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | crawl_source:1302 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 17:46:58 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中南财经政法大学] (source: zuel)
+2026-05-20 17:47:00 | [32mINFO[0m | lite_crawler | crawl_zuel:861 | 第 1 页: 获取到 10 条列表项
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | crawl_zuel:839 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中南财经政法大学] 完成: 2 条 | 获取:2 | 耗时:4.9s
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | main:1384 | 
+======================================================================
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | main:1385 | 爬取完成 | 总耗时 4.9s
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | main:1386 | 成功入库: 2 条 (已过滤过期数据)
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | main:1387 | ======================================================================
+
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 4.88秒
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 2
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:280 |   [      zuel] 获取:   2 | 成功:   2 | 重复:   0 | 错误:   0
+2026-05-20 17:47:03 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 17:48:08
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | main:1373 | 数据源: zuel
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | main:1375 | 每个源最多: 2 条
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | main:1376 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | main:1377 | ======================================================================
+
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | crawl_source:1316 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 17:48:08 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中南财经政法大学] (source: zuel)
+2026-05-20 17:48:10 | [32mINFO[0m | lite_crawler | crawl_zuel:861 | 第 1 页: 获取到 10 条列表项
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | crawl_zuel:839 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中南财经政法大学] 完成: 2 条 | 获取:2 | 耗时:2.6s
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | main:1398 | 
+======================================================================
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | main:1399 | 爬取完成 | 总耗时 2.6s
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | main:1400 | 成功入库: 2 条 (已过滤过期数据)
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | main:1401 | ======================================================================
+
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 2.64秒
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 2
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:280 |   [      zuel] 获取:   2 | 成功:   2 | 重复:   0 | 错误:   0
+2026-05-20 17:48:11 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 17:55:07
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | main:1361 | 数据源: zuel
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | main:1363 | 每个源最多: 2 条
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | main:1364 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | main:1365 | ======================================================================
+
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | crawl_source:1304 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 17:55:07 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中南财经政法大学] (source: zuel)
+2026-05-20 17:55:09 | [32mINFO[0m | lite_crawler | crawl_zuel:861 | 第 1 页: 获取到 10 条列表项
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | crawl_zuel:839 | 达到最大数量限制 (2)，停止爬取
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中南财经政法大学] 完成: 2 条 | 获取:2 | 耗时:3.2s
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | main:1386 | 
+======================================================================
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | main:1387 | 爬取完成 | 总耗时 3.2s
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | main:1388 | 成功入库: 2 条 (已过滤过期数据)
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | main:1389 | ======================================================================
+
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 3.19秒
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 2
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 2
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:280 |   [      zuel] 获取:   2 | 成功:   2 | 重复:   0 | 错误:   0
+2026-05-20 17:55:10 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 17:57:08
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | main:1438 | 数据源: swufe
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | main:1440 | 每个源最多: 3 条
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | main:1441 | 📅 时间筛选: 只入库最近 3 个月的数据
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | main:1442 | ======================================================================
+
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | crawl_source:1381 | 📅 时间筛选: 只入库最近 3 个月的数据
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 17:57:08 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 17:57:10 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 17:57:22 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 2 页: 获取到 20 条列表项
+2026-05-20 17:57:34 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 3 页: 获取到 20 条列表项
+2026-05-20 17:57:47 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 4 页: 获取到 20 条列表项
+2026-05-20 17:57:59 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 5 页: 获取到 20 条列表项
+2026-05-20 17:58:11 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 6 页: 获取到 20 条列表项
+2026-05-20 17:58:24 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 7 页: 获取到 20 条列表项
+2026-05-20 17:58:36 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 8 页: 获取到 20 条列表项
+2026-05-20 17:58:47 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 9 页: 获取到 20 条列表项
+2026-05-20 17:59:01 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 10 页: 获取到 20 条列表项
+2026-05-20 17:59:14 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 11 页: 获取到 20 条列表项
+2026-05-20 17:59:26 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 12 页: 获取到 20 条列表项
+2026-05-20 17:59:38 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 13 页: 获取到 20 条列表项
+2026-05-20 17:59:55 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 14 页: 获取到 20 条列表项
+2026-05-20 18:00:06 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 15 页: 获取到 20 条列表项
+2026-05-20 18:00:18 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 16 页: 获取到 20 条列表项
+2026-05-20 18:00:32 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 17 页: 获取到 20 条列表项
+2026-05-20 18:01:04 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 18 页: 获取到 20 条列表项
+2026-05-20 18:01:16 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 19 页: 获取到 20 条列表项
+2026-05-20 18:01:29 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 20 页: 获取到 20 条列表项
+2026-05-20 18:01:46 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 21 页: 获取到 20 条列表项
+2026-05-20 18:01:59 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 22 页: 获取到 20 条列表项
+2026-05-20 18:02:11 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 23 页: 获取到 20 条列表项
+2026-05-20 18:02:23 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 24 页: 获取到 20 条列表项
+2026-05-20 18:02:36 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 25 页: 获取到 20 条列表项
+2026-05-20 18:02:49 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 26 页: 获取到 20 条列表项
+2026-05-20 18:03:01 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 27 页: 获取到 20 条列表项
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:04:03
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | main:1446 | 数据源: swufe
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | main:1448 | 每个源最多: 5 条
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | main:1449 | 📅 时间筛选: 只入库最近 1 个月的数据
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | main:1450 | ======================================================================
+
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | crawl_source:1389 | 📅 时间筛选: 只入库最近 1 个月的数据
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:04:03 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:04:15 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 2 页: 获取到 20 条列表项
+2026-05-20 18:04:28 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 3 页: 获取到 20 条列表项
+2026-05-20 18:04:41 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 4 页: 获取到 20 条列表项
+2026-05-20 18:04:54 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 5 页: 获取到 20 条列表项
+2026-05-20 18:05:07 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 6 页: 获取到 20 条列表项
+2026-05-20 18:05:21 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 7 页: 获取到 20 条列表项
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | crawl_swufe:1149 | 遇到过期数据 (2026-04-20)，停止爬取
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [西南财经大学] 完成: 0 条 | 获取:0 | 耗时:83.4s
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | main:1471 | 
+======================================================================
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | main:1472 | 爬取完成 | 总耗时 83.4s
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | main:1473 | 成功入库: 0 条 (已过滤过期数据)
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | main:1474 | ======================================================================
+
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 83.44秒
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 0
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 0
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:280 |   [     swufe] 获取:   0 | 成功:   0 | 重复:   0 | 错误:   0
+2026-05-20 18:05:26 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:06:11
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | main:1445 | 数据源: swufe
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | main:1447 | 每个源最多: 3 条
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | main:1448 | 📅 时间筛选: 只入库最近 3 个月的数据
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | main:1449 | ======================================================================
+
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | crawl_source:1388 | 📅 时间筛选: 只入库最近 3 个月的数据
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:06:11 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:06:12 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:06:27 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 2 页: 获取到 20 条列表项
+2026-05-20 18:06:40 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 3 页: 获取到 20 条列表项
+2026-05-20 18:06:52 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 4 页: 获取到 20 条列表项
+2026-05-20 18:07:05 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 5 页: 获取到 20 条列表项
+2026-05-20 18:07:18 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 6 页: 获取到 20 条列表项
+2026-05-20 18:07:31 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 7 页: 获取到 20 条列表项
+2026-05-20 18:07:44 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 8 页: 获取到 20 条列表项
+2026-05-20 18:07:56 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 9 页: 获取到 20 条列表项
+2026-05-20 18:08:09 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 10 页: 获取到 20 条列表项
+2026-05-20 18:08:22 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 11 页: 获取到 20 条列表项
+2026-05-20 18:08:38 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 12 页: 获取到 20 条列表项
+2026-05-20 18:08:53 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 13 页: 获取到 20 条列表项
+2026-05-20 18:09:05 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 14 页: 获取到 20 条列表项
+2026-05-20 18:09:20 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 15 页: 获取到 20 条列表项
+2026-05-20 18:09:32 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 16 页: 获取到 20 条列表项
+2026-05-20 18:09:45 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 17 页: 获取到 20 条列表项
+2026-05-20 18:09:57 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 18 页: 获取到 20 条列表项
+2026-05-20 18:10:10 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 19 页: 获取到 20 条列表项
+2026-05-20 18:10:23 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 20 页: 获取到 20 条列表项
+2026-05-20 18:10:37 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 21 页: 获取到 20 条列表项
+2026-05-20 18:10:56 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 22 页: 获取到 20 条列表项
+2026-05-20 18:11:11 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 23 页: 获取到 20 条列表项
+2026-05-20 18:11:24 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 24 页: 获取到 20 条列表项
+2026-05-20 18:11:38 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 25 页: 获取到 20 条列表项
+2026-05-20 18:11:52 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 26 页: 获取到 20 条列表项
+2026-05-20 18:12:07 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 27 页: 获取到 20 条列表项
+2026-05-20 18:12:23 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 28 页: 获取到 20 条列表项
+2026-05-20 18:12:36 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 29 页: 获取到 20 条列表项
+2026-05-20 18:12:48 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 30 页: 获取到 20 条列表项
+2026-05-20 18:13:01 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 31 页: 获取到 20 条列表项
+2026-05-20 18:13:14 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 32 页: 获取到 20 条列表项
+2026-05-20 18:13:27 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 33 页: 获取到 20 条列表项
+2026-05-20 18:13:41 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 34 页: 获取到 20 条列表项
+2026-05-20 18:13:55 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 35 页: 获取到 20 条列表项
+2026-05-20 18:14:09 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 36 页: 获取到 20 条列表项
+2026-05-20 18:14:22 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 37 页: 获取到 20 条列表项
+2026-05-20 18:14:35 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 38 页: 获取到 20 条列表项
+2026-05-20 18:14:48 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 39 页: 获取到 20 条列表项
+2026-05-20 18:15:01 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 40 页: 获取到 20 条列表项
+2026-05-20 18:15:17 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 41 页: 获取到 20 条列表项
+2026-05-20 18:15:30 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 42 页: 获取到 20 条列表项
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: DEBUG
+2026-05-20 18:16:48 | [36mDEBUG[0m | lite_crawler | preload_existing_urls:127 | 预加载 5 条已存在URL到内存
+2026-05-20 18:16:48 | [36mDEBUG[0m | lite_crawler | log_database_operation:375 | ✓ 数据库初始化: jobs/crawl_logs/crawler_status
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:16:48
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:16:48 | [36mDEBUG[0m | lite_crawler | set_crawler_status:1279 | 爬虫状态更新: running
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | main:1460 | 数据源: swufe
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | main:1462 | 每个源最多: 2 条
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | main:1463 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | main:1464 | ======================================================================
+
+2026-05-20 18:16:48 | [36mDEBUG[0m | lite_crawler | set_crawler_status:1279 | 爬虫状态更新: running [swufe]
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | crawl_source:1403 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:16:48 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:16:49 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs_list/page/1.htm → 200 (0.84s)
+2026-05-20 18:16:49 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:16:50 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14880-.htm → 200 (0.57s)
+2026-05-20 18:16:50 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14879-.htm → 200 (0.82s)
+2026-05-20 18:16:51 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-8283-.htm → 200 (0.60s)
+2026-05-20 18:16:52 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14918-.htm → 200 (0.59s)
+2026-05-20 18:16:52 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14878-.htm → 200 (0.61s)
+2026-05-20 18:16:53 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14916-.htm → 200 (0.70s)
+2026-05-20 18:16:54 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14479-.htm → 200 (0.63s)
+2026-05-20 18:16:54 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14912-.htm → 200 (0.59s)
+2026-05-20 18:16:55 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14910-.htm → 200 (0.50s)
+2026-05-20 18:16:55 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14909-.htm → 200 (0.53s)
+2026-05-20 18:16:56 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14911-.htm → 200 (0.54s)
+2026-05-20 18:16:56 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14908-.htm → 200 (0.52s)
+2026-05-20 18:16:57 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14882-.htm → 200 (0.52s)
+2026-05-20 18:16:57 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14881-.htm → 200 (0.53s)
+2026-05-20 18:16:58 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14902-.htm → 200 (0.52s)
+2026-05-20 18:16:59 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14901-.htm → 200 (0.60s)
+2026-05-20 18:16:59 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14903-.htm → 200 (0.57s)
+2026-05-20 18:17:00 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14900-.htm → 200 (0.53s)
+2026-05-20 18:17:00 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-12455-.htm → 200 (0.51s)
+2026-05-20 18:17:01 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14899-.htm → 200 (0.62s)
+2026-05-20 18:17:02 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs_list/page/2.htm → 200 (0.66s)
+2026-05-20 18:17:02 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 2 页: 获取到 20 条列表项
+2026-05-20 18:17:02 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-13568-.htm → 200 (0.57s)
+2026-05-20 18:17:04 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-13569-.htm → 200 (2.09s)
+2026-05-20 18:17:06 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-13570-.htm → 200 (1.23s)
+2026-05-20 18:17:06 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14890-.htm → 200 (0.50s)
+2026-05-20 18:17:07 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14892-.htm → 200 (0.61s)
+2026-05-20 18:17:07 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14893-.htm → 200 (0.84s)
+2026-05-20 18:17:08 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14895-.htm → 200 (0.71s)
+2026-05-20 18:17:09 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14894-.htm → 200 (0.82s)
+2026-05-20 18:17:10 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14896-.htm → 200 (0.50s)
+2026-05-20 18:17:10 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14891-.htm → 200 (0.53s)
+2026-05-20 18:17:11 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14884-.htm → 200 (0.46s)
+2026-05-20 18:17:11 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14877-.htm → 200 (0.46s)
+2026-05-20 18:17:12 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-7347-.htm → 200 (0.51s)
+2026-05-20 18:17:12 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-7346-.htm → 200 (0.55s)
+2026-05-20 18:17:13 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14875-.htm → 200 (0.71s)
+2026-05-20 18:17:13 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14873-.htm → 200 (0.60s)
+2026-05-20 18:17:14 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-13159-.htm → 200 (0.49s)
+2026-05-20 18:17:14 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14872-.htm → 200 (0.52s)
+2026-05-20 18:17:15 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-14871-.htm → 200 (0.56s)
+2026-05-20 18:17:16 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-13550-.htm → 200 (0.54s)
+2026-05-20 18:17:16 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs_list/page/3.htm → 200 (0.70s)
+2026-05-20 18:17:16 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 3 页: 获取到 20 条列表项
+2026-05-20 18:17:17 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-13551-.htm → 200 (0.58s)
+2026-05-20 18:17:17 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-13552-.htm → 200 (0.50s)
+2026-05-20 18:17:18 | [36mDEBUG[0m | lite_crawler | log_request:367 | GET https://job3.swufe.edu.cn/jobs/jobs-show-13553-.htm → 200 (0.61s)
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:18:33
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | main:1466 | 数据源: swufe
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | main:1468 | 每个源最多: 3 条
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | main:1469 | 📅 时间筛选: 只入库最近 3 个月的数据
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | main:1470 | ======================================================================
+
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | crawl_source:1409 | 📅 时间筛选: 只入库最近 3 个月的数据
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:18:33 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:18:38 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | crawl_swufe:1083 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [西南财经大学] 完成: 3 条 | 获取:3 | 耗时:8.4s
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | main:1491 | 
+======================================================================
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | main:1492 | 爬取完成 | 总耗时 8.5s
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | main:1493 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | main:1494 | ======================================================================
+
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 8.47秒
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:280 |   [     swufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:18:41 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:20:54
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | main:1466 | 数据源: sufe
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | main:1468 | 每个源最多: 5 条
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | main:1469 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | main:1470 | ======================================================================
+
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | crawl_source:1409 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:20:54 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 18:21:31 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 1 页: 获取到 10 条列表项
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | crawl_sufe:695 | 达到最大数量限制 (5)，停止爬取
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [上海财经大学] 完成: 5 条 | 获取:5 | 耗时:189.5s
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | main:1491 | 
+======================================================================
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | main:1492 | 爬取完成 | 总耗时 189.5s
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | main:1493 | 成功入库: 5 条 (已过滤过期数据)
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | main:1494 | ======================================================================
+
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 189.54秒
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 5
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 5
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:280 |   [      sufe] 获取:   5 | 成功:   5 | 重复:   0 | 错误:   0
+2026-05-20 18:24:04 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:24:10
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | main:1466 | 数据源: zuel
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | main:1468 | 每个源最多: 5 条
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | main:1469 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | main:1470 | ======================================================================
+
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | crawl_source:1409 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:24:10 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中南财经政法大学] (source: zuel)
+2026-05-20 18:24:14 | [32mINFO[0m | lite_crawler | crawl_zuel:861 | 第 1 页: 获取到 10 条列表项
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | crawl_zuel:839 | 达到最大数量限制 (5)，停止爬取
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中南财经政法大学] 完成: 5 条 | 获取:5 | 耗时:6.6s
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | main:1491 | 
+======================================================================
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | main:1492 | 爬取完成 | 总耗时 6.6s
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | main:1493 | 成功入库: 5 条 (已过滤过期数据)
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | main:1494 | ======================================================================
+
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 6.60秒
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 5
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 5
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:280 |   [      zuel] 获取:   5 | 成功:   5 | 重复:   0 | 错误:   0
+2026-05-20 18:24:17 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:24:23
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | main:1466 | 数据源: swufe
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | main:1468 | 每个源最多: 5 条
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | main:1469 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | main:1470 | ======================================================================
+
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | crawl_source:1409 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:24:23 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | crawl_swufe:1083 | 达到最大数量限制 (5)，停止爬取
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [西南财经大学] 完成: 5 条 | 获取:5 | 耗时:6.1s
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | main:1491 | 
+======================================================================
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | main:1492 | 爬取完成 | 总耗时 6.1s
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | main:1493 | 成功入库: 5 条 (已过滤过期数据)
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | main:1494 | ======================================================================
+
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 6.11秒
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 5
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 5
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:280 |   [     swufe] 获取:   5 | 成功:   5 | 重复:   0 | 错误:   0
+2026-05-20 18:24:29 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:24:34
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | main:1466 | 数据源: cufe
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | main:1468 | 每个源最多: 5 条
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | main:1469 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | main:1470 | ======================================================================
+
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | crawl_source:1409 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:24:34 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-20 18:24:36 | [32mINFO[0m | lite_crawler | crawl_platform:992 | 第 1 页: 获取到 15 条列表项
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | crawl_platform:971 | 达到最大数量限制 (5)，停止爬取
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中央财经大学] 完成: 5 条 | 获取:5 | 耗时:3.0s
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | main:1491 | 
+======================================================================
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | main:1492 | 爬取完成 | 总耗时 3.0s
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | main:1493 | 成功入库: 5 条 (已过滤过期数据)
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | main:1494 | ======================================================================
+
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 2.98秒
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 5
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 5
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:280 |   [      cufe] 获取:   5 | 成功:   5 | 重复:   0 | 错误:   0
+2026-05-20 18:24:37 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:24:43
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | main:1466 | 数据源: dufe
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | main:1468 | 每个源最多: 5 条
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | main:1469 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | main:1470 | ======================================================================
+
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | crawl_source:1409 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:24:43 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [东北财经大学] (source: dufe)
+2026-05-20 18:24:44 | [32mINFO[0m | lite_crawler | crawl_platform:992 | 第 1 页: 获取到 15 条列表项
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | crawl_platform:971 | 达到最大数量限制 (5)，停止爬取
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [东北财经大学] 完成: 5 条 | 获取:5 | 耗时:4.8s
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | main:1491 | 
+======================================================================
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | main:1492 | 爬取完成 | 总耗时 4.8s
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | main:1493 | 成功入库: 5 条 (已过滤过期数据)
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | main:1494 | ======================================================================
+
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 4.78秒
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 5
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 5
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:280 |   [      dufe] 获取:   5 | 成功:   5 | 重复:   0 | 错误:   0
+2026-05-20 18:24:48 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:31:53
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | main:1571 | 数据源: swufe
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | main:1573 | 每个源最多: 3 条
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | main:1574 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | main:1575 | ======================================================================
+
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | crawl_source:1514 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:31:53 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:31:54 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | crawl_swufe:1083 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [西南财经大学] 完成: 3 条 | 获取:3 | 耗时:4.3s
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | main:1596 | 
+======================================================================
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | main:1597 | 爬取完成 | 总耗时 4.4s
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | main:1598 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | main:1599 | ======================================================================
+
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 4.37秒
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:280 |   [     swufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:31:58 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:32:46
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | main:1577 | 数据源: swufe
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | main:1579 | 每个源最多: 3 条
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | main:1580 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | main:1581 | ======================================================================
+
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | crawl_source:1520 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:32:46 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:32:47 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | crawl_swufe:1083 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [西南财经大学] 完成: 3 条 | 获取:3 | 耗时:4.3s
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | main:1602 | 
+======================================================================
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | main:1603 | 爬取完成 | 总耗时 4.4s
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | main:1604 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | main:1605 | ======================================================================
+
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 4.36秒
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:280 |   [     swufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:32:50 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:34:05
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | main:1581 | 数据源: swufe
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | main:1583 | 每个源最多: 3 条
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | main:1584 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | main:1585 | ======================================================================
+
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | crawl_source:1524 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:34:05 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | crawl_swufe:1083 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [西南财经大学] 完成: 3 条 | 获取:3 | 耗时:4.1s
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | main:1606 | 
+======================================================================
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | main:1607 | 爬取完成 | 总耗时 4.1s
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | main:1608 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | main:1609 | ======================================================================
+
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 4.14秒
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:280 |   [     swufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:34:09 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:35:23
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | main:1558 | 数据源: swufe
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | main:1560 | 每个源最多: 3 条
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | main:1561 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | main:1562 | ======================================================================
+
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | crawl_source:1501 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:35:23 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [西南财经大学] (source: swufe)
+2026-05-20 18:35:24 | [32mINFO[0m | lite_crawler | crawl_swufe:1108 | 第 1 页: 获取到 20 条列表项
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | crawl_swufe:1083 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [西南财经大学] 完成: 3 条 | 获取:3 | 耗时:4.5s
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | main:1583 | 
+======================================================================
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | main:1584 | 爬取完成 | 总耗时 4.5s
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | main:1585 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | main:1586 | ======================================================================
+
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 4.53秒
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:280 |   [     swufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:35:28 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:47:40
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | main:1620 | 数据源: cufe
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | main:1622 | 每个源最多: 3 条
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | main:1623 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | main:1624 | ======================================================================
+
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | crawl_source:1563 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:47:40 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-20 18:47:41 | [32mINFO[0m | lite_crawler | crawl_platform:992 | 第 1 页: 获取到 15 条列表项
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | crawl_platform:971 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中央财经大学] 完成: 3 条 | 获取:3 | 耗时:2.1s
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | main:1645 | 
+======================================================================
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | main:1646 | 爬取完成 | 总耗时 2.1s
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | main:1647 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | main:1648 | ======================================================================
+
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 2.07秒
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:280 |   [      cufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:47:42 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:48:27
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | main:1621 | 数据源: cufe
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | main:1623 | 每个源最多: 3 条
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | main:1624 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | main:1625 | ======================================================================
+
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | crawl_source:1564 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:48:27 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | crawl_platform:992 | 第 1 页: 获取到 15 条列表项
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | crawl_platform:971 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中央财经大学] 完成: 3 条 | 获取:3 | 耗时:1.9s
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | main:1646 | 
+======================================================================
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | main:1647 | 爬取完成 | 总耗时 1.9s
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | main:1648 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | main:1649 | ======================================================================
+
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 1.87秒
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:280 |   [      cufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:48:29 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:49:26
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | main:1630 | 数据源: cufe
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | main:1632 | 每个源最多: 3 条
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | main:1633 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | main:1634 | ======================================================================
+
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | crawl_source:1573 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:49:26 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-20 18:49:27 | [32mINFO[0m | lite_crawler | crawl_platform:992 | 第 1 页: 获取到 15 条列表项
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | crawl_platform:971 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中央财经大学] 完成: 3 条 | 获取:3 | 耗时:2.0s
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | main:1655 | 
+======================================================================
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | main:1656 | 爬取完成 | 总耗时 2.0s
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | main:1657 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | main:1658 | ======================================================================
+
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 2.00秒
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:280 |   [      cufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:49:28 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:50:34
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | main:1638 | 数据源: cufe
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | main:1640 | 每个源最多: 3 条
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | main:1641 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | main:1642 | ======================================================================
+
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | crawl_source:1581 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:50:34 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-20 18:50:35 | [32mINFO[0m | lite_crawler | crawl_platform:992 | 第 1 页: 获取到 15 条列表项
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | crawl_platform:971 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中央财经大学] 完成: 3 条 | 获取:3 | 耗时:2.1s
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | main:1663 | 
+======================================================================
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | main:1664 | 爬取完成 | 总耗时 2.1s
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | main:1665 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | main:1666 | ======================================================================
+
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 2.14秒
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:280 |   [      cufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:50:36 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:51:52
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | main:1641 | 数据源: cufe, dufe
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | main:1643 | 每个源最多: 3 条
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | main:1644 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | main:1645 | ======================================================================
+
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | crawl_source:1584 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:51:52 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-20 18:51:53 | [32mINFO[0m | lite_crawler | crawl_platform:992 | 第 1 页: 获取到 15 条列表项
+2026-05-20 18:51:53 | [32mINFO[0m | lite_crawler | crawl_platform:971 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:51:53 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中央财经大学] 完成: 3 条 | 获取:3 | 耗时:1.3s
+2026-05-20 18:51:53 | [32mINFO[0m | lite_crawler | crawl_source:1584 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:51:53 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:51:53 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [东北财经大学] (source: dufe)
+2026-05-20 18:51:54 | [32mINFO[0m | lite_crawler | crawl_platform:992 | 第 1 页: 获取到 15 条列表项
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | crawl_platform:971 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [东北财经大学] 完成: 3 条 | 获取:3 | 耗时:4.2s
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | main:1666 | 
+======================================================================
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | main:1667 | 爬取完成 | 总耗时 5.5s
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | main:1668 | 成功入库: 6 条 (已过滤过期数据)
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | main:1669 | ======================================================================
+
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 5.52秒
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 6
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 6
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:280 |   [      cufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:280 |   [      dufe] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:51:58 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 18:57:03
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | main:1644 | 数据源: zuel
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | main:1646 | 每个源最多: 3 条
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | main:1647 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | main:1648 | ======================================================================
+
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | crawl_source:1587 | 📅 时间筛选: 只入库最近 6 个月的数据
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 18:57:03 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [中南财经政法大学] (source: zuel)
+2026-05-20 18:57:05 | [32mINFO[0m | lite_crawler | crawl_zuel:861 | 第 1 页: 获取到 10 条列表项
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | crawl_zuel:839 | 达到最大数量限制 (3)，停止爬取
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | log_source_end:308 | ✓ [中南财经政法大学] 完成: 3 条 | 获取:3 | 耗时:4.1s
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | main:1669 | 
+======================================================================
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | main:1670 | 爬取完成 | 总耗时 4.1s
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | main:1671 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | main:1672 | ======================================================================
+
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:267 | ======================================================================
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:268 | 爬取会话结束
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:269 | 总耗时: 4.16秒
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:270 | 总岗位数: 3
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:271 | 成功插入: 3
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:272 | 重复跳过: 0
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:273 | 错误次数: 0
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:274 | 重试次数: 0
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:277 | ----------------------------------------------------------------------
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:278 | 各数据源统计:
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:280 |   [      zuel] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-20 18:57:07 | [32mINFO[0m | lite_crawler | end_session:287 | ======================================================================
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 19:02:16
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | main:1644 | 数据源: sufe, zuel, cufe, dufe, swufe
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | main:1647 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | main:1648 | ======================================================================
+
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | crawl_source:1587 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 19:02:16 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 19:02:17 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 1 页: 获取到 10 条列表项
+2026-05-20 19:02:18 | [33mWARNING[0m | lite_crawler | insert_job:628 | 数据唯一约束冲突: 管培生-投资 @ 上海汇雅特集团有限公司
+2026-05-20 19:02:19 | [33mWARNING[0m | lite_crawler | insert_job:628 | 数据唯一约束冲突: 国际营销技术支持 @ 山东省人才在线有限公司
+2026-05-20 19:02:21 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 2 页: 获取到 10 条列表项
+2026-05-20 19:02:22 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 3 页: 获取到 10 条列表项
+2026-05-20 19:02:23 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 4 页: 获取到 10 条列表项
+2026-05-20 19:02:23 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 5 页: 获取到 10 条列表项
+2026-05-20 19:02:24 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 6 页: 获取到 10 条列表项
+2026-05-20 19:02:25 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 7 页: 获取到 10 条列表项
+2026-05-20 19:02:26 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 8 页: 获取到 10 条列表项
+2026-05-20 19:02:27 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 9 页: 获取到 10 条列表项
