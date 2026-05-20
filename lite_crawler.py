@@ -508,14 +508,25 @@ def init_database():
     """)
     
     db.execute("""
-        INSERT OR IGNORE INTO crawler_status (id, is_running, status) 
+        INSERT OR IGNORE INTO crawler_status (id, is_running, status)
         VALUES (1, 0, 'idle')
     """)
-    
+
+    # 增量爬取状态表
+    db.execute("""
+        CREATE TABLE IF NOT EXISTS crawl_state (
+            source TEXT PRIMARY KEY,
+            last_page INTEGER DEFAULT 1,
+            last_crawl_time TIMESTAMP,
+            last_job_count INTEGER DEFAULT 0,
+            extra TEXT DEFAULT '{}'
+        )
+    """)
+
     db.commit()
-    
+
     preload_existing_urls()
-    crawl_logger.log_database_operation("初始化", "jobs/crawl_logs/crawler_status", True)
+    crawl_logger.log_database_operation("初始化", "jobs/crawl_logs/crawler_status/crawl_state", True)
     logger.info("✓ 数据库初始化完成（与主爬虫表结构一致）")
 
 
@@ -558,6 +569,34 @@ def is_within_date_range(publish_date: str, months: int = 2) -> bool:
     except Exception as e:
         logger.warning(f"日期解析失败: {publish_date} - {e}")
         return True  # 解析失败时默认通过
+
+
+def save_crawl_state(source: str, last_page: int, last_job_count: int = 0, extra: str = '{}'):
+    """保存增量爬取状态"""
+    from datetime import datetime
+    now = datetime.now().isoformat()
+    db.execute('''
+        INSERT INTO crawl_state (source, last_page, last_crawl_time, last_job_count, extra)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(source) DO UPDATE SET
+            last_page = excluded.last_page,
+            last_crawl_time = excluded.last_crawl_time,
+            last_job_count = excluded.last_job_count,
+            extra = excluded.extra
+    ''', (source, last_page, now, last_job_count, extra))
+    db.commit()
+    logger.debug(f"增量状态已保存: [{source}] last_page={last_page}, count={last_job_count}")
+
+
+def load_crawl_state(source: str) -> Dict:
+    """加载增量爬取状态"""
+    row = db.execute(
+        "SELECT last_page, last_crawl_time, last_job_count, extra FROM crawl_state WHERE source = ?",
+        (source,)
+    ).fetchone()
+    if row:
+        return {"last_page": row[0], "last_crawl_time": row[1], "last_job_count": row[2], "extra": row[3]}
+    return {"last_page": 1, "last_crawl_time": None, "last_job_count": 0, "extra": "{}"}
 
 
 def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
@@ -1150,6 +1189,7 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
     通过HTML页面解析获取列表，检查发布时间后决定是否爬取详情页。
     列表页: https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm
     
+    支持增量爬取：记录上次爬取的页码，下次从该页开始。
     解析逻辑使用 shared_parsers 中的共用函数，确保与主爬虫字段匹配一致。
     """
     from bs4 import BeautifulSoup
@@ -1162,105 +1202,120 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
     
     crawl_logger.log_source_start(source, source_name)
     
-    page = 1
+    # 加载增量爬取状态
+    state = load_crawl_state(source)
+    start_page = state.get("last_page", 1)
+    last_completed_page = start_page - 1
+    
+    if start_page > 1:
+        logger.info(f"增量爬取: 从第 {start_page} 页开始 (上次爬取时间: {state.get('last_crawl_time', '未知')})")
+    
+    page = start_page
     count = 0
     cutoff_date = datetime.now() - timedelta(days=date_filter_months * 30)
     
-    while True:
-        if max_items > 0 and count >= max_items:
-            logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
-            break
-        
-        list_url = f"https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm"
-        
-        response = fetch_with_retry(list_url)
-        if not response:
-            logger.warning(f"第 {page} 页列表获取失败，停止爬取")
-            break
-        
-        try:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # 查找列表容器
-            list_box = soup.find('div', class_='listb J_allListBox')
-            if not list_box:
-                logger.debug(f"第 {page} 页未找到列表容器，爬取结束")
+    try:
+        while True:
+            if max_items > 0 and count >= max_items:
+                logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
                 break
             
-            # 获取所有岗位项
-            job_items = list_box.find_all('div', class_='td-j-name')
-            if not job_items:
-                logger.debug(f"第 {page} 页无岗位数据，爬取结束")
+            list_url = f"https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm"
+            
+            response = fetch_with_retry(list_url)
+            if not response:
+                logger.warning(f"第 {page} 页列表获取失败，停止爬取")
                 break
             
-            logger.info(f"第 {page} 页: 获取到 {len(job_items)} 条列表项")
-            
-            # 标记是否需要停止（遇到过期数据）
-            should_stop = False
-            
-            for item in job_items:
-                # 使用共用函数检查发布时间
-                publish_date_str, is_expired = parse_swufe_list_date(item, cutoff_date)
+            try:
+                soup = BeautifulSoup(response.text, 'html.parser')
                 
-                if is_expired:
-                    logger.info(f"遇到过期数据 ({publish_date_str})，停止爬取")
-                    should_stop = True
+                # 查找列表容器
+                list_box = soup.find('div', class_='listb J_allListBox')
+                if not list_box:
+                    logger.debug(f"第 {page} 页未找到列表容器，爬取结束")
                     break
                 
-                if max_items > 0 and count >= max_items:
+                # 获取所有岗位项
+                job_items = list_box.find_all('div', class_='td-j-name')
+                if not job_items:
+                    logger.debug(f"第 {page} 页无岗位数据，爬取结束")
                     break
                 
-                # 获取详情页链接
-                a_tag = item.find('a', href=True)
-                if not a_tag:
-                    continue
+                logger.info(f"第 {page} 页: 获取到 {len(job_items)} 条列表项")
                 
-                detail_path = a_tag.get('href', '')
-                if not detail_path:
-                    continue
+                # 标记是否需要停止（遇到过期数据）
+                should_stop = False
                 
-                detail_url = urljoin(base_url, detail_path)
-                
-                if url_exists(detail_url):
-                    continue
-                
-                # 爬取详情页
-                detail_response = fetch_with_retry(detail_url)
-                if not detail_response:
-                    continue
-                
-                try:
-                    # 使用共用解析函数
-                    job = parse_swufe_detail(
-                        detail_response.text,
-                        detail_url,
-                        source,
-                        source_name,
-                        source_config.get("location", "成都")
-                    )
+                for item in job_items:
+                    # 使用共用函数检查发布时间
+                    publish_date_str, is_expired = parse_swufe_list_date(item, cutoff_date)
                     
-                    if job:
-                        yield job
-                        count += 1
+                    if is_expired:
+                        logger.info(f"遇到过期数据 ({publish_date_str})，停止爬取")
+                        should_stop = True
+                        break
+                    
+                    if max_items > 0 and count >= max_items:
+                        break
+                    
+                    # 获取详情页链接
+                    a_tag = item.find('a', href=True)
+                    if not a_tag:
+                        continue
+                    
+                    detail_path = a_tag.get('href', '')
+                    if not detail_path:
+                        continue
+                    
+                    detail_url = urljoin(base_url, detail_path)
+                    
+                    if url_exists(detail_url):
+                        continue
+                    
+                    # 爬取详情页
+                    detail_response = fetch_with_retry(detail_url)
+                    if not detail_response:
+                        continue
+                    
+                    try:
+                        # 使用共用解析函数
+                        job = parse_swufe_detail(
+                            detail_response.text,
+                            detail_url,
+                            source,
+                            source_name,
+                            source_config.get("location", "成都")
+                        )
                         
-                        if count % 20 == 0:
-                            logger.info(f"  已完成: {count} 条")
-                        
-                        # 短暂延迟避免请求过快
-                        time.sleep(0.5)
-                        
-                except Exception as e:
-                    crawl_logger.log_error(source, e, f"解析详情页: {detail_url}")
-                    continue
-            
-            if should_stop:
+                        if job:
+                            yield job
+                            count += 1
+                            
+                            if count % 20 == 0:
+                                logger.info(f"  已完成: {count} 条")
+                            
+                            # 短暂延迟避免请求过快
+                            time.sleep(0.5)
+                            
+                    except Exception as e:
+                        crawl_logger.log_error(source, e, f"解析详情页: {detail_url}")
+                        continue
+                
+                if should_stop:
+                    break
+                
+                last_completed_page = page
+                page += 1
+                
+            except Exception as e:
+                crawl_logger.log_error(source, e, f"解析列表页: {page}")
                 break
-            
-            page += 1
-            
-        except Exception as e:
-            crawl_logger.log_error(source, e, f"解析列表页: {page}")
-            break
+    
+    finally:
+        # 保存增量爬取状态
+        if last_completed_page > 0:
+            save_crawl_state(source, last_completed_page, count)
     
     crawl_logger.log_source_end(source, source_name, count)
 

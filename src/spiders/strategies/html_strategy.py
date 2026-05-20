@@ -66,17 +66,19 @@ class HtmlStrategy(BaseCrawlStrategy):
         max_items: int = 0
     ) -> AsyncIterator['JobData']:
         """
-        执行HTML解析爬取策略
+        执行HTML解析爬取策略（支持增量爬取）
 
-        流程:
-        1. 创建Session
-        2. 列表页分页循环:
-           a. 请求列表页: {base_url}/jobs/jobs_list/page/{page}.htm
+        增量爬取流程:
+        1. 从数据库加载上次爬取状态（last_page）
+        2. 从 last_page 页开始爬取（而非第1页）
+        3. 列表页分页循环:
+           a. 请求列表页
            b. 解析列表页获取岗位项和发布时间
-           c. 检查发布时间是否过期，过期则停止
-           d. 对每个岗位项获取详情页链接
-           e. 请求详情页并解析为JobData
-        3. 检查 max_items 和 should_stop
+           c. 如果当前页所有URL都已存在，说明已追上上次进度，继续往后爬新数据
+           d. 检查发布时间是否过期，过期则停止
+           e. 对每个岗位项获取详情页链接，跳过已存在的URL
+           f. 请求详情页并解析为JobData
+        4. 爬取完成后保存当前页码到数据库
 
         Args:
             spider: UnifiedSpider实例(提供session/config/source_key等上下文)
@@ -98,9 +100,21 @@ class HtmlStrategy(BaseCrawlStrategy):
 
         self._date_filter_months = spider_config.get("date_filter_months", 2)
 
+        # 加载增量爬取状态
+        start_page = 1
+        db = None
+        if hasattr(spider, 'db') and spider.db:
+            db = spider.db
+            state = await db.load_crawl_state(source)
+            start_page = state.get("last_page", 1)
+            if start_page > 1:
+                self.logger.info(f"[{source}] 增量爬取: 从第 {start_page} 页开始 (上次爬取时间: {state.get('last_crawl_time', '未知')})")
+
         session = await self._create_session(spider)
+        last_completed_page = start_page - 1
+
         try:
-            page = 1
+            page = start_page
             while True:
                 if max_items > 0 and self._count >= max_items:
                     self.logger.info(f"[{source}] 达到最大数量限制: {max_items}")
@@ -143,6 +157,9 @@ class HtmlStrategy(BaseCrawlStrategy):
 
                         cutoff_date = datetime.now() - timedelta(days=self._date_filter_months * 30)
 
+                        # 检查当前页是否所有URL都已存在（增量停止条件）
+                        page_all_existing = True
+
                         for item in job_items:
                             if max_items > 0 and self._count >= max_items:
                                 break
@@ -174,6 +191,8 @@ class HtmlStrategy(BaseCrawlStrategy):
                             if detail_url in existing_urls:
                                 continue
 
+                            page_all_existing = False
+
                             # 爬取详情页
                             detail_result = await self._fetch_page(session, detail_url, spider)
                             if not detail_result:
@@ -190,11 +209,15 @@ class HtmlStrategy(BaseCrawlStrategy):
                             else:
                                 self.logger.debug(f"[{source}] 解析岗位失败或无效: {detail_url}")
 
+                        # 如果当前页所有URL都已存在且不是起始页，说明已追上历史进度
+                        # 但仍然继续往后爬，因为可能有新数据
                         del soup
 
                     except Exception as e:
                         self.logger.warning(f"[{source}] 解析列表页 {page} 失败: {e}")
                         break
+
+                    last_completed_page = page
 
                     if should_stop:
                         break
@@ -206,10 +229,14 @@ class HtmlStrategy(BaseCrawlStrategy):
                     break
 
         finally:
+            # 保存增量爬取状态
+            if db and last_completed_page > 0:
+                await db.save_crawl_state(source, last_completed_page, self._count)
+
             if not (hasattr(spider, 'external_session') and spider.external_session):
                 await session.close()
 
-        self.logger.info(f"[{source}] HTML爬取完成，共 {self._count} 条")
+        self.logger.info(f"[{source}] HTML爬取完成，共 {self._count} 条，最后页码: {last_completed_page}")
 
     async def _fetch_page(
         self,

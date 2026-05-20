@@ -25,7 +25,7 @@ from .strategies import get_strategy
 class UnifiedSpider(BaseSpider):
     """统一爬虫调度器 - 根据配置动态选择策略执行爬取"""
 
-    def __init__(self, source: str, config: Optional[Dict[str, Any]] = None, headless: bool = True, session=None):
+    def __init__(self, source: str, config: Optional[Dict[str, Any]] = None, headless: bool = True, session=None, db=None):
         self.source = source
         self.spider_config = get_spider_config(source)
         
@@ -39,6 +39,7 @@ class UnifiedSpider(BaseSpider):
         self.spider_type = self.spider_config["spider_type"]
         
         self.external_session = session
+        self.db = db
         
         self.detail_concurrency = int(self.config.get("detail_concurrency", 
                                       self.spider_config.get("detail_concurrency", 8)))
@@ -268,6 +269,6 @@ class UnifiedSpider(BaseSpider):
         return self
 
 
-def create_spider(source: str, config: Optional[Dict[str, Any]] = None, headless: bool = True, session=None) -> UnifiedSpider:
+def create_spider(source: str, config: Optional[Dict[str, Any]] = None, headless: bool = True, session=None, db=None) -> UnifiedSpider:
     """创建统一爬虫实例"""
-    return UnifiedSpider(source, config, headless, session)
+    return UnifiedSpider(source, config, headless, session, db)

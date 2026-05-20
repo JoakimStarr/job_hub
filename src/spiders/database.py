@@ -159,6 +159,17 @@ class LocalDatabase:
         except Exception:
             pass  # 列已存在，忽略
 
+        # 增量爬取状态表
+        await self._conn.execute('''
+            CREATE TABLE IF NOT EXISTS crawl_state (
+                source TEXT PRIMARY KEY,
+                last_page INTEGER DEFAULT 1,
+                last_crawl_time TIMESTAMP,
+                last_job_count INTEGER DEFAULT 0,
+                extra TEXT DEFAULT '{}'
+            )
+        ''')
+
         await self._conn.commit()
 
     @staticmethod
@@ -371,6 +382,59 @@ class LocalDatabase:
         ))
         await self._conn.commit()
         logger.debug(f"爬虫状态更新: {status}" + (f" [{current_source}]" if current_source else ""))
+
+    async def save_crawl_state(self, source: str, last_page: int,
+                                last_job_count: int = 0, extra: str = '{}'):
+        """
+        保存增量爬取状态
+
+        Args:
+            source: 数据源标识
+            last_page: 最后爬取的页码
+            last_job_count: 本次爬取的岗位数
+            extra: 额外状态信息(JSON字符串)
+        """
+        if not self._conn:
+            await self.connect()
+        now = datetime.now().isoformat() if 'datetime' in dir() else time.strftime('%Y-%m-%dT%H:%M:%S')
+        await self._conn.execute('''
+            INSERT INTO crawl_state (source, last_page, last_crawl_time, last_job_count, extra)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(source) DO UPDATE SET
+                last_page = excluded.last_page,
+                last_crawl_time = excluded.last_crawl_time,
+                last_job_count = excluded.last_job_count,
+                extra = excluded.extra
+        ''', (source, last_page, now, last_job_count, extra))
+        await self._conn.commit()
+        logger.debug(f"增量状态已保存: [{source}] last_page={last_page}, count={last_job_count}")
+
+    async def load_crawl_state(self, source: str) -> Dict[str, Any]:
+        """
+        加载增量爬取状态
+
+        Args:
+            source: 数据源标识
+
+        Returns:
+            状态字典，包含 last_page, last_crawl_time, last_job_count, extra。
+            如果没有记录则返回默认值。
+        """
+        if not self._conn:
+            await self.connect()
+        cursor = await self._conn.execute(
+            "SELECT last_page, last_crawl_time, last_job_count, extra FROM crawl_state WHERE source = ?",
+            (source,)
+        )
+        row = await cursor.fetchone()
+        if row:
+            return {
+                "last_page": row[0],
+                "last_crawl_time": row[1],
+                "last_job_count": row[2],
+                "extra": row[3],
+            }
+        return {"last_page": 1, "last_crawl_time": None, "last_job_count": 0, "extra": "{}"}
 
     async def get_crawler_status(self) -> Dict[str, Any]:
         """获取爬虫全局状态"""

@@ -118,7 +118,7 @@ class AsyncMultiCrawler:
                 "existing_url_lookup": self.db.get_existing_urls,
                 "headless": headless,
             }
-            spider = create_spider(source_key, config=config, headless=headless, session=self.session)
+            spider = create_spider(source_key, config=config, headless=headless, session=self.session, db=self.db)
             try:
                 if stream_mode:
                     return await self._crawl_and_save_stream(spider, source_key, max_items)
