@@ -1,0 +1,42 @@
+# ============================================
+# FinIntern Hub - Web 应用 Dockerfile
+# ============================================
+# 多阶段构建：减小最终镜像体积
+# ============================================
+
+# 阶段1: 安装依赖
+FROM node:20-alpine AS deps
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
+
+# 阶段2: 构建
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN npm run build
+
+# 阶段3: 生产镜像
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# 安装必要工具
+RUN apk add --no-cache curl sqlite
+
+# 从构建阶段复制产物
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# 创建数据目录
+RUN mkdir -p /app/data
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]

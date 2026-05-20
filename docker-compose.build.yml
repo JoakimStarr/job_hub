@@ -1,0 +1,37 @@
+# ============================================
+# FinIntern Hub - 阿里云推送专用
+# ============================================
+# 兼容 trash/scripts/push-image.sh 脚本
+# 使用方式:
+#   ./trash/scripts/push-image.sh -b -c    # 构建并推送
+#   ./trash/scripts/push-image.sh -v        # VPC内网推送
+# ============================================
+
+services:
+  # ====================
+  # Web 应用 (Next.js)
+  # 服务名必须为 finintern-next（push-image.sh 要求）
+  # ====================
+  finintern-next:
+    build:
+      context: .
+      dockerfile: Dockerfile.push
+      args:
+        - NODE_ENV=production
+    image: job_hub-finintern-next:latest  # 必须匹配 push-image.sh 的 LOCAL_IMAGE
+    container_name: finintern-next-build
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_PATH=/app/data/jobs.db
+      - SESSION_TIMEOUT_HOURS=24
+    volumes:
+      - ./data:/app/data
+      - ./.env:/app/.env:ro
+    networks:
+      - job-hub-network
+    restart: "no"  # 仅用于构建，不自动运行
+
+networks:
+  job-hub-network:
+    driver: bridge

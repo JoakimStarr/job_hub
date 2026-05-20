@@ -53,6 +53,102 @@ SCHEDULE_INTERVALS = {
 
 HTTP_SOURCES = get_lite_http_sources()
 
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15",
+]
+DEFAULT_HEADERS = {
+    "Accept": "application/json, text/html, */*",
+    "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+    "Cache-Control": "no-cache",
+}
+
+import random as _random
+
+_db_conn = None
+_url_cache = set()
+_url_cache_dirty = False
+
+
+class Database:
+    """数据库连接复用（单例）"""
+    
+    _instance = None
+    _conn = None
+    
+    def __class_getitem__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
+    @property
+    def conn(self):
+        if self._conn is None:
+            self._conn = sqlite3.connect(str(DB_PATH), check_same_thread=False)
+            self._conn.execute("PRAGMA journal_mode=WAL")
+            self._conn.execute("PRAGMA synchronous=NORMAL")
+            self._conn.execute("PRAGMA cache_size=-10000")
+        return self._conn
+    
+    def execute(self, sql, params=()):
+        return self.conn.execute(sql, params)
+    
+    def executemany(self, sql, params_list):
+        return self.conn.executemany(sql, params_list)
+    
+    def commit(self):
+        self.conn.commit()
+    
+    def close(self):
+        if self._conn:
+            self._conn.close()
+            self._conn = None
+
+db = Database()
+
+
+def _get_random_headers():
+    """获取随机请求头"""
+    headers = dict(DEFAULT_HEADERS)
+    headers["User-Agent"] = _random.choice(USER_AGENTS)
+    return headers
+
+
+def preload_existing_urls():
+    """预加载所有已存在的URL到内存集合（批量查重基础）"""
+    global _url_cache
+    try:
+        row = db.execute("SELECT source_url FROM jobs").fetchall()
+        _url_cache = {r[0] for r in row}
+        logger.debug(f"预加载 {_url_cache.size()} 条已存在URL到内存")
+    except Exception as e:
+        logger.warning(f"预加载URL失败: {e}")
+        _url_cache = set()
+
+
+def url_exists(url: str) -> bool:
+    """检查 URL 是否已存在（内存查询，O(1)）"""
+    return url in _url_cache
+
+
+def mark_url_exists(urls):
+    """批量标记URL为已存在"""
+    global _url_cache, _url_cache_dirty
+    _url_cache.update(urls)
+    _url_cache_dirty = True
+
+
+def flush_url_cache_if_dirty():
+    """如果缓存脏了，重新从DB加载（保证一致性）"""
+    global _url_cache_dirty
+    if _url_cache_dirty:
+        preload_existing_urls()
+        _url_cache_dirty = False
+
 
 class ColoredFormatter(logging.Formatter):
     """彩色日志格式化器"""
@@ -348,12 +444,7 @@ def init_database():
     """初始化数据库"""
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     
-    conn = sqlite3.connect(str(DB_PATH))
-    cursor = conn.cursor()
-    
-    logger.debug("初始化数据库表结构...")
-    
-    cursor.execute("""
+    db.execute("""
         CREATE TABLE IF NOT EXISTS jobs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
@@ -374,32 +465,13 @@ def init_database():
         )
     """)
     
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_source ON jobs(source)")
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_source_url ON jobs(source_url)")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_source ON jobs(source)")
+    db.execute("CREATE INDEX IF NOT EXISTS idx_source_url ON jobs(source_url)")
+    db.commit()
     
-    conn.commit()
-    conn.close()
-    
+    preload_existing_urls()
     crawl_logger.log_database_operation("初始化", "jobs", True)
     logger.info("✓ 数据库初始化完成")
-
-
-def url_exists(url: str) -> bool:
-    """检查 URL 是否已存在"""
-    try:
-        conn = sqlite3.connect(str(DB_PATH))
-        cursor = conn.cursor()
-        cursor.execute("SELECT 1 FROM jobs WHERE source_url = ? LIMIT 1", (url,))
-        exists = cursor.fetchone() is not None
-        conn.close()
-        
-        if exists:
-            logger.debug(f"URL已存在: {url[:60]}...")
-        
-        return exists
-    except Exception as e:
-        logger.error(f"检查URL存在性失败: {e}")
-        return False
 
 
 def is_within_date_range(publish_date: str, months: int = 2) -> bool:
@@ -451,7 +523,6 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
     company = job.get("company", "")
     publish_date = job.get("publish_date", "")
     
-    # 时间筛选：只入库最近N个月的数据
     if not is_within_date_range(publish_date, date_filter_months):
         crawl_logger.log_job_duplicate(source, f"{title} [过期:{publish_date}]")
         return False
@@ -459,10 +530,7 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
     try:
         crawl_logger.log_job_fetched(source, title, company)
         
-        conn = sqlite3.connect(str(DB_PATH))
-        cursor = conn.cursor()
-        
-        existing = cursor.execute(
+        existing = db.execute(
             "SELECT id, LENGTH(description) as desc_len FROM jobs WHERE title=? AND company=? AND source=?",
             (title, company, source)
         ).fetchone()
@@ -472,15 +540,14 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
         if existing:
             old_id, old_desc_len = existing
             if new_desc_len <= old_desc_len:
-                conn.close()
                 crawl_logger.log_job_duplicate(source, title)
                 return False
             
             logger.info(f"更新更完整记录: [{title}] ({old_desc_len} → {new_desc_len}字符)")
-            cursor.execute("DELETE FROM jobs WHERE id=?", (old_id,))
+            db.execute("DELETE FROM jobs WHERE id=?", (old_id,))
             crawl_logger.log_database_operation("删除重复", "jobs", True, 1)
         
-        cursor.execute("""
+        db.execute("""
             INSERT INTO jobs 
             (title, company, location, salary, education, description, 
              publish_date, source, university, source_url, apply_url, job_type)
@@ -500,10 +567,10 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
             job.get("job_type", "全职"),
         ))
         
-        job_id = cursor.lastrowid
-        conn.commit()
-        conn.close()
+        job_id = db.conn.lastrowid
+        db.commit()
         
+        mark_url_exists([job.get("source_url", "")])
         crawl_logger.log_job_success(source, job_id)
         return True
         
@@ -516,8 +583,13 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
 
 
 def fetch_with_retry(url: str, method: str = "GET", **kwargs) -> Optional[requests.Response]:
-    """带重试的 HTTP 请求"""
+    """带重试的 HTTP 请求（含随机UA和反爬措施）"""
     start_time = time.time()
+    headers = _get_random_headers()
+    kwargs.setdefault("headers", {})
+    kwargs["headers"].update(headers)
+    
+    delay_range = (1.0, 3.0)
     
     for attempt in range(MAX_RETRIES):
         try:
@@ -532,19 +604,22 @@ def fetch_with_retry(url: str, method: str = "GET", **kwargs) -> Optional[reques
             if response.status_code == 200:
                 return response
             
+            if response.status_code == 403:
+                logger.warning(f"被反爬拦截 (403): {url[:60]}，等待后重试...")
+            
             logger.warning(f"HTTP {response.status_code}: {url[:60]}")
             
             if attempt < MAX_RETRIES - 1:
                 crawl_logger.log_retry("http", url, attempt + 1, MAX_RETRIES)
-                delay = RETRY_DELAY_BASE ** attempt
-                logger.debug(f"等待 {delay}s 后重试...")
+                delay = RETRY_DELAY_BASE ** attempt + _random.uniform(*delay_range)
+                logger.debug(f"等待 {delay:.1f}s 后重试...")
                 time.sleep(delay)
                 
         except requests.exceptions.RequestException as e:
             if attempt < MAX_RETRIES - 1:
                 crawl_logger.log_retry("http", url, attempt + 1, MAX_RETRIES)
-                delay = RETRY_DELAY_BASE ** attempt
-                logger.debug(f"请求异常，等待 {delay}s 后重试: {type(e).__name__}")
+                delay = RETRY_DELAY_BASE ** attempt + _random.uniform(*delay_range)
+                logger.debug(f"请求异常，等待 {delay:.1f}s 后重试: {type(e).__name__}")
                 time.sleep(delay)
             else:
                 logger.error(f"请求最终失败: {url[:60]} | {type(e).__name__}: {e}")
@@ -1112,6 +1187,9 @@ def main():
     logger.info("=" * 70 + "\n")
     
     crawl_logger.end_session()
+    
+    db.close()
+    flush_url_cache_if_dirty()
 
 
 if __name__ == "__main__":

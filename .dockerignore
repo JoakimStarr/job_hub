@@ -1,116 +1,49 @@
-# ============================================
-# Docker 镜像构建排除文件 (.dockerignore)
-# ============================================
-# 只包含: Next.js前端应用 + API路由
-# 排除: 数据库/爬虫/文档/日志等非必要文件
-
-# ============================================
-# 1. Node.js / 构建产物
-# ============================================
+# 依赖
 node_modules
-.next
-build
-dist
-.cache
-.npm
-.buildcache
-
-# ============================================
-# 2. 数据文件 (运行时通过 volume 挂载)
-# ============================================
-# 排除数据库文件，但保留必要的JSON配置文件
-*.db
-*.db.bak*
-*.sqlite
-*.sqlite3
-
-# 排除用户上传的数据 (简历等)
-data/user_profiles/records/
-data/user_profiles/uploads/
-
-# 保留必要的配置文件 (不要排除这些):
-# ✅ data/skill_dictionary.json      - 技能字典 (resume-parser, diagnose依赖)
-# ✅ data/major_similarity.json       - 专业相似度 (match-engine依赖)
-# ✅ data/filter_cache.json           - 过滤器缓存
-# ✅ data/user_profiles/quality_metrics_1.json           - 质量指标配置
-# ✅ data/user_profiles/recommendation_weight_profiles.json - 推荐权重配置
-
-# ============================================
-# 3. Python 爬虫文件 (不需要打包到镜像中)
-# ============================================
-src/spiders/
-lite_crawler.py
-run_spiders.py
-create_test_db.py
-init_db.py
-*.pyc
+venv
 __pycache__
-.pytest_cache
-.coverage
-*.egg-info
+*.pyc
 
-# ============================================
-# 4. 文档文件
-# ============================================
-*.md
-docs/
-README*
-CHANGELOG*
-LICENSE*
-API_USAGE_GUIDE*
-SKILLS_USAGE_GUIDE*
-SPIDER_*
-PROJECT_ANALYSIS_REPORT*
+# 构建产物
+.next
+out
+dist
 
-# ============================================
-# 5. 日志和输出文件
-# ============================================
-logs/
-log/
-output/
+# 数据
+data
+*.db
+*.db-journal
+*.db-wal
+
+# 日志
+logs
 *.log
-build.log
-structured_*.json
-visited_urls.json
 
-# ============================================
-# 6. Git / IDE 配置
-# ============================================
-.git
-.gitignore
-.vscode
+# 环境变量（不要提交到镜像）
+.env
+.env.local
+.env.production
+
+# IDE
 .idea
+.vscode
 *.swp
 *.swo
-*~
 
-# ============================================
-# 7. 环境变量和密钥
-# ============================================
-.env
-.env.*
-!.env.example
-!.env.ai.example
-.secrets
+# Git
+.git
+.gitignore
 
-# ============================================
-# 8. Trae 项目配置 (开发工具)
-# ============================================
-.trae/
+# 文档
+docs
+*.md
+!README.md
 
-# ============================================
-# 9. 脚本工具 (本地开发用)
-# ============================================
-scripts/
-push-image.sh
-docker-compose.yml
+# Docker 相关
+Dockerfile*
+docker-compose*.yml
 .dockerignore
 
-# ============================================
-# 10. 缓存和临时文件
-# ============================================
-.DS_Store
-Thumbs.db
-*.tmp
-*.temp
-.cache/
+# 其他
+.trash
+trash

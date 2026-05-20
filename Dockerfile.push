@@ -1,0 +1,77 @@
+# ============================================
+# FinIntern Hub - 阿里云推送专用 Dockerfile
+# ============================================
+# 用于构建推送到阿里云 ACR 的镜像
+# 包含: Next.js 前端 + API 路由 + SQLite 数据库
+# 不包含: 爬虫、文档、日志
+#
+# 使用方式:
+#   docker compose -f docker-compose.build.yml build --no-cache finintern-next
+#   ./trash/scripts/push-image.sh -b -c
+# ============================================
+
+# 阶段1: 安装依赖
+FROM node:20-alpine AS deps
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
+
+# 阶段2: 构建 Next.js
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# 仅复制需要的文件（排除爬虫、文档等）
+RUN mkdir -p .next && \
+    # 复制核心源码
+    cp -r src/app src/components src/lib src/styles src/types .next/ 2>/dev/null || true && \
+    # 复制配置文件
+    cp package.json next.config.* tsconfig.json postcss.config.js tailwind.config.* .next/ 2>/dev/null || true && \
+    # 复制 public 目录
+    cp -r public .next/public 2>/dev/null || true
+
+WORKDIR /app/.next
+
+# 安装构建依赖并构建
+RUN npm ci --include=dev && \
+    npm run build && \
+    # 清理构建依赖以减小体积
+    npm ci --omit=dev || true
+
+# 阶段3: 生产镜像 (轻量级)
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# 安装运行时依赖
+RUN apk add --no-cache \
+    curl \
+    sqlite-libs \
+    # better-sqlite3 原生依赖
+    && rm -rf /var/cache/apk/*
+
+# 从构建阶段复制产物
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/.next/public ./public
+
+# 创建必要目录
+RUN mkdir -p /app/data /app/log
+
+# 数据卷
+VOLUME ["/app/data", "/app/log"]
+
+EXPOSE 3000
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
+
+CMD ["node", "server.js"]
