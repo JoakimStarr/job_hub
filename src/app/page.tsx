@@ -6,10 +6,14 @@ import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton } from '@/components/ui';
 import { API } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
+import { useAppStore } from '@/store';
+import { useToast } from '@/components/Toast';
 import type { JobItem, StatsOverview } from '@/lib/types';
 
 export default function HomePage() {
   const router = useRouter();
+  const { user: currentUser } = useAppStore();
+  const toast = useToast();
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
 
   const { data: stats, error: statsError, loading: statsLoading, mutate: mutateStats } = useFetch<StatsOverview>(
@@ -33,6 +37,11 @@ export default function HomePage() {
   }, [mutateStats, mutateJobs]);
 
   async function handleToggleFavorite(job: JobItem) {
+    if (!currentUser) {
+      toast.error('请登录后操作');
+      router.push('/login');
+      return;
+    }
     await API.toggleFavorite(job.id);
     handleRefresh();
   }
@@ -46,7 +55,7 @@ export default function HomePage() {
   }
 
   return (
-    <AppShell title="首页" description="平台概览、热门关键词和最新岗位" requiredPermission="view_stats">
+    <AppShell title="首页" description="平台概览、热门关键词和最新岗位">
       {loading ? (
         <>
           <Skeleton type="metric" />

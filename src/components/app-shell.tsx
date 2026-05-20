@@ -15,6 +15,11 @@ function joinClassNames(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
 }
 
+const GUEST_PATHS = ['/', '/jobs'];
+function isGuestPath(pathname: string): boolean {
+  return GUEST_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'));
+}
+
 function getInitials(name: string | null | undefined): string {
   if (!name) return '?';
   return name.charAt(0).toUpperCase();
@@ -40,7 +45,10 @@ export function AppShell({
   const sidebarRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { setUser: setStoreUser } = useAppStore();
-  const visibleItems = useMemo(() => NAV_ITEMS.filter((item) => !item.permission || hasPermission(user, item.permission)), [user]);
+  const visibleItems = useMemo(() => NAV_ITEMS.filter((item) => {
+    if (!user) return !item.permission; // 游客只看无权限要求的项
+    return !item.permission || hasPermission(user, item.permission);
+  }), [user]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -82,16 +90,24 @@ export function AppShell({
     let cancelled = false;
 
     function redirectToLogin() {
+      // 游客路径：进入游客模式而非跳转登录
+      if (isGuestPath(pathname)) {
+        setUser(null);
+        setStoreUser(null);
+        setReady(true);
+        return;
+      }
+
       // 🚨 简单防循环机制：使用时间戳锁（1秒内不重复跳转）
       const lastRedirect = parseInt(sessionStorage.getItem('auth_last_redirect') || '0');
       const now = Date.now();
-      
+
       if (now - lastRedirect < 1000) {
         sessionStorage.removeItem('auth_last_redirect');
         window.location.reload();
         return;
       }
-      
+
       // 记录本次跳转时间
       sessionStorage.setItem('auth_last_redirect', String(now));
 
@@ -208,7 +224,7 @@ export function AppShell({
     );
   }
 
-  if (requiredPermission && user && !hasPermission(user, requiredPermission)) {
+  if (requiredPermission && (!user || !hasPermission(user, requiredPermission))) {
     return (
       <div className="app-root app-denied">
         <div className="denied-card">
@@ -279,26 +295,38 @@ export function AppShell({
         </nav>
 
         <div className="sidebar-footer">
-          <div className="user-chip">
-            <div className="user-chip-avatar">{getInitials(displayName)}</div>
-            <div className="user-info">
-              <div className="user-chip-name">{displayName}</div>
-              <div className="user-chip-role">{userRole}</div>
-            </div>
-          </div>
-          <button
-            className="btn sidebar-logout-danger"
-            onClick={async () => {
-              try {
-                clearSession();
-              } finally {
-                router.replace('/login');
-              }
-            }}
-            aria-label="退出登录"
-          >
-            退出登录
-          </button>
+          {user ? (
+            <>
+              <div className="user-chip">
+                <div className="user-chip-avatar">{getInitials(displayName)}</div>
+                <div className="user-info">
+                  <div className="user-chip-name">{displayName}</div>
+                  <div className="user-chip-role">{userRole}</div>
+                </div>
+              </div>
+              <button
+                className="btn sidebar-logout-danger"
+                onClick={async () => {
+                  try {
+                    clearSession();
+                  } finally {
+                    router.replace('/login');
+                  }
+                }}
+                aria-label="退出登录"
+              >
+                退出登录
+              </button>
+            </>
+          ) : (
+            <button
+              className="btn btn-primary"
+              style={{ width: '100%', justifyContent: 'center', fontSize: 13, minHeight: 34 }}
+              onClick={() => router.push('/login')}
+            >
+              登录获取完整功能
+            </button>
+          )}
         </div>
       </aside>
 
@@ -320,6 +348,11 @@ export function AppShell({
             <div className="topbar-subtitle">{description || '统一账号、岗位和系统控制中心'}</div>
           </div>
           <div className="topbar-actions">
+            {!user && (
+              <button className="btn btn-secondary" style={{ fontSize: 12, padding: '4px 12px' }} onClick={() => router.push('/login')}>
+                登录
+              </button>
+            )}
             <ThemeToggle />
           </div>
         </header>

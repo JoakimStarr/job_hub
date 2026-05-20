@@ -33,7 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
   { key: 'home', label: '首页', href: '/', description: '平台概览和统计数据', emoji: '🏠' },
   { key: 'jobs', label: '岗位列表', href: '/jobs', description: '浏览和筛选岗位', emoji: '💼' },
   { key: 'match', label: '简历匹配', href: '/match', description: '上传简历分析并匹配最佳岗位', emoji: '🎯', permission: 'view_jobs' },
-  { key: 'favorites', label: '我的收藏', href: '/favorites', description: '查看收藏岗位', emoji: '⭐' },
+  { key: 'favorites', label: '我的收藏', href: '/favorites', description: '查看收藏岗位', emoji: '⭐', permission: 'view_jobs' },
   { key: 'crawler', label: '数据采集', href: '/crawler', description: '管理爬虫任务', emoji: '🕷️', permission: 'manage_crawler' },
   { key: 'system', label: '系统状态', href: '/system', description: '配置和健康状态', emoji: '⚙️', permission: 'view_system' },
   { key: 'recommendations', label: '智能推荐', href: '/recommendations', description: 'AI 推荐与咨询', emoji: '🤖', permission: 'use_recommendations' },

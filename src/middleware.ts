@@ -35,6 +35,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // 游客可访问路径（无需登录）
+  const GUEST_PATHS = ['/', '/jobs'];
+  if (GUEST_PATHS.some(guestPath => pathname === guestPath || pathname.startsWith(guestPath + '/'))) {
+    return NextResponse.next();
+  }
+
   // 检查 session_token Cookie
   const sessionToken = request.cookies.get('session_token')?.value;
 
