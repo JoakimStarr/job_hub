@@ -10,7 +10,7 @@ import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
-    requireAuthUnified(request);
+    await requireAuthUnified(request);
 
     const body = await request.json();
     const { job_id, profile, prompt } = body;

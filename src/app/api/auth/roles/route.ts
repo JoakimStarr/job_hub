@@ -6,7 +6,7 @@ import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
-    requirePermissionUnified(request, 'users:read');
+    await requirePermissionUnified(request, 'users:read');
 
     const roles = [
       { id: 'admin', name: '管理员' },

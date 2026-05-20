@@ -64,7 +64,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    requirePermissionUnified(request, 'system:write');
+    await requirePermissionUnified(request, 'system:write');
 
     const body = await request.json();
     const { name, keyword, locations, industries, job_types, education, enabled } = body;

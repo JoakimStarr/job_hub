@@ -6,7 +6,7 @@ import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
-    requirePermissionUnified(request, 'system:write');
+    await requirePermissionUnified(request, 'system:write');
 
     const searchParams = request.nextUrl.searchParams;
     const rawLimit = parseInt(searchParams.get('limit') || '500');

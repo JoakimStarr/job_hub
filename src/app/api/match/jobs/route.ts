@@ -10,7 +10,7 @@ import { scoreEngine } from '@/lib/score-engine';
 export async function POST(request: NextRequest) {
   try {
     const startTime = Date.now();
-    requireAuthUnified(request);
+    await requireAuthUnified(request);
 
     const body = await request.json();
     const { profile, filters } = body as {

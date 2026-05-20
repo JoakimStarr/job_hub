@@ -60,7 +60,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    requirePermissionUnified(request, 'system:write');
+    await requirePermissionUnified(request, 'system:write');
 
     const body = await request.json();
 

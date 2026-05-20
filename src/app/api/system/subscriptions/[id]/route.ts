@@ -10,7 +10,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
-    requirePermissionUnified(request, 'system:write');
+    await requirePermissionUnified(request, 'system:write');
 
     const body = await request.json();
     const { name, keyword, locations, industries, job_types, education, enabled } = body;

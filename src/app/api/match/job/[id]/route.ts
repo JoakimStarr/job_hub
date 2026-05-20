@@ -12,7 +12,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    requireAuthUnified(request);
+    await requireAuthUnified(request);
 
     const { id } = await params;
     const jobId = parseInt(id);
