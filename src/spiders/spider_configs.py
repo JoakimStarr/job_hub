@@ -163,23 +163,18 @@ SPIDER_CONFIGS: Dict[str, Dict[str, Any]] = {
         "page_size": 10,
         "max_pages": 100,
         "detail_concurrency": 8,
-        "url_patterns": {
-            "fulltime": {
-                "pattern": "https://job3.swufe.edu.cn/jobs/jobs-show-{id}.htm",
-                "start_id": 14506,
-                "job_type": "全职",
-            },
-            "intern": {
-                "pattern": "https://job3.swufe.edu.cn/interns/interns_show/id/{id}.htm",
-                "start_id": 12250,
-                "job_type": "实习",
-            },
-        },
+        "date_filter_months": 2,
+        "list_url_pattern": "https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm",
         "headers": {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
         },
         "selectors": {
+            "list_container": "div.listb.J_allListBox",
+            "list_items": "div.td-j-name",
+            "list_item_row": "div.yli",
+            "list_detail": "div.detail",
+            "publish_time_label": "div.txt2",
             "title": "div.j-n-txt",
             "publish_date": "div.job_date span.cutom_font",
             "salary": "div.job_msg span",
@@ -353,13 +348,18 @@ def get_lite_http_sources():
     lite_sources["swufe"] = {
         "name": "西南财经大学",
         "base_url": "https://job3.swufe.edu.cn",
-        "list_url": "/news/web/list2?type=1&page={page}",
-        "detail_url": "/news/web/info/{id}",
+        "list_url_pattern": "https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm",
         "field_mapping": {
-            "title": "title",
+            "title": "position_name",
             "company": "company",
             "location": "location",
-            "description": "content",
+            "salary": "salary",
+            "education": "education",
+            "description": "description",
+            "requirements": "requirements",
+            "contact": "contact",
+            "industry": "industry",
+            "publish_date": "publish_date",
         },
     }
 

@@ -1149,10 +1149,12 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
     
     通过HTML页面解析获取列表，检查发布时间后决定是否爬取详情页。
     列表页: https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm
+    
+    解析逻辑使用 shared_parsers 中的共用函数，确保与主爬虫字段匹配一致。
     """
     from bs4 import BeautifulSoup
-    import re
     from datetime import datetime, timedelta
+    from src.spiders.shared_parsers import parse_swufe_detail, parse_swufe_list_date
     
     source = "swufe"
     source_name = source_config["name"]
@@ -1197,50 +1199,13 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
             should_stop = False
             
             for item in job_items:
-                # 检查发布时间（在获取详情前）
-                job_row = item.find_parent('div', class_='yli')
-                publish_date_str = ""
-                is_expired = False
-                if job_row:
-                    detail_div = job_row.find('div', class_='detail')
-                    if detail_div:
-                        # 查找所有包含 "发布时间" 的 span
-                        for span in detail_div.find_all('span'):
-                            txt2 = span.find('div', class_='txt2')
-                            if txt2 and '发布时间' in txt2.get_text():
-                                # 获取 span 的文本内容（不包括 txt2）
-                                publish_text = span.get_text(strip=True).replace('发布时间：', '')
-                                
-                                # 处理相对时间格式
-                                if '小时前' in publish_text or '天前' in publish_text or '分钟前' in publish_text:
-                                    # 相对时间表示是最近的数据，不过期
-                                    is_expired = False
-                                    # 尝试提取数字作为日期字符串
-                                    num_match = re.search(r'(\d+)', publish_text)
-                                    if num_match:
-                                        days_ago = int(num_match.group(1))
-                                        if '小时前' in publish_text or '分钟前' in publish_text:
-                                            days_ago = 0
-                                        publish_date = datetime.now() - timedelta(days=days_ago)
-                                        publish_date_str = publish_date.strftime('%Y-%m-%d')
-                                else:
-                                    # 处理绝对日期格式
-                                    date_match = re.search(r'(\d{4}-\d{2}-\d{2})', publish_text)
-                                    if date_match:
-                                        publish_date_str = date_match.group(1)
-                                        try:
-                                            publish_date = datetime.strptime(publish_date_str, '%Y-%m-%d')
-                                            # 检查是否在时间范围内
-                                            if publish_date < cutoff_date:
-                                                is_expired = True
-                                                logger.info(f"遇到过期数据 ({publish_date_str})，停止爬取")
-                                                should_stop = True
-                                        except ValueError:
-                                            pass
-                                break
-                    
-                    if should_stop:
-                        break
+                # 使用共用函数检查发布时间
+                publish_date_str, is_expired = parse_swufe_list_date(item, cutoff_date)
+                
+                if is_expired:
+                    logger.info(f"遇到过期数据 ({publish_date_str})，停止爬取")
+                    should_stop = True
+                    break
                 
                 if max_items > 0 and count >= max_items:
                     break
@@ -1259,158 +1224,30 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
                 if url_exists(detail_url):
                     continue
                 
-                # 爬取详情页（保持原有逻辑不变）
+                # 爬取详情页
                 detail_response = fetch_with_retry(detail_url)
                 if not detail_response:
                     continue
                 
                 try:
-                    detail_soup = BeautifulSoup(detail_response.text, 'html.parser')
-
-                    # 详情页解析 - SWUFE详情页结构
-                    # 页面可能有多个主要容器，需要分别查找
-                    new_se_main = detail_soup.find('div', class_='new-se-main')
-                    main_div = detail_soup.find('div', class_='main')
-                    jobsshow = detail_soup.find('div', class_='jobsshow')
-
-                    # 使用第一个找到的作为主容器
-                    main_content = new_se_main or main_div or jobsshow or detail_soup
-
-                    # 提取岗位名称 - 优先从 new-se-main 查找
-                    position_name = ""
-                    if new_se_main:
-                        jobname_elem = new_se_main.find('div', class_='jobname')
-                        if jobname_elem:
-                            j_n_txt = jobname_elem.find('div', class_='j-n-txt')
-                            position_name = j_n_txt.get_text(strip=True) if j_n_txt else ""
-
-                    # 提取发布时间 - 优先从 new-se-main 查找
-                    if new_se_main:
-                        job_date = new_se_main.find('div', class_='job_date')
-                        if job_date:
-                            date_span = job_date.find('span', class_='cutom_font')
-                            if date_span:
-                                publish_date_str = date_span.get_text(strip=True)[:10]
-
-                    # 提取薪资、学历、工作地点 - 优先从 new-se-main 的 job_msg 查找
-                    salary = "面议"
-                    education = ""
-                    location = ""
-
-                    if new_se_main:
-                        job_msg = new_se_main.find('div', class_='job_msg')
-                        if job_msg:
-                            for span in job_msg.find_all('span'):
-                                span_text = span.get_text(strip=True)
-                                if '薪酬：' in span_text:
-                                    salary_txt = span_text.replace('薪酬：', '')
-                                    if salary_txt:
-                                        salary = salary_txt
-                                elif '学历：' in span_text:
-                                    edu_txt = span_text.replace('学历：', '')
-                                    if edu_txt:
-                                        education = edu_txt
-                                elif '工作地：' in span_text:
-                                    loc_txt = span_text.replace('工作地：', '')
-                                    if loc_txt:
-                                        location = loc_txt
-
-                    # 提取公司信息 - 优先从 new-se-main 查找
-                    company = ""
-                    industry = ""
-
-                    if new_se_main:
-                        job_com = new_se_main.find('div', class_='job-com')
-                        if job_com:
-                            com_name = job_com.find('div', class_='com-name')
-                            if com_name:
-                                for comment in com_name.find_all(string=lambda text: isinstance(text, str) and '<!--' in text):
-                                    comment.extract()
-                                company = com_name.get_text(strip=True)
-
-                            com_class = job_com.find('div', class_='com-class')
-                            if com_class:
-                                industry = com_class.get_text(strip=True)
-
-                    # 如果 new-se-main 中没有找到公司名，尝试 main_div
-                    if not company and main_div:
-                        com_name_alt = main_div.find('div', class_='com-name')
-                        if com_name_alt:
-                            company = com_name_alt.get_text(strip=True)
-
-                    # title格式: 岗位 | 公司
-                    title = f"{position_name} | {company}" if position_name and company else (position_name or company)
-
-                    # 提取职位描述和投递要求 - 从 main_div 或 jobsshow 查找 describe
-                    description_parts = []
-                    requirements = ""
-
-                    # 优先从 main_div 查找 describe
-                    describe_container = main_div or jobsshow or detail_soup
-                    describe_divs = describe_container.find_all('div', class_='describe')
-
-                    for desc_div in describe_divs:
-                        tit = desc_div.find('div', class_='tit')
-                        if tit:
-                            tit_text = tit.get_text(strip=True)
-                            txt = desc_div.find('div', class_='txt')
-                            req = desc_div.find('div', class_='req')
-
-                            if '职位描述' in tit_text and txt:
-                                description_parts.append(f"【职位描述】{txt.get_text(strip=True)}")
-                            elif '投递' in tit_text or '要求' in tit_text:
-                                req_text = ""
-                                if req:
-                                    req_text = req.get_text(strip=True)
-                                elif txt:
-                                    req_text = txt.get_text(strip=True)
-                                if not req_text:
-                                    req_text = desc_div.get_text(strip=True).replace(tit_text, '').strip()
-                                if req_text:
-                                    requirements = req_text
-
-                    # 提取联系方式 - 从整个页面文本
-                    contact_parts = []
-                    page_text = detail_soup.get_text()
-
-                    email_match = re.search(r'[\w.-]+@[\w.-]+\.\w+', page_text)
-                    if email_match:
-                        contact_parts.append(f"邮箱: {email_match.group()}")
-
-                    phone_match = re.search(r'1[3-9]\d{9}', page_text)
-                    if phone_match:
-                        contact_parts.append(f"电话: {phone_match.group()}")
-
-                    contact = " | ".join(contact_parts)
-
-                    # 合并描述
-                    description = "\n\n".join(description_parts)
-
-                    job = {
-                        "title": title,
-                        "company": company,
-                        "location": location,
-                        "salary": salary,
-                        "education": education,
-                        "requirements": requirements,
-                        "description": truncate_text(description),
-                        "contact": contact,
-                        "industry": industry,
-                        "publish_date": publish_date_str,
-                        "source": source,
-                        "university": source_name,
-                        "source_url": detail_url,
-                        "apply_url": detail_url,
-                    }
+                    # 使用共用解析函数
+                    job = parse_swufe_detail(
+                        detail_response.text,
+                        detail_url,
+                        source,
+                        source_name,
+                        source_config.get("location", "成都")
+                    )
                     
-                    yield job
-                    count += 1
-                    
-                    if count % 20 == 0:
-                        logger.info(f"  已完成: {count} 条")
-                    
-                    # 短暂延迟避免请求过快
-                    time.sleep(0.5)
+                    if job:
+                        yield job
+                        count += 1
+                        
+                        if count % 20 == 0:
+                            logger.info(f"  已完成: {count} 条")
+                        
+                        # 短暂延迟避免请求过快
+                        time.sleep(0.5)
                         
                 except Exception as e:
                     crawl_logger.log_error(source, e, f"解析详情页: {detail_url}")
