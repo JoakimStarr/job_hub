@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
-import { logger } from '@/lib/logger';
 import { requireAuthUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  try {
-    await requireAuthUnified(request);
-  } catch {
-    return NextResponse.json({ error: '未授权访问，请先登录' }, { status: 401 });
-  }
-
   const { id } = await params;
   try {
+    await requireAuthUnified(request);
+
     const db = getDb();
     
     const job = db.prepare('SELECT is_favorite FROM jobs WHERE id = ?').get(parseInt(id)) as { is_favorite: number } | undefined;
@@ -33,6 +30,9 @@ export async function POST(
       data: { is_favorite: newFavoriteState === 1 }
     });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to toggle favorite' },

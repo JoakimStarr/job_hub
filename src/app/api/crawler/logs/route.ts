@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { handleApiError } from '@/lib/api-response';
+import { requirePermissionUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import fs from 'fs';
 import path from 'path';
@@ -17,6 +19,8 @@ export async function GET(request: Request) {
   const apiPath = '/api/crawler/logs';
 
   try {
+    await requirePermissionUnified(request as any, 'crawler:read');
+
     const { searchParams } = new URL(request.url);
     const rawLimit = searchParams.get('limit');
     const limit = Math.min(Math.max(parseInt(rawLimit || '50', 10) || 50, 1), 200);
@@ -67,6 +71,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json(entries);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.error('Failed to read crawler logs', error, { path: apiPath });
     return handleApiError(error, { path: apiPath });
   }

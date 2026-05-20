@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb, getSourceName, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
+import { requireAuthUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
 export async function GET(
@@ -44,39 +46,44 @@ export async function PATCH(
 ) {
   const { id } = await params;
   try {
+    await requireAuthUnified(request);
+
     const body = await request.json();
     const { is_favorite, is_read } = body;
-    
+
     const db = getDb();
-    
+
     const updates: string[] = [];
     const values: any[] = [];
-    
+
     if (is_favorite !== undefined) {
       updates.push('is_favorite = ?');
       values.push(is_favorite ? 1 : 0);
     }
-    
+
     if (is_read !== undefined) {
       updates.push('is_read = ?');
       values.push(is_read ? 1 : 0);
     }
-    
+
     if (updates.length === 0) {
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 });
     }
-    
+
     values.push(parseInt(id));
-    
+
     const sql = `UPDATE jobs SET ${updates.join(', ')} WHERE id = ?`;
     const result = db.prepare(sql).run(...values);
-    
+
     if (result.changes === 0) {
       return NextResponse.json({ error: 'Job not found' }, { status: 404 });
     }
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to update job' },

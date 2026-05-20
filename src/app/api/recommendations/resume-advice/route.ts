@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { aiService } from '@/lib/ai-service';
+import { requireAuthUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
+    await requireAuthUnified(request);
+
     const body = await request.json();
     const { profile, prompt } = body;
 
@@ -57,6 +61,9 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.error('简历建议错误:', error);
     return NextResponse.json(
       { error: '简历建议生成失败，请稍后重试' },

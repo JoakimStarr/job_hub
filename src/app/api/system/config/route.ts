@@ -45,11 +45,16 @@ function saveConfig(config: Record<string, unknown>): void {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    await requirePermissionUnified(request, 'system:read');
+
     const config = loadConfig();
     return NextResponse.json(config);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.error('Config error:', error);
     return NextResponse.json(
       { error: 'Failed to load config' },

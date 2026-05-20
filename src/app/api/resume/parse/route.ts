@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseResumeText } from '@/lib/resume-parser';
+import { requireAuthUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
+    await requireAuthUnified(request);
+
     const body = await request.json();
     const { text } = body;
 
@@ -32,6 +36,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.error('简历解析错误:', error);
     return NextResponse.json(
       { error: '简历解析失败，请检查格式是否正确' },

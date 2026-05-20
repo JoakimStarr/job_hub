@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db-utils';
 import { APP_VERSION } from '@/lib/constants';
+import { requirePermissionUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    await requirePermissionUnified(request as any, 'system:read');
+
     const db = getDb();
     
     const totalJobs = db.prepare('SELECT COUNT(*) as count FROM jobs').get() as { count: number };
@@ -52,6 +56,9 @@ export async function GET() {
     
     return NextResponse.json(status);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     logger.error('Database error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch system status' },

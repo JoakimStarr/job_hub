@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb, getSourceName, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
 import { aiService } from '@/lib/ai-service';
+import { requireAuthUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import type { ResumeProfile } from '@/lib/resume-types';
 
@@ -177,6 +179,8 @@ export async function POST(
   const { id } = await params;
 
   try {
+    await requireAuthUnified(request);
+
     const body = await request.json();
     const { profile }: { profile?: ResumeProfile } = body;
 
@@ -230,6 +234,9 @@ export async function POST(
 
     return NextResponse.json(result);
   } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     const duration = Date.now() - startTime;
     logger.error('AI analysis error:', error);
     logger.api('POST', `/api/jobs/${id}/ai-analysis`, 500, duration);
