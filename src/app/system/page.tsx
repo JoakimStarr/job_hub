@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, MetricCard, SectionCard, Select, Skeleton, TabNav } from '@/components/ui';
 import { API } from '@/lib/api';
+import { useFetch } from '@/hooks/useFetch';
 import type { JobItem, SystemConfig, SystemStatus, SubscriptionItem } from '@/lib/types';
 
 type Feedback = { tone: 'success' | 'error'; text: string };
@@ -59,11 +60,7 @@ function PreviewModal({
 }
 
 export default function SystemPage() {
-  const [status, setStatus] = useState<SystemStatus | null>(null);
-  const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
   const [configText, setConfigText] = useState('{}');
-  const [config, setConfig] = useState<SystemConfig | null>(null);
-  const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>('config');
   const [savingConfig, setSavingConfig] = useState(false);
@@ -74,32 +71,41 @@ export default function SystemPage() {
     loading: boolean;
   }>({ subscription: null, jobs: [], loading: false });
 
-  const version = status?.app?.version || config?.app?.version || '--';
+  const {
+    data: status,
+    loading: statusLoading,
+    mutate: mutateStatus,
+  } = useFetch<SystemStatus>('/api/system/status', () => API.getSystemStatus());
 
-  async function loadSystemData() {
-    setLoading(true);
-    try {
-      const [nextStatus, nextConfig, nextSubscriptions] = await Promise.all([
-        API.getSystemStatus(),
-        API.getSystemConfig(),
-        API.getSubscriptions(),
-      ]);
-      setStatus(nextStatus);
-      setConfig(nextConfig);
-      setConfigText(JSON.stringify(nextConfig || {}, null, 2));
-      setSubscriptions(nextSubscriptions || []);
-      return true;
-    } catch (requestError) {
-      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '加载系统状态失败' });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
+  const {
+    data: config,
+    loading: configLoading,
+    mutate: mutateConfig,
+  } = useFetch<SystemConfig>('/api/system/config', () => API.getSystemConfig());
+
+  const {
+    data: subscriptions,
+    loading: subscriptionsLoading,
+    mutate: mutateSubscriptions,
+  } = useFetch<SubscriptionItem[]>('/api/system/subscriptions', () => API.getSubscriptions());
+
+  const subscriptionsList = subscriptions ?? [];
+  const loading = statusLoading || configLoading || subscriptionsLoading;
 
   useEffect(() => {
-    void loadSystemData();
-  }, []);
+    if (config) {
+      setConfigText(JSON.stringify(config, null, 2));
+    }
+  }, [config]);
+
+  function reloadAll(): Promise<boolean> {
+    mutateStatus();
+    mutateConfig();
+    mutateSubscriptions();
+    return Promise.resolve(true);
+  }
+
+  const version = status?.app?.version || config?.app?.version || '--';
 
   const diagnostics = useMemo(() => Object.entries(status?.crawler_diagnostics || {}), [status]);
 
@@ -118,7 +124,7 @@ export default function SystemPage() {
     setSavingConfig(true);
     try {
       await API.updateSystemConfig(parsed);
-      const refreshed = await loadSystemData();
+      const refreshed = await reloadAll();
       if (refreshed) {
         setFeedback({ tone: 'success', text: '配置已保存' });
       }
@@ -134,7 +140,7 @@ export default function SystemPage() {
     setCleaning(true);
     try {
       await API.cleanHistoricalData(500);
-      const refreshed = await loadSystemData();
+      const refreshed = await reloadAll();
       if (refreshed) {
         setFeedback({ tone: 'success', text: '历史岗位已清洗' });
       }
@@ -170,7 +176,7 @@ export default function SystemPage() {
         title="系统管理"
         description="配置中心、订阅管理和诊断日志"
         action={
-          <Button variant="secondary" onClick={() => { void loadSystemData(); }}>
+          <Button variant="secondary" onClick={reloadAll}>
             刷新
           </Button>
         }
@@ -238,8 +244,8 @@ export default function SystemPage() {
           loading ? <Skeleton type="card" /> : (
             <div id="panel-subscriptions" role="tabpanel" aria-labelledby="tab-subscriptions" style={{ marginTop: 10 }}>
               <SubscriptionPanel
-                subscriptions={subscriptions}
-                reload={loadSystemData}
+                subscriptions={subscriptionsList}
+                reload={reloadAll}
                 onPreview={(subscription) => {
                   setPreviewModal({ subscription, jobs: [], loading: true });
                   API.previewSubscription(subscription.id)
