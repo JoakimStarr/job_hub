@@ -62,3 +62,17 @@ export async function requirePermissionUnified(request: NextRequest, permission:
   }
   return user;
 }
+
+/**
+ * 可选认证验证（不抛异常）
+ * 
+ * 已登录返回用户信息，未登录返回 { authorized: false, user: null }
+ * 用于需要区分访客/登录用户的 API 路由
+ */
+export async function optionalAuthUnified(request: NextRequest): Promise<{ 
+  authorized: boolean; 
+  user: AppUser | null; 
+  method: 'cookie' | 'token' | null 
+}> {
+  return verifyAuthUnified(request);
+}

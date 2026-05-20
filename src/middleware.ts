@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// 允许访客（未登录）访问的页面路径
+const GUEST_PATHS = ['/', '/jobs'];
+
 /**
  * Next.js 中间件 - 服务端路由守卫
  *
@@ -35,9 +38,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 游客可访问路径（无需登录）
-  const GUEST_PATHS = ['/', '/jobs'];
-  if (GUEST_PATHS.some(guestPath => pathname === guestPath || pathname.startsWith(guestPath + '/'))) {
+  // 访客允许的页面路径，无需登录
+  if (GUEST_PATHS.includes(pathname)) {
     return NextResponse.next();
   }
 
