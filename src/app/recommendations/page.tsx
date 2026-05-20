@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, FileUpload, Input, JobCard, SectionCard, Skeleton, TabNav } from '@/components/ui';
 import { API } from '@/lib/api';
+import { useFetch } from '@/hooks/useFetch';
 import type { JobItem } from '@/lib/types';
 
 type RecommendationMode = 'analyze' | 'resume' | 'delivery';
@@ -65,28 +66,16 @@ export default function RecommendationsPage() {
   const [profile, setProfile] = useState('');
   const [prompt, setPrompt] = useState('');
   const [response, setResponse] = useState<unknown>(null);
-  const [history, setHistory] = useState<unknown[]>([]);
-  const [historyLoading, setHistoryLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeContent, setResumeContent] = useState('');
 
-  async function loadHistory() {
-    setHistoryLoading(true);
-    try {
-      const nextHistory = await API.getRecommendationHistory(5);
-      setHistory(Array.isArray(nextHistory) ? nextHistory : []);
-    } catch (requestError) {
-      setMessage(requestError instanceof Error ? requestError.message : '加载推荐历史失败');
-    } finally {
-      setHistoryLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    void loadHistory();
-  }, []);
+  const { data: historyData, loading: historyLoading, mutate: mutateHistory } = useFetch<unknown[]>(
+    '/api/recommendations/history?limit=5',
+    () => API.getRecommendationHistory(5),
+  );
+  const history = Array.isArray(historyData) ? historyData : [];
 
   const handleFileSelect = useCallback((file: File) => {
     setResumeFile(file);
@@ -189,7 +178,7 @@ export default function RecommendationsPage() {
                 <Button variant="primary" onClick={submitAction} disabled={submitting}>
                   {submitting ? '生成中...' : '生成结果'}
                 </Button>
-                <Button variant="secondary" onClick={() => void loadHistory()}>
+                <Button variant="secondary" onClick={mutateHistory}>
                   刷新历史
                 </Button>
               </div>
