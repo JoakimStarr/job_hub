@@ -1,68 +1,55 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { mutate } from 'swr';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton, StarButton } from '@/components/ui';
 import { Pagination } from '@/components/Pagination';
 import { API, APIError } from '@/lib/api';
 import type { JobItem, PagedResponse } from '@/lib/types';
 import { useToast } from '@/components/Toast';
+import { useFetch } from '@/hooks/useFetch';
 
 export default function FavoritesPage() {
   const router = useRouter();
   const toast = useToast();
-  const [favorites, setFavorites] = useState<PagedResponse<JobItem> | null>(null);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
-  const requestIdRef = useRef(0);
 
-  const loadFavorites = useCallback(async (nextPage: number, nextQuery: string) => {
-    const requestId = ++requestIdRef.current;
-    setLoading(true);
-    setError('');
-    try {
-      const result = await API.getFavorites({ page: nextPage, page_size: 10, keyword: nextQuery });
-      if (requestId !== requestIdRef.current) return;
-      setFavorites(result);
-    } catch (err) {
-      if (requestId !== requestIdRef.current) return;
-      setError(err instanceof Error ? err.message : '加载收藏失败');
-    } finally {
-      if (requestId !== requestIdRef.current) return;
-      setLoading(false);
-    }
-  }, []);
+  const favoritesKey = `/api/jobs/favorites?page=${page}&keyword=${query}`;
 
-  useEffect(() => {
-    void loadFavorites(1, '');
-  }, [loadFavorites]);
+  const { data: favorites, error: fetchError, loading, mutate: mutateFavorites } = useFetch<PagedResponse<JobItem>>(
+    favoritesKey,
+    () => API.getFavorites({ page, page_size: 10, keyword: query }),
+  );
 
-  const handleSearch = useCallback(async () => {
+  const handleSearch = useCallback(() => {
     setPage(1);
-    await loadFavorites(1, query);
-  }, [query, loadFavorites]);
+  }, []);
 
   const handleClear = useCallback(() => {
     setQuery('');
     setPage(1);
-    void loadFavorites(1, '');
-  }, [loadFavorites]);
+  }, []);
 
   const handleToggleFavorite = useCallback(async (job: JobItem, source?: 'list' | 'detail') => {
     const newFavoriteState = job.is_favorite ? 0 : 1;
 
-    setFavorites((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        items: prev.items.filter((item) => item.id !== job.id),
-        total: Math.max(0, prev.total - 1),
-      };
-    });
+    // 乐观更新：从收藏列表中移除
+    mutate(
+      favoritesKey,
+      (current: PagedResponse<JobItem> | undefined) => {
+        if (!current) return current;
+        return {
+          ...current,
+          items: current.items.filter((item) => item.id !== job.id),
+          total: Math.max(0, current.total - 1),
+        };
+      },
+      { revalidate: false },
+    );
 
     if (source === 'detail') {
       setSelectedJob((prev) =>
@@ -74,7 +61,8 @@ export default function FavoritesPage() {
       await API.toggleFavorite(job.id);
       toast.success(newFavoriteState ? '已添加到收藏' : '已取消收藏');
     } catch (err) {
-      void loadFavorites(page, query);
+      // 回滚：重新获取数据
+      mutate(favoritesKey);
       const errorMsg = err instanceof Error ? err.message : '操作失败';
       if (err instanceof APIError && err.status === 404) {
         toast.error('收藏接口不存在，请检查后端服务');
@@ -86,7 +74,7 @@ export default function FavoritesPage() {
         toast.error(errorMsg);
       }
     }
-  }, [page, query, loadFavorites, toast]);
+  }, [favoritesKey, toast]);
 
   const handleJobClick = useCallback((job: JobItem) => {
     setSelectedJob(job);
@@ -98,6 +86,7 @@ export default function FavoritesPage() {
 
   const items = favorites?.items || [];
   const statsLoading = loading && !favorites;
+  const error = fetchError?.message || '';
 
   return (
     <AppShell title="我的收藏" description="查看、检索并取消收藏岗位" requiredPermission="view_jobs">
@@ -115,11 +104,11 @@ export default function FavoritesPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="搜索收藏岗位"
-              onKeyDown={(e) => { if (e.key === 'Enter') void handleSearch(); }}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
             />
           </label>
           <div style={{ display: 'flex', alignItems: 'end', gap: 10 }}>
-            <StarButton active size="md" onClick={() => void handleSearch()} />
+            <StarButton active size="md" onClick={handleSearch} />
             <Button variant="secondary" onClick={handleClear}>清除</Button>
           </div>
         </div>
@@ -130,11 +119,11 @@ export default function FavoritesPage() {
           <EmptyState
             title="加载失败"
             description={error}
-            action={<Button variant="secondary" onClick={() => void loadFavorites(page, query)}>重试</Button>}
+            action={<Button variant="secondary" onClick={() => mutateFavorites()}>重试</Button>}
           />
         ) : null}
 
-        {!error && loading && !favorites ? (
+        {!error && statsLoading ? (
           <Skeleton type="card" />
         ) : null}
 
@@ -163,7 +152,7 @@ export default function FavoritesPage() {
               <Pagination
                 current={page}
                 total={favorites.pages}
-                onChange={(p) => { setPage(p); void loadFavorites(p, query); }}
+                onChange={(p) => setPage(p)}
               />
             ) : null}
           </>
