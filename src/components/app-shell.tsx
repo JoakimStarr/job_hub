@@ -9,6 +9,7 @@ import { AUTH_EXPIRED_EVENT } from '@/lib/constants';
 import type { AppUser, PermissionKey } from '@/lib/types';
 import { useAppStore } from '@/store';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { PageTransition } from '@/components/PageTransition';
 
 function joinClassNames(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
@@ -279,9 +280,10 @@ export function AppShell({
 
         <div className="sidebar-footer">
           <div className="user-chip">
+            <div className="user-chip-avatar">{getInitials(displayName)}</div>
             <div className="user-info">
               <div className="user-chip-name">{displayName}</div>
-              <div className="user-chip-role">{APP_VERSION}</div>
+              <div className="user-chip-role">{userRole}</div>
             </div>
           </div>
           <button
@@ -322,20 +324,24 @@ export function AppShell({
           </div>
         </header>
 
-        <div className="page-content">{children}</div>
+        <PageTransition>
+          <div className="page-content">{children}</div>
+        </PageTransition>
 
         <footer className="site-footer">
           <div className="footer-inner">
-            <div className="footer-row">
-              <span className="footer-label">网站声明：仅为个人学习开发用途</span>
+            <div className="footer-main">
+              <span className="footer-brand">FinIntern Hub</span>
+              <span className="footer-separator">·</span>
+              <span className="footer-text">仅为个人学习开发用途</span>
             </div>
-            <div className="footer-row">
-              <span className="footer-label">灵感来源：我们伟大的宝宝</span>
+            <div className="footer-sub">
+              <span>灵感来源：我们伟大的宝宝</span>
+              <span className="footer-separator">·</span>
+              <span>作者：JoakimStarr / 文人病</span>
+              <span className="footer-separator">·</span>
+              <span className="footer-version">{APP_VERSION}</span>
             </div>
-            <div className="footer-row">
-              <span className="footer-label">网站作者：JoakimStarr / 文人病</span>
-            </div>
-            <div className="footer-version">{APP_VERSION}</div>
           </div>
         </footer>
       </main>

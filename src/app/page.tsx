@@ -1,46 +1,40 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton } from '@/components/ui';
 import { API } from '@/lib/api';
+import { useFetch } from '@/hooks/useFetch';
 import type { JobItem, StatsOverview } from '@/lib/types';
 
 export default function HomePage() {
   const router = useRouter();
-  const [stats, setStats] = useState<StatsOverview | null>(null);
-  const [jobs, setJobs] = useState<JobItem[]>([]);
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
-  async function loadData() {
-    setLoading(true);
-    setError('');
-    try {
-      const [overview, latestResult] = await Promise.all([
-        API.getStatsOverview(),
-        API.getJobs({ page: 1, page_size: 6, days: 7, sort: 'created_at', order: 'desc' }),
-      ]);
-      setStats(overview);
-      setJobs(latestResult.items || []);
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : '加载首页数据失败');
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { data: stats, error: statsError, loading: statsLoading, mutate: mutateStats } = useFetch<StatsOverview>(
+    '/api/stats/overview',
+    () => API.getStatsOverview(),
+  );
 
-  useEffect(() => {
-    void loadData();
-  }, []);
+  const { data: latestResult, error: jobsError, loading: jobsLoading, mutate: mutateJobs } = useFetch<{ items: JobItem[] }>(
+    '/api/jobs?home_latest',
+    () => API.getJobs({ page: 1, page_size: 6, days: 7, sort: 'created_at', order: 'desc' }),
+  );
 
+  const loading = statsLoading || jobsLoading;
+  const error = statsError?.message || jobsError?.message || '';
+  const jobs = latestResult?.items || [];
   const overview = stats?.overview || {};
+
+  const handleRefresh = useCallback(() => {
+    mutateStats();
+    mutateJobs();
+  }, [mutateStats, mutateJobs]);
 
   async function handleToggleFavorite(job: JobItem) {
     await API.toggleFavorite(job.id);
-    await loadData();
+    handleRefresh();
   }
 
   function handleKeywordClick(keyword: string) {
@@ -59,7 +53,7 @@ export default function HomePage() {
           <Skeleton type="card" />
         </>
       ) : error ? (
-        <EmptyState title="加载失败" description={error} action={<Button variant="secondary" onClick={loadData}>重试</Button>} />
+        <EmptyState title="加载失败" description={error} action={<Button variant="secondary" onClick={handleRefresh}>重试</Button>} />
       ) : (
         <>
           <div className="grid-4">
@@ -72,7 +66,7 @@ export default function HomePage() {
           <SectionCard
             title="热门关键词"
             description="来自历史岗位与推荐画像的高频关键词"
-            action={<Button variant="secondary" onClick={loadData}>刷新数据</Button>}
+            action={<Button variant="secondary" onClick={handleRefresh}>刷新数据</Button>}
           >
             {(stats?.hot_keywords || []).length ? (
               <div className="job-tags">

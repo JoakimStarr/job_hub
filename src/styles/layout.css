@@ -168,6 +168,20 @@
   margin-bottom: 8px;
 }
 
+.user-chip-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
 .user-info {
   flex: 1;
   min-width: 0;
@@ -184,8 +198,8 @@
 
 .user-chip-role {
   font-size: 11px;
-  color: var(--panel-border);
-  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  color: var(--muted);
+  font-weight: 500;
   letter-spacing: 0.3px;
 }
 
@@ -329,10 +343,9 @@
 }
 
 /* ======== Footer 页脚 (Mobile-First) ======== */
-/* 基础样式：移动端垂直堆叠 */
 .site-footer {
   margin-top: auto;
-  padding: 24px 0;
+  padding: 28px 0 20px;
   border-top: 1px solid var(--panel-border);
 }
 
@@ -341,24 +354,45 @@
   padding: 0 16px;
 }
 
-.footer-row {
-  display: block;
-  text-align: center;
-  margin: 6px 0;
+.footer-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.footer-brand {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.footer-text {
   font-size: 13px;
   color: var(--muted);
 }
 
-.footer-label {
-  font-weight: 600;
-  color: var(--text);
+.footer-sub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--muted);
   opacity: 0.7;
 }
 
-.footer-version {
-  margin-top: 10px;
-  font-size: 11px;
+.footer-separator {
   color: var(--panel-border);
+}
+
+.footer-version {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 11px;
 }
 
 /* ======== 其他组件 ======== */
@@ -451,14 +485,6 @@
   .topbar-title {
     font-size: 20px;
   }
-
-  .footer-row {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 8px;
-    text-align: left;
-    margin: 0 12px;
-  }
 }
 
 /* --- lg: 平板横屏/桌面 (≥1024px) --- */
@@ -485,5 +511,31 @@
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
+  }
+}
+
+/* ======== 页面路由过渡动画 ======== */
+.page-transition-idle {
+  /* 稳定状态，无动画 */
+}
+
+.page-transition-enter {
+  animation: pageFadeIn var(--duration-slow) var(--ease-out);
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition-enter {
+    animation: none;
   }
 }

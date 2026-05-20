@@ -86,7 +86,7 @@ export const MetricCard = memo(function MetricCard({ label, value, hint, tone = 
   );
 });
 
-export function Button({ children, variant = 'primary', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'ghost' | 'danger' }) {
+export const Button = memo(function Button({ children, variant = 'primary', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'ghost' | 'danger' }) {
   const hasTextContent = typeof children === 'string' && children.trim().length > 0;
   const ariaLabel = props['aria-label'] || (!hasTextContent && !Array.isArray(children) ? props.title || '按钮' : undefined);
 
@@ -99,15 +99,15 @@ export function Button({ children, variant = 'primary', ...props }: ButtonHTMLAt
       {children}
     </button>
   );
-}
+});
 
-export function Input(props: InputHTMLAttributes<HTMLInputElement>) {
+export const Input = memo(function Input(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={joinClassNames('input', props.className)} />;
-}
+});
 
-export function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
+export const Select = memo(function Select(props: SelectHTMLAttributes<HTMLSelectElement>) {
   return <select {...props} className={joinClassNames('select', props.className)} />;
-}
+});
 
 export const Badge = memo(function Badge({ children, tone = 'slate', style, onClick }: { children: ReactNode; tone?: 'slate' | 'blue' | 'emerald' | 'amber' | 'rose' | 'violet'; style?: React.CSSProperties; onClick?: (e: React.MouseEvent<HTMLSpanElement>) => void }) {
   return <span className={joinClassNames('badge', `badge-${tone}`)} style={style} onClick={onClick}>{children}</span>;

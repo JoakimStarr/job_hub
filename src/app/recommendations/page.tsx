@@ -73,7 +73,7 @@ export default function RecommendationsPage() {
 
   const { data: historyData, loading: historyLoading, mutate: mutateHistory } = useFetch<unknown[]>(
     '/api/recommendations/history?limit=5',
-    () => API.getRecommendationHistory(5),
+    () => API.getRecommendationHistory(5) as Promise<unknown[]>,
   );
   const history = Array.isArray(historyData) ? historyData : [];
 
@@ -178,7 +178,7 @@ export default function RecommendationsPage() {
                 <Button variant="primary" onClick={submitAction} disabled={submitting}>
                   {submitting ? '生成中...' : '生成结果'}
                 </Button>
-                <Button variant="secondary" onClick={mutateHistory}>
+                <Button variant="secondary" onClick={() => { void mutateHistory(); }}>
                   刷新历史
                 </Button>
               </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { SWRConfig } from 'swr';
 import { ToastProvider } from '@/components/Toast';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -20,5 +21,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  return <ToastProvider>{children}</ToastProvider>;
+  return (
+    <SWRConfig
+      value={{
+        revalidateOnFocus: false,
+        shouldRetryOnError: false,
+        dedupingInterval: 5000,
+        onError: (error) => {
+          // 401 错误由 API 层统一处理，这里不重复处理
+          if (error?.status === 401) return;
+          console.error('SWR 请求错误:', error?.message || error);
+        },
+      }}
+    >
+      <ToastProvider>{children}</ToastProvider>
+    </SWRConfig>
+  );
 }

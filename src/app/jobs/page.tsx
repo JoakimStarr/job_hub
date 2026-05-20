@@ -2,14 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
-import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, SectionCard, Skeleton } from '@/components/ui';
+import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, SectionCard } from '@/components/ui';
 import { Pagination } from '@/components/Pagination';
 import { RefreshButton } from '@/components/RefreshButton';
 import { HierarchicalFilter } from '@/components/HierarchicalFilter';
-import { LoadingSpinner, SkeletonCard, SkeletonMetric } from '@/components/Loading';
+import { SkeletonCard, SkeletonMetric } from '@/components/Loading';
 import { ErrorMessage, useToast } from '@/components/Toast';
 import { API, APIError } from '@/lib/api';
 import { DEBOUNCE_MS } from '@/lib/constants';
+import { useFetch } from '@/hooks/useFetch';
 import type { JobItem, PagedResponse, FilterOption, ProvinceWithCities, EducationMapping } from '@/types';
 
 interface FilterOptions {
@@ -22,18 +23,18 @@ interface FilterOptions {
   education_mapping: EducationMapping[];
 }
 
+const EMPTY_FILTERS: FilterOptions = {
+  locations: [],
+  job_types: [],
+  industries: [],
+  education: [],
+  sources: [],
+  provinces: [],
+  education_mapping: [],
+};
+
 export default function JobsPage() {
   const toast = useToast();
-  const [jobs, setJobs] = useState<PagedResponse<JobItem> | null>(null);
-  const [filters, setFilters] = useState<FilterOptions>({
-    locations: [],
-    job_types: [],
-    industries: [],
-    education: [],
-    sources: [],
-    provinces: [],
-    education_mapping: [],
-  });
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [location, setLocation] = useState('');
@@ -42,12 +43,9 @@ export default function JobsPage() {
   const [education, setEducation] = useState('');
   const [source, setSource] = useState('');
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [statsExpanded, setStatsExpanded] = useState(false);
-  const requestIdRef = useRef(0);
+  const [refreshing, setRefreshing] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -76,54 +74,53 @@ export default function JobsPage() {
     order: 'desc',
   }), [page, location, jobType, industry, education, source]);
 
-  async function loadJobs(nextLoading = false) {
-    const requestId = ++requestIdRef.current;
-    nextLoading ? setRefreshing(true) : setLoading(true);
-    setError(null);
-    try {
-      const [jobList, filterOptions] = await Promise.all([
-        debouncedQuery.trim() ? API.searchJobs(debouncedQuery, filterParams) : API.getJobs(filterParams),
-        API.getFilterOptions(),
-      ]);
-      if (requestId !== requestIdRef.current) return;
-      setJobs(jobList);
-      setFilters({
-        locations: (filterOptions.locations || []) as FilterOption[],
-        job_types: (filterOptions.job_types || []) as FilterOption[],
-        industries: (filterOptions.industries || []) as FilterOption[],
-        education: (filterOptions.education || []) as FilterOption[],
-        sources: (filterOptions.sources || []) as FilterOption[],
-        provinces: (filterOptions.provinces || []) as ProvinceWithCities[],
-        education_mapping: (filterOptions.education_mapping || []) as EducationMapping[],
-      });
-    } catch (requestError) {
-      if (requestId !== requestIdRef.current) return;
-      const errorMessage = requestError instanceof Error ? requestError.message : '加载岗位列表失败';
-      setError(errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      if (requestId !== requestIdRef.current) return;
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }
+  // 筛选选项独立缓存，60秒内不重复请求
+  const { data: filterOptions, mutate: mutateFilters } = useFetch<FilterOptions>(
+    '/api/jobs/filters',
+    () => API.getFilterOptions(),
+    { dedupingInterval: 60000 },
+  );
 
-  useEffect(() => {
-    void loadJobs();
-  }, [page, debouncedQuery, location, jobType, industry, education, source]);
+  const filters = filterOptions ?? EMPTY_FILTERS;
+
+  // 岗位列表根据筛选条件动态请求
+  const jobsKey = debouncedQuery.trim()
+    ? `/api/jobs/search?q=${debouncedQuery}&${API.buildQuery(filterParams)}`
+    : `/api/jobs?${API.buildQuery(filterParams)}`;
+
+  const { data: jobs, error: jobsError, loading: jobsLoading, mutate: mutateJobs } = useFetch<PagedResponse<JobItem>>(
+    jobsKey,
+    () => debouncedQuery.trim()
+      ? API.searchJobs(debouncedQuery, filterParams)
+      : API.getJobs(filterParams),
+  );
+
+  const loading = jobsLoading && !jobs;
+  const error = jobsError?.message || null;
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([mutateJobs(), mutateFilters()]);
+    setRefreshing(false);
+  }, [mutateJobs, mutateFilters]);
 
   const handleToggleFavorite = useCallback(async (job: JobItem) => {
     const newFavoriteState = job.is_favorite ? 0 : 1;
 
-    setJobs((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        items: prev.items.map((item) =>
-          item.id === job.id ? { ...item, is_favorite: newFavoriteState } : item
-        ),
-      };
-    });
+    // 乐观更新：先更新 UI
+    mutateJobs(
+      (current) => {
+        if (!current) return current;
+        return {
+          ...current,
+          items: current.items.map((item) =>
+            item.id === job.id ? { ...item, is_favorite: newFavoriteState } : item
+          ),
+        };
+      },
+      { revalidate: false },
+    );
+
     setSelectedJob((prev) => {
       if (prev && prev.id === job.id) {
         return { ...prev, is_favorite: newFavoriteState };
@@ -135,15 +132,19 @@ export default function JobsPage() {
       await API.toggleFavorite(job.id);
       toast.success(newFavoriteState ? '已添加到收藏' : '已取消收藏');
     } catch (err) {
-      setJobs((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          items: prev.items.map((item) =>
-            item.id === job.id ? { ...item, is_favorite: newFavoriteState ? 0 : 1 } : item
-          ),
-        };
-      });
+      // 回滚
+      mutateJobs(
+        (current) => {
+          if (!current) return current;
+          return {
+            ...current,
+            items: current.items.map((item) =>
+              item.id === job.id ? { ...item, is_favorite: newFavoriteState ? 0 : 1 } : item
+            ),
+          };
+        },
+        { revalidate: false },
+      );
       setSelectedJob((prev) => {
         if (prev && prev.id === job.id) {
           return { ...prev, is_favorite: newFavoriteState ? 0 : 1 };
@@ -162,7 +163,7 @@ export default function JobsPage() {
         toast.error(errorMsg);
       }
     }
-  }, [toast]);
+  }, [mutateJobs, toast]);
 
   function handleClearFilters() {
     setQuery('');
@@ -340,12 +341,12 @@ export default function JobsPage() {
       <SectionCard
         title="岗位结果"
         description="点击卡片查看详情，点击星星切换收藏状态"
-        action={<RefreshButton onRefresh={() => void loadJobs(true)} />}
+        action={<RefreshButton onRefresh={handleRefresh} />}
       >
         {loading ? (
           <SkeletonCard count={5} />
         ) : error ? (
-          <ErrorMessage title="加载失败" message={error} retry={() => void loadJobs()} />
+          <ErrorMessage title="加载失败" message={error} retry={handleRefresh} />
         ) : items.length === 0 ? (
           <EmptyState title="没有结果" description="当前筛选条件下没有找到岗位。" />
         ) : (
