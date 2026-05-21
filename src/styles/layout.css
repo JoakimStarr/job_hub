@@ -539,3 +539,52 @@
     animation: none;
   }
 }
+
+/* 访客模式提示条 */
+.guest-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--color-info-bg, #eff6ff);
+  border-bottom: 1px solid var(--color-info-border, #bfdbfe);
+  color: var(--color-info-text, #1e40af);
+  font-size: 13px;
+}
+
+.guest-banner-text {
+  flex-shrink: 0;
+}
+
+.guest-banner-login {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  font-size: 12px;
+  background: var(--color-primary, #3b82f6);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.guest-banner-login:hover {
+  opacity: 0.9;
+}
+
+/* 访客模式登录按钮 */
+.sidebar-login-btn {
+  width: 100%;
+  padding: 8px;
+  background: var(--color-primary, #3b82f6);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sidebar-login-btn:hover {
+  opacity: 0.9;
+}

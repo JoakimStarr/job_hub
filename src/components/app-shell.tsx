@@ -15,15 +15,12 @@ function joinClassNames(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
 }
 
-const GUEST_PATHS = ['/', '/jobs'];
-function isGuestPath(pathname: string): boolean {
-  return GUEST_PATHS.some(p => pathname === p || pathname.startsWith(p + '/'));
-}
-
 function getInitials(name: string | null | undefined): string {
   if (!name) return '?';
   return name.charAt(0).toUpperCase();
 }
+
+const GUEST_ALLOWED_PATHS = ['/', '/jobs'];
 
 export function AppShell({
   children,
@@ -40,15 +37,18 @@ export function AppShell({
   const pathname = usePathname();
   const [user, setUser] = useState<AppUser | null>(null);
   const [ready, setReady] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const { setUser: setStoreUser } = useAppStore();
-  const visibleItems = useMemo(() => NAV_ITEMS.filter((item) => {
-    if (!user) return !item.permission; // 游客只看无权限要求的项
-    return !item.permission || hasPermission(user, item.permission);
-  }), [user]);
+  const { setUser: setStoreUser, setIsGuest: setStoreIsGuest } = useAppStore();
+  const visibleItems = useMemo(() => {
+    if (isGuest) {
+      return NAV_ITEMS.filter((item) => item.guestVisible);
+    }
+    return NAV_ITEMS.filter((item) => !item.permission || hasPermission(user, item.permission));
+  }, [user, isGuest]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -90,24 +90,16 @@ export function AppShell({
     let cancelled = false;
 
     function redirectToLogin() {
-      // 游客路径：进入游客模式而非跳转登录
-      if (isGuestPath(pathname)) {
-        setUser(null);
-        setStoreUser(null);
-        setReady(true);
-        return;
-      }
-
       // 🚨 简单防循环机制：使用时间戳锁（1秒内不重复跳转）
       const lastRedirect = parseInt(sessionStorage.getItem('auth_last_redirect') || '0');
       const now = Date.now();
-
+      
       if (now - lastRedirect < 1000) {
         sessionStorage.removeItem('auth_last_redirect');
         window.location.reload();
         return;
       }
-
+      
       // 记录本次跳转时间
       sessionStorage.setItem('auth_last_redirect', String(now));
 
@@ -153,6 +145,7 @@ export function AppShell({
             
             setUser(user);
             setStoreUser(user);
+            setStoreIsGuest(false);
             setReady(true);
             
             localStorage.setItem('finintern_hub_auth_token', 'cookie-session');
@@ -168,6 +161,7 @@ export function AppShell({
           if (cancelled) return;
           setUser(cached);
           setStoreUser(cached);
+          setStoreIsGuest(false);
           setReady(true);
           void loadCurrentUser(true).then((current) => {
             if (!cancelled && current) {
@@ -182,6 +176,13 @@ export function AppShell({
         if (cancelled) return;
         
         if (!current) {
+          // 访客允许的页面，不跳转登录页
+          if (GUEST_ALLOWED_PATHS.includes(pathname)) {
+            setIsGuest(true);
+            setStoreIsGuest(true);
+            setReady(true);
+            return;
+          }
           redirectToLogin();
           return;
         }
@@ -192,7 +193,13 @@ export function AppShell({
         
       } catch (error) {
         if (!cancelled) {
-          redirectToLogin();
+          if (GUEST_ALLOWED_PATHS.includes(pathname)) {
+            setIsGuest(true);
+            setStoreIsGuest(true);
+            setReady(true);
+          } else {
+            redirectToLogin();
+          }
         }
       }
     }
@@ -224,7 +231,7 @@ export function AppShell({
     );
   }
 
-  if (requiredPermission && (!user || !hasPermission(user, requiredPermission))) {
+  if (requiredPermission && user && !hasPermission(user, requiredPermission)) {
     return (
       <div className="app-root app-denied">
         <div className="denied-card">
@@ -251,8 +258,8 @@ export function AppShell({
     );
   }
 
-  const displayName = user?.display_name || user?.username || '访客';
-  const userRole = user?.role || 'guest';
+  const displayName = isGuest ? '访客' : (user?.display_name || user?.username || '访客');
+  const userRole = isGuest ? '访客模式' : (user?.role || 'guest');
 
   return (
     <div className="app-root">
@@ -295,36 +302,34 @@ export function AppShell({
         </nav>
 
         <div className="sidebar-footer">
-          {user ? (
-            <>
-              <div className="user-chip">
-                <div className="user-chip-avatar">{getInitials(displayName)}</div>
-                <div className="user-info">
-                  <div className="user-chip-name">{displayName}</div>
-                  <div className="user-chip-role">{userRole}</div>
-                </div>
-              </div>
-              <button
-                className="btn sidebar-logout-danger"
-                onClick={async () => {
-                  try {
-                    clearSession();
-                  } finally {
-                    router.replace('/login');
-                  }
-                }}
-                aria-label="退出登录"
-              >
-                退出登录
-              </button>
-            </>
+          <div className="user-chip">
+            <div className="user-chip-avatar">{getInitials(displayName)}</div>
+            <div className="user-info">
+              <div className="user-chip-name">{displayName}</div>
+              <div className="user-chip-role">{userRole}</div>
+            </div>
+          </div>
+          {isGuest ? (
+            <button
+              className="btn sidebar-login-btn"
+              onClick={() => router.push('/login')}
+              aria-label="登录"
+            >
+              登录
+            </button>
           ) : (
             <button
-              className="btn btn-primary"
-              style={{ width: '100%', justifyContent: 'center', fontSize: 13, minHeight: 34 }}
-              onClick={() => router.push('/login')}
+              className="btn sidebar-logout-danger"
+              onClick={async () => {
+                try {
+                  clearSession();
+                } finally {
+                  router.replace('/login');
+                }
+              }}
+              aria-label="退出登录"
             >
-              登录获取完整功能
+              退出登录
             </button>
           )}
         </div>
@@ -348,14 +353,18 @@ export function AppShell({
             <div className="topbar-subtitle">{description || '统一账号、岗位和系统控制中心'}</div>
           </div>
           <div className="topbar-actions">
-            {!user && (
-              <button className="btn btn-secondary" style={{ fontSize: 12, padding: '4px 12px' }} onClick={() => router.push('/login')}>
-                登录
-              </button>
-            )}
             <ThemeToggle />
           </div>
         </header>
+
+        {isGuest && (
+          <div className="guest-banner">
+            <span className="guest-banner-text">当前为访客模式，登录后可使用收藏、匹配、AI推荐等完整功能</span>
+            <button className="btn btn-sm guest-banner-login" onClick={() => router.push('/login')}>
+              立即登录
+            </button>
+          </div>
+        )}
 
         <PageTransition>
           <div className="page-content">{children}</div>
