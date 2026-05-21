@@ -9,9 +9,9 @@ import { HierarchicalFilter } from '@/components/HierarchicalFilter';
 import { SkeletonCard, SkeletonMetric } from '@/components/Loading';
 import { ErrorMessage, useToast } from '@/components/Toast';
 import { API, APIError } from '@/lib/api';
+import { useAppStore } from '@/store';
 import { DEBOUNCE_MS } from '@/lib/constants';
 import { useFetch } from '@/hooks/useFetch';
-import { useAppStore } from '@/store';
 import type { JobItem, PagedResponse, FilterOption, ProvinceWithCities, EducationMapping } from '@/types';
 
 interface FilterOptions {
@@ -36,7 +36,6 @@ const EMPTY_FILTERS: FilterOptions = {
 
 export default function JobsPage() {
   const toast = useToast();
-  const { user: currentUser } = useAppStore();
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [location, setLocation] = useState('');
@@ -107,11 +106,10 @@ export default function JobsPage() {
   }, [mutateJobs, mutateFilters]);
 
   const handleToggleFavorite = useCallback(async (job: JobItem) => {
-    if (!currentUser) {
-      toast.error('请登录后操作');
+    if (useAppStore.getState().isGuest) {
+      alert('请登录后收藏岗位');
       return;
     }
-
     const newFavoriteState = job.is_favorite ? 0 : 1;
 
     // 乐观更新：先更新 UI
@@ -170,7 +168,7 @@ export default function JobsPage() {
         toast.error(errorMsg);
       }
     }
-  }, [mutateJobs, toast, currentUser]);
+  }, [mutateJobs, toast]);
 
   function handleClearFilters() {
     setQuery('');
@@ -186,7 +184,7 @@ export default function JobsPage() {
   const items = jobs?.items || [];
 
   return (
-    <AppShell title="岗位列表" description="搜索、筛选和收藏金融实习岗位">
+    <AppShell title="岗位列表" description="搜索、筛选和收藏金融实习岗位" requiredPermission="view_jobs">
       <SectionCard
         title="筛选条件"
         description="按关键词、地点、类型、行业、学历和来源筛选岗位"

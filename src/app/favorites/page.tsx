@@ -7,6 +7,7 @@ import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton, StarButton } from '@/components/ui';
 import { Pagination } from '@/components/Pagination';
 import { API, APIError } from '@/lib/api';
+import { useAppStore } from '@/store';
 import type { JobItem, PagedResponse } from '@/lib/types';
 import { useToast } from '@/components/Toast';
 import { useFetch } from '@/hooks/useFetch';
@@ -35,6 +36,10 @@ export default function FavoritesPage() {
   }, []);
 
   const handleToggleFavorite = useCallback(async (job: JobItem, source?: 'list' | 'detail') => {
+    if (useAppStore.getState().isGuest) {
+      alert('请登录后收藏岗位');
+      return;
+    }
     const newFavoriteState = job.is_favorite ? 0 : 1;
 
     // 乐观更新：从收藏列表中移除

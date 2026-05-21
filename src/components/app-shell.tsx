@@ -189,6 +189,7 @@ export function AppShell({
 
         setUser(current);
         setStoreUser(current);
+        setStoreIsGuest(false);
         setReady(true);
         
       } catch (error) {

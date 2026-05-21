@@ -17,6 +17,8 @@ interface FilterOptions {
 interface AppState {
   user: AppUser | null;
   setUser: (user: AppUser | null) => void;
+  isGuest: boolean;
+  setIsGuest: (isGuest: boolean) => void;
   favoriteJobIds: Set<number>;
   setFavorite: (jobId: number, isFavorite: boolean) => void;
   removeFavorite: (jobId: number) => void;
@@ -28,6 +30,8 @@ interface AppState {
 export const useAppStore = create<AppState>((set) => ({
   user: null,
   setUser: (user) => set({ user }),
+  isGuest: false,
+  setIsGuest: (isGuest) => set({ isGuest }),
   favoriteJobIds: new Set<number>(),
   setFavorite: (jobId, isFavorite) =>
     set((state) => {

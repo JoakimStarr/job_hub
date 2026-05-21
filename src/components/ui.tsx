@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, memo, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
 import type { JobItem } from '@/lib/types';
 import { API } from '@/lib/api';
+import { useAppStore } from '@/store';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 function joinClassNames(...values: Array<string | false | null | undefined>) {
@@ -240,6 +241,10 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
   }, []);
 
   const handleAnalyze = useCallback(async () => {
+    if (useAppStore.getState().isGuest) {
+      alert('请登录后使用此功能');
+      return;
+    }
     setAiLoading(true);
     setAiError('');
     setAiResult(null);
