@@ -91,6 +91,32 @@
   border-top: 1px solid var(--panel-border);
 }
 
+.auth-guest-link {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.auth-divider {
+  display: block;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  position: relative;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: calc(50% - 20px);
+  height: 1px;
+  background: var(--panel-border);
+}
+
+.auth-divider::before { left: 0; }
+.auth-divider::after { right: 0; }
+
 @media (max-width: 768px) {
   .auth-page { padding: 16px; align-items: stretch; }
   .auth-grid { grid-template-columns: 1fr; gap: 24px; }

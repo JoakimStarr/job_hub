@@ -323,6 +323,10 @@ export function AppShell({
               className="btn sidebar-logout-danger"
               onClick={async () => {
                 try {
+                  await fetch('/api/auth/logout', { method: 'POST' });
+                } catch {
+                }
+                try {
                   clearSession();
                 } finally {
                   router.replace('/login');

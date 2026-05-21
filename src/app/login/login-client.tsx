@@ -169,15 +169,19 @@ export function LoginClient() {
             <Button type="submit" disabled={loading}>
               {loading ? '正在登录...' : '登录并进入平台'}
             </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => router.push('/')}
-              style={{ width: '100%', marginTop: 8 }}
-            >
-              游客访问
-            </Button>
           </form>
+
+          <div className="auth-guest-link">
+            <span className="auth-divider">或</span>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              style={{ width: '100%', marginTop: 12 }}
+              onClick={() => router.push('/')}
+            >
+              以访客身份浏览岗位
+            </button>
+          </div>
 
           {/* 开发环境显示默认账号 */}
           {process.env.NODE_ENV === 'development' && (

@@ -1,0 +1,21 @@
+- [x] middleware.ts 对 `/` 和 `/jobs` 路径允许无 session_token 访问
+- [x] AppShell 未登录时不再跳转登录页（访客允许页面），设置 isGuest 状态
+- [x] 访客模式下侧边栏仅显示"首页"和"岗位列表"导航项
+- [x] 访客模式下侧边栏底部显示"登录"按钮（非"退出登录"）
+- [x] 访客模式下用户角色显示"访客"
+- [x] 页面顶部显示访客提示条，含"立即登录"按钮
+- [x] `optionalAuthUnified` 函数已添加到 auth-server.ts
+- [x] `POST /api/jobs/[id]/favorite` 添加认证保护
+- [x] `PATCH /api/jobs/[id]` 添加认证保护
+- [x] `POST /api/jobs/[id]/ai-analysis` 添加认证保护
+- [x] `POST /api/resume/parse` 添加认证保护
+- [x] `POST /api/resume/diagnose` 添加认证保护
+- [x] `POST /api/recommendations/resume-advice` 添加认证保护
+- [x] `POST /api/recommendations/delivery-assistant` 添加认证保护
+- [x] `GET /api/crawler/logs` 添加权限保护
+- [x] `GET /api/system/config` 添加权限保护
+- [x] `GET /api/system/status` 添加权限保护
+- [x] 访客点击收藏按钮时弹出登录引导提示
+- [x] 访客访问需登录功能（匹配/推荐/管理）时被 middleware 重定向到登录页
+- [x] 已登录用户行为不受影响，所有功能正常使用
+- [x] NAV_ITEMS 新增 guestVisible 字段，首页和岗位列表标记为访客可见
