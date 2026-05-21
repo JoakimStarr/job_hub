@@ -1,0 +1,38 @@
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | set_level:326 | 日志级别设置为: INFO
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | init_database:616 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | start_session:338 | ======================================================================
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | start_session:339 | 轻量化单线程爬虫启动
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | start_session:340 | 启动时间: 2026-05-21 13:18:48
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | start_session:341 | Python版本: 3.13.13
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | start_session:342 | 工作目录: /home/joakim/Project/job_hub
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | start_session:343 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | start_session:344 | ======================================================================
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | main:1612 | 数据源: sufe
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | main:1614 | 每个源最多: 3 条
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | main:1615 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | main:1616 | ======================================================================
+
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | crawl_source:1547 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | log_source_start:386 | ----------------------------------------------------------------------
+2026-05-21 13:18:48 | [32mINFO[0m | lite_crawler | log_source_start:387 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-21 13:19:19 | [32mINFO[0m | lite_crawler | crawl_sufe:845 | 第 1 页: 获取到 10 条列表项
+2026-05-21 13:19:50 | [32mINFO[0m | lite_crawler | crawl_sufe:845 | 第 2 页: 获取到 10 条列表项
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | set_level:326 | 日志级别设置为: INFO
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | init_database:616 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | start_session:338 | ======================================================================
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | start_session:339 | 轻量化单线程爬虫启动
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | start_session:340 | 启动时间: 2026-05-21 13:20:25
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | start_session:341 | Python版本: 3.13.13
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | start_session:342 | 工作目录: /home/joakim/Project/job_hub
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | start_session:343 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | start_session:344 | ======================================================================
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | main:1612 | 数据源: sufe
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | main:1614 | 每个源最多: 2 条
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | main:1615 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | main:1616 | ======================================================================
+
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | crawl_source:1547 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | log_source_start:386 | ----------------------------------------------------------------------
+2026-05-21 13:20:25 | [32mINFO[0m | lite_crawler | log_source_start:387 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-21 13:20:56 | [32mINFO[0m | lite_crawler | crawl_sufe:845 | 第 1 页: 获取到 10 条列表项
+2026-05-21 13:21:27 | [32mINFO[0m | lite_crawler | crawl_sufe:845 | 第 2 页: 获取到 10 条列表项

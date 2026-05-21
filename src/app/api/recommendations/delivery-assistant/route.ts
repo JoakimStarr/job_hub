@@ -3,10 +3,15 @@ import { aiService } from '@/lib/ai-service';
 import { requireAuthUnified } from '@/lib/auth-server';
 import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
+import { logAICall, initAILogTable } from '@/lib/ai-logger';
+
+initAILogTable();
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+
   try {
-    await requireAuthUnified(request);
+    const user = await requireAuthUnified(request);
 
     const body = await request.json();
     const { profile, prompt } = body;
@@ -49,10 +54,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await aiService.chat([
+    const response = await (aiService as NonNullable<typeof aiService>).chat([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ]);
+
+    logAICall({
+      sessionId: `delivery_${Date.now()}`,
+      type: 'delivery',
+      provider: process.env.AI_PROVIDER || 'unknown',
+      model: response.model,
+      status: 'success',
+      durationMs: Date.now() - startTime,
+      inputSummary: userPrompt.slice(0, 200),
+      outputSummary: response.content.slice(0, 500),
+      userId: user.id,
+      inputTokens: response.usage?.prompt_tokens,
+      outputTokens: response.usage?.completion_tokens,
+      totalTokens: response.usage?.total_tokens,
+    });
+
+    const duration = Date.now() - startTime;
+    logger.api('POST', '/api/recommendations/delivery-assistant', 200, duration);
 
     return NextResponse.json({
       result: response.content,
@@ -64,6 +87,16 @@ export async function POST(request: NextRequest) {
     if (error instanceof AuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
+    logAICall({
+      sessionId: `delivery_${Date.now()}`,
+      type: 'delivery',
+      provider: process.env.AI_PROVIDER || 'unknown',
+      model: '',
+      status: 'error',
+      durationMs: Date.now() - startTime,
+      inputSummary: 'delivery assistant request',
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+    });
     logger.error('投递助手错误:', error);
     return NextResponse.json(
       { error: '投递助手生成失败，请稍后重试' },

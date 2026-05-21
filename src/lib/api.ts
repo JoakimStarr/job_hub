@@ -154,6 +154,18 @@ export const API = {
 
   getRecommendations: (data: Record<string, unknown> = {}) => request('/api/recommendations/analyze', { method: 'POST', body: JSON.stringify(data) }),
   getRecommendationChat: (data: Record<string, unknown> = {}) => request('/api/recommendations/chat', { method: 'POST', body: JSON.stringify(data) }),
+  getRecommendationChatStream: (data: Record<string, unknown> = {}) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem(AUTH_TOKEN_KEY) : '';
+    return fetch('/api/recommendations/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'text/event-stream',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ ...data, stream: true }),
+    });
+  },
   getResumeAdvice: (data: Record<string, unknown> = {}) => request('/api/recommendations/resume-advice', { method: 'POST', body: JSON.stringify(data) }),
   getDeliveryAssistant: (data: Record<string, unknown> = {}) => request('/api/recommendations/delivery-assistant', { method: 'POST', body: JSON.stringify(data) }),
   getRecommendationHistory: (limit = 10) => request(`/api/recommendations/history?limit=${limit}`),
@@ -162,4 +174,19 @@ export const API = {
   reportRecommendationClick: (data: Record<string, unknown>) => request('/api/recommendations/metrics/click', { method: 'POST', body: JSON.stringify(data) }),
   reportRecommendationDelivery: (data: Record<string, unknown>) => request('/api/recommendations/metrics/delivery', { method: 'POST', body: JSON.stringify(data) }),
   reportRecommendationFeedback: (data: Record<string, unknown>) => request('/api/recommendations/feedback', { method: 'POST', body: JSON.stringify(data) }),
+
+  getChatSessions: (limit = 10) => request('/api/recommendations/chat', { method: 'GET' }),
+  getChatSession: (sessionId: string) => request(`/api/recommendations/chat?session_id=${sessionId}`),
+  deleteChatSession: (sessionId: string) => request(`/api/recommendations/chat?session_id=${sessionId}`, { method: 'DELETE' }),
+
+  semanticSearch: (params: Record<string, unknown> = {}) => {
+    const query = new URLSearchParams();
+    if (params.q) query.set('q', String(params.q));
+    if (params.top_k) query.set('top_k', String(params.top_k));
+    return request(`/api/jobs/semantic-search?${query.toString()}`);
+  },
+  generateJobEmbeddings: (limit = 100) => request('/api/jobs/semantic-search', {
+    method: 'POST',
+    body: JSON.stringify({ action: 'generate_embeddings', limit }),
+  }),
 };

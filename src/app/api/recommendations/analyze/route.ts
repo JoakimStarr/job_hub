@@ -7,6 +7,7 @@ import type { ResumeProfile, JobItem } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
 import { logger } from '@/lib/logger';
+import { buildRAGContext, buildRAGPrompt } from '@/lib/embedding-service';
 
 export async function POST(request: NextRequest) {
   try {
@@ -94,6 +95,13 @@ export async function POST(request: NextRequest) {
 
     if (prompt) {
       userPrompt += `用户问题：${prompt}\n`;
+    }
+
+    if (job) {
+      const ragItems = buildRAGContext(job.id);
+      if (ragItems.length > 0) {
+        userPrompt += `\n【参考信息】\n${buildRAGPrompt(ragItems)}\n`;
+      }
     }
 
     if (!userPrompt) {

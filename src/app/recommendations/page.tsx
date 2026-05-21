@@ -6,6 +6,9 @@ import { Badge, Button, EmptyState, FileUpload, Input, JobCard, SectionCard, Ske
 import { API } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
 import type { JobItem } from '@/lib/types';
+import AIAnalysisResult, { isAnalysisResult } from '@/components/AIAnalysisResult';
+import AIChatPanel from '@/components/AIChatPanel';
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 type RecommendationMode = 'analyze' | 'resume' | 'delivery';
 
@@ -38,7 +41,27 @@ function renderResult(data: unknown, submitting: boolean) {
   if (typeof data === 'string') {
     return (
       <div className="ai-result">
-        <pre className="textarea" style={{ whiteSpace: 'pre-wrap', minHeight: 280 }}>{data}</pre>
+        <MarkdownRenderer content={data} />
+      </div>
+    );
+  }
+
+  const d = data as Record<string, unknown>;
+
+  if (isAnalysisResult(data)) {
+    const { _meta, ...resultData } = data;
+    return (
+      <AIAnalysisResult
+        data={resultData}
+        meta={_meta || undefined}
+      />
+    );
+  }
+
+  if ((d.result || d.content) && typeof (d.result || d.content) === 'string') {
+    return (
+      <div className="ai-result">
+        <MarkdownRenderer content={d.result as string || d.content as string} />
       </div>
     );
   }
@@ -70,6 +93,8 @@ export default function RecommendationsPage() {
   const [message, setMessage] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeContent, setResumeContent] = useState('');
+  const [analysisSessionId, setAnalysisSessionId] = useState<string>('');
+  const [showChat, setShowChat] = useState(false);
 
   const { data: historyData, loading: historyLoading, mutate: mutateHistory } = useFetch<unknown[]>(
     '/api/recommendations/history?limit=5',
@@ -92,6 +117,9 @@ export default function RecommendationsPage() {
 
   async function submitAction() {
     setMessage('');
+    setShowChat(false);
+    setAnalysisSessionId('');
+
     const trimmedJobId = jobId.trim();
     let parsedJobId: number | undefined;
 
@@ -107,13 +135,22 @@ export default function RecommendationsPage() {
     try {
       const combinedProfile = [profile, resumeContent].filter(Boolean).join('\n\n');
       let result: unknown = null;
+
       if (mode === 'analyze') {
         result = await API.getRecommendations({ job_id: parsedJobId, profile: combinedProfile, prompt });
+        if (result && typeof result === 'object' && '_meta' in (result as Record<string, unknown>)) {
+          const meta = (result as Record<string, unknown>)._meta as Record<string, unknown>;
+          if (meta?.session_id) {
+            setAnalysisSessionId(meta.session_id as string);
+            setShowChat(true);
+          }
+        }
       } else if (mode === 'resume') {
         result = await API.getResumeAdvice({ profile: combinedProfile, prompt });
       } else {
         result = await API.getDeliveryAssistant({ profile: combinedProfile, prompt });
       }
+
       setResponse(result);
     } catch (requestError) {
       setMessage(requestError instanceof Error ? requestError.message : '请求失败');
@@ -124,6 +161,8 @@ export default function RecommendationsPage() {
 
   const hasResumeFile = resumeFile !== null;
   const activeTabLabel = TABS.find((t) => t.key === mode)?.label || '岗位分析';
+  const currentJobIdNum = jobId ? parseInt(jobId) : undefined;
+  const hasAnalysisResult = response !== null && isAnalysisResult(response);
 
   return (
     <AppShell title="智能推荐" description="AI 分析、简历建议和投递辅助" requiredPermission="use_recommendations">
@@ -187,11 +226,36 @@ export default function RecommendationsPage() {
         </div>
 
         <div style={{ flex: '1 1 60%', minWidth: 0 }}>
-          <TabNav tabs={TABS} active={mode} onChange={setMode} />
+          <TabNav tabs={TABS} active={mode} onChange={(m) => { setMode(m); setResponse(null); setShowChat(false); }} />
           <div style={{ marginTop: 0 }}>
             <SectionCard title="AI 推荐结果" description={`当前模式：${activeTabLabel}`}>
               {renderResult(response, submitting)}
             </SectionCard>
+
+            {hasAnalysisResult && !showChat && currentJobIdNum ? (
+              <div style={{ marginTop: 12 }}>
+                <Button
+                  variant="secondary"
+                  onClick={() => setShowChat(true)}
+                >
+                  💬 继续追问
+                </Button>
+              </div>
+            ) : null}
+
+            {showChat && currentJobIdNum ? (
+              <div style={{ marginTop: 12 }}>
+                <SectionCard title="AI 追问对话" description="基于当前分析结果继续提问">
+                  <AIChatPanel
+                    jobId={currentJobIdNum}
+                    sessionId={analysisSessionId || undefined}
+                    onSessionIdChange={setAnalysisSessionId}
+                    disabled={!hasAnalysisResult}
+                    placeholder="例如：这个岗位的面试流程是怎样的？需要准备哪些材料？"
+                  />
+                </SectionCard>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -205,14 +269,14 @@ export default function RecommendationsPage() {
           {!historyLoading && history.length > 0 ? (
             <div className="grid" style={{ gap: 12 }}>
               {history.map((item, index) => {
-            if (typeof item !== 'object' || item === null) return null;
-            const historyItem = item as Record<string, unknown>;
-            const modeLabel = historyItem.mode === 'analyze' ? '岗位分析' :
-                              historyItem.mode === 'resume' ? '简历建议' : '投递助手';
-            const timestamp = historyItem.created_at ?
-              new Date(historyItem.created_at as string).toLocaleString('zh-CN') :
-              `记录 ${index + 1}`;
-                
+                if (typeof item !== 'object' || item === null) return null;
+                const historyItem = item as Record<string, unknown>;
+                const modeLabel = historyItem.mode === 'analyze' ? '岗位分析' :
+                                  historyItem.mode === 'resume' ? '简历建议' : '投递助手';
+                const timestamp = historyItem.created_at ?
+                  new Date(historyItem.created_at as string).toLocaleString('zh-CN') :
+                  `记录 ${index + 1}`;
+
                 return (
                   <div key={index} className="history-card" onClick={() => setResponse(historyItem.result)}>
                     <div className="history-card-header">
@@ -220,8 +284,8 @@ export default function RecommendationsPage() {
                       <Badge tone="blue">{timestamp}</Badge>
                     </div>
                     <div className="history-card-content">
-                      {historyItem.profile ? 
-                        String(historyItem.profile).substring(0, 100) + '...' : 
+                      {historyItem.profile ?
+                        String(historyItem.profile).substring(0, 100) + '...' :
                         '点击查看详情'}
                     </div>
                   </div>
