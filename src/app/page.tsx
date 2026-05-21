@@ -4,31 +4,39 @@ import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton } from '@/components/ui';
+import { Pagination } from '@/components/Pagination';
 import { API } from '@/lib/api';
 import { useAppStore } from '@/store';
 import { useFetch } from '@/hooks/useFetch';
-import type { JobItem, StatsOverview } from '@/lib/types';
+import type { JobItem, StatsOverview, PagedResponse } from '@/types';
+
+const LATEST_DAYS = 7;
+const PAGE_SIZE = 8;
 
 export default function HomePage() {
   const router = useRouter();
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
+  const [page, setPage] = useState(1);
 
   const { data: stats, error: statsError, loading: statsLoading, mutate: mutateStats } = useFetch<StatsOverview>(
     '/api/stats/overview',
     () => API.getStatsOverview(),
   );
 
-  const { data: latestResult, error: jobsError, loading: jobsLoading, mutate: mutateJobs } = useFetch<{ items: JobItem[] }>(
-    '/api/jobs?page=1&page_size=6&days=7&sort=publish_date&order=desc',
-    () => API.getJobs({ page: 1, page_size: 6, days: 7, sort: 'publish_date', order: 'desc' }),
+  const jobsKey = `/api/jobs?page=${page}&page_size=${PAGE_SIZE}&days=${LATEST_DAYS}&sort=publish_date&order=desc`;
+  const { data: latestResult, error: jobsError, loading: jobsLoading, mutate: mutateJobs } = useFetch<PagedResponse<JobItem>>(
+    jobsKey,
+    () => API.getJobs({ page, page_size: PAGE_SIZE, days: LATEST_DAYS, sort: 'publish_date', order: 'desc' }),
   );
 
   const loading = statsLoading || jobsLoading;
   const error = statsError?.message || jobsError?.message || '';
   const jobs = latestResult?.items || [];
+  const totalPages = latestResult?.pages || 0;
   const overview = stats?.overview || {};
 
   const handleRefresh = useCallback(() => {
+    setPage(1);
     mutateStats();
     mutateJobs();
   }, [mutateStats, mutateJobs]);
@@ -39,7 +47,8 @@ export default function HomePage() {
       return;
     }
     await API.toggleFavorite(job.id);
-    handleRefresh();
+    mutateStats();
+    mutateJobs();
   }
 
   function handleKeywordClick(keyword: string) {
@@ -88,11 +97,16 @@ export default function HomePage() {
             {jobs.length === 0 ? (
               <EmptyState title="暂无岗位" description="当前数据库里还没有可展示的岗位。" />
             ) : (
-              <div className="grid" style={{ gap: '14px' }}>
-                {jobs.map((job) => (
-                  <JobCard key={job.id} job={job} onToggleFavorite={() => handleToggleFavorite(job)} onClick={(target) => setSelectedJob(target)} onTagClick={handleTagClick} />
-                ))}
-              </div>
+              <>
+                <div className="grid" style={{ gap: '14px' }}>
+                  {jobs.map((job) => (
+                    <JobCard key={job.id} job={job} onToggleFavorite={() => handleToggleFavorite(job)} onClick={(target) => setSelectedJob(target)} onTagClick={handleTagClick} />
+                  ))}
+                </div>
+                {totalPages > 1 && (
+                  <Pagination current={page} total={totalPages} onChange={(p) => setPage(p)} />
+                )}
+              </>
             )}
           </SectionCard>
 
