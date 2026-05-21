@@ -19,8 +19,8 @@ export default function HomePage() {
   );
 
   const { data: latestResult, error: jobsError, loading: jobsLoading, mutate: mutateJobs } = useFetch<{ items: JobItem[] }>(
-    '/api/jobs?home_latest',
-    () => API.getJobs({ page: 1, page_size: 6, days: 7, sort: 'created_at', order: 'desc' }),
+    '/api/jobs?page=1&page_size=6&days=7&sort=publish_date&order=desc',
+    () => API.getJobs({ page: 1, page_size: 6, days: 7, sort: 'publish_date', order: 'desc' }),
   );
 
   const loading = statsLoading || jobsLoading;

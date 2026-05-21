@@ -98,6 +98,8 @@ export interface JobQueryFilters {
   multiLocation?: string[];
   multiIndustry?: string[];
   multiJobType?: string[];
+  /** 筛选最近 N 天内发布的岗位（基于 publish_date 字段） */
+  publishDateDays?: number;
 }
 
 export function buildJobWhereClause(filters: JobQueryFilters): { whereClause: string; params: unknown[] } {
@@ -140,6 +142,11 @@ export function buildJobWhereClause(filters: JobQueryFilters): { whereClause: st
   if (filters.isFavorite !== undefined && filters.isFavorite !== null) {
     conditions.push('is_favorite = ?');
     params.push(typeof filters.isFavorite === 'boolean' ? (filters.isFavorite ? 1 : 0) : filters.isFavorite);
+  }
+
+  if (filters.publishDateDays && filters.publishDateDays > 0) {
+    conditions.push("date(publish_date) >= date('now', ?)");
+    params.push(`-${filters.publishDateDays} days`);
   }
 
   if (filters.multiLocation && filters.multiLocation.length > 0) {

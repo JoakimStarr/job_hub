@@ -24,6 +24,8 @@ export async function GET(request: NextRequest) {
     const education = searchParams.get('education') || '';
     const sourceParam = searchParams.get('source') || '';
     const isFavorite = searchParams.get('is_favorite');
+    const daysParam = searchParams.get('days');
+    const days = daysParam ? parseInt(daysParam) : 0;
     const sort = searchParams.get('sort') || 'created_at';
     const order = searchParams.get('order') || 'desc';
 
@@ -38,6 +40,7 @@ export async function GET(request: NextRequest) {
         education: education || undefined,
         source: sourceParam || undefined,
         isFavorite: isFavorite !== null && isFavorite !== '' ? parseInt(isFavorite) : undefined,
+        publishDateDays: days > 0 ? days : undefined,
       });
       
       const countSql = `SELECT COUNT(*) as total FROM jobs ${whereClause}`;
