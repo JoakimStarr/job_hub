@@ -265,40 +265,57 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
     }
   }, [job.id]);
 
-  return (
-    <div className="modal-backdrop" onClick={onClose} role="presentation">
-      <div
-        className="job-detail-modal"
-        ref={modalRef}
-        onClick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="job-detail-title"
-      >
-        <div className="job-detail-head">
-          <div>
-            <h2 id="job-detail-title">{job.title}</h2>
-            <div className="job-detail-meta">
-              {job.company ? <span>{job.company}</span> : null}
-              {job.location ? <span>📍 {job.location}</span> : null}
-              {detailDate ? <span>📅 {detailDate}</span> : null}
-            </div>
+  async function handleShare() {
+  const url = job.apply_url || job.source_url || '';
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: job.title, url });
+    } catch {
+      // user cancelled
+    }
+  } else {
+    try {
+      await navigator.clipboard.writeText(url);
+      // TODO: show toast
+    } catch {
+      // fallback
+    }
+  }
+}
+
+return (
+  <div className="modal-backdrop" onClick={onClose} role="presentation">
+    <div
+      className="job-detail-modal"
+      ref={modalRef}
+      onClick={(e) => e.stopPropagation()}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="job-detail-title"
+    >
+      <div className="job-detail-head">
+        <div>
+          <h2 id="job-detail-title">{job.title}</h2>
+          <div className="job-detail-meta">
+            {job.company ? <span>{job.company}</span> : null}
+            {job.location ? <span>📍 {job.location}</span> : null}
+            {detailDate ? <span>📅 {detailDate}</span> : null}
           </div>
-          <div className="job-detail-actions">
-            {onToggleFavorite ? (
-              <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} />
-            ) : null}
-            {job.source_url || job.apply_url ? (
-              <a
-                href={job.apply_url || job.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-primary"
-                style={{ fontSize: 13, textDecoration: 'none' }}
-                aria-label="查看原网页"
-              >
-                查看原网页 ↗
-              </a>
+        </div>
+        <div className="job-detail-actions">
+          {onToggleFavorite ? (
+            <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} />
+          ) : null}
+          {(job.source_url || job.apply_url) ? (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleShare}
+              style={{ fontSize: 13 }}
+              aria-label="分享岗位"
+            >
+              分享
+            </button>
             ) : null}
             <button type="button" className="modal-close-btn" onClick={onClose} aria-label="关闭">
               ✕
@@ -335,13 +352,13 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
               </div>
             ) : null}
             {(job.source_url || job.apply_url) ? (
-              <div className="job-detail-info-item">
-                <span className="job-detail-info-label">来源链接</span>
+              <div className="job-detail-source-link">
+                <span className="job-detail-source-label">来源链接</span>
                 <a
                   href={job.apply_url || job.source_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: 'var(--primary)', wordBreak: 'break-all' }}
+                  className="job-detail-source-url"
                 >
                   {job.apply_url || job.source_url}
                 </a>
