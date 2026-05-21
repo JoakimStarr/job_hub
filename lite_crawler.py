@@ -50,6 +50,10 @@ SCHEDULE_INTERVALS = {
     "daily": 86400,
     "weekly": 604800,
 }
+BATCH_COMMIT_SIZE = 50
+URL_CACHE_MAX_SIZE = 100000
+REQUEST_TIMEOUT = 30
+DETAIL_DELAY = 0.5
 
 HTTP_SOURCES = get_lite_http_sources()
 
@@ -110,6 +114,73 @@ class Database:
 
 db = Database()
 
+_pending_commits = 0
+
+
+def _batch_commit():
+    """批量提交：累积到阈值时提交"""
+    global _pending_commits
+    _pending_commits += 1
+    if _pending_commits >= BATCH_COMMIT_SIZE:
+        db.commit()
+        _pending_commits = 0
+        logger.debug(f"批量提交 {BATCH_COMMIT_SIZE} 条记录")
+
+
+def _flush_pending_commits():
+    """刷新所有待提交的记录"""
+    global _pending_commits
+    if _pending_commits > 0:
+        db.commit()
+        _pending_commits = 0
+
+
+def incremental_crawl(func):
+    """
+    增量爬取装饰器：统一处理状态加载/保存
+    
+    被装饰的函数需要接受 (source_config, max_items) 参数，
+    并返回 Iterator[Dict]。
+    
+    装饰器会自动:
+    1. 加载增量状态 (load_crawl_state)
+    2. 将 start_page 传递给被装饰函数
+    3. 在函数结束后保存状态 (save_crawl_state)
+    """
+    import json as json_mod
+    from functools import wraps
+    
+    @wraps(func)
+    def wrapper(source_config: Dict, max_items: int = 0, **kwargs):
+        source = kwargs.get('source') or source_config.get('source', func.__name__.replace('crawl_', ''))
+        source_name = source_config.get('name', source)
+        
+        state = load_crawl_state(source)
+        state_extra = json_mod.loads(state.get('extra', '{}'))
+        start_page = state_extra.get('page', 1)
+        
+        if start_page > 1:
+            logger.info(f"增量爬取: 从第 {start_page} 页开始 (上次爬取时间: {state.get('last_crawl_time', '未知')})")
+        
+        crawl_logger.log_source_start(source, source_name)
+        
+        last_completed_page = start_page - 1
+        count = 0
+        
+        try:
+            for job in func(source_config, max_items, start_page=start_page, **kwargs):
+                yield job
+                count += 1
+                last_completed_page = kwargs.get('_current_page', last_completed_page)
+        finally:
+            if last_completed_page > 0:
+                state_extra['page'] = last_completed_page + 1
+                save_crawl_state(source, last_completed_page, count, extra=json_mod.dumps(state_extra))
+            
+            crawl_logger.log_source_end(source, source_name, count)
+    
+    return wrapper
+
 
 def _get_random_headers():
     """获取随机请求头"""
@@ -125,6 +196,9 @@ def preload_existing_urls():
         row = db.execute("SELECT source_url FROM jobs").fetchall()
         _url_cache = {r[0] for r in row}
         logger.debug(f"预加载 {len(_url_cache)} 条已存在URL到内存")
+        
+        if len(_url_cache) > URL_CACHE_MAX_SIZE:
+            logger.warning(f"URL缓存超过阈值 ({URL_CACHE_MAX_SIZE})，建议清理旧数据")
     except Exception as e:
         logger.warning(f"预加载URL失败: {e}")
         _url_cache = set()
@@ -140,6 +214,9 @@ def mark_url_exists(urls):
     global _url_cache, _url_cache_dirty
     _url_cache.update(urls)
     _url_cache_dirty = True
+    
+    if len(_url_cache) > URL_CACHE_MAX_SIZE:
+        logger.warning(f"URL缓存达到 {len(_url_cache)}，超过阈值 {URL_CACHE_MAX_SIZE}")
 
 
 def flush_url_cache_if_dirty():
@@ -148,6 +225,15 @@ def flush_url_cache_if_dirty():
     if _url_cache_dirty:
         preload_existing_urls()
         _url_cache_dirty = False
+
+
+def trim_url_cache():
+    """清理URL缓存，移除最旧的记录"""
+    global _url_cache
+    if len(_url_cache) > URL_CACHE_MAX_SIZE:
+        excess = len(_url_cache) - URL_CACHE_MAX_SIZE
+        _url_cache = set(list(_url_cache)[excess:])
+        logger.info(f"URL缓存已清理，移除 {excess} 条旧记录")
 
 
 class ColoredFormatter(logging.Formatter):
@@ -600,42 +686,34 @@ def load_crawl_state(source: str) -> Dict:
 
 
 def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
-    """插入岗位数据，基于(title,company)去重保留最完整记录，并按时间筛选"""
+    """插入岗位数据，基于 source_url 去重（与主爬虫一致），并按时间筛选"""
     
     source = job.get("source", "unknown")
     title = job.get("title", "")
-    company = job.get("company", "")
+    source_url = job.get("source_url", "")
     publish_date = job.get("publish_date", "")
+    
+    if not source_url:
+        logger.debug(f"岗位缺少 source_url，跳过: {title}")
+        return False
     
     if not is_within_date_range(publish_date, date_filter_months):
         crawl_logger.log_job_duplicate(source, f"{title} [过期:{publish_date}]")
         return False
     
+    if url_exists(source_url):
+        crawl_logger.log_job_duplicate(source, title)
+        return False
+    
     try:
-        crawl_logger.log_job_fetched(source, title, company)
-        
-        existing = db.execute(
-            "SELECT id, LENGTH(description) as desc_len FROM jobs WHERE title=? AND company=? AND source=?",
-            (title, company, source)
-        ).fetchone()
-        
-        new_desc_len = len(job.get("description", ""))
-        
-        if existing:
-            old_id, old_desc_len = existing
-            if new_desc_len <= old_desc_len:
-                crawl_logger.log_job_duplicate(source, title)
-                return False
-            
-            logger.info(f"更新更完整记录: [{title}] ({old_desc_len} → {new_desc_len}字符)")
-            db.execute("DELETE FROM jobs WHERE id=?", (old_id,))
-            crawl_logger.log_database_operation("删除重复", "jobs", True, 1)
+        crawl_logger.log_job_fetched(source, title, job.get("company", ""))
         
         db.execute("""
             INSERT INTO jobs 
             (title, company, location, salary, education, requirements, description, 
-             contact, publish_date, deadline, industry, job_type, source, university, source_url, apply_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             contact, publish_date, deadline, industry, job_type, experience, tags,
+             source, university, source_url, apply_url)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             job.get("title", ""),
             job.get("company", ""),
@@ -649,22 +727,25 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
             job.get("deadline", ""),
             job.get("industry", ""),
             job.get("job_type", "全职"),
+            job.get("experience", ""),
+            job.get("tags", ""),
             job.get("source", ""),
             job.get("university", ""),
-            job.get("source_url", ""),
+            source_url,
             job.get("apply_url", ""),
         ))
         
         cursor = db.execute("SELECT last_insert_rowid()")
         job_id = cursor.fetchone()[0]
-        db.commit()
         
-        mark_url_exists([job.get("source_url", "")])
+        mark_url_exists([source_url])
+        _batch_commit()
+        
         crawl_logger.log_job_success(source, job_id)
         return True
         
-    except sqlite3.IntegrityError as e:
-        logger.warning(f"数据唯一约束冲突: {title} @ {company}")
+    except sqlite3.IntegrityError:
+        crawl_logger.log_job_duplicate(source, title)
         return False
     except Exception as e:
         crawl_logger.log_error(source, e, f"插入岗位: {title}")
@@ -723,7 +804,6 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
     source_name = source_config["name"]
     base_url = source_config["base_url"]
     list_url = urljoin(base_url, source_config["list_url"])
-    field_mapping = source_config["field_mapping"]
 
     crawl_logger.log_source_start(source, source_name)
 
@@ -860,7 +940,6 @@ def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
     source = "zuel"
     source_name = source_config["name"]
     base_url = source_config["base_url"]
-    field_mapping = source_config["field_mapping"]
 
     crawl_logger.log_source_start(source, source_name)
 
@@ -1001,7 +1080,6 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
     import json as json_mod
     source_name = source_config["name"]
     base_url = source_config["base_url"]
-    field_mapping = source_config["field_mapping"]
 
     crawl_logger.log_source_start(source, source_name)
 
@@ -1563,6 +1641,7 @@ def main():
     
     crawl_logger.end_session()
     
+    _flush_pending_commits()
     db.close()
     flush_url_cache_if_dirty()
 

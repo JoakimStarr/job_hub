@@ -1,22 +1,29 @@
 # 多阶段构建 Dockerfile for FinIntern Hub
-# 使用 Node.js 20 Alpine 作为基础镜像
+# 使用 Node.js 20 (Debian-based) 作为基础镜像，确保 native 模块编译兼容性
 
 # ==========================================
 # 阶段 1: 依赖安装 (deps)
 # ==========================================
-FROM node:20-alpine AS deps
+FROM node:20-slim AS deps
 
-# 配置阿里云 Alpine 镜像源
-RUN sed -i 's|https://dl-cdn.alpinelinux.org/alpine|http://mirrors.aliyun.com/alpine|g' /etc/apk/repositories \
-    && echo "http://mirrors.aliyun.com/alpine/v3.23/main" >> /etc/apk/repositories \
-    && echo "http://mirrors.aliyun.com/alpine/v3.23/community" >> /etc/apk/repositories
+# 配置阿里云 Debian 镜像源
+RUN rm -f /etc/apt/sources.list.d/debian.sources \
+    && echo "deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
 # 安装 better-sqlite3 编译所需的工具链
-RUN apk add --no-cache python3 make g++
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# 配置 npm 镜像源
+# 配置 npm 镜像源（registry 用于包下载）
 ARG NPM_REGISTRY=https://registry.npmmirror.com
 RUN npm config set registry ${NPM_REGISTRY}
+
+# NODEJS_ORG_MIRROR 用于 node-gyp 下载 Node.js headers，通过 npmmirror 镜像加速
+ENV NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
 
 WORKDIR /app
 
@@ -29,19 +36,26 @@ RUN npm ci --prefer-offline --no-audit --no-fund
 # ==========================================
 # 阶段 2: 构建 (builder)
 # ==========================================
-FROM node:20-alpine AS builder
+FROM node:20-slim AS builder
 
-# 配置阿里云 Alpine 镜像源
-RUN sed -i 's|https://dl-cdn.alpinelinux.org/alpine|http://mirrors.aliyun.com/alpine|g' /etc/apk/repositories \
-    && echo "http://mirrors.aliyun.com/alpine/v3.23/main" >> /etc/apk/repositories \
-    && echo "http://mirrors.aliyun.com/alpine/v3.23/community" >> /etc/apk/repositories
+# 配置阿里云 Debian 镜像源
+RUN rm -f /etc/apt/sources.list.d/debian.sources \
+    && echo "deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
 # 安装 better-sqlite3 编译所需的工具链
-RUN apk add --no-cache python3 make g++
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # 配置 npm 镜像源
 ARG NPM_REGISTRY=https://registry.npmmirror.com
 RUN npm config set registry ${NPM_REGISTRY}
+
+# NODEJS_ORG_MIRROR 用于 node-gyp 下载 Node.js headers，通过 npmmirror 镜像加速
+ENV NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
 
 WORKDIR /app
 
@@ -58,19 +72,22 @@ RUN npm run build
 # ==========================================
 # 阶段 3: 运行 (runner)
 # ==========================================
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 
-# 配置阿里云 Alpine 镜像源
-RUN sed -i 's|https://dl-cdn.alpinelinux.org/alpine|http://mirrors.aliyun.com/alpine|g' /etc/apk/repositories \
-    && echo "http://mirrors.aliyun.com/alpine/v3.23/main" >> /etc/apk/repositories \
-    && echo "http://mirrors.aliyun.com/alpine/v3.23/community" >> /etc/apk/repositories
+# 配置阿里云 Debian 镜像源
+RUN rm -f /etc/apt/sources.list.d/debian.sources \
+    && echo "deb http://mirrors.aliyun.com/debian bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
+    && echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
 # 安装 curl 用于健康检查
-RUN apk add --no-cache curl
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # 创建非 root 用户
-RUN addgroup --system --gid 1001 nodejs \
-    && adduser --system --uid 1001 nextjs
+RUN groupadd --system --gid 1001 nodejs \
+    && useradd --system --uid 1001 --gid 1001 nextjs
 
 WORKDIR /app
 

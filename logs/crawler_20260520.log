@@ -1393,3 +1393,26 @@
 2026-05-20 19:02:25 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 7 页: 获取到 10 条列表项
 2026-05-20 19:02:26 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 8 页: 获取到 10 条列表项
 2026-05-20 19:02:27 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 9 页: 获取到 10 条列表项
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | set_level:240 | 日志级别设置为: INFO
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | init_database:519 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | start_session:252 | ======================================================================
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | start_session:253 | 轻量化单线程爬虫启动
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | start_session:254 | 启动时间: 2026-05-20 19:28:51
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | start_session:255 | Python版本: 3.13.13
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | start_session:256 | 工作目录: /home/joakim/Project/job_hub
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | start_session:257 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | start_session:258 | ======================================================================
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | main:1644 | 数据源: sufe
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | main:1646 | 每个源最多: 2 条
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | main:1647 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | main:1648 | ======================================================================
+
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | crawl_source:1587 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | log_source_start:300 | ----------------------------------------------------------------------
+2026-05-20 19:28:51 | [32mINFO[0m | lite_crawler | log_source_start:301 | ▶ 开始爬取 [上海财经大学] (source: sufe)
+2026-05-20 19:29:21 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 1 页: 获取到 10 条列表项
+2026-05-20 19:29:52 | [32mINFO[0m | lite_crawler | crawl_sufe:716 | 第 2 页: 获取到 10 条列表项
+2026-05-20 20:04:29 | DEBUG    | lite_crawler | preload_existing_urls:127 | 预加载 68 条已存在URL到内存
+2026-05-20 20:04:29 | DEBUG    | lite_crawler | log_database_operation:375 | ✓ 数据库初始化: jobs/crawl_logs/crawler_status/crawl_state
+2026-05-20 20:04:29 | [32mINFO[0m | lite_crawler | init_database:530 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-20 20:04:29 | DEBUG    | lite_crawler | save_crawl_state:588 | 增量状态已保存: [swufe] last_page=3, count=10
