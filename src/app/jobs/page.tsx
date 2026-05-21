@@ -359,10 +359,9 @@ export default function JobsPage() {
         description="点击卡片查看详情，点击星星切换收藏状态"
         action={
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div className="sort-bar">
-              <span className="sort-label">排序</span>
+            <div className="sort-controls">
               <select
-                className="sort-select"
+                className="sort-field-select"
                 value={sortField}
                 onChange={(e) => { setSortField(e.target.value as typeof sortField); setPage(1); }}
                 aria-label="排序字段"
@@ -372,12 +371,24 @@ export default function JobsPage() {
                 ))}
               </select>
               <button
-                className="sort-order-btn"
+                className="sort-dir-btn"
                 onClick={() => { setSortOrder((o) => o === 'desc' ? 'asc' : 'desc'); setPage(1); }}
-                title={sortOrder === 'desc' ? '当前：降序（点击切换为升序）' : '当前：升序（点击切换为降序）'}
+                title={sortOrder === 'desc' ? '切换为升序（旧到新）' : '切换为降序（新到旧）'}
                 aria-label={sortOrder === 'desc' ? '切换为升序' : '切换为降序'}
               >
-                {sortOrder === 'desc' ? '↓ 新到旧' : '↑ 旧到新'}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  {sortOrder === 'desc' ? (
+                    <>
+                      <path d="M8 3L13 8H3L8 3Z" fill="currentColor" opacity="0.35"/>
+                      <path d="M8 13L3 8H13L8 13Z" fill="currentColor"/>
+                    </>
+                  ) : (
+                    <>
+                      <path d="M8 3L13 8H3L8 3Z" fill="currentColor"/>
+                      <path d="M8 13L3 8H13L8 13Z" fill="currentColor" opacity="0.35"/>
+                    </>
+                  )}
+                </svg>
               </button>
             </div>
             <RefreshButton onRefresh={handleRefresh} />
