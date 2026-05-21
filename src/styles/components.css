@@ -345,6 +345,78 @@
 }
 
 /* ======== 已选筛选项 Tag 展示 ======== */
+
+/* ======== 排序栏 ======== */
+.sort-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.sort-label {
+  color: var(--muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.sort-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--card);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 24px 4px 8px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M3 4.5l3 3 3-3'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.sort-select:hover {
+  border-color: var(--primary);
+}
+
+.sort-select:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: -1px;
+}
+
+.sort-order-btn {
+  background: var(--card);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out);
+}
+
+.sort-order-btn:hover {
+  border-color: var(--primary);
+  background: var(--hover);
+}
+
+@media (max-width: 767px) {
+  .sort-bar {
+    font-size: 12px;
+  }
+  .sort-select {
+    font-size: 12px;
+    padding: 4px 20px 4px 6px;
+  }
+  .sort-order-btn {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
 .filter-tags {
   display: flex;
   flex-wrap: wrap;

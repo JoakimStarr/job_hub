@@ -44,6 +44,8 @@ export default function JobsPage() {
   const [education, setEducation] = useState('');
   const [source, setSource] = useState('');
   const [page, setPage] = useState(1);
+  const [sortField, setSortField] = useState<'created_at' | 'publish_date' | 'updated_at' | 'salary'>('created_at');
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [statsExpanded, setStatsExpanded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -71,9 +73,9 @@ export default function JobsPage() {
     industry,
     education,
     source,
-    sort: 'created_at',
-    order: 'desc',
-  }), [page, location, jobType, industry, education, source]);
+    sort: sortField,
+    order: sortOrder,
+  }), [page, location, jobType, industry, education, source, sortField, sortOrder]);
 
   // 筛选选项独立缓存，60秒内不重复请求
   const { data: filterOptions, mutate: mutateFilters } = useFetch<FilterOptions>(
@@ -178,8 +180,17 @@ export default function JobsPage() {
     setIndustry('');
     setEducation('');
     setSource('');
+    setSortField('created_at');
+    setSortOrder('desc');
     setPage(1);
   }
+
+  const SORT_OPTIONS = [
+    { value: 'created_at', label: '采集时间' },
+    { value: 'publish_date', label: '发布时间' },
+    { value: 'updated_at', label: '更新时间' },
+    { value: 'salary', label: '薪资' },
+  ] as const;
 
   const items = jobs?.items || [];
 
@@ -346,7 +357,32 @@ export default function JobsPage() {
       <SectionCard
         title="岗位结果"
         description="点击卡片查看详情，点击星星切换收藏状态"
-        action={<RefreshButton onRefresh={handleRefresh} />}
+        action={
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div className="sort-bar">
+              <span className="sort-label">排序</span>
+              <select
+                className="sort-select"
+                value={sortField}
+                onChange={(e) => { setSortField(e.target.value as typeof sortField); setPage(1); }}
+                aria-label="排序字段"
+              >
+                {SORT_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              <button
+                className="sort-order-btn"
+                onClick={() => { setSortOrder((o) => o === 'desc' ? 'asc' : 'desc'); setPage(1); }}
+                title={sortOrder === 'desc' ? '当前：降序（点击切换为升序）' : '当前：升序（点击切换为降序）'}
+                aria-label={sortOrder === 'desc' ? '切换为升序' : '切换为降序'}
+              >
+                {sortOrder === 'desc' ? '↓ 新到旧' : '↑ 旧到新'}
+              </button>
+            </div>
+            <RefreshButton onRefresh={handleRefresh} />
+          </div>
+        }
       >
         {loading ? (
           <SkeletonCard count={5} />
