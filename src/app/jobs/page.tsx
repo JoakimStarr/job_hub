@@ -44,7 +44,7 @@ export default function JobsPage() {
   const [education, setEducation] = useState('');
   const [source, setSource] = useState('');
   const [page, setPage] = useState(1);
-  const [sortField, setSortField] = useState<'created_at' | 'publish_date' | 'updated_at'>('created_at');
+  const [sortField, setSortField] = useState<'created_at' | 'publish_date' | 'updated_at'>('publish_date');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [statsExpanded, setStatsExpanded] = useState(false);
@@ -180,7 +180,7 @@ export default function JobsPage() {
     setIndustry('');
     setEducation('');
     setSource('');
-    setSortField('created_at');
+    setSortField('publish_date');
     setSortOrder('desc');
     setPage(1);
   }
