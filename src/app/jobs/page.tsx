@@ -44,7 +44,7 @@ export default function JobsPage() {
   const [education, setEducation] = useState('');
   const [source, setSource] = useState('');
   const [page, setPage] = useState(1);
-  const [sortField, setSortField] = useState<'created_at' | 'publish_date' | 'updated_at' | 'salary'>('created_at');
+  const [sortField, setSortField] = useState<'created_at' | 'publish_date' | 'updated_at'>('created_at');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [statsExpanded, setStatsExpanded] = useState(false);
@@ -189,7 +189,6 @@ export default function JobsPage() {
     { value: 'created_at', label: '采集时间' },
     { value: 'publish_date', label: '发布时间' },
     { value: 'updated_at', label: '更新时间' },
-    { value: 'salary', label: '薪资' },
   ] as const;
 
   const items = jobs?.items || [];
