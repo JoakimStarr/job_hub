@@ -18,12 +18,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# 配置 npm 镜像源（registry 用于包下载）
+# 配置 npm 镜像源和超时设置
 ARG NPM_REGISTRY=https://registry.npmmirror.com
-RUN npm config set registry ${NPM_REGISTRY}
+RUN npm config set registry ${NPM_REGISTRY} \
+    && npm config set fetch-timeout 120000 \
+    && npm config set fetch-retry-mintimeout 20000 \
+    && npm config set fetch-retry-maxtimeout 120000 \
+    && npm config set fetch-retries 5
 
 # NODEJS_ORG_MIRROR 用于 node-gyp 下载 Node.js headers，通过 npmmirror 镜像加速
 ENV NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
+# better-sqlite3 预编译二进制文件镜像
+ENV npm_config_better_sqlite3_binary_host_mirror=https://npmmirror.com/mirrors/better-sqlite3
 
 WORKDIR /app
 
@@ -31,7 +37,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 
 # 安装生产依赖（包括 better-sqlite3 的编译）
-RUN npm ci --prefer-offline --no-audit --no-fund
+RUN npm ci --no-audit --no-fund || npm ci --no-audit --no-fund
 
 # ==========================================
 # 阶段 2: 构建 (builder)
@@ -50,12 +56,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# 配置 npm 镜像源
+# 配置 npm 镜像源和超时设置
 ARG NPM_REGISTRY=https://registry.npmmirror.com
-RUN npm config set registry ${NPM_REGISTRY}
+RUN npm config set registry ${NPM_REGISTRY} \
+    && npm config set fetch-timeout 120000 \
+    && npm config set fetch-retry-mintimeout 20000 \
+    && npm config set fetch-retry-maxtimeout 120000 \
+    && npm config set fetch-retries 5
 
 # NODEJS_ORG_MIRROR 用于 node-gyp 下载 Node.js headers，通过 npmmirror 镜像加速
 ENV NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
+# better-sqlite3 预编译二进制文件镜像
+ENV npm_config_better_sqlite3_binary_host_mirror=https://npmmirror.com/mirrors/better-sqlite3
 
 WORKDIR /app
 

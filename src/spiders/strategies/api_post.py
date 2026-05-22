@@ -871,14 +871,17 @@ class ApiPostStrategy(BaseCrawlStrategy):
             # publish_date: startTime
             publish_date = normalize_publish_date(detail.get("startTime", ""))
 
-            # description: positionDescription（含placeholder检测，回退到shortContent/content）
-            description = position_info.get("positionDescription", "")
-            placeholder_texts = ['详见招聘简章', '详见公告', '详见附件', '请查看详情']
-
-            if not description or any(p in description for p in placeholder_texts):
-                description = detail.get("shortContent", "") or detail.get("content", "")
-                if description:
-                    description = html_to_text(description)
+            # description: 优先使用content字段，回退到positionDescription/shortContent
+            content = detail.get("content", "")
+            if content:
+                description = html_to_text(content)
+            else:
+                description = position_info.get("positionDescription", "")
+                placeholder_texts = ['详见招聘简章', '详见公告', '详见附件', '请查看详情']
+                if not description or any(p in description for p in placeholder_texts):
+                    description = detail.get("shortContent", "")
+                    if description:
+                        description = html_to_text(description)
 
             # education: studentType
             education = position_info.get("studentType", "")
@@ -886,18 +889,22 @@ class ApiPostStrategy(BaseCrawlStrategy):
             # requirements: majorName
             requirements = position_info.get("majorName", "")
 
-            # contact: resumeReceiveEmail
-            contact = ""
+            # contact: resumeReceiveEmail + onlineApplicationUrl
+            contact_parts = []
             email = detail.get("resumeReceiveEmail", "")
             if email:
-                contact = f"邮箱: {email}"
+                contact_parts.append(f"邮箱: {email}")
+            online_url = detail.get("onlineApplicationUrl", "")
+            if online_url:
+                contact_parts.append(f"网申地址: {online_url}")
+            contact = " | ".join(contact_parts)
 
             # industry: corporationNatureValue
             industry = corp_info.get("corporationNatureValue", "")
 
             # salary: 从content/shortContent中提取薪资关键词
             salary = "面议"
-            content = detail.get("content", "") or detail.get("shortContent", "")
+            salary_content = content or detail.get("shortContent", "")
             salary_patterns = [
                 r'(\d+\s*[Kk千]\s*[-~～]\s*\d+\s*[Kk千])',
                 r'(\d+\s*万\s*[-~～]\s*\d+\s*万)',
@@ -905,7 +912,7 @@ class ApiPostStrategy(BaseCrawlStrategy):
                 r'(\d+\s*[-~～]\s*\d+\s*元?\s*/\s*(月|年|天))',
             ]
             for pattern in salary_patterns:
-                salary_match = re.search(pattern, content)
+                salary_match = re.search(pattern, salary_content)
                 if salary_match:
                     salary = salary_match.group()
                     break
