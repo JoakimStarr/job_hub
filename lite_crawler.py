@@ -55,6 +55,7 @@ URL_CACHE_MAX_SIZE = 100000
 REQUEST_TIMEOUT = 30
 DETAIL_DELAY = 0.5
 MAX_PAGES = 20
+OVERWRITE_MODE = False
 
 HTTP_SOURCES = get_lite_http_sources()
 
@@ -702,48 +703,86 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
         crawl_logger.log_job_duplicate(source, f"{title} [过期:{publish_date}]")
         return False
     
-    if url_exists(source_url):
+    if not OVERWRITE_MODE and url_exists(source_url):
         crawl_logger.log_job_duplicate(source, title)
         return False
     
     try:
         crawl_logger.log_job_fetched(source, title, job.get("company", ""))
         
-        db.execute("""
-            INSERT INTO jobs 
-            (title, company, location, salary, education, requirements, description, 
-             contact, publish_date, deadline, industry, job_type, experience, tags,
-             source, university, source_url, apply_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            job.get("title", ""),
-            job.get("company", ""),
-            job.get("location", ""),
-            job.get("salary", "面议"),
-            job.get("education", ""),
-            job.get("requirements", ""),
-            job.get("description", ""),
-            job.get("contact", ""),
-            job.get("publish_date", ""),
-            job.get("deadline", ""),
-            job.get("industry", ""),
-            job.get("job_type", "全职"),
-            job.get("experience", ""),
-            job.get("tags", ""),
-            job.get("source", ""),
-            job.get("university", ""),
-            source_url,
-            job.get("apply_url", ""),
-        ))
-        
-        cursor = db.execute("SELECT last_insert_rowid()")
-        job_id = cursor.fetchone()[0]
-        
-        mark_url_exists([source_url])
-        _batch_commit()
-        
-        crawl_logger.log_job_success(source, job_id)
-        return True
+        if OVERWRITE_MODE and url_exists(source_url):
+            db.execute("""
+                UPDATE jobs SET
+                    title = ?, company = ?, location = ?, salary = ?, education = ?,
+                    requirements = ?, description = ?, contact = ?, publish_date = ?,
+                    deadline = ?, industry = ?, job_type = ?, experience = ?, tags = ?,
+                    source = ?, university = ?, apply_url = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE source_url = ?
+            """, (
+                job.get("title", ""),
+                job.get("company", ""),
+                job.get("location", ""),
+                job.get("salary", "面议"),
+                job.get("education", ""),
+                job.get("requirements", ""),
+                job.get("description", ""),
+                job.get("contact", ""),
+                job.get("publish_date", ""),
+                job.get("deadline", ""),
+                job.get("industry", ""),
+                job.get("job_type", "全职"),
+                job.get("experience", ""),
+                job.get("tags", ""),
+                job.get("source", ""),
+                job.get("university", ""),
+                job.get("apply_url", ""),
+                source_url,
+            ))
+            
+            cursor = db.execute("SELECT id FROM jobs WHERE source_url = ?", (source_url,))
+            row = cursor.fetchone()
+            job_id = row[0] if row else 0
+            
+            _batch_commit()
+            crawl_logger.log_job_success(source, job_id)
+            logger.info(f"[{source}] 覆盖更新: {title} (id={job_id})")
+            return True
+        else:
+            db.execute("""
+                INSERT INTO jobs 
+                (title, company, location, salary, education, requirements, description, 
+                 contact, publish_date, deadline, industry, job_type, experience, tags,
+                 source, university, source_url, apply_url)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                job.get("title", ""),
+                job.get("company", ""),
+                job.get("location", ""),
+                job.get("salary", "面议"),
+                job.get("education", ""),
+                job.get("requirements", ""),
+                job.get("description", ""),
+                job.get("contact", ""),
+                job.get("publish_date", ""),
+                job.get("deadline", ""),
+                job.get("industry", ""),
+                job.get("job_type", "全职"),
+                job.get("experience", ""),
+                job.get("tags", ""),
+                job.get("source", ""),
+                job.get("university", ""),
+                source_url,
+                job.get("apply_url", ""),
+            ))
+            
+            cursor = db.execute("SELECT last_insert_rowid()")
+            job_id = cursor.fetchone()[0]
+            
+            mark_url_exists([source_url])
+            _batch_commit()
+            
+            crawl_logger.log_job_success(source, job_id)
+            return True
         
     except sqlite3.IntegrityError:
         crawl_logger.log_job_duplicate(source, title)
@@ -1648,11 +1687,14 @@ def main():
     
     init_database()
 
-    # 清除增量爬取状态
+    # 清除增量爬取状态并启用覆盖模式
     if args.reset_incremental:
+        global OVERWRITE_MODE
+        OVERWRITE_MODE = True
         db.execute("DELETE FROM crawl_state")
         db.commit()
-        logger.info("已清除所有增量爬取状态，将从头开始爬取")
+        logger.info("已清除所有增量爬取状态，启用覆盖模式")
+        logger.info("已存在的数据将被更新覆盖")
 
     sources = args.sources or list(HTTP_SOURCES.keys())
     date_filter_months = args.date_filter
