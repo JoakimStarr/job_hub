@@ -15,6 +15,7 @@ import type {
 import { AUTH_EXPIRED_EVENT, AUTH_TOKEN_KEY, AUTH_USER_KEY } from '@/lib/constants';
 
 const REQUEST_TIMEOUT_MS = 30_000;
+const AI_REQUEST_TIMEOUT_MS = 120_000;
 
 export class APIError extends Error {
   status: number;
@@ -48,7 +49,7 @@ function buildQuery(params: Record<string, unknown> = {}) {
   return query.toString();
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+async function request<T>(path: string, init: RequestInit = {}, timeoutMs?: number): Promise<T> {
   const token = typeof window !== 'undefined' ? localStorage.getItem(AUTH_TOKEN_KEY) : '';
   const headers = new Headers(init.headers || {});
   headers.set('Accept', 'application/json');
@@ -59,15 +60,16 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     headers.set('Authorization', `Bearer ${token}`);
   }
 
+  const effectiveTimeout = timeoutMs || REQUEST_TIMEOUT_MS;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), effectiveTimeout);
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
     ...init,
     headers,
     signal: controller.signal,
   }).catch((error) => {
     if (controller.signal.aborted) {
-      throw new APIError('请求超时，请稍后重试', 408, error);
+      throw new APIError(`请求超时（${Math.round(effectiveTimeout / 1000)}秒），请稍后重试`, 408, error);
     }
     throw error;
   }).finally(() => {
@@ -133,8 +135,8 @@ export const API = {
   getJobDetail: (id: number) => request<JobItem>(`/api/jobs/${id}`),
   getJobTimeline: (id: number) => request(`/api/jobs/${id}/timeline`),
   addJobTimeline: (id: number, data: Record<string, unknown>) => request(`/api/jobs/${id}/timeline`, { method: 'POST', body: JSON.stringify(data) }),
-  generateInterviewQuestions: (id: number) => request(`/api/jobs/${id}/interview-questions`, { method: 'POST' }),
-  analyzeJob: (id: number, data: Record<string, unknown> = {}) => request(`/api/jobs/${id}/ai-analysis`, { method: 'POST', body: JSON.stringify(data) }),
+  generateInterviewQuestions: (id: number) => request(`/api/jobs/${id}/interview-questions`, { method: 'POST' }, AI_REQUEST_TIMEOUT_MS),
+  analyzeJob: (id: number, data: Record<string, unknown> = {}) => request(`/api/jobs/${id}/ai-analysis`, { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),
 
   getCrawlerStatus: () => request<CrawlerStatus>('/api/crawler/status'),
   startCrawler: (data: Record<string, unknown> = {}) => request('/api/crawler/start', { method: 'POST', body: JSON.stringify(data) }),
@@ -152,8 +154,8 @@ export const API = {
   deleteSubscription: (id: number) => request(`/api/system/subscriptions/${id}`, { method: 'DELETE' }),
   previewSubscription: (id: number) => request<JobItem[]>(`/api/system/subscriptions/${id}/preview`),
 
-  getRecommendations: (data: Record<string, unknown> = {}) => request('/api/recommendations/analyze', { method: 'POST', body: JSON.stringify(data) }),
-  getRecommendationChat: (data: Record<string, unknown> = {}) => request('/api/recommendations/chat', { method: 'POST', body: JSON.stringify(data) }),
+  getRecommendations: (data: Record<string, unknown> = {}) => request('/api/recommendations/analyze', { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),
+  getRecommendationChat: (data: Record<string, unknown> = {}) => request('/api/recommendations/chat', { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),
   getRecommendationChatStream: (data: Record<string, unknown> = {}) => {
     const token = typeof window !== 'undefined' ? localStorage.getItem(AUTH_TOKEN_KEY) : '';
     return fetch('/api/recommendations/chat', {
@@ -166,8 +168,8 @@ export const API = {
       body: JSON.stringify({ ...data, stream: true }),
     });
   },
-  getResumeAdvice: (data: Record<string, unknown> = {}) => request('/api/recommendations/resume-advice', { method: 'POST', body: JSON.stringify(data) }),
-  getDeliveryAssistant: (data: Record<string, unknown> = {}) => request('/api/recommendations/delivery-assistant', { method: 'POST', body: JSON.stringify(data) }),
+  getResumeAdvice: (data: Record<string, unknown> = {}) => request('/api/recommendations/resume-advice', { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),
+  getDeliveryAssistant: (data: Record<string, unknown> = {}) => request('/api/recommendations/delivery-assistant', { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),
   getRecommendationHistory: (limit = 10) => request(`/api/recommendations/history?limit=${limit}`),
   getRecommendationQualityDashboard: () => request('/api/recommendations/quality-dashboard'),
   reportRecommendationImpression: (data: Record<string, unknown>) => request('/api/recommendations/metrics/impression', { method: 'POST', body: JSON.stringify(data) }),

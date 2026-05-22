@@ -10,8 +10,10 @@ import {
   logAICall,
   initAILogTable,
 } from '@/lib/ai-logger';
+import { saveRecommendationHistory, initRecommendationHistoryTable } from '@/lib/recommendation-history';
 
 initAILogTable();
+initRecommendationHistoryTable();
 
 interface AnalysisResult {
   score: {
@@ -288,6 +290,18 @@ export async function POST(
 
     const duration = Date.now() - startTime;
     logger.api('POST', `/api/jobs/${id}/ai-analysis`, 200, duration);
+
+    saveRecommendationHistory({
+      userId: user.id,
+      mode: 'ai_analysis',
+      jobId: parseInt(id),
+      profileSummary: profile ? `姓名:${profile.name} 技能:${profile.skills.join(',')}` : undefined,
+      prompt: body.prompt || undefined,
+      result: { ...result, _meta: { session_id: sessionId, model: response.model, usage: response.usage, duration_ms: duration } },
+      sessionId,
+      model: response.model,
+      durationMs: duration,
+    });
 
     return NextResponse.json({
       ...result,

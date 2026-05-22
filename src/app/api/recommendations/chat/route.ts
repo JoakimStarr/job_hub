@@ -7,7 +7,10 @@ import {
   createChatSession, getChatSession, getChatMessages,
   saveChatMessage, updateChatSessionTitle, getUserChatSessions,
 } from '@/lib/chat-store';
+import { saveRecommendationHistory, initRecommendationHistoryTable } from '@/lib/recommendation-history';
 import { getDb } from '@/lib/db-utils';
+
+initRecommendationHistoryTable();
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -127,6 +130,18 @@ export async function POST(request: NextRequest) {
 
     const duration = Date.now() - startTime;
     logger.api('POST', '/api/recommendations/chat', 200, duration);
+
+    saveRecommendationHistory({
+      userId: user.id,
+      mode: 'chat',
+      jobId: body.job_id ? parseInt(body.job_id) : undefined,
+      profileSummary: undefined,
+      prompt: message || undefined,
+      result: { result: response.content, session_id: sessionId, model: response.model, usage: response.usage, chat_mode: true },
+      sessionId,
+      model: response.model,
+      durationMs: duration,
+    });
 
     return NextResponse.json({
       result: response.content,

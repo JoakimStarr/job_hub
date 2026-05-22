@@ -4,8 +4,10 @@ import { requireAuthUnified } from '@/lib/auth-server';
 import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import { logAICall, initAILogTable } from '@/lib/ai-logger';
+import { saveRecommendationHistory, initRecommendationHistoryTable } from '@/lib/recommendation-history';
 
 initAILogTable();
+initRecommendationHistoryTable();
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
@@ -76,6 +78,16 @@ export async function POST(request: NextRequest) {
 
     const duration = Date.now() - startTime;
     logger.api('POST', '/api/recommendations/resume-advice', 200, duration);
+
+    saveRecommendationHistory({
+      userId: user.id,
+      mode: 'resume',
+      profileSummary: profile ? profile.slice(0, 200) : undefined,
+      prompt: prompt || undefined,
+      result: { result: response.content, model: response.model, usage: response.usage },
+      model: response.model,
+      durationMs: duration,
+    });
 
     return NextResponse.json({
       result: response.content,

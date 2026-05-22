@@ -4,6 +4,11 @@ import { aiService } from '@/lib/ai-service';
 import { requireAuthUnified } from '@/lib/auth-server';
 import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
+import { saveRecommendationHistory, initRecommendationHistoryTable } from '@/lib/recommendation-history';
+import { logAICall, initAILogTable } from '@/lib/ai-logger';
+
+initAILogTable();
+initRecommendationHistoryTable();
 
 interface InterviewQuestion {
   category: string;
@@ -60,7 +65,7 @@ export async function POST(
   const { id } = await params;
 
   try {
-    await requireAuthUnified(request);
+    const user = await requireAuthUnified(request);
 
     const db = getDb();
     const job = db.prepare(`
@@ -106,6 +111,28 @@ export async function POST(
 
     const duration = Date.now() - startTime;
     logger.api('POST', `/api/jobs/${id}/interview-questions`, 200, duration);
+
+    logAICall({
+      sessionId: `interview_${id}_${Date.now()}`,
+      type: 'interview_questions',
+      provider: process.env.AI_PROVIDER || 'unknown',
+      model: 'glm-4.7-flash',
+      status: 'success',
+      durationMs: duration,
+      inputSummary: `Job ID: ${id}`,
+      outputSummary: JSON.stringify(result).slice(0, 500),
+      jobId: parseInt(id),
+      userId: user.id,
+    });
+
+    saveRecommendationHistory({
+      userId: user.id,
+      mode: 'interview_questions',
+      jobId: parseInt(id),
+      result: result as unknown as Record<string, unknown>,
+      model: process.env.AI_MODEL || 'glm-4.7-flash',
+      durationMs: duration,
+    });
 
     return NextResponse.json(result);
   } catch (error) {
