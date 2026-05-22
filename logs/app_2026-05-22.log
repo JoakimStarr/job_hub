@@ -1,0 +1,2 @@
+{"timestamp":"2026-05-22T04:56:34.328Z","level":"info","message":"API POST /api/jobs/14000/ai-analysis","context":{"statusCode":200,"duration":"28865ms"}}
+{"timestamp":"2026-05-22T04:56:34.329Z","level":"info","message":"推荐历史已保存","context":{"mode":"ai_analysis","jobId":14000,"historyId":1}}

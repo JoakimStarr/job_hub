@@ -29,6 +29,38 @@ function isJobArray(data: unknown): data is JobItem[] {
   );
 }
 
+function extractReadableContent(data: unknown): string | null {
+  if (!data || typeof data !== 'object') return null;
+  const d = data as Record<string, unknown>;
+
+  if (typeof d.result === 'string') return d.result;
+  if (typeof d.content === 'string') return d.content;
+
+  if (d.score && typeof (d.score as Record<string, unknown>).total === 'number') {
+    const score = d.score as Record<string, number>;
+    const parts: string[] = [];
+    if (d.recommendation) parts.push(`**推荐等级**: ${d.recommendation}`);
+    if (score.total != null) parts.push(`\n**综合评分**: ${score.total}/100`);
+    if (score.skills != null) parts.push(`**技能匹配**: ${score.skills}/100`);
+    if (score.education != null) parts.push(`**学历匹配**: ${score.education}/100`);
+    if (score.match_rate != null) parts.push(`**匹配率**: ${score.match_rate}%`);
+    if (Array.isArray(d.suggestions) && d.suggestions.length > 0) {
+      parts.push('\n**建议**:\n' + (d.suggestions as string[]).map((s: string) => `- ${s}`).join('\n'));
+    }
+    if (Array.isArray(d.risks) && d.risks.length > 0) {
+      parts.push('\n**风险提示**:\n' + (d.risks as string[]).map((r: string) => `- ⚠️ ${r}`).join('\n'));
+    }
+    if (Array.isArray(d.action_plan) && d.action_plan.length > 0) {
+      parts.push('\n**行动计划**:\n' + (d.action_plan as string[]).map((a: string, i: number) => `${i + 1}. ${a}`).join('\n'));
+    }
+    return parts.join('\n\n');
+  }
+
+  if (isJobArray(data)) return null;
+
+  return JSON.stringify(data, null, 2);
+}
+
 function renderResult(data: unknown, submitting: boolean) {
   if (submitting) {
     return <Skeleton type="card" />;
@@ -46,8 +78,6 @@ function renderResult(data: unknown, submitting: boolean) {
     );
   }
 
-  const d = data as Record<string, unknown>;
-
   if (isAnalysisResult(data)) {
     const { _meta, ...resultData } = data;
     return (
@@ -58,10 +88,11 @@ function renderResult(data: unknown, submitting: boolean) {
     );
   }
 
-  if ((d.result || d.content) && typeof (d.result || d.content) === 'string') {
+  const readable = extractReadableContent(data);
+  if (readable) {
     return (
       <div className="ai-result">
-        <MarkdownRenderer content={d.result as string || d.content as string} />
+        <MarkdownRenderer content={readable} />
       </div>
     );
   }
@@ -76,10 +107,11 @@ function renderResult(data: unknown, submitting: boolean) {
     );
   }
 
+  const textContent = JSON.stringify(data, null, 2);
   return (
-    <pre className="textarea" style={{ whiteSpace: 'pre-wrap', minHeight: 280 }}>
-      {JSON.stringify(data, null, 2)}
-    </pre>
+    <div className="ai-result">
+      <MarkdownRenderer content={textContent} />
+    </div>
   );
 }
 
@@ -97,10 +129,9 @@ export default function RecommendationsPage() {
   const [showChat, setShowChat] = useState(false);
 
   const { data: historyData, loading: historyLoading, mutate: mutateHistory } = useFetch<unknown[]>(
-    '/api/recommendations/history?limit=5',
-    () => API.getRecommendationHistory(5) as Promise<unknown[]>,
+    '/api/recommendations/history?limit=20',
+    () => API.getRecommendationHistory(20) as Promise<unknown[]>,
   );
-  const history = Array.isArray(historyData) ? historyData : [];
 
   const handleFileSelect = useCallback((file: File) => {
     setResumeFile(file);
@@ -152,6 +183,7 @@ export default function RecommendationsPage() {
       }
 
       setResponse(result);
+      void mutateHistory();
     } catch (requestError) {
       setMessage(requestError instanceof Error ? requestError.message : '请求失败');
     } finally {
@@ -163,6 +195,95 @@ export default function RecommendationsPage() {
   const activeTabLabel = TABS.find((t) => t.key === mode)?.label || '岗位分析';
   const currentJobIdNum = jobId ? parseInt(jobId) : undefined;
   const hasAnalysisResult = response !== null && isAnalysisResult(response);
+
+  const historyList = Array.isArray(historyData) ? historyData : [];
+
+  function getHistoryModeLabel(mode: string): string {
+    const map: Record<string, string> = {
+      ai_analysis: '岗位分析',
+      analyze: '岗位分析',
+      resume: '简历建议',
+      delivery: '投递助手',
+      chat: '追问对话',
+      interview_questions: '面试题目',
+    };
+    return map[mode] || mode;
+  }
+
+  function renderHistoryItem(item: Record<string, unknown>) {
+    const modeLabel = getHistoryModeLabel(String(item.mode || ''));
+
+    let displayContent: React.ReactNode;
+    const resultData = item.result as Record<string, unknown> | string | null;
+
+    if (item.mode === 'chat' || item.mode === 'interview_questions') {
+      const rd = typeof resultData === 'object' && resultData !== null ? resultData : {};
+      const content = typeof rd.result === 'string'
+        ? rd.result
+        : typeof resultData === 'string'
+          ? resultData
+          : JSON.stringify(resultData, null, 2);
+      displayContent = (
+        <div style={{ fontSize: 13, lineHeight: 1.6 }}>
+          <MarkdownRenderer content={String(content)} />
+        </div>
+      );
+    } else if (typeof resultData === 'object' && resultData !== null) {
+      const rd = resultData as Record<string, unknown>;
+      if (rd.score && typeof (rd.score as Record<string, unknown>).total === 'number') {
+        displayContent = (
+          <AIAnalysisResult
+            data={rd as unknown as { score: { total: number; skills: number; education: number; match_rate: number }; recommendation: string; suggestions: string[]; risks: string[]; action_plan: string[] }}
+            meta={(rd._meta || undefined) as { session_id?: string; model?: string; usage?: { prompt_tokens: number; completion_tokens: number; total_tokens: number }; duration_ms?: number } | undefined}
+          />
+        );
+      } else if (rd.result && typeof rd.result === 'string') {
+        displayContent = <MarkdownRenderer content={rd.result} />;
+      } else {
+        displayContent = <MarkdownRenderer content={JSON.stringify(rd, null, 2)} />;
+      }
+    } else {
+      displayContent = <MarkdownRenderer content={String(resultData || '')} />;
+    }
+
+    const timestamp = item.created_at
+      ? new Date(item.created_at as string).toLocaleString('zh-CN')
+      : '';
+
+    return (
+      <div
+        key={item.id as number}
+        style={{
+          padding: '12px 16px',
+          borderRadius: 8,
+          background: '#fafafa',
+          border: '1px solid #e5e7eb',
+          cursor: 'pointer',
+          transition: 'border-color 0.15s',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#3b82f6')}
+        onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#e5e7eb')}
+        onClick={() => setResponse(item.result)}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <Badge tone={item.mode === 'chat' ? 'violet' : 'blue'}>{modeLabel}</Badge>
+          {timestamp ? <span style={{ fontSize: 11, color: '#9ca3af' }}>{timestamp}</span> : null}
+        </div>
+        {(typeof item.job_id === 'number' || typeof item.job_id === 'string') ? (
+          <div style={{ fontSize: 11, color: '#9ca3af', marginBottom: 4 }}>职位 ID: {String(item.job_id)}</div>
+        ) : null}
+        <div style={{
+          maxHeight: 120,
+          overflow: 'hidden',
+          opacity: 0.8,
+          fontSize: 13,
+          lineHeight: 1.5,
+        }}>
+          {displayContent}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AppShell title="智能推荐" description="AI 分析、简历建议和投递辅助" requiredPermission="use_recommendations">
@@ -252,6 +373,7 @@ export default function RecommendationsPage() {
                     onSessionIdChange={setAnalysisSessionId}
                     disabled={!hasAnalysisResult}
                     placeholder="例如：这个岗位的面试流程是怎样的？需要准备哪些材料？"
+                    onMessageSent={() => void mutateHistory()}
                   />
                 </SectionCard>
               </div>
@@ -261,35 +383,16 @@ export default function RecommendationsPage() {
       </div>
 
       <div style={{ marginTop: 24 }}>
-        <SectionCard title="历史记录" description="近期推荐请求与结果">
+        <SectionCard title="历史记录" description="所有AI操作记录（含分析和追问）">
           {historyLoading ? <Skeleton type="card" /> : null}
-          {!historyLoading && history.length === 0 ? (
-            <EmptyState title="暂无历史" description="生成过推荐后会在这里显示历史记录。" />
+          {!historyLoading && historyList.length === 0 ? (
+            <EmptyState title="暂无历史" description="使用过AI功能后会在这里显示记录。" />
           ) : null}
-          {!historyLoading && history.length > 0 ? (
-            <div className="grid" style={{ gap: 12 }}>
-              {history.map((item, index) => {
+          {!historyLoading && historyList.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {historyList.map((item) => {
                 if (typeof item !== 'object' || item === null) return null;
-                const historyItem = item as Record<string, unknown>;
-                const modeLabel = historyItem.mode === 'analyze' ? '岗位分析' :
-                                  historyItem.mode === 'resume' ? '简历建议' : '投递助手';
-                const timestamp = historyItem.created_at ?
-                  new Date(historyItem.created_at as string).toLocaleString('zh-CN') :
-                  `记录 ${index + 1}`;
-
-                return (
-                  <div key={index} className="history-card" onClick={() => setResponse(historyItem.result)}>
-                    <div className="history-card-header">
-                      <div className="history-card-title">{modeLabel}</div>
-                      <Badge tone="blue">{timestamp}</Badge>
-                    </div>
-                    <div className="history-card-content">
-                      {historyItem.profile ?
-                        String(historyItem.profile).substring(0, 100) + '...' :
-                        '点击查看详情'}
-                    </div>
-                  </div>
-                );
+                return renderHistoryItem(item as Record<string, unknown>);
               })}
             </div>
           ) : null}

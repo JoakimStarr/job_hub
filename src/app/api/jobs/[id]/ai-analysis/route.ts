@@ -366,6 +366,17 @@ async function handleChatResponse(
     usage: response.usage,
     chat_mode: true,
   });
+
+  saveRecommendationHistory({
+    userId,
+    mode: 'chat',
+    jobId,
+    prompt: messages[messages.length - 1]?.content?.slice(0, 200),
+    result: { result: response.content, session_id: sessionId, model: response.model, usage: response.usage, chat_mode: true },
+    sessionId,
+    model: response.model,
+    durationMs: Date.now() - startTime,
+  });
 }
 
 async function handleStreamResponse(
@@ -393,6 +404,16 @@ async function handleStreamResponse(
               outputSummary: fullContent.slice(0, 500),
               jobId,
               userId,
+            });
+            saveRecommendationHistory({
+              userId,
+              mode: 'chat',
+              jobId,
+              prompt: messages[messages.length - 1]?.content?.slice(0, 200),
+              result: { result: fullContent, session_id: sessionId, model: chunk.model || '', chat_mode: true },
+              sessionId,
+              model: chunk.model || '',
+              durationMs: Date.now() - startTime,
             });
             controller.enqueue(encoder.encode(
               `data: ${JSON.stringify({ done: true, session_id: sessionId })}\n\n`

@@ -17,6 +17,7 @@ interface AIChatPanelProps {
   initialMessages?: ChatMessage[];
   placeholder?: string;
   disabled?: boolean;
+  onMessageSent?: () => void;
 }
 
 export default function AIChatPanel({
@@ -26,6 +27,7 @@ export default function AIChatPanel({
   initialMessages = [],
   placeholder = '输入追问内容，如：这个岗位的面试流程是怎样的？',
   disabled = false,
+  onMessageSent,
 }: AIChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState('');
@@ -123,6 +125,7 @@ export default function AIChatPanel({
         { role: 'assistant', content: fullContent },
       ]);
       setStreamingContent('');
+      onMessageSent?.();
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : '发送失败';
       setMessages((prev) => [
@@ -132,7 +135,7 @@ export default function AIChatPanel({
     } finally {
       setLoading(false);
     }
-  }, [input, loading, disabled, jobId, currentSessionId, onSessionIdChange]);
+  }, [input, loading, disabled, jobId, currentSessionId, onSessionIdChange, onMessageSent]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {

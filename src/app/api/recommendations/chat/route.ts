@@ -87,6 +87,15 @@ export async function POST(request: NextRequest) {
                     const title = fullContent.slice(0, 40) + (fullContent.length > 40 ? '...' : '');
                     updateChatSessionTitle(sessionId, title);
                   }
+                  saveRecommendationHistory({
+                    userId: user.id,
+                    mode: 'chat',
+                    jobId: body.job_id ? parseInt(body.job_id) : undefined,
+                    prompt: body.message || undefined,
+                    result: { result: fullContent, session_id: sessionId, chat_mode: true },
+                    sessionId,
+                    durationMs: Date.now() - startTime,
+                  });
                 }
                 controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, session_id: sessionId })}\n\n`));
                 controller.close();
