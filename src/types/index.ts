@@ -158,16 +158,55 @@ export interface FilterCache {
   updated_at: number;
 }
 
+export interface Award {
+  name: string;
+  level?: string;
+  date?: string;
+}
+
+export interface SocialLink {
+  platform: string;
+  url: string;
+}
+
 export interface ResumeProfile {
+  // 基本信息
   name: string;
   phone: string;
   email: string;
+  gender?: string;
+  birthDate?: string;
+  age?: number;
+  address?: string;
+  idCard?: string;
+
+  // 教育与技能
   education: Education[];
   skills: string[];
-  internships: Internship[];
-  projects: Project[];
   certifications: string[];
   languages: string[];
+
+  // 经历
+  internships: Internship[];
+  projects: Project[];
+  awards?: Award[];
+  volunteerExperience?: string;
+
+  // 社交与作品
+  socialLinks?: SocialLink[];
+  portfolio?: string;
+  github?: string;
+
+  // 求职意向
+  targetPosition?: string;
+  targetLocation?: string;
+  targetSalary?: string;
+  targetIndustry?: string;
+  jobTypePreference?: string;
+  availability?: string;
+  selfEvaluation?: string;
+
+  // 原始文本
   resumeText: string;
 }
 

@@ -205,6 +205,19 @@ export function getAlertById(id: number): JobAlert | null {
   };
 }
 
+export function disableAlert(id: number): boolean {
+  initJobAlertsTables();
+  const db = getDb();
+  
+  const result = db.prepare(`
+    UPDATE user_job_alerts 
+    SET enabled = 0, updated_at = datetime('now')
+    WHERE id = ?
+  `).run(id);
+  
+  return result.changes > 0;
+}
+
 export function recordAlertHistory(alertId: number, jobIds: number[], emailSent: boolean, errorMessage?: string): void {
   initJobAlertsTables();
   const db = getDb();

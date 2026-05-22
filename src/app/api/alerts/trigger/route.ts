@@ -93,6 +93,7 @@ export async function POST(request: NextRequest) {
       if (emailConfigured) {
         const emailData = {
           to: alert.email,
+          alertId: alert.id,
           keywords: alert.keywords,
           jobs: matchedJobs.map(m => ({
             id: m.job.id,

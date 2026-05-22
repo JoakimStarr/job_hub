@@ -13,6 +13,7 @@ export interface SmtpConfig {
 
 export interface JobAlertEmailData {
   to: string;
+  alertId: number;
   keywords: string[];
   jobs: Array<{
     id: number;
@@ -70,8 +71,11 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
 
   const transporter = createTransporter(config);
 
-  const { to, keywords, jobs } = emailData;
+  const { to, alertId, keywords, jobs } = emailData;
   const keywordStr = keywords.join('、');
+  
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const unsubscribeUrl = `${baseUrl}/unsubscribe?alert_id=${alertId}&email=${encodeURIComponent(to)}`;
 
   const jobListHtml = jobs.map((job, index) => `
     <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3b82f6;">
@@ -102,6 +106,8 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
         .content { background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
         .footer { text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }
         .keyword-tag { display: inline-block; background: #dbeafe; color: #1d4ed8; padding: 4px 12px; border-radius: 20px; margin: 2px; font-size: 14px; }
+        .unsubscribe-link { color: #6b7280; text-decoration: underline; }
+        .unsubscribe-link:hover { color: #ef4444; }
       </style>
     </head>
     <body>
@@ -121,7 +127,10 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
             ${jobListHtml}
           </div>
           <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #666;">
-            如需修改订阅设置或取消订阅，请登录系统设置页面。
+            如需修改订阅设置，请登录系统设置页面。
+          </p>
+          <p style="color: #9ca3af; font-size: 13px;">
+            不想再收到此类邮件？<a href="${unsubscribeUrl}" class="unsubscribe-link" style="margin-left: 5px;">点击取消订阅</a>
           </p>
         </div>
         <div class="footer">
@@ -152,7 +161,10 @@ ${i + 1}. ${job.title}
    链接：${job.source_url || ''}
 `).join('\n')}
 
-如需修改订阅设置或取消订阅，请登录系统设置页面。
+如需修改订阅设置，请登录系统设置页面。
+
+不想再收到此类邮件？点击以下链接取消订阅：
+${unsubscribeUrl}
 
 此邮件由系统自动发送，请勿直接回复。
   `.trim();

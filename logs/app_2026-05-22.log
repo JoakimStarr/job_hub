@@ -17,3 +17,10 @@
 {"timestamp":"2026-05-22T11:03:50.062Z","level":"info","message":"Python PDF 解析成功","context":{"chars":1383,"pages":1,"used_ocr":true}}
 {"timestamp":"2026-05-22T11:23:46.759Z","level":"info","message":"Python PDF 解析成功","context":{"chars":1383,"pages":1,"used_ocr":true,"duration":"2819ms"}}
 {"timestamp":"2026-05-22T11:23:46.763Z","level":"info","message":"自动保存解析后的用户画像","context":{"userId":1,"fileName":"20260403_163216_刘艳菲_数字经济_1_.pdf","confidence":1}}
+{"timestamp":"2026-05-22T11:43:58.038Z","level":"info","message":"Python PDF 解析成功","context":{"chars":1136,"pages":1,"used_ocr":true,"duration":"2492ms"}}
+{"timestamp":"2026-05-22T11:43:58.041Z","level":"warn","message":"保存用户画像失败（不影响返回结果）","context":{"error":"UNIQUE constraint failed: user_profiles.user_id"}}
+{"timestamp":"2026-05-22T11:46:03.293Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-22T11:46:03.294Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-22T11:46:03.299Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-22T11:46:03.299Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-22T11:47:27.017Z","level":"info","message":"Test email sent to Joakimstarr@foxmail.com: <6a7a89ae-5fa9-6331-3304-00a26eb8f8ce@foxmail.com>"}
