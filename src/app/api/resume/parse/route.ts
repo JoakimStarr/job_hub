@@ -4,9 +4,14 @@ import { requireAuthUnified } from '@/lib/auth-server';
 import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import fs from 'node:fs';
+import os from 'node:os';
 
 export const runtime = 'nodejs';
+
+const execFileAsync = promisify(execFile);
 
 type ParseResumeMeta = {
   source_type: 'pdf' | 'txt' | 'text';
@@ -16,61 +21,79 @@ type ParseResumeMeta = {
   capabilities: string[];
 };
 
-declare global {
-  var pdfjsWorker: { WorkerMessageHandler: unknown } | undefined;
-}
-
 async function extractTextFromPdf(file: File): Promise<string> {
-  if (!globalThis.pdfjsWorker?.WorkerMessageHandler) {
-    try {
-      const workerPath = path.resolve(process.cwd(), 'node_modules/pdf-parse/dist/pdf-parse/cjs/pdf.worker.mjs');
-      const workerModule = await import(pathToFileURL(workerPath).href);
-      globalThis.pdfjsWorker = { WorkerMessageHandler: (workerModule as Record<string, unknown>).WorkerMessageHandler };
-    } catch (workerImportError) {
-      logger.warn('PDF worker 加载失败，尝试备用方案', { error: workerImportError instanceof Error ? workerImportError.message : workerImportError });
-    }
-  }
+  const tempDir = os.tmpdir();
+  const tempFilePath = path.join(tempDir, `resume_${Date.now()}_${file.name}`);
 
   try {
-    const { PDFParse } = require('pdf-parse') as { PDFParse: new (options: { data: Buffer }) => { getText: () => Promise<{ text: string }>; destroy: () => Promise<void> } };
     const buffer = Buffer.from(await file.arrayBuffer());
-    const parser = new PDFParse({ data: buffer });
+    fs.writeFileSync(tempFilePath, buffer);
 
+    logger.info('调用 Python PDF 解析器', { file: file.name, path: tempFilePath });
+
+    const scriptPath = path.resolve(process.cwd(), 'scripts/pdf_parser.py');
+    const { stdout, stderr } = await execFileAsync('python3', [scriptPath, tempFilePath], {
+      timeout: 30000,
+      maxBuffer: 10 * 1024 * 1024,
+    });
+
+    if (stderr) {
+      logger.debug('Python PDF 解析器 stderr', { output: stderr });
+    }
+
+    const result = JSON.parse(stdout);
+
+    if (!result.success) {
+      if (result.need_install) {
+        throw new Error(
+          'PDF 解析依赖未安装。请运行：\n' +
+          'sudo apt-get install tesseract-ocr tesseract-ocr-chi-sim poppler-utils\n' +
+          'pip3 install pdf2image pytesseract pypdfium2'
+        );
+      }
+      throw new Error(result.error || 'PDF 解析失败');
+    }
+
+    if (!result.text || result.text.length < 50) {
+      throw new Error(
+        'PDF 文本提取失败（可能是扫描质量太差或加密文档）。' +
+        '请将简历转换为 TXT 格式后重试。'
+      );
+    }
+
+    logger.info('Python PDF 解析成功', {
+      chars: result.cleaned_length,
+      pages: result.pages,
+      used_ocr: result.used_ocr,
+    });
+
+    return result.text;
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    if (errorMessage.includes('ENOENT') || errorMessage.includes('python3')) {
+      throw new Error(
+        'Python 环境未找到。请确保系统已安装 Python 3，或使用 TXT 格式上传简历。'
+      );
+    }
+    
+    if (errorMessage.includes('timeout')) {
+      throw new Error('PDF 解析超时（超过30秒）。请尝试较小的 PDF 文件或转换为 TXT 格式。');
+    }
+
+    logger.error('Python PDF 解析错误', { error: errorMessage });
+    throw error;
+
+  } finally {
     try {
-      const result = await parser.getText();
-      return result.text || '';
-    } finally {
-      await parser.destroy().catch(() => undefined);
+      if (fs.existsSync(tempFilePath)) {
+        fs.unlinkSync(tempFilePath);
+      }
+    } catch (cleanupError) {
+      logger.warn('临时文件清理失败', { error: cleanupError instanceof Error ? cleanupError.message : cleanupError });
     }
-  } catch (pdfParseError) {
-    logger.error('pdf-parse 主模块加载或执行失败，尝试使用备用解析', { error: pdfParseError instanceof Error ? pdfParseError.message : pdfParseError });
-
-    return extractPdfWithFallback(file);
   }
-}
-
-async function extractPdfWithFallback(file: File): Promise<string> {
-  try {
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const textContent = buffer.toString('latin1');
-
-    const cleaned = textContent
-      .replace(/[^\x20-\x7E\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-
-    if (cleaned.length > 50 && /[\u4e00-\u9fff]/.test(cleaned)) {
-      logger.info('使用备用 Latin-1 解码提取 PDF 文本成功', { length: cleaned.length });
-      return cleaned;
-    }
-  } catch {
-    // 继续尝试其他方法
-  }
-
-  throw new Error(
-    'PDF 解析失败。请将简历转换为 TXT 格式后上传，' +
-    '或在终端运行 npm install pdf-parse 并重启服务。'
-  );
 }
 
 async function extractTextFromFile(file: File): Promise<string> {
