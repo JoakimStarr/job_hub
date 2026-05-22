@@ -5,3 +5,10 @@
 {"timestamp":"2026-05-22T05:10:19.886Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms","total":89,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
 {"timestamp":"2026-05-22T05:11:47.959Z","level":"info","message":"API POST /api/jobs/14000/ai-analysis","context":{"statusCode":200,"duration":"83972ms"}}
 {"timestamp":"2026-05-22T05:11:47.960Z","level":"info","message":"推荐历史已保存","context":{"mode":"ai_analysis","jobId":14000,"historyId":3}}
+{"timestamp":"2026-05-22T05:19:55.150Z","level":"info","message":"API POST /api/jobs/14000/ai-analysis","context":{"statusCode":200,"duration":"19198ms"}}
+{"timestamp":"2026-05-22T05:19:55.151Z","level":"info","message":"推荐历史已保存","context":{"mode":"ai_analysis","jobId":14000,"historyId":4}}
+{"timestamp":"2026-05-22T06:58:41.911Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"0ms","total":44,"page":1,"pageSize":8,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-22T06:59:20.477Z","level":"info","message":"API POST /api/jobs/14051/ai-analysis","context":{"statusCode":200,"duration":"25723ms"}}
+{"timestamp":"2026-05-22T06:59:20.477Z","level":"info","message":"推荐历史已保存","context":{"mode":"ai_analysis","jobId":14051,"historyId":5}}
+{"timestamp":"2026-05-22T07:01:36.174Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms","total":90,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-22T07:02:24.313Z","level":"info","message":"推荐历史已保存","context":{"mode":"chat","jobId":14051,"historyId":6}}

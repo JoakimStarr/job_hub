@@ -69,6 +69,11 @@ export interface CrawlerStatus {
   message?: string;
   current_source?: string;
   elapsed_seconds?: number;
+  total_sources?: number;
+  completed_sources?: number;
+  total_jobs?: number;
+  start_time?: string | null;
+  last_update?: string | null;
 }
 
 export interface SystemConfig {
@@ -223,6 +228,13 @@ export interface ParseResult {
   profile: ResumeProfile;
   confidence: number;
   warnings: string[];
+  meta?: {
+    source_type: 'pdf' | 'txt' | 'text';
+    file_name?: string;
+    extracted_chars: number;
+    extracted_words: number;
+    capabilities: string[];
+  };
 }
 
 export interface ApiErrorResponse {

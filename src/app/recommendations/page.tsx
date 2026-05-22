@@ -5,10 +5,11 @@ import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, FileUpload, Input, JobCard, SectionCard, Skeleton, TabNav } from '@/components/ui';
 import { API } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
-import type { JobItem } from '@/lib/types';
+import type { JobItem, ParseResult } from '@/lib/types';
 import AIAnalysisResult, { isAnalysisResult } from '@/components/AIAnalysisResult';
 import AIChatPanel from '@/components/AIChatPanel';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
+import { ResumeParseSummary, type ResumeParseSummaryMeta } from '@/components/ResumeParseSummary';
 
 type RecommendationMode = 'analyze' | 'resume' | 'delivery';
 
@@ -158,6 +159,8 @@ export default function RecommendationsPage() {
   const [message, setMessage] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [resumeContent, setResumeContent] = useState('');
+  const [resumeParseMeta, setResumeParseMeta] = useState<ResumeParseSummaryMeta | null>(null);
+  const [resumeParseMessage, setResumeParseMessage] = useState('');
   const [analysisSessionId, setAnalysisSessionId] = useState<string>('');
   const [showChat, setShowChat] = useState(false);
 
@@ -166,17 +169,21 @@ export default function RecommendationsPage() {
     () => API.getRecommendationHistory(20) as Promise<unknown[]>,
   );
 
-  const handleFileSelect = useCallback((file: File) => {
+  const handleFileSelect = useCallback(async (file: File) => {
     setResumeFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result;
-      setResumeContent(typeof content === 'string' ? content : '');
-    };
-    reader.onerror = () => {
-      setMessage('文件读取失败，请检查文件格式');
-    };
-    reader.readAsText(file);
+    setResumeParseMessage('正在提取简历文本并生成画像…');
+    setResumeParseMeta(null);
+    try {
+      const result: ParseResult = await API.parseResumeFile(file);
+      setResumeContent(result.profile.resumeText || '');
+      setResumeParseMeta(result.meta || null);
+      setResumeParseMessage(result.meta ? 'PDF 已解析完成，可继续生成岗位分析与推荐结果。' : '简历解析已完成');
+      setMessage('');
+    } catch (error) {
+      setResumeParseMeta(null);
+      setResumeParseMessage(error instanceof Error ? error.message : '文件解析失败，请检查文件格式');
+      setMessage(error instanceof Error ? error.message : '文件解析失败，请检查文件格式');
+    }
   }, []);
 
   async function submitAction() {
@@ -326,9 +333,14 @@ export default function RecommendationsPage() {
         <div style={{ flex: '0 0 40%', minWidth: 0 }}>
           <SectionCard title="简历上传" description="上传简历文件辅助 AI 进行精准分析">
             <FileUpload
-              accept=".pdf,.doc,.docx,.txt"
-              label="拖拽或点击上传简历（支持 PDF、Word、TXT）"
+              accept=".pdf,.txt"
+              label="拖拽或点击上传简历（支持 PDF、TXT）"
               onFileSelect={handleFileSelect}
+            />
+            <ResumeParseSummary
+              status={resumeParseMeta ? 'success' : resumeParseMessage.includes('失败') ? 'error' : resumeParseMessage ? 'loading' : 'idle'}
+              meta={resumeParseMeta}
+              message={resumeParseMessage}
             />
             {hasResumeFile ? (
               <div style={{ marginTop: 10 }}>

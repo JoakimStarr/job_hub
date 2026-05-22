@@ -86,6 +86,7 @@ export function saveRecommendationHistory(params: {
 export function getRecommendationHistory(filters?: {
   userId?: number;
   mode?: string;
+  jobId?: number;
   limit?: number;
 }): RecommendationHistoryItem[] {
   const db = getDb();
@@ -104,6 +105,11 @@ export function getRecommendationHistory(filters?: {
   if (filters?.mode) {
     sql += ' AND mode = ?';
     conditions.push(filters.mode);
+  }
+
+  if (filters?.jobId) {
+    sql += ' AND job_id = ?';
+    conditions.push(filters.jobId);
   }
 
   sql += ' ORDER BY created_at DESC LIMIT ?';

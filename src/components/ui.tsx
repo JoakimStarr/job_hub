@@ -2,9 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, memo, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
 import type { JobItem } from '@/lib/types';
-import { API } from '@/lib/api';
-import { useAppStore } from '@/store';
-import MarkdownRenderer from '@/components/MarkdownRenderer';
+import JobAnalysisPanel from '@/components/JobAnalysisPanel';
 
 function joinClassNames(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
@@ -190,9 +188,6 @@ export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick, o
 });
 
 export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobItem; onClose: () => void; onToggleFavorite?: (job: JobItem) => void }) {
-  const [aiResult, setAiResult] = useState<string | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiError, setAiError] = useState('');
   const modalRef = useRef<HTMLDivElement>(null);
 
   const detailDate = formatDate(job.publish_date || job.created_at);
@@ -240,117 +235,57 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
     };
   }, []);
 
-  const handleAnalyze = useCallback(async () => {
-    if (useAppStore.getState().isGuest) {
-      alert('请登录后使用此功能');
-      return;
-    }
-    setAiLoading(true);
-    setAiError('');
-    setAiResult(null);
-    try {
-      const result = await API.analyzeJob(job.id);
-      let text = '';
-
-      if (typeof result === 'string') {
-        text = result;
-      } else if (result && typeof result === 'object') {
-        const obj = result as Record<string, unknown>;
-
-        if (obj.score && typeof (obj.score as Record<string, unknown>).total === 'number') {
-          const score = obj.score as Record<string, number>;
-          const parts: string[] = [];
-          if (obj.recommendation) parts.push(`**推荐等级**: ${obj.recommendation}`);
-          if (score.total != null) parts.push(`\n**综合评分**: ${score.total}/100`);
-          if (score.skills != null) parts.push(`**技能匹配**: ${score.skills}/100`);
-          if (score.education != null) parts.push(`**学历匹配**: ${score.education}/100`);
-          if (score.match_rate != null) parts.push(`**匹配率**: ${score.match_rate}%`);
-          if (Array.isArray(obj.suggestions) && (obj.suggestions as string[]).length > 0) {
-            parts.push('\n**建议**:\n' + (obj.suggestions as string[]).map((s: string) => `- ${s}`).join('\n'));
-          }
-          if (Array.isArray(obj.risks) && (obj.risks as string[]).length > 0) {
-            parts.push('\n**风险提示**:\n' + (obj.risks as string[]).map((r: string) => `- ⚠️ ${r}`).join('\n'));
-          }
-          if (Array.isArray(obj.action_plan) && (obj.action_plan as string[]).length > 0) {
-            parts.push('\n**行动计划**:\n' + (obj.action_plan as string[]).map((a: string, i: number) => `${i + 1}. ${a}`).join('\n'));
-          }
-          const meta = obj._meta as Record<string, unknown> | undefined;
-          if (meta?.model) parts.push(`\n\n*模型: ${meta.model}*`);
-          text = parts.join('\n\n');
-        } else {
-          text = String(obj.answer || obj.result || obj.content || '');
-        }
-
-        if (!text) {
-          const fallbackFields = ['text', 'message', 'response', 'summary', 'explanation'];
-          for (const field of fallbackFields) {
-            if (typeof obj[field] === 'string' && (obj[field] as string).length > 0) {
-              text = obj[field] as string;
-              break;
-            }
-          }
-        }
-      }
-
-      setAiResult(text || '分析完成，但无法解析结果内容。请尝试刷新页面重新分析。');
-    } catch (err) {
-      setAiError(err instanceof Error ? err.message : 'AI 分析失败');
-    } finally {
-      setAiLoading(false);
-    }
-  }, [job.id]);
-
   async function handleShare() {
-  const url = job.apply_url || job.source_url || '';
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: job.title, url });
-    } catch {
-      // user cancelled
-    }
-  } else {
-    try {
-      await navigator.clipboard.writeText(url);
-      // TODO: show toast
-    } catch {
-      // fallback
+    const url = job.apply_url || job.source_url || '';
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: job.title, url });
+      } catch {
+        // user cancelled
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        // TODO: show toast
+      } catch {
+        // fallback
+      }
     }
   }
-}
 
-return (
-  <div className="modal-backdrop" onClick={onClose} role="presentation">
-    <div
-      className="job-detail-modal"
-      ref={modalRef}
-      onClick={(e) => e.stopPropagation()}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="job-detail-title"
-    >
-      <div className="job-detail-head">
-        <div>
-          <h2 id="job-detail-title">{job.title}</h2>
-          <div className="job-detail-meta">
-            {job.company ? <span>{job.company}</span> : null}
-            {job.location ? <span>📍 {job.location}</span> : null}
-            {detailDate ? <span>📅 {detailDate}</span> : null}
+  return (
+    <div className="modal-backdrop" onClick={onClose} role="presentation">
+      <div
+        className="job-detail-modal"
+        ref={modalRef}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="job-detail-title"
+      >
+        <div className="job-detail-head">
+          <div>
+            <h2 id="job-detail-title">{job.title}</h2>
+            <div className="job-detail-meta">
+              {job.company ? <span>{job.company}</span> : null}
+              {job.location ? <span>📍 {job.location}</span> : null}
+              {detailDate ? <span>📅 {detailDate}</span> : null}
+            </div>
           </div>
-        </div>
-        <div className="job-detail-actions">
-          {onToggleFavorite ? (
-            <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} />
-          ) : null}
-          {(job.source_url || job.apply_url) ? (
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleShare}
-              style={{ fontSize: 13 }}
-              aria-label="分享岗位"
-            >
-              分享
-            </button>
+          <div className="job-detail-actions">
+            {onToggleFavorite ? (
+              <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} />
+            ) : null}
+            {(job.source_url || job.apply_url) ? (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleShare}
+                style={{ fontSize: 13 }}
+                aria-label="分享岗位"
+              >
+                分享
+              </button>
             ) : null}
             <button type="button" className="modal-close-btn" onClick={onClose} aria-label="关闭">
               ✕
@@ -408,21 +343,7 @@ return (
 
           <div className="job-detail-section">
             <h3>AI 分析</h3>
-            {!aiResult && !aiLoading && !aiError ? (
-              <Button variant="secondary" onClick={handleAnalyze}>AI 分析</Button>
-            ) : null}
-            {aiLoading ? (
-              <div className="ai-loading">
-                <div className="loading-orb" style={{ width: 28, height: 28, borderWidth: 3 }} />
-                <span>AI 分析中...</span>
-              </div>
-            ) : null}
-            {aiError ? (
-              <div className="notice notice-error">{aiError}</div>
-            ) : null}
-            {aiResult ? (
-              <div className="ai-result"><MarkdownRenderer content={aiResult} /></div>
-            ) : null}
+            <JobAnalysisPanel job={job} />
           </div>
         </div>
       </div>

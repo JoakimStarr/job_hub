@@ -359,14 +359,6 @@ async function handleChatResponse(
     totalTokens: response.usage?.total_tokens,
   });
 
-  return NextResponse.json({
-    result: response.content,
-    session_id: sessionId,
-    model: response.model,
-    usage: response.usage,
-    chat_mode: true,
-  });
-
   saveRecommendationHistory({
     userId,
     mode: 'chat',
@@ -376,6 +368,14 @@ async function handleChatResponse(
     sessionId,
     model: response.model,
     durationMs: Date.now() - startTime,
+  });
+
+  return NextResponse.json({
+    result: response.content,
+    session_id: sessionId,
+    model: response.model,
+    usage: response.usage,
+    chat_mode: true,
   });
 }
 

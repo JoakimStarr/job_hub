@@ -6,12 +6,14 @@ import { logger } from '@/lib/logger';
 import fs from 'fs';
 import path from 'path';
 
-const LOG_DIR = '/home/joakim/Project/job_hub/src/log';
+const LOG_DIR = path.join(process.cwd(), 'log');
 
 interface LogEntry {
   time: string;
+  timestamp: string;
   level: string;
   message: string;
+  source?: string;
 }
 
 export async function GET(request: Request) {
@@ -61,8 +63,10 @@ export async function GET(request: Request) {
       if (match) {
         entries.unshift({
           time: match[1],
+          timestamp: match[1],
           level: match[2].toUpperCase(),
           message: match[3],
+          source: files[0].name,
         });
       }
     }

@@ -3,6 +3,7 @@ import type {
   CrawlerStatus,
   JobItem,
   PagedResponse,
+  ParseResult,
   RoleItem,
   StatsOverview,
   SubscriptionItem,
@@ -170,7 +171,19 @@ export const API = {
   },
   getResumeAdvice: (data: Record<string, unknown> = {}) => request('/api/recommendations/resume-advice', { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),
   getDeliveryAssistant: (data: Record<string, unknown> = {}) => request('/api/recommendations/delivery-assistant', { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),
-  getRecommendationHistory: (limit = 10) => request(`/api/recommendations/history?limit=${limit}`),
+  getRecommendationHistory: (limit = 10, filters: { mode?: string; jobId?: number } = {}) => {
+    const query = new URLSearchParams();
+    query.set('limit', String(limit));
+    if (filters.mode) query.set('mode', filters.mode);
+    if (filters.jobId) query.set('jobId', String(filters.jobId));
+    return request(`/api/recommendations/history?${query.toString()}`);
+  },
+  parseResumeText: (text: string) => request<ParseResult>('/api/resume/parse', { method: 'POST', body: JSON.stringify({ text }) }, AI_REQUEST_TIMEOUT_MS),
+  parseResumeFile: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return request<ParseResult>('/api/resume/parse', { method: 'POST', body: formData }, AI_REQUEST_TIMEOUT_MS);
+  },
   getRecommendationQualityDashboard: () => request('/api/recommendations/quality-dashboard'),
   reportRecommendationImpression: (data: Record<string, unknown>) => request('/api/recommendations/metrics/impression', { method: 'POST', body: JSON.stringify(data) }),
   reportRecommendationClick: (data: Record<string, unknown>) => request('/api/recommendations/metrics/click', { method: 'POST', body: JSON.stringify(data) }),

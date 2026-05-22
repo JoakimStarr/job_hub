@@ -481,12 +481,16 @@
     {
       "name": "江苏省苏州市工业园区",
       "count": 1
+    },
+    {
+      "name": "北京市通州区",
+      "count": 1
     }
   ],
   "job_types": [
     {
       "name": "全职",
-      "count": 59
+      "count": 60
     },
     {
       "name": "实习",
@@ -551,15 +555,15 @@
       "count": 3
     },
     {
+      "name": "房地产业",
+      "count": 2
+    },
+    {
       "name": "渔业",
       "count": 2
     },
     {
       "name": "其他企业(含民营企业等)",
-      "count": 1
-    },
-    {
-      "name": "房地产业",
       "count": 1
     },
     {
@@ -578,25 +582,25 @@
   "education": [
     {
       "name": "本科",
-      "count": 61
+      "count": 62
     },
     {
       "name": "硕士",
-      "count": 46
+      "count": 47
     },
     {
       "name": "博士",
-      "count": 35
+      "count": 36
     },
     {
       "name": "不限",
-      "count": 19
+      "count": 20
     }
   ],
   "sources": [
     {
       "name": "上海财经大学",
-      "count": 36,
+      "count": 37,
       "pinyin": "shanghaicaijingdaxue",
       "firstLetter": "shcjdx"
     },
@@ -4890,5 +4894,5 @@
       "alias": []
     }
   ],
-  "updated_at": 1779426360014
+  "updated_at": 1779434557090
 }

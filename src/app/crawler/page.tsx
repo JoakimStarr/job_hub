@@ -7,7 +7,7 @@ import { API, APIError } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
 import type { CrawlerStatus } from '@/lib/types';
 
-type CrawlerLog = { timestamp?: string; level?: string; message?: string; source?: string };
+type CrawlerLog = { timestamp?: string; time?: string; level?: string; message?: string; source?: string };
 
 export default function CrawlerPage() {
   const [headless, setHeadless] = useState(true);
@@ -141,6 +141,31 @@ export default function CrawlerPage() {
         {message ? <div className="notice notice-success" style={{ marginTop: 16 }}>{message}</div> : null}
       </SectionCard>
 
+      <SectionCard title="使用概览" description="运行时长、来源进度和采集结果汇总">
+        <div className="grid-4">
+          <div className="stat-card">
+            <div className="stat-card-title">运行时长</div>
+            <div className="stat-card-value">{status?.elapsed_seconds != null ? `${Math.floor((status.elapsed_seconds || 0) / 60)} 分 ${status?.elapsed_seconds % 60} 秒` : '--'}</div>
+            <div className="stat-card-hint">距离本次任务开始的时间</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-title">来源进度</div>
+            <div className="stat-card-value">{status?.completed_sources ?? 0}/{status?.total_sources ?? 0}</div>
+            <div className="stat-card-hint">已完成 / 总来源</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-title">累计岗位</div>
+            <div className="stat-card-value">{status?.total_jobs ?? 0}</div>
+            <div className="stat-card-hint">当前批次已入库数量</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-title">最后更新</div>
+            <div className="stat-card-value">{status?.last_update ? new Date(status.last_update).toLocaleString('zh-CN') : '--'}</div>
+            <div className="stat-card-hint">最近一次状态刷新时间</div>
+          </div>
+        </div>
+      </SectionCard>
+
       <SectionCard title="采集来源" description="来源列表和可用状态">
         {sourcesLoading ? <EmptyState title="正在加载" description="爬虫来源正在拉取。" /> : null}
         {sourcesError ? <EmptyState title="加载失败" description={sourcesError.message} action={<Button variant="secondary" onClick={reloadAll}>重试</Button>} /> : null}
@@ -173,7 +198,7 @@ export default function CrawlerPage() {
                   <Badge tone={String(item.level || '').toLowerCase().includes('error') ? 'rose' : 'blue'}>{item.level || 'INFO'}</Badge>
                 </div>
                 <div style={{ marginTop: 8, color: 'var(--muted)', fontSize: 13 }}>
-                  {item.timestamp || '--'} {item.source ? `· ${item.source}` : ''}
+                  {item.timestamp || item.time || '--'} {item.source ? `· ${item.source}` : ''}
                 </div>
               </div>
             ))}

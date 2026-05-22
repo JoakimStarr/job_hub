@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import type { ResumeProfile, ParseResult } from '@/lib/resume-types';
 import { API } from '@/lib/api';
+import { ResumeParseSummary, type ResumeParseSummaryMeta } from '@/components/ResumeParseSummary';
 import styles from './resume-uploader.module.css';
 
 interface ResumeUploaderProps {
@@ -15,13 +16,15 @@ interface ResumeUploaderProps {
 export default function ResumeUploader({
   onParseSuccess,
   onParseError,
-  acceptedFormats = ['.txt'],
+  acceptedFormats = ['.pdf', '.txt'],
   maxSize = 5,
 }: ResumeUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
   const [parseProgress, setParseProgress] = useState(0);
   const [resumeText, setResumeText] = useState('');
+  const [parseSummary, setParseSummary] = useState<ResumeParseSummaryMeta | null>(null);
+  const [parseMessage, setParseMessage] = useState('');
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -51,31 +54,40 @@ export default function ResumeUploader({
   }, []);
 
   const handleFile = async (file: File) => {
-    if (!file.name.endsWith('.txt')) {
-      onParseError('目前仅支持TXT格式的简历文件');
+    const fileName = file.name.toLowerCase();
+    const supported = fileName.endsWith('.pdf') || fileName.endsWith('.txt');
+
+    if (!supported) {
+      const errorMessage = '目前仅支持 PDF 和 TXT 格式的简历文件';
+      setParseMessage(errorMessage);
+      setParseSummary(null);
+      onParseError(errorMessage);
       return;
     }
 
     if (file.size > maxSize * 1024 * 1024) {
-      onParseError(`文件大小超过${maxSize}MB限制`);
+      const errorMessage = `文件大小超过${maxSize}MB限制`;
+      setParseMessage(errorMessage);
+      setParseSummary(null);
+      onParseError(errorMessage);
       return;
     }
 
     setIsParsing(true);
     setParseProgress(0);
+    setParseMessage('正在提取简历文本并构建画像…');
+    setParseSummary(null);
 
     try {
-      const text = await file.text();
-      setResumeText(text);
+      const result: ParseResult = await API.parseResumeFile(file);
+      setResumeText(result.profile.resumeText || '');
       setParseProgress(30);
-
-      const result: ParseResult = await API.request<ParseResult>('/api/resume/parse', {
-        method: 'POST',
-        body: JSON.stringify({ text }),
-      });
 
       setParseProgress(70);
       setParseProgress(100);
+
+      setParseSummary(result.meta || null);
+      setParseMessage(result.meta ? 'PDF 已解析完成，可继续进行岗位匹配、AI 分析与推荐生成。' : '简历解析已完成');
 
       if (result.warnings.length > 0) {
         console.warn('解析警告:', result.warnings);
@@ -91,23 +103,28 @@ export default function ResumeUploader({
 
   const handleTextSubmit = async () => {
     if (!resumeText.trim()) {
-      onParseError('请输入简历内容');
+      const errorMessage = '请输入简历内容';
+      setParseMessage(errorMessage);
+      setParseSummary(null);
+      onParseError(errorMessage);
       return;
     }
 
     setIsParsing(true);
     setParseProgress(0);
+    setParseMessage('正在解析文本简历…');
+    setParseSummary(null);
 
     try {
       setParseProgress(30);
 
-      const result: ParseResult = await API.request<ParseResult>('/api/resume/parse', {
-        method: 'POST',
-        body: JSON.stringify({ text: resumeText }),
-      });
+      const result: ParseResult = await API.parseResumeText(resumeText);
 
       setParseProgress(70);
       setParseProgress(100);
+
+      setParseSummary(result.meta || null);
+      setParseMessage(result.meta ? '文本简历已解析完成，可继续进行岗位匹配与 AI 分析。' : '简历解析已完成');
 
       if (result.warnings.length > 0) {
         console.warn('解析警告:', result.warnings);
@@ -146,9 +163,6 @@ export default function ResumeUploader({
             <div className={styles.parsingText}>正在解析简历...</div>
             <div className={styles.progressBarBg}
               role="progressbar"
-              aria-valuenow={parseProgress}
-              aria-valuemin={0}
-              aria-valuemax={100}
               aria-label="解析进度"
             >
               <div
@@ -195,6 +209,12 @@ export default function ResumeUploader({
           </>
         )}
       </div>
+
+      <ResumeParseSummary
+        status={isParsing ? 'loading' : parseSummary ? 'success' : parseMessage ? 'error' : 'idle'}
+        meta={parseSummary}
+        message={parseMessage}
+      />
 
       <div className={styles.textareaSection}>
         <div className={styles.dividerRow}>
