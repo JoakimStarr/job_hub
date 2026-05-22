@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   getAllEnabledAlerts, 
+  getAllAlerts,
   createAlert, 
   getAlertById,
   initJobAlertsTables 
 } from '@/lib/job-alerts-db';
 import { isEmailConfigured } from '@/lib/email-service';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     initJobAlertsTables();
-    const alerts = getAllEnabledAlerts();
+    
+    const { searchParams } = new URL(request.url);
+    const includeDisabled = searchParams.get('include_disabled') === 'true';
+    
+    const alerts = includeDisabled ? getAllAlerts() : getAllEnabledAlerts();
     
     return NextResponse.json({
       success: true,

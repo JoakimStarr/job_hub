@@ -94,6 +94,33 @@ export function getAllEnabledAlerts(): JobAlert[] {
   }));
 }
 
+export function getAllAlerts(): JobAlert[] {
+  initJobAlertsTables();
+  const db = getDb();
+
+  const rows = db.prepare(`
+    SELECT id, email, keywords, sources, locations, industries, min_salary, education,
+           enabled, last_notified_at, notify_count, created_at
+    FROM user_job_alerts
+    ORDER BY created_at DESC
+  `).all() as Record<string, unknown>[];
+
+  return rows.map(row => ({
+    id: row.id as number,
+    email: row.email as string,
+    keywords: JSON.parse(row.keywords as string || '[]'),
+    sources: JSON.parse(row.sources as string || '[]'),
+    locations: JSON.parse(row.locations as string || '[]'),
+    industries: JSON.parse(row.industries as string || '[]'),
+    min_salary: row.min_salary as string | undefined,
+    education: row.education as string | undefined,
+    enabled: row.enabled === 1,
+    last_notified_at: row.last_notified_at as string | undefined,
+    notify_count: row.notify_count as number,
+    created_at: row.created_at as string,
+  }));
+}
+
 export function createAlert(alert: Omit<JobAlert, 'id' | 'notify_count' | 'created_at'>): JobAlert {
   initJobAlertsTables();
   const db = getDb();
@@ -212,6 +239,19 @@ export function disableAlert(id: number): boolean {
   const result = db.prepare(`
     UPDATE user_job_alerts 
     SET enabled = 0, updated_at = datetime('now')
+    WHERE id = ?
+  `).run(id);
+  
+  return result.changes > 0;
+}
+
+export function enableAlert(id: number): boolean {
+  initJobAlertsTables();
+  const db = getDb();
+  
+  const result = db.prepare(`
+    UPDATE user_job_alerts 
+    SET enabled = 1, updated_at = datetime('now')
     WHERE id = ?
   `).run(id);
   

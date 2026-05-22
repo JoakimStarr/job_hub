@@ -29,6 +29,18 @@ interface AlertHistory {
   created_at: string;
 }
 
+interface PreviewJob {
+  id: number;
+  title: string;
+  company?: string;
+  location?: string;
+  salary?: string;
+  university?: string;
+  source_url?: string;
+  matchedKeywords: string[];
+  matchScore: number;
+}
+
 const SOURCE_OPTIONS = [
   { value: 'sufe', label: '上海财经大学' },
   { value: 'zuel', label: '中南财经政法大学' },
@@ -43,6 +55,7 @@ export default function JobAlertsPanel() {
   const [loading, setLoading] = useState(true);
   const [emailConfigured, setEmailConfigured] = useState(true);
   const [message, setMessage] = useState('');
+  const [showDisabled, setShowDisabled] = useState(false);
   
   const [editingAlert, setEditingAlert] = useState<JobAlert | null>(null);
   const [formData, setFormData] = useState({
@@ -55,11 +68,27 @@ export default function JobAlertsPanel() {
     education: '',
   });
 
+  const [previewModal, setPreviewModal] = useState<{
+    open: boolean;
+    alert: JobAlert | null;
+    jobs: PreviewJob[];
+    totalJobs: number;
+    matchedCount: number;
+    loading: boolean;
+  }>({
+    open: false,
+    alert: null,
+    jobs: [],
+    totalJobs: 0,
+    matchedCount: 0,
+    loading: false,
+  });
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const [alertsRes, historyRes] = await Promise.all([
-        API.getJobAlerts(),
+        API.getJobAlerts(showDisabled),
         API.getAlertHistory(),
       ]);
       
@@ -76,11 +105,61 @@ export default function JobAlertsPanel() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [showDisabled]);
 
   useEffect(() => {
     void fetchData();
   }, [fetchData]);
+
+  const handlePreview = async (alert: JobAlert) => {
+    setPreviewModal({
+      open: true,
+      alert,
+      jobs: [],
+      totalJobs: 0,
+      matchedCount: 0,
+      loading: true,
+    });
+
+    try {
+      const res = await API.previewJobAlert(alert.id);
+      if (res.success && res.data) {
+        setPreviewModal(prev => ({
+          ...prev,
+          jobs: res.data.matched_jobs as PreviewJob[],
+          totalJobs: res.data.total_jobs,
+          matchedCount: res.data.matched_count,
+          loading: false,
+        }));
+      } else {
+        setPreviewModal(prev => ({
+          ...prev,
+          loading: false,
+        }));
+        setMessage(res.error || '预览失败');
+      }
+    } catch (error) {
+      setPreviewModal(prev => ({
+        ...prev,
+        loading: false,
+      }));
+      setMessage(error instanceof Error ? error.message : '预览失败');
+    }
+  };
+
+  const handleReEnable = async (alertId: number) => {
+    try {
+      const res = await API.enableJobAlert(alertId);
+      if (res.success) {
+        setMessage('订阅已重新启用');
+        void fetchData();
+      } else {
+        setMessage(res.error || '启用失败');
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : '启用失败');
+    }
+  };
 
   const handleSubmit = async () => {
     if (!formData.email || !formData.keywords) {
@@ -223,6 +302,9 @@ export default function JobAlertsPanel() {
     return <Skeleton type="card" />;
   }
 
+  const enabledCount = alerts.filter(a => a.enabled).length;
+  const disabledCount = alerts.filter(a => !a.enabled).length;
+
   return (
     <div>
       {!emailConfigured ? (
@@ -236,6 +318,106 @@ export default function JobAlertsPanel() {
           {message}
         </div>
       ) : null}
+
+      {previewModal.open && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: 20,
+          }}
+          onClick={() => setPreviewModal(prev => ({ ...prev, open: false }))}
+        >
+          <div
+            style={{
+              background: 'white',
+              borderRadius: 12,
+              maxWidth: 700,
+              width: '100%',
+              maxHeight: '80vh',
+              overflow: 'auto',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ padding: 20, borderBottom: '1px solid #e5e7eb' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: 0 }}>预览匹配岗位</h3>
+                <button
+                  onClick={() => setPreviewModal(prev => ({ ...prev, open: false }))}
+                  style={{ background: 'none', border: 'none', fontSize: 24, cursor: 'pointer', color: '#6b7280' }}
+                >
+                  ×
+                </button>
+              </div>
+              {previewModal.alert && (
+                <div style={{ marginTop: 8, fontSize: 13, color: '#6b7280' }}>
+                  关键词：{previewModal.alert.keywords.join('、')}
+                </div>
+              )}
+            </div>
+            
+            <div style={{ padding: 20 }}>
+              {previewModal.loading ? (
+                <div style={{ textAlign: 'center', padding: 40 }}>加载中...</div>
+              ) : (
+                <>
+                  <div style={{ marginBottom: 16, fontSize: 14, color: '#4b5563' }}>
+                    从最近 {previewModal.totalJobs} 个岗位中匹配到 <strong>{previewModal.matchedCount}</strong> 个岗位
+                  </div>
+                  
+                  {previewModal.jobs.length === 0 ? (
+                    <EmptyState title="暂无匹配岗位" description="当前没有匹配该订阅条件的岗位" />
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {previewModal.jobs.map(job => (
+                        <div
+                          key={job.id}
+                          style={{
+                            padding: 16,
+                            borderRadius: 8,
+                            border: '1px solid #e5e7eb',
+                            background: '#fff',
+                          }}
+                        >
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div style={{ flex: 1 }}>
+                              <a
+                                href={job.source_url || '#'}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ fontSize: 15, fontWeight: 600, color: '#3b82f6', textDecoration: 'none' }}
+                              >
+                                {job.title}
+                              </a>
+                              <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>
+                                {job.company ? `${job.company} · ` : ''}
+                                {job.location ? `${job.location} · ` : ''}
+                                {job.salary || '面议'}
+                              </div>
+                              <div style={{ fontSize: 12, color: '#3b82f6', marginTop: 6 }}>
+                                匹配关键词：{job.matchedKeywords.join('、')}
+                              </div>
+                            </div>
+                            <Badge tone="blue">{job.matchScore}%</Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
         <SectionCard title={editingAlert ? '编辑订阅' : '新建订阅'} description="设置关键词，当有新岗位匹配时自动邮件通知">
@@ -337,7 +519,21 @@ export default function JobAlertsPanel() {
         </SectionCard>
 
         <div>
-          <SectionCard title="我的订阅" description={`共 ${alerts.length} 个订阅`}>
+          <SectionCard 
+            title="我的订阅" 
+            description={`共 ${alerts.length} 个订阅（${enabledCount} 启用，${disabledCount} 禁用）`}
+          >
+            <div style={{ marginBottom: 12 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', fontSize: 13 }}>
+                <input
+                  type="checkbox"
+                  checked={showDisabled}
+                  onChange={e => setShowDisabled(e.target.checked)}
+                />
+                显示已禁用的订阅
+              </label>
+            </div>
+            
             {alerts.length === 0 ? (
               <EmptyState title="暂无订阅" description="创建订阅后，当有新岗位匹配时会自动邮件通知您" />
             ) : (
@@ -376,16 +572,32 @@ export default function JobAlertsPanel() {
                       已推送 {alert.notify_count} 次
                       {alert.last_notified_at ? ` · 上次：${new Date(alert.last_notified_at).toLocaleString('zh-CN')}` : ''}
                     </div>
-                    <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                      <Button variant="secondary" onClick={() => handleEdit(alert)}>
-                        编辑
+                    <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
+                      <Button variant="secondary" onClick={() => handlePreview(alert)}>
+                        预览
                       </Button>
-                      <Button variant="secondary" onClick={() => handleToggle(alert)}>
-                        {alert.enabled ? '禁用' : '启用'}
-                      </Button>
-                      <Button variant="secondary" onClick={() => handleDelete(alert.id)}>
-                        删除
-                      </Button>
+                      {alert.enabled ? (
+                        <>
+                          <Button variant="secondary" onClick={() => handleEdit(alert)}>
+                            编辑
+                          </Button>
+                          <Button variant="secondary" onClick={() => handleToggle(alert)}>
+                            禁用
+                          </Button>
+                          <Button variant="secondary" onClick={() => handleDelete(alert.id)}>
+                            删除
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button variant="primary" onClick={() => handleReEnable(alert.id)}>
+                            重新启用
+                          </Button>
+                          <Button variant="secondary" onClick={() => handleDelete(alert.id)}>
+                            删除
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))}

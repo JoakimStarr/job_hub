@@ -206,7 +206,11 @@ export const API = {
   }),
   
   // Job Alerts APIs
-  getJobAlerts: () => request<{ success: boolean; data: unknown[]; emailConfigured?: boolean }>('/api/alerts'),
+  getJobAlerts: (includeDisabled = false) => {
+    const query = new URLSearchParams();
+    if (includeDisabled) query.set('include_disabled', 'true');
+    return request<{ success: boolean; data: unknown[]; emailConfigured?: boolean }>(`/api/alerts?${query.toString()}`);
+  },
   createJobAlert: (data: Record<string, unknown>) => request<{ success: boolean; data: unknown; error?: string }>('/api/alerts', {
     method: 'POST',
     body: JSON.stringify(data),
@@ -218,6 +222,15 @@ export const API = {
   deleteJobAlert: (id: number) => request<{ success: boolean; error?: string }>(`/api/alerts/${id}`, {
     method: 'DELETE',
   }),
+  enableJobAlert: (id: number) => request<{ success: boolean; error?: string }>(`/api/alerts/${id}/enable`, {
+    method: 'POST',
+  }),
+  previewJobAlert: (alertId: number, limit = 20) => {
+    const query = new URLSearchParams();
+    query.set('alert_id', String(alertId));
+    query.set('limit', String(limit));
+    return request<{ success: boolean; data: { alert: { id: number; email: string; keywords: string[] }; total_jobs: number; matched_count: number; matched_jobs: unknown[] }; error?: string }>(`/api/alerts/preview?${query.toString()}`);
+  },
   sendTestEmail: (email: string) => request<{ success: boolean; error?: string }>('/api/alerts/test-email', {
     method: 'POST',
     body: JSON.stringify({ email }),

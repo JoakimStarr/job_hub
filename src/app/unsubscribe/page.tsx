@@ -9,7 +9,9 @@ export default function UnsubscribePage() {
   const email = searchParams.get('email');
   
   const [loading, setLoading] = useState(false);
+  const [reEnabling, setReEnabling] = useState(false);
   const [success, setSuccess] = useState<boolean | null>(null);
+  const [reEnableSuccess, setReEnableSuccess] = useState<boolean | null>(null);
   const [message, setMessage] = useState('');
   const [keywords, setKeywords] = useState<string[]>([]);
   const [showConfirm, setShowConfirm] = useState(true);
@@ -56,6 +58,33 @@ export default function UnsubscribePage() {
     }
   };
 
+  const handleReEnable = async () => {
+    if (!alertId) return;
+    
+    setReEnabling(true);
+    try {
+      const response = await fetch(`/api/alerts/${alertId}/enable`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setReEnableSuccess(true);
+        setMessage('订阅已重新启用，您将继续收到职位提醒邮件。');
+      } else {
+        setReEnableSuccess(false);
+        setMessage(data.error || '重新启用失败，请稍后重试');
+      }
+    } catch (error) {
+      setReEnableSuccess(false);
+      setMessage('网络错误，请稍后重试');
+    } finally {
+      setReEnabling(false);
+    }
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -78,17 +107,17 @@ export default function UnsubscribePage() {
             width: 80,
             height: 80,
             borderRadius: '50%',
-            background: success === true ? '#10b981' : success === false ? '#ef4444' : '#3b82f6',
+            background: reEnableSuccess === true ? '#10b981' : success === true ? '#10b981' : success === false ? '#ef4444' : '#3b82f6',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: '0 auto 20px',
             fontSize: 40,
           }}>
-            {success === true ? '✓' : success === false ? '✗' : '📧'}
+            {reEnableSuccess === true ? '✓' : success === true ? '✓' : success === false ? '✗' : '📧'}
           </div>
           <h1 style={{ margin: 0, fontSize: 24, color: '#1f2937' }}>
-            职位提醒取消订阅
+            {reEnableSuccess === true ? '重新订阅成功' : '职位提醒取消订阅'}
           </h1>
         </div>
 
@@ -162,7 +191,7 @@ export default function UnsubscribePage() {
           <div>
             <p style={{
               textAlign: 'center',
-              color: success ? '#059669' : '#dc2626',
+              color: reEnableSuccess === true ? '#059669' : success ? '#059669' : '#dc2626',
               fontSize: 16,
               lineHeight: 1.6,
             }}>
@@ -198,7 +227,7 @@ export default function UnsubscribePage() {
               </div>
             )}
 
-            {success && (
+            {success && reEnableSuccess === null && (
               <div style={{
                 marginTop: 24,
                 padding: 16,
@@ -206,9 +235,26 @@ export default function UnsubscribePage() {
                 borderRadius: 8,
                 border: '1px solid #3b82f6',
               }}>
-                <p style={{ margin: 0, color: '#1e40af', fontSize: 13 }}>
-                  💡 如需重新订阅，请登录系统在"职位提醒"页面创建新的订阅。
+                <p style={{ margin: '0 0 12px', color: '#1e40af', fontSize: 13 }}>
+                  💡 改变主意了？您可以立即重新启用订阅：
                 </p>
+                <button
+                  onClick={handleReEnable}
+                  disabled={reEnabling}
+                  style={{
+                    width: '100%',
+                    padding: '12px 20px',
+                    background: reEnabling ? '#9ca3af' : '#3b82f6',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: reEnabling ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {reEnabling ? '处理中...' : '重新启用订阅'}
+                </button>
               </div>
             )}
 
