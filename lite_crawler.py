@@ -54,6 +54,7 @@ BATCH_COMMIT_SIZE = 50
 URL_CACHE_MAX_SIZE = 100000
 REQUEST_TIMEOUT = 30
 DETAIL_DELAY = 0.5
+MAX_PAGES = 20
 
 HTTP_SOURCES = get_lite_http_sources()
 
@@ -798,8 +799,13 @@ def fetch_with_retry(url: str, method: str = "GET", **kwargs) -> Optional[reques
 
 
 def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
-    """爬取 SUFE（支持增量爬取）"""
-    import json as json_mod
+    """爬取 SUFE（基于URL去重的增量爬取）
+    
+    增量策略：
+    - 不记录页码，通过 URL 去重判断是否需要继续
+    - 每页检查所有 URL 是否已存在，全部存在则停止爬取
+    - 最多爬取 MAX_PAGES 页
+    """
     source = "sufe"
     source_name = source_config["name"]
     base_url = source_config["base_url"]
@@ -807,19 +813,11 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
     crawl_logger.log_source_start(source, source_name)
 
-    # 加载增量爬取状态
-    state = load_crawl_state(source)
-    state_extra = json_mod.loads(state.get("extra", "{}"))
-    start_page = state_extra.get("page", 1)
-    if start_page > 1:
-        logger.info(f"增量爬取: 从第 {start_page} 页开始 (上次爬取时间: {state.get('last_crawl_time', '未知')})")
-
-    page = start_page
+    page = 1
     count = 0
-    last_completed_page = start_page - 1
 
     try:
-        while True:
+        while page <= MAX_PAGES:
             if max_items > 0 and count >= max_items:
                 logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
                 break
@@ -844,22 +842,32 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                 logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
 
+                # 检查当前页所有 URL 是否都已存在
+                page_urls = [urljoin(base_url, f"/career/zpxx/view/zpxx/{item.get('zpxxid')}") 
+                            for item in items if item.get('zpxxid')]
+                existing_count = sum(1 for url in page_urls if url_exists(url))
+                
+                if existing_count == len(page_urls) and len(page_urls) > 0:
+                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                    break
+
+                page_has_new_data = False
+
                 for item in items:
                     if max_items > 0 and count >= max_items:
                         break
 
                     item_id = item.get("zpxxid")
                     if not item_id:
-                        logger.debug(f"列表项缺少 zpxxid 字段，跳过")
                         continue
 
-                    # 数据接口URL（用于获取详情）
-                    detail_api_url = urljoin(base_url, source_config["detail_url"].format(item_id=item_id))
-                    # 页面展示URL（用于source_url）
                     view_url = urljoin(base_url, f"/career/zpxx/view/zpxx/{item_id}")
 
                     if url_exists(view_url):
                         continue
+
+                    page_has_new_data = True
+                    detail_api_url = urljoin(base_url, source_config["detail_url"].format(item_id=item_id))
 
                     detail_response = fetch_with_retry(detail_api_url, method="POST")
                     if not detail_response:
@@ -868,7 +876,6 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                     try:
                         detail_data = detail_response.json().get("data", {})
 
-                        # 获取职位列表 zwxxList
                         zwxx_list = detail_data.get("zwxxList", [])
                         if not zwxx_list:
                             zwxx_list = [detail_data]
@@ -877,7 +884,6 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             if max_items > 0 and count >= max_items:
                                 break
 
-                            # 职位名称优先使用 zwmc，否则使用 zpzt
                             title = zwxx.get("zwmc") or detail_data.get("zpzt", "")
                             company = detail_data.get("dwmc", "")
                             location = zwxx.get("gzszxmc") or zwxx.get("gzszssmc") or detail_data.get("szxmc", "")
@@ -919,43 +925,40 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                         crawl_logger.log_error(source, e, f"解析详情页: {detail_api_url}")
                         continue
 
-                last_completed_page = page
                 page += 1
 
             except Exception as e:
                 crawl_logger.log_error(source, e, f"解析列表页: {page}")
                 break
+    except KeyboardInterrupt:
+        logger.warning("用户中断爬取")
+    except Exception as e:
+        crawl_logger.log_error(source, e, "爬取过程异常")
     finally:
-        # 保存增量爬取状态
-        if last_completed_page > 0:
-            state_extra["page"] = last_completed_page + 1
-            save_crawl_state(source, last_completed_page, count, extra=json_mod.dumps(state_extra))
+        save_crawl_state(source, 0, count, extra='{}')
 
     crawl_logger.log_source_end(source, source_name, count)
 
 
 def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
-    """爬取 ZUEL - 中南财经政法大学（支持增量爬取）"""
-    import json as json_mod
+    """爬取 ZUEL - 中南财经政法大学（基于URL去重的增量爬取）
+    
+    增量策略：
+    - 不记录页码，通过 URL 去重判断是否需要继续
+    - 每页检查所有 URL 是否已存在，全部存在则停止爬取
+    - 最多爬取 MAX_PAGES 页
+    """
     source = "zuel"
     source_name = source_config["name"]
     base_url = source_config["base_url"]
 
     crawl_logger.log_source_start(source, source_name)
 
-    # 加载增量爬取状态
-    state = load_crawl_state(source)
-    state_extra = json_mod.loads(state.get("extra", "{}"))
-    start_page = state_extra.get("page", 1)
-    if start_page > 1:
-        logger.info(f"增量爬取: 从第 {start_page} 页开始 (上次爬取时间: {state.get('last_crawl_time', '未知')})")
-
-    page = start_page
+    page = 1
     count = 0
-    last_completed_page = start_page - 1
 
     try:
-        while True:
+        while page <= MAX_PAGES:
             if max_items > 0 and count >= max_items:
                 logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
                 break
@@ -981,22 +984,30 @@ def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                 logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
 
+                # 检查当前页所有 URL 是否都已存在
+                page_urls = [f"https://jyzx.zuel.edu.cn/home/career/internship?id={item.get('id')}" 
+                            for item in items if item.get('id')]
+                existing_count = sum(1 for url in page_urls if url_exists(url))
+                
+                if existing_count == len(page_urls) and len(page_urls) > 0:
+                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                    break
+
                 for item in items:
                     if max_items > 0 and count >= max_items:
                         break
 
                     item_id = item.get("id")
                     if not item_id:
-                        logger.debug(f"列表项缺少 id 字段，跳过")
                         continue
 
                     view_url = f"https://jyzx.zuel.edu.cn/home/career/internship?id={item_id}"
 
-                    detail_url = source_config["detail_url"].format(id=item_id)
-                    full_detail_url = urljoin(base_url, detail_url)
-
                     if url_exists(view_url):
                         continue
+
+                    detail_url = source_config["detail_url"].format(id=item_id)
+                    full_detail_url = urljoin(base_url, detail_url)
 
                     detail_response = fetch_with_retry(full_detail_url)
                     if not detail_response:
@@ -1060,42 +1071,39 @@ def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                         crawl_logger.log_error(source, e, f"解析详情页: {full_detail_url}")
                         continue
 
-                last_completed_page = page
                 page += 1
 
             except Exception as e:
                 crawl_logger.log_error(source, e, f"解析列表页: {page}")
                 break
+    except KeyboardInterrupt:
+        logger.warning("用户中断爬取")
+    except Exception as e:
+        crawl_logger.log_error(source, e, "爬取过程异常")
     finally:
-        # 保存增量爬取状态
-        if last_completed_page > 0:
-            state_extra["page"] = last_completed_page + 1
-            save_crawl_state(source, last_completed_page, count, extra=json_mod.dumps(state_extra))
+        save_crawl_state(source, 0, count, extra='{}')
 
     crawl_logger.log_source_end(source, source_name, count)
 
 
 def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
-    """爬取平台类数据源（CUFE/DUFE，支持增量爬取）"""
-    import json as json_mod
+    """爬取平台类数据源（CUFE/DUFE，基于URL去重的增量爬取）
+    
+    增量策略：
+    - 不记录页码，通过 URL 去重判断是否需要继续
+    - 每页检查所有 URL 是否已存在，全部存在则停止爬取
+    - 最多爬取 MAX_PAGES 页
+    """
     source_name = source_config["name"]
     base_url = source_config["base_url"]
 
     crawl_logger.log_source_start(source, source_name)
 
-    # 加载增量爬取状态
-    state = load_crawl_state(source)
-    state_extra = json_mod.loads(state.get("extra", "{}"))
-    start_page = state_extra.get("page", 1)
-    if start_page > 1:
-        logger.info(f"增量爬取: 从第 {start_page} 页开始 (上次爬取时间: {state.get('last_crawl_time', '未知')})")
-
-    page = start_page
+    page = 1
     count = 0
-    last_completed_page = start_page - 1
 
     try:
-        while True:
+        while page <= MAX_PAGES:
             if max_items > 0 and count >= max_items:
                 logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
                 break
@@ -1120,22 +1128,32 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
 
                 logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
 
+                # 检查当前页所有 URL 是否都已存在
+                page_urls = [urljoin(base_url, item.get("url", "")) for item in items if item.get("url")]
+                existing_count = sum(1 for url in page_urls if url_exists(url))
+                
+                if existing_count == len(page_urls) and len(page_urls) > 0:
+                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                    break
+
                 for item in items:
                     if max_items > 0 and count >= max_items:
                         break
 
                     url_path = item.get("url", "")
                     if not url_path:
-                        logger.debug(f"列表项缺少 url 字段，跳过")
                         continue
 
-                    from urllib.parse import parse_qs, urlparse
+                    full_url = urljoin(base_url, url_path)
+
+                    if url_exists(full_url):
+                        continue
+
                     parsed = urlparse(url_path)
                     query_params = parse_qs(parsed.query)
                     recruitment_id = query_params.get("recruitmentId", [None])[0]
 
                     if not recruitment_id:
-                        logger.debug(f"URL中缺少 recruitmentId 参数: {url_path}")
                         continue
 
                     detail_url = urljoin(base_url, source_config["detail_url"])
@@ -1148,7 +1166,6 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
                     try:
                         detail_result = detail_response.json()
                         if detail_result.get("state") != 1:
-                            logger.debug(f"详情API返回异常 state={detail_result.get('state')}")
                             continue
 
                         obj = detail_result.get("object", {})
@@ -1178,7 +1195,6 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
                         if not description or any(p in description for p in placeholder_texts):
                             description = detail.get("shortContent", "") or detail.get("content", "")
                             if description:
-                                import re
                                 description = re.sub(r'<[^>]+>', '', description)
                                 description = description.replace('\r\n', '\n').replace('\r', '\n').strip()
 
@@ -1194,7 +1210,6 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
 
                         salary = "面议"
                         content = detail.get("content", "") or detail.get("shortContent", "")
-                        import re
                         salary_patterns = [
                             r'(\d+\s*[Kk千]\s*[-~～]\s*\d+\s*[Kk千])',
                             r'(\d+\s*万\s*[-~～]\s*\d+\s*万)',
@@ -1222,8 +1237,8 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
                             "publish_date": publish_date,
                             "source": source,
                             "university": source_name,
-                            "source_url": urljoin(base_url, url_path),
-                            "apply_url": urljoin(base_url, url_path),
+                            "source_url": full_url,
+                            "apply_url": full_url,
                         }
 
                         yield job
@@ -1236,29 +1251,29 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
                         crawl_logger.log_error(source, e, f"解析详情页: {url_path}")
                         continue
 
-                last_completed_page = page
                 page += 1
 
             except Exception as e:
                 crawl_logger.log_error(source, e, f"解析列表页: {page}")
                 break
+    except KeyboardInterrupt:
+        logger.warning("用户中断爬取")
+    except Exception as e:
+        crawl_logger.log_error(source, e, "爬取过程异常")
     finally:
-        # 保存增量爬取状态
-        if last_completed_page > 0:
-            state_extra["page"] = last_completed_page + 1
-            save_crawl_state(source, last_completed_page, count, extra=json_mod.dumps(state_extra))
+        save_crawl_state(source, 0, count, extra='{}')
 
     crawl_logger.log_source_end(source, source_name, count)
 
 
 def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
-    """爬取 SWUFE - 西南财经大学
+    """爬取 SWUFE - 西南财经大学（基于URL去重的增量爬取）
     
-    通过HTML页面解析获取列表，检查发布时间后决定是否爬取详情页。
-    列表页: https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm
-    
-    支持增量爬取：记录上次爬取的页码，下次从该页开始。
-    解析逻辑使用 shared_parsers 中的共用函数，确保与主爬虫字段匹配一致。
+    增量策略：
+    - 不记录页码，通过 URL 去重判断是否需要继续
+    - 每页检查所有 URL 是否已存在，全部存在则停止爬取
+    - 最多爬取 MAX_PAGES 页
+    - 检查发布时间，过期数据停止爬取
     """
     from bs4 import BeautifulSoup
     from datetime import datetime, timedelta
@@ -1270,20 +1285,12 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
     
     crawl_logger.log_source_start(source, source_name)
     
-    # 加载增量爬取状态
-    state = load_crawl_state(source)
-    start_page = state.get("last_page", 1)
-    last_completed_page = start_page - 1
-    
-    if start_page > 1:
-        logger.info(f"增量爬取: 从第 {start_page} 页开始 (上次爬取时间: {state.get('last_crawl_time', '未知')})")
-    
-    page = start_page
+    page = 1
     count = 0
     cutoff_date = datetime.now() - timedelta(days=date_filter_months * 30)
     
     try:
-        while True:
+        while page <= MAX_PAGES:
             if max_items > 0 and count >= max_items:
                 logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
                 break
@@ -1298,13 +1305,11 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
             try:
                 soup = BeautifulSoup(response.text, 'html.parser')
                 
-                # 查找列表容器
                 list_box = soup.find('div', class_='listb J_allListBox')
                 if not list_box:
                     logger.debug(f"第 {page} 页未找到列表容器，爬取结束")
                     break
                 
-                # 获取所有岗位项
                 job_items = list_box.find_all('div', class_='td-j-name')
                 if not job_items:
                     logger.debug(f"第 {page} 页无岗位数据，爬取结束")
@@ -1312,11 +1317,24 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
                 
                 logger.info(f"第 {page} 页: 获取到 {len(job_items)} 条列表项")
                 
-                # 标记是否需要停止（遇到过期数据）
+                # 检查当前页所有 URL 是否都已存在
+                page_urls = []
+                for item in job_items:
+                    a_tag = item.find('a', href=True)
+                    if a_tag:
+                        detail_path = a_tag.get('href', '')
+                        if detail_path:
+                            page_urls.append(urljoin(base_url, detail_path))
+                
+                existing_count = sum(1 for url in page_urls if url_exists(url))
+                
+                if existing_count == len(page_urls) and len(page_urls) > 0:
+                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                    break
+                
                 should_stop = False
                 
                 for item in job_items:
-                    # 使用共用函数检查发布时间
                     publish_date_str, is_expired = parse_swufe_list_date(item, cutoff_date)
                     
                     if is_expired:
@@ -1327,7 +1345,6 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
                     if max_items > 0 and count >= max_items:
                         break
                     
-                    # 获取详情页链接
                     a_tag = item.find('a', href=True)
                     if not a_tag:
                         continue
@@ -1341,13 +1358,11 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
                     if url_exists(detail_url):
                         continue
                     
-                    # 爬取详情页
                     detail_response = fetch_with_retry(detail_url)
                     if not detail_response:
                         continue
                     
                     try:
-                        # 使用共用解析函数
                         job = parse_swufe_detail(
                             detail_response.text,
                             detail_url,
@@ -1363,8 +1378,7 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
                             if count % 20 == 0:
                                 logger.info(f"  已完成: {count} 条")
                             
-                            # 短暂延迟避免请求过快
-                            time.sleep(0.5)
+                            time.sleep(DETAIL_DELAY)
                             
                     except Exception as e:
                         crawl_logger.log_error(source, e, f"解析详情页: {detail_url}")
@@ -1373,17 +1387,17 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
                 if should_stop:
                     break
                 
-                last_completed_page = page
                 page += 1
                 
             except Exception as e:
                 crawl_logger.log_error(source, e, f"解析列表页: {page}")
                 break
-    
+    except KeyboardInterrupt:
+        logger.warning("用户中断爬取")
+    except Exception as e:
+        crawl_logger.log_error(source, e, "爬取过程异常")
     finally:
-        # 保存增量爬取状态
-        if last_completed_page > 0:
-            save_crawl_state(source, last_completed_page, count)
+        save_crawl_state(source, 0, count, extra='{}')
     
     crawl_logger.log_source_end(source, source_name, count)
 
