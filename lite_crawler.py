@@ -881,14 +881,15 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                 logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
 
-                # 检查当前页所有 URL 是否都已存在
-                page_urls = [urljoin(base_url, f"/career/zpxx/view/zpxx/{item.get('zpxxid')}") 
-                            for item in items if item.get('zpxxid')]
-                existing_count = sum(1 for url in page_urls if url_exists(url))
-                
-                if existing_count == len(page_urls) and len(page_urls) > 0:
-                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
-                    break
+                # 检查当前页所有 URL 是否都已存在（覆盖模式下跳过此检查）
+                if not OVERWRITE_MODE:
+                    page_urls = [urljoin(base_url, f"/career/zpxx/view/zpxx/{item.get('zpxxid')}") 
+                                for item in items if item.get('zpxxid')]
+                    existing_count = sum(1 for url in page_urls if url_exists(url))
+                    
+                    if existing_count == len(page_urls) and len(page_urls) > 0:
+                        logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                        break
 
                 page_has_new_data = False
 
@@ -902,7 +903,7 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                     view_url = urljoin(base_url, f"/career/zpxx/view/zpxx/{item_id}")
 
-                    if url_exists(view_url):
+                    if not OVERWRITE_MODE and url_exists(view_url):
                         continue
 
                     page_has_new_data = True
@@ -1023,14 +1024,15 @@ def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                 logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
 
-                # 检查当前页所有 URL 是否都已存在
-                page_urls = [f"https://jyzx.zuel.edu.cn/home/career/internship?id={item.get('id')}" 
-                            for item in items if item.get('id')]
-                existing_count = sum(1 for url in page_urls if url_exists(url))
-                
-                if existing_count == len(page_urls) and len(page_urls) > 0:
-                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
-                    break
+                # 检查当前页所有 URL 是否都已存在（覆盖模式下跳过此检查）
+                if not OVERWRITE_MODE:
+                    page_urls = [f"https://jyzx.zuel.edu.cn/home/career/internship?id={item.get('id')}" 
+                                for item in items if item.get('id')]
+                    existing_count = sum(1 for url in page_urls if url_exists(url))
+                    
+                    if existing_count == len(page_urls) and len(page_urls) > 0:
+                        logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                        break
 
                 for item in items:
                     if max_items > 0 and count >= max_items:
@@ -1042,7 +1044,7 @@ def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                     view_url = f"https://jyzx.zuel.edu.cn/home/career/internship?id={item_id}"
 
-                    if url_exists(view_url):
+                    if not OVERWRITE_MODE and url_exists(view_url):
                         continue
 
                     detail_url = source_config["detail_url"].format(id=item_id)
@@ -1167,13 +1169,14 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
 
                 logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
 
-                # 检查当前页所有 URL 是否都已存在
-                page_urls = [urljoin(base_url, item.get("url", "")) for item in items if item.get("url")]
-                existing_count = sum(1 for url in page_urls if url_exists(url))
-                
-                if existing_count == len(page_urls) and len(page_urls) > 0:
-                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
-                    break
+                # 检查当前页所有 URL 是否都已存在（覆盖模式下跳过此检查）
+                if not OVERWRITE_MODE:
+                    page_urls = [urljoin(base_url, item.get("url", "")) for item in items if item.get("url")]
+                    existing_count = sum(1 for url in page_urls if url_exists(url))
+                    
+                    if existing_count == len(page_urls) and len(page_urls) > 0:
+                        logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                        break
 
                 for item in items:
                     if max_items > 0 and count >= max_items:
@@ -1185,7 +1188,7 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
 
                     full_url = urljoin(base_url, url_path)
 
-                    if url_exists(full_url):
+                    if not OVERWRITE_MODE and url_exists(full_url):
                         continue
 
                     parsed = urlparse(url_path)
@@ -1356,20 +1359,21 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
                 
                 logger.info(f"第 {page} 页: 获取到 {len(job_items)} 条列表项")
                 
-                # 检查当前页所有 URL 是否都已存在
-                page_urls = []
-                for item in job_items:
-                    a_tag = item.find('a', href=True)
-                    if a_tag:
-                        detail_path = a_tag.get('href', '')
-                        if detail_path:
-                            page_urls.append(urljoin(base_url, detail_path))
-                
-                existing_count = sum(1 for url in page_urls if url_exists(url))
-                
-                if existing_count == len(page_urls) and len(page_urls) > 0:
-                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
-                    break
+                # 检查当前页所有 URL 是否都已存在（覆盖模式下跳过此检查）
+                if not OVERWRITE_MODE:
+                    page_urls = []
+                    for item in job_items:
+                        a_tag = item.find('a', href=True)
+                        if a_tag:
+                            detail_path = a_tag.get('href', '')
+                            if detail_path:
+                                page_urls.append(urljoin(base_url, detail_path))
+                    
+                    existing_count = sum(1 for url in page_urls if url_exists(url))
+                    
+                    if existing_count == len(page_urls) and len(page_urls) > 0:
+                        logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                        break
                 
                 should_stop = False
                 
@@ -1394,7 +1398,7 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
                     
                     detail_url = urljoin(base_url, detail_path)
                     
-                    if url_exists(detail_url):
+                    if not OVERWRITE_MODE and url_exists(detail_url):
                         continue
                     
                     detail_response = fetch_with_retry(detail_url)
