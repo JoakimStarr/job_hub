@@ -251,13 +251,48 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
     try {
       const result = await API.analyzeJob(job.id);
       let text = '';
+
       if (typeof result === 'string') {
         text = result;
       } else if (result && typeof result === 'object') {
         const obj = result as Record<string, unknown>;
-        text = String(obj.answer || obj.result || obj.content || JSON.stringify(result, null, 2));
+
+        if (obj.score && typeof (obj.score as Record<string, unknown>).total === 'number') {
+          const score = obj.score as Record<string, number>;
+          const parts: string[] = [];
+          if (obj.recommendation) parts.push(`**推荐等级**: ${obj.recommendation}`);
+          if (score.total != null) parts.push(`\n**综合评分**: ${score.total}/100`);
+          if (score.skills != null) parts.push(`**技能匹配**: ${score.skills}/100`);
+          if (score.education != null) parts.push(`**学历匹配**: ${score.education}/100`);
+          if (score.match_rate != null) parts.push(`**匹配率**: ${score.match_rate}%`);
+          if (Array.isArray(obj.suggestions) && (obj.suggestions as string[]).length > 0) {
+            parts.push('\n**建议**:\n' + (obj.suggestions as string[]).map((s: string) => `- ${s}`).join('\n'));
+          }
+          if (Array.isArray(obj.risks) && (obj.risks as string[]).length > 0) {
+            parts.push('\n**风险提示**:\n' + (obj.risks as string[]).map((r: string) => `- ⚠️ ${r}`).join('\n'));
+          }
+          if (Array.isArray(obj.action_plan) && (obj.action_plan as string[]).length > 0) {
+            parts.push('\n**行动计划**:\n' + (obj.action_plan as string[]).map((a: string, i: number) => `${i + 1}. ${a}`).join('\n'));
+          }
+          const meta = obj._meta as Record<string, unknown> | undefined;
+          if (meta?.model) parts.push(`\n\n*模型: ${meta.model}*`);
+          text = parts.join('\n\n');
+        } else {
+          text = String(obj.answer || obj.result || obj.content || '');
+        }
+
+        if (!text) {
+          const fallbackFields = ['text', 'message', 'response', 'summary', 'explanation'];
+          for (const field of fallbackFields) {
+            if (typeof obj[field] === 'string' && (obj[field] as string).length > 0) {
+              text = obj[field] as string;
+              break;
+            }
+          }
+        }
       }
-      setAiResult(text);
+
+      setAiResult(text || '分析完成，但无法解析结果内容。请尝试刷新页面重新分析。');
     } catch (err) {
       setAiError(err instanceof Error ? err.message : 'AI 分析失败');
     } finally {

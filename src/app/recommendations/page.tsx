@@ -30,13 +30,25 @@ function isJobArray(data: unknown): data is JobItem[] {
 }
 
 function extractReadableContent(data: unknown): string | null {
-  if (!data || typeof data !== 'object') return null;
+  console.log('[renderResult] extractReadableContent called with:', JSON.stringify(data)?.slice(0, 500));
+
+  if (!data || typeof data !== 'object') {
+    console.log('[renderResult] extractReadableContent: not an object, returning null');
+    return null;
+  }
   const d = data as Record<string, unknown>;
 
-  if (typeof d.result === 'string') return d.result;
-  if (typeof d.content === 'string') return d.content;
+  if (typeof d.result === 'string') {
+    console.log('[renderResult] extractReadableContent: found result string');
+    return d.result;
+  }
+  if (typeof d.content === 'string') {
+    console.log('[renderResult] extractReadableContent: found content string');
+    return d.content;
+  }
 
   if (d.score && typeof (d.score as Record<string, unknown>).total === 'number') {
+    console.log('[renderResult] extractReadableContent: found score object, building markdown');
     const score = d.score as Record<string, number>;
     const parts: string[] = [];
     if (d.recommendation) parts.push(`**推荐等级**: ${d.recommendation}`);
@@ -56,12 +68,27 @@ function extractReadableContent(data: unknown): string | null {
     return parts.join('\n\n');
   }
 
-  if (isJobArray(data)) return null;
+  if (isJobArray(data)) {
+    console.log('[renderResult] extractReadableContent: detected job array, returning null for JobCard rendering');
+    return null;
+  }
 
-  return JSON.stringify(data, null, 2);
+  // 尝试从常见字段提取文本内容，避免直接返回原始 JSON
+  const fallbackFields = ['text', 'message', 'response', 'answer', 'output', 'summary', 'explanation'];
+  for (const field of fallbackFields) {
+    if (typeof d[field] === 'string' && (d[field] as string).length > 0) {
+      console.log(`[renderResult] extractReadableContent: found fallback field '${field}'`);
+      return d[field] as string;
+    }
+  }
+
+  console.log('[renderResult] extractReadableContent: no readable content found, returning null');
+  return null;
 }
 
 function renderResult(data: unknown, submitting: boolean) {
+  console.log('[renderResult] called, submitting:', submitting, ', data type:', typeof data);
+
   if (submitting) {
     return <Skeleton type="card" />;
   }
@@ -71,6 +98,7 @@ function renderResult(data: unknown, submitting: boolean) {
   }
 
   if (typeof data === 'string') {
+    console.log('[renderResult] rendering as string, length:', data.length);
     return (
       <div className="ai-result">
         <MarkdownRenderer content={data} />
@@ -79,6 +107,7 @@ function renderResult(data: unknown, submitting: boolean) {
   }
 
   if (isAnalysisResult(data)) {
+    console.log('[renderResult] rendering as AIAnalysisResult');
     const { _meta, ...resultData } = data;
     return (
       <AIAnalysisResult
@@ -90,6 +119,7 @@ function renderResult(data: unknown, submitting: boolean) {
 
   const readable = extractReadableContent(data);
   if (readable) {
+    console.log('[renderResult] rendering extracted readable content, length:', readable.length);
     return (
       <div className="ai-result">
         <MarkdownRenderer content={readable} />
@@ -98,6 +128,7 @@ function renderResult(data: unknown, submitting: boolean) {
   }
 
   if (isJobArray(data)) {
+    console.log('[renderResult] rendering as JobCard array, count:', data.length);
     return (
       <div className="grid" style={{ gap: 14 }}>
         {data.map((job) => (
@@ -107,10 +138,12 @@ function renderResult(data: unknown, submitting: boolean) {
     );
   }
 
-  const textContent = JSON.stringify(data, null, 2);
+  // 绝对不显示原始 JSON，改为显示友好的空状态或格式化后的信息摘要
+  console.warn('[renderResult] WARNING: 无法识别的数据类型，将显示通用结果视图而非原始 JSON');
+  const summaryText = '已生成分析结果，但当前无法以结构化方式展示。请尝试刷新页面或重新提交请求。';
   return (
     <div className="ai-result">
-      <MarkdownRenderer content={textContent} />
+      <MarkdownRenderer content={summaryText} />
     </div>
   );
 }
