@@ -21,9 +21,6 @@ declare global {
 }
 
 async function extractTextFromPdf(file: File): Promise<string> {
-  const { createRequire } = await import('node:module');
-  const require = createRequire(import.meta.url);
-
   if (!globalThis.pdfjsWorker?.WorkerMessageHandler) {
     try {
       const workerPath = path.resolve(process.cwd(), 'node_modules/pdf-parse/dist/pdf-parse/cjs/pdf.worker.mjs');
