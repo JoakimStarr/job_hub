@@ -154,6 +154,38 @@
   cursor: not-allowed;
 }
 
+.loadingEditor {
+  text-align: center;
+  padding: 40px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.editorSection {
+  margin-top: 32px;
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(102, 126, 234, 0.2);
+}
+
+.editorHeader {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.editorHeader h3 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.editorHint {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
 /* ======== 移动端适配 ======== */
 @media (max-width: 768px) {
   .container { max-width: none; padding: 20px 16px; }

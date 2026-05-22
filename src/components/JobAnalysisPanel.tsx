@@ -111,8 +111,8 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
 
       if (history.length > 0) {
         const latest = history[0];
-        setActiveResult((current) => current || latest.result);
-        setActiveSessionId((current) => current || latest.session_id || extractSessionId(latest.result));
+        setActiveResult((current: unknown | null) => current || latest.result);
+        setActiveSessionId((current: string) => current || latest.session_id || extractSessionId(latest.result));
       }
 
       if (typeof window !== 'undefined') {

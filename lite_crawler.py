@@ -1543,6 +1543,48 @@ def run_scheduled(sources: list, max_items: int, schedule: str):
     crawl_logger.end_session()
 
 
+def trigger_job_alerts(since_minutes: int = 30):
+    """触发职位提醒：检查新增岗位并推送邮件
+    
+    Args:
+        since_minutes: 检查最近N分钟内新增的岗位
+    """
+    import requests
+    
+    try:
+        logger.info("正在检查职位提醒订阅...")
+        
+        # 调用API触发职位提醒
+        api_url = "http://localhost:3000/api/alerts/trigger"
+        
+        response = requests.post(
+            api_url,
+            json={"since_minutes": since_minutes},
+            timeout=60
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            if result.get("success"):
+                alerts_triggered = result.get("alerts_triggered", 0)
+                jobs_processed = result.get("jobs_processed", 0)
+                logger.info(f"职位提醒处理完成: 检查 {jobs_processed} 个岗位, 触发 {alerts_triggered} 个订阅")
+                
+                # 打印详细结果
+                for r in result.get("results", []):
+                    status = "已发送" if r.get("email_sent") else "发送失败"
+                    logger.info(f"  订阅 {r.get('alert_id')} ({r.get('email')}): {r.get('matched_count')} 个匹配, 邮件{status}")
+            else:
+                logger.warning(f"职位提醒API返回错误: {result.get('error', '未知错误')}")
+        else:
+            logger.warning(f"职位提醒API请求失败: HTTP {response.status_code}")
+            
+    except requests.exceptions.ConnectionError:
+        logger.warning("无法连接到职位提醒API，请确保Web服务正在运行 (http://localhost:3000)")
+    except Exception as e:
+        logger.warning(f"触发职位提醒失败: {e}")
+
+
 def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -> int:
     """爬取单个数据源
     
@@ -1656,6 +1698,11 @@ def main():
     crawl_logger.end_session()
     
     _flush_pending_commits()
+    
+    # 触发职位提醒
+    if total_count > 0:
+        trigger_job_alerts()
+    
     db.close()
     flush_url_cache_if_dirty()
 

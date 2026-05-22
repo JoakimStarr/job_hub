@@ -234,6 +234,7 @@ export interface ParseResult {
     extracted_chars: number;
     extracted_words: number;
     capabilities: string[];
+    profile_saved?: boolean;
   };
 }
 

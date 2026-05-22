@@ -12,3 +12,8 @@
 {"timestamp":"2026-05-22T06:59:20.477Z","level":"info","message":"推荐历史已保存","context":{"mode":"ai_analysis","jobId":14051,"historyId":5}}
 {"timestamp":"2026-05-22T07:01:36.174Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms","total":90,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
 {"timestamp":"2026-05-22T07:02:24.313Z","level":"info","message":"推荐历史已保存","context":{"mode":"chat","jobId":14051,"historyId":6}}
+{"timestamp":"2026-05-22T11:02:26.224Z","level":"info","message":"Python PDF 解析成功","context":{"chars":1383,"pages":1,"used_ocr":true}}
+{"timestamp":"2026-05-22T11:03:47.492Z","level":"info","message":"调用 Python PDF 解析器","context":{"file":"20260403_163216_刘艳菲_数字经济_1_.pdf","path":"/tmp/resume_1779447827491_20260403_163216_刘艳菲_数字经济_1_.pdf"}}
+{"timestamp":"2026-05-22T11:03:50.062Z","level":"info","message":"Python PDF 解析成功","context":{"chars":1383,"pages":1,"used_ocr":true}}
+{"timestamp":"2026-05-22T11:23:46.759Z","level":"info","message":"Python PDF 解析成功","context":{"chars":1383,"pages":1,"used_ocr":true,"duration":"2819ms"}}
+{"timestamp":"2026-05-22T11:23:46.763Z","level":"info","message":"自动保存解析后的用户画像","context":{"userId":1,"fileName":"20260403_163216_刘艳菲_数字经济_1_.pdf","confidence":1}}

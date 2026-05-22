@@ -4,7 +4,13 @@ import { useState, useCallback } from 'react';
 import type { ResumeProfile, ParseResult } from '@/lib/resume-types';
 import { API } from '@/lib/api';
 import { ResumeParseSummary, type ResumeParseSummaryMeta } from '@/components/ResumeParseSummary';
+import dynamic from 'next/dynamic';
 import styles from './resume-uploader.module.css';
+
+const ProfileEditor = dynamic(() => import('./ProfileEditor'), {
+  ssr: false,
+  loading: () => <div className={styles.loadingEditor}>加载编辑器...</div>,
+});
 
 interface ResumeUploaderProps {
   onParseSuccess: (profile: ResumeProfile) => void;
@@ -25,6 +31,8 @@ export default function ResumeUploader({
   const [resumeText, setResumeText] = useState('');
   const [parseSummary, setParseSummary] = useState<ResumeParseSummaryMeta | null>(null);
   const [parseMessage, setParseMessage] = useState('');
+  const [showEditor, setShowEditor] = useState(false);
+  const [currentProfile, setCurrentProfile] = useState<ResumeProfile | null>(null);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -93,7 +101,12 @@ export default function ResumeUploader({
         console.warn('解析警告:', result.warnings);
       }
 
+      setCurrentProfile(result.profile);
       onParseSuccess(result.profile);
+      
+      if (result.meta?.profile_saved) {
+        setShowEditor(true);
+      }
     } catch (error) {
       onParseError(error instanceof Error ? error.message : '简历解析失败');
     } finally {
@@ -130,6 +143,7 @@ export default function ResumeUploader({
         console.warn('解析警告:', result.warnings);
       }
 
+      setCurrentProfile(result.profile);
       onParseSuccess(result.profile);
     } catch (error) {
       onParseError(error instanceof Error ? error.message : '简历解析失败');
@@ -240,6 +254,25 @@ export default function ResumeUploader({
           {isParsing ? '解析中...' : '开始解析'}
         </button>
       </div>
+
+      {showEditor && currentProfile && (
+        <div className={styles.editorSection}>
+          <div className={styles.editorHeader}>
+            <h3>✏️ 编辑和补充画像信息</h3>
+            <p className={styles.editorHint}>
+              解析结果已自动保存。您可以修改、补充或添加遗漏的信息，这些修改将用于更精准的岗位匹配。
+            </p>
+          </div>
+          
+          <ProfileEditor
+            initialProfile={currentProfile}
+            onProfileUpdate={(updatedProfile) => {
+              setCurrentProfile(updatedProfile);
+              onParseSuccess(updatedProfile);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

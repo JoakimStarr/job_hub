@@ -204,4 +204,32 @@ export const API = {
     method: 'POST',
     body: JSON.stringify({ action: 'generate_embeddings', limit }),
   }),
+  
+  // Job Alerts APIs
+  getJobAlerts: () => request<{ success: boolean; data: unknown[]; emailConfigured?: boolean }>('/api/alerts'),
+  createJobAlert: (data: Record<string, unknown>) => request<{ success: boolean; data: unknown; error?: string }>('/api/alerts', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  updateJobAlert: (id: number, data: Record<string, unknown>) => request<{ success: boolean; data: unknown; error?: string }>(`/api/alerts/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  deleteJobAlert: (id: number) => request<{ success: boolean; error?: string }>(`/api/alerts/${id}`, {
+    method: 'DELETE',
+  }),
+  sendTestEmail: (email: string) => request<{ success: boolean; error?: string }>('/api/alerts/test-email', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  }),
+  getAlertHistory: (alertId?: number, limit = 50) => {
+    const query = new URLSearchParams();
+    if (alertId) query.set('alert_id', String(alertId));
+    query.set('limit', String(limit));
+    return request<{ success: boolean; data: unknown[]; error?: string }>(`/api/alerts/history?${query.toString()}`);
+  },
+  triggerAlerts: (data: Record<string, unknown>) => request<{ success: boolean; message?: string; jobs_processed?: number; alerts_triggered?: number; results?: unknown[]; error?: string }>('/api/alerts/trigger', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
 };

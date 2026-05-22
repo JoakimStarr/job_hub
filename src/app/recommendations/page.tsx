@@ -10,13 +10,15 @@ import AIAnalysisResult, { isAnalysisResult } from '@/components/AIAnalysisResul
 import AIChatPanel from '@/components/AIChatPanel';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { ResumeParseSummary, type ResumeParseSummaryMeta } from '@/components/ResumeParseSummary';
+import JobAlertsPanel from '@/components/JobAlertsPanel';
 
-type RecommendationMode = 'analyze' | 'resume' | 'delivery';
+type RecommendationMode = 'analyze' | 'resume' | 'delivery' | 'alerts';
 
 const TABS: { key: RecommendationMode; label: string }[] = [
   { key: 'analyze', label: '岗位分析' },
   { key: 'resume', label: '简历建议' },
   { key: 'delivery', label: '投递助手' },
+  { key: 'alerts', label: '职位提醒' },
 ];
 
 function isJobArray(data: unknown): data is JobItem[] {
@@ -394,35 +396,41 @@ export default function RecommendationsPage() {
         <div style={{ flex: '1 1 60%', minWidth: 0 }}>
           <TabNav tabs={TABS} active={mode} onChange={(m) => { setMode(m); setResponse(null); setShowChat(false); }} />
           <div style={{ marginTop: 0 }}>
-            <SectionCard title="AI 推荐结果" description={`当前模式：${activeTabLabel}`}>
-              {renderResult(response, submitting)}
-            </SectionCard>
-
-            {hasAnalysisResult && !showChat && currentJobIdNum ? (
-              <div style={{ marginTop: 12 }}>
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowChat(true)}
-                >
-                  💬 继续追问
-                </Button>
-              </div>
-            ) : null}
-
-            {showChat && currentJobIdNum ? (
-              <div style={{ marginTop: 12 }}>
-                <SectionCard title="AI 追问对话" description="基于当前分析结果继续提问">
-                  <AIChatPanel
-                    jobId={currentJobIdNum}
-                    sessionId={analysisSessionId || undefined}
-                    onSessionIdChange={setAnalysisSessionId}
-                    disabled={!hasAnalysisResult}
-                    placeholder="例如：这个岗位的面试流程是怎样的？需要准备哪些材料？"
-                    onMessageSent={() => void mutateHistory()}
-                  />
+            {mode === 'alerts' ? (
+              <JobAlertsPanel />
+            ) : (
+              <>
+                <SectionCard title="AI 推荐结果" description={`当前模式：${activeTabLabel}`}>
+                  {renderResult(response, submitting)}
                 </SectionCard>
-              </div>
-            ) : null}
+
+                {hasAnalysisResult && !showChat && currentJobIdNum ? (
+                  <div style={{ marginTop: 12 }}>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setShowChat(true)}
+                    >
+                      💬 继续追问
+                    </Button>
+                  </div>
+                ) : null}
+
+                {showChat && currentJobIdNum ? (
+                  <div style={{ marginTop: 12 }}>
+                    <SectionCard title="AI 追问对话" description="基于当前分析结果继续提问">
+                      <AIChatPanel
+                        jobId={currentJobIdNum}
+                        sessionId={analysisSessionId || undefined}
+                        onSessionIdChange={setAnalysisSessionId}
+                        disabled={!hasAnalysisResult}
+                        placeholder="例如：这个岗位的面试流程是怎样的？需要准备哪些材料？"
+                        onMessageSent={() => void mutateHistory()}
+                      />
+                    </SectionCard>
+                  </div>
+                ) : null}
+              </>
+            )}
           </div>
         </div>
       </div>
