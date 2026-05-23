@@ -15,6 +15,32 @@ const FALLBACK_MODELS = [
   'glm-4.6v',                // Fallback 6
 ];
 
+const AI_TIMEOUT_MS = 120000; // AI调用超时120秒
+
+function getApiKeyForProvider(provider: string): string {
+  switch (provider) {
+    case 'zhipu':
+      return process.env.ZHIPU_API_KEY || '';
+    case 'siliconflow':
+      return process.env.SILICONFLOW_API_KEY || '';
+    case 'openai':
+      return process.env.OPENAI_API_KEY || '';
+    case 'deepseek':
+      return process.env.DEEPSEEK_API_KEY || '';
+    default:
+      return process.env.AI_API_KEY || '';
+  }
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`AI调用超时 (${ms / 1000}秒)`)), ms)
+    )
+  ]);
+}
+
 async function chatWithFallback(
   messages: import('./ai-service').AIMessage[],
   primaryModel?: string,
@@ -25,11 +51,12 @@ async function chatWithFallback(
 
   let lastError: Error | null = null;
 
-  for (const model of models) {
+  for (let i = 0; i < models.length; i++) {
+    const model = models[i];
     try {
       const { AIService } = await import('./ai-service');
       const provider = (process.env.AI_PROVIDER || 'zhipu') as 'openai' | 'zhipu' | 'siliconflow' | 'deepseek' | 'custom';
-      const apiKey = process.env.ZHIPU_API_KEY || process.env.AI_API_KEY || '';
+      const apiKey = getApiKeyForProvider(provider);
       const baseUrl = process.env.AI_BASE_URL || 'https://open.bigmodel.cn/api/paas/v4';
 
       if (!apiKey) {
@@ -45,18 +72,29 @@ async function chatWithFallback(
         maxTokens: 8192,
       });
 
-      const response = await tempService.chat(messages);
+      const response = await withTimeout(tempService.chat(messages), AI_TIMEOUT_MS);
+
       if (model !== models[0]) {
         logger.info(`AI fallback: 使用备用模型 ${model} 成功 (主模型 ${models[0]} 不可用)`);
       }
       return response;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
-      const is429 = lastError.message.includes('429') || lastError.message.includes('rate');
-      if (is429) {
-        logger.warn(`AI模型 ${model} 限流(429)，尝试下一个模型...`);
+      const is429 = lastError.message.includes('429') || lastError.message.includes('rate') || lastError.message.includes('limit');
+      const isTimeout = lastError.message.includes('timed out') || lastError.message.includes('timeout') || lastError.message.includes('超时');
+
+      if (isTimeout) {
+        logger.warn(`AI模型 ${model} 超时(${AI_TIMEOUT_MS / 1000}s)，尝试下一个模型... (${i + 1}/${models.length})`);
+      } else if (is429) {
+        logger.warn(`AI模型 ${model} 限流(429)，尝试下一个模型... (${i + 1}/${models.length})`);
       } else {
-        logger.warn(`AI模型 ${model} 调用失败: ${lastError.message}，尝试下一个模型...`);
+        logger.warn(`AI模型 ${model} 调用失败: ${lastError.message.slice(0, 100)}，尝试下一个模型... (${i + 1}/${models.length})`);
+      }
+
+      if (i < models.length - 1) {
+        const delayMs = isTimeout ? 2000 : is429 ? 3000 : 1000;
+        logger.warn(`等待 ${delayMs / 1000}s 后重试...`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
       }
       continue;
     }

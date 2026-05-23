@@ -1763,12 +1763,24 @@ def run_scheduled(sources: list, max_items: int, schedule: str):
     crawl_logger.end_session()
 
 
-def call_zhipu_ai(messages: list, model: str = "glm-4.7-flash") -> dict:
-    """直接调用智谱AI API
+AI_FALLBACK_MODELS = [
+    'glm-4.7-flash',
+    'glm-4-flash-250414',
+    'glm-4.5-air',
+    'glm-4.7',
+    'glm-4.6v-flash',
+    'glm-4.1v-thinking-flash',
+    'glm-4.6v',
+]
+AI_TIMEOUT = 120
+
+
+def call_zhipu_ai_with_fallback(messages: list, primary_model: str = "glm-4.7-flash") -> dict:
+    """调用智谱AI API，支持模型降级链
 
     Args:
         messages: 消息列表 [{role: "system"|"user", content: "..."}]
-        model: 模型名称
+        primary_model: 主模型名称
 
     Returns:
         AI响应的JSON字典
@@ -1784,21 +1796,59 @@ def call_zhipu_ai(messages: list, model: str = "glm-4.7-flash") -> dict:
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
-    data = {
-        "model": model,
-        "messages": messages,
-        "temperature": 0.3,
-        "max_tokens": 8192
-    }
 
-    logger.debug(f"  调用智谱AI API: {model}")
-    response = requests.post(url, headers=headers, json=data, timeout=60)
+    models = [primary_model] + [m for m in AI_FALLBACK_MODELS if m != primary_model]
 
-    if response.status_code != 200:
-        raise Exception(f"AI API错误 {response.status_code}: {response.text[:200]}")
+    last_error = None
 
-    result = response.json()
-    return result
+    for i, model in enumerate(models):
+        data = {
+            "model": model,
+            "messages": messages,
+            "temperature": 0.3,
+            "max_tokens": 8192
+        }
+
+        logger.debug(f"  调用智谱AI API: {model} ({i + 1}/{len(models)})")
+        try:
+            response = requests.post(url, headers=headers, json=data, timeout=AI_TIMEOUT)
+
+            if response.status_code == 200:
+                result = response.json()
+                if i > 0:
+                    logger.info(f"  AI fallback: 使用备用模型 {model} 成功 (主模型 {models[0]} 不可用)")
+                return result
+            elif response.status_code == 429:
+                last_error = Exception(f"AI限流(429): {model}")
+                logger.warning(f"  AI模型 {model} 限流(429)，尝试下一个... ({i + 1}/{len(models)})")
+            else:
+                last_error = Exception(f"AI错误{response.status_code}: {response.text[:100]}")
+                logger.warning(f"  AI模型 {model} 错误 {response.status_code}，尝试下一个... ({i + 1}/{len(models)})")
+        except requests.exceptions.Timeout:
+            last_error = Exception(f"超时({AI_TIMEOUT}s): {model}")
+            logger.warning(f"  AI模型 {model} 超时({AI_TIMEOUT}s)，尝试下一个... ({i + 1}/{len(models)})")
+        except requests.exceptions.RequestException as e:
+            last_error = e
+            logger.warning(f"  AI模型 {model} 网络错误: {str(e)[:80]}，尝试下一个... ({i + 1}/{len(models)})")
+
+        if i < len(models) - 1:
+            delay = 2 if '超时' in str(last_error) or '429' in str(last_error) else 1
+            time.sleep(delay)
+
+    raise last_error or Exception("所有AI模型均失败")
+
+
+def call_zhipu_ai(messages: list, model: str = "glm-4.7-flash") -> dict:
+    """直接调用智谱AI API（兼容旧接口，自动使用降级链）
+
+    Args:
+        messages: 消息列表 [{role: "system"|"user", content: "..."}]
+        model: 模型名称
+
+    Returns:
+        AI响应的JSON字典
+    """
+    return call_zhipu_ai_with_fallback(messages, primary_model=model)
 
 
 def get_alerts_from_db() -> list:
