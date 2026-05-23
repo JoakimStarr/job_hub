@@ -42,7 +42,7 @@ export function AppShell({
   const [isMobile, setIsMobile] = useState(false);
   const sidebarRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const { setUser: setStoreUser, setIsGuest: setStoreIsGuest } = useAppStore();
+  const { setUser: setStoreUser, setIsGuest: setStoreIsGuest, setAuthReady } = useAppStore();
   const visibleItems = useMemo(() => {
     if (isGuest) {
       return NAV_ITEMS.filter((item) => item.guestVisible);
@@ -51,13 +51,11 @@ export function AppShell({
   }, [user, isGuest]);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const mql = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
   }, []);
 
   useEffect(() => {
@@ -93,68 +91,79 @@ export function AppShell({
       // 🚨 简单防循环机制：使用时间戳锁（1秒内不重复跳转）
       const lastRedirect = parseInt(sessionStorage.getItem('auth_last_redirect') || '0');
       const now = Date.now();
-      
+
       if (now - lastRedirect < 1000) {
         sessionStorage.removeItem('auth_last_redirect');
         window.location.reload();
         return;
       }
-      
+
       // 记录本次跳转时间
       sessionStorage.setItem('auth_last_redirect', String(now));
 
       clearSession();
       setUser(null);
       setStoreUser(null);
+      setAuthReady(false);
       setReady(false);
       const redirect = encodeURIComponent(`${pathname}${window.location.search}`);
       router.replace(`/login?redirect=${redirect}`);
     }
 
     /**
-     * 用户身份验证引导函数（极速版）
-     * 
+     * 用户身份验证引导函数（优化版）
+     *
      * 设计原则：
+     * - 优先使用 Zustand 缓存，避免重复网络请求
      * - 单次检查，快速响应（无重试、无延迟）
      * - 简单的防循环机制（1秒时间戳锁）
      * - 优先Cookie认证，回退Token认证
      */
     async function bootstrap() {
+      // ===== 快速路径：检查 Zustand 缓存 =====
+      const storeState = useAppStore.getState();
+      if (storeState.authReady && storeState.user) {
+        setUser(storeState.user);
+        setReady(true);
+        return;
+      }
+
       try {
         // ===== 方式1: Cookie 认证（单次检查） =====
         const authMeResponse = await fetch('/api/auth/me', {
           credentials: 'same-origin',
         });
-        
+
         if (authMeResponse.ok) {
           const authData = await authMeResponse.json();
-          
+
           if (authData.authenticated && authData.user) {
             if (cancelled) return;
-            
+
             // ✅ 认证成功！清除所有锁
             sessionStorage.removeItem('auth_last_redirect');
             sessionStorage.removeItem('auth_is_redirecting');
-            
+
             const user: AppUser = {
               id: authData.user.id,
               username: authData.user.username,
               role: authData.user.role as any,
               permissions: authData.user.permissions || [],
             };
-            
+
             setUser(user);
             setStoreUser(user);
             setStoreIsGuest(false);
             setReady(true);
-            
+            setAuthReady(true);
+
             localStorage.setItem('finintern_hub_auth_token', 'cookie-session');
             localStorage.setItem('finintern_hub_auth_user', JSON.stringify(user));
-            
+
             return;
           }
         }
-        
+
         // ===== 方式2: Token 认证（向后兼容） =====
         const cached = getCachedUser();
         if (cached?.id) {
@@ -163,6 +172,7 @@ export function AppShell({
           setStoreUser(cached);
           setStoreIsGuest(false);
           setReady(true);
+          setAuthReady(true);
           void loadCurrentUser(true).then((current) => {
             if (!cancelled && current) {
               setUser(current);
@@ -174,13 +184,14 @@ export function AppShell({
 
         const current = await loadCurrentUser(true);
         if (cancelled) return;
-        
+
         if (!current) {
           // 访客允许的页面，不跳转登录页
           if (GUEST_ALLOWED_PATHS.includes(pathname)) {
             setIsGuest(true);
             setStoreIsGuest(true);
             setReady(true);
+            setAuthReady(true);
             return;
           }
           redirectToLogin();
@@ -191,13 +202,15 @@ export function AppShell({
         setStoreUser(current);
         setStoreIsGuest(false);
         setReady(true);
-        
+        setAuthReady(true);
+
       } catch (error) {
         if (!cancelled) {
           if (GUEST_ALLOWED_PATHS.includes(pathname)) {
             setIsGuest(true);
             setStoreIsGuest(true);
             setReady(true);
+            setAuthReady(true);
           } else {
             redirectToLogin();
           }
@@ -328,6 +341,7 @@ export function AppShell({
                 }
                 try {
                   clearSession();
+                  setAuthReady(false);
                 } finally {
                   router.replace('/login');
                 }

@@ -19,6 +19,8 @@ interface AppState {
   setUser: (user: AppUser | null) => void;
   isGuest: boolean;
   setIsGuest: (isGuest: boolean) => void;
+  authReady: boolean;
+  setAuthReady: (ready: boolean) => void;
   favoriteJobIds: Set<number>;
   setFavorite: (jobId: number, isFavorite: boolean) => void;
   removeFavorite: (jobId: number) => void;
@@ -32,6 +34,8 @@ export const useAppStore = create<AppState>((set) => ({
   setUser: (user) => set({ user }),
   isGuest: false,
   setIsGuest: (isGuest) => set({ isGuest }),
+  authReady: false,
+  setAuthReady: (authReady) => set({ authReady }),
   favoriteJobIds: new Set<number>(),
   setFavorite: (jobId, isFavorite) =>
     set((state) => {
