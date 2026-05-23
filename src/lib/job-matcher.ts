@@ -1,5 +1,6 @@
 import type { JobItem } from './types';
 import type { JobAlert } from './job-alerts-db';
+import { getNotifiedJobIds } from './job-alerts-db';
 import { logger } from './logger';
 
 export interface MatchRule {
@@ -162,9 +163,17 @@ export function matchJobsToAlert(jobs: JobItem[], alert: JobAlert): MatchedJob[]
     education: alert.education,
   };
 
+  // 防重复推送：获取该订阅已推送过的 job_ids
+  const notifiedJobIds = getNotifiedJobIds(alert.id);
+
   const results: MatchedJob[] = [];
 
   for (const job of jobs) {
+    // 跳过已推送过的岗位
+    if (notifiedJobIds.has(job.id)) {
+      continue;
+    }
+
     const matched = matchJobToRule(job, rule);
     if (matched) {
       results.push(matched);
@@ -172,6 +181,10 @@ export function matchJobsToAlert(jobs: JobItem[], alert: JobAlert): MatchedJob[]
   }
 
   results.sort((a, b) => b.matchScore - a.matchScore);
+
+  if (notifiedJobIds.size > 0) {
+    logger.info(`Alert ${alert.id}: skipped ${notifiedJobIds.size} previously notified jobs`);
+  }
 
   return results;
 }

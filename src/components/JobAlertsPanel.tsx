@@ -13,6 +13,7 @@ interface JobAlert {
   industries: string[];
   min_salary?: string;
   education?: string;
+  min_notify_interval?: number;
   enabled: boolean;
   last_notified_at?: string;
   notify_count: number;
@@ -66,6 +67,7 @@ export default function JobAlertsPanel() {
     industries: '',
     min_salary: '',
     education: '',
+    min_notify_interval: '',
   });
 
   const [previewModal, setPreviewModal] = useState<{
@@ -184,8 +186,9 @@ export default function JobAlertsPanel() {
           industries: formData.industries.split(/[,，]/).map(i => i.trim()).filter(Boolean),
           min_salary: formData.min_salary || undefined,
           education: formData.education || undefined,
+          min_notify_interval: formData.min_notify_interval ? parseInt(formData.min_notify_interval, 10) : 0,
         });
-        
+
         if (res.success) {
           setMessage('更新成功');
           setEditingAlert(null);
@@ -203,6 +206,7 @@ export default function JobAlertsPanel() {
           industries: formData.industries.split(/[,，]/).map(i => i.trim()).filter(Boolean),
           min_salary: formData.min_salary || undefined,
           education: formData.education || undefined,
+          min_notify_interval: formData.min_notify_interval ? parseInt(formData.min_notify_interval, 10) : 0,
         });
         
         if (res.success) {
@@ -228,6 +232,7 @@ export default function JobAlertsPanel() {
       industries: (alert.industries || []).join(', '),
       min_salary: alert.min_salary || '',
       education: alert.education || '',
+      min_notify_interval: alert.min_notify_interval ? String(alert.min_notify_interval) : '',
     });
   };
 
@@ -285,6 +290,7 @@ export default function JobAlertsPanel() {
       industries: '',
       min_salary: '',
       education: '',
+      min_notify_interval: '',
     });
     setEditingAlert(null);
   };
@@ -500,6 +506,16 @@ export default function JobAlertsPanel() {
                   <option value="博士">博士</option>
                 </select>
               </label>
+              <label style={{ flex: 1 }}>
+                <div style={{ marginBottom: 6, fontWeight: 600 }}>推送间隔（分钟）</div>
+                <Input
+                  type="number"
+                  value={formData.min_notify_interval}
+                  onChange={e => setFormData(prev => ({ ...prev, min_notify_interval: e.target.value }))}
+                  placeholder="0=不限"
+                  min="0"
+                />
+              </label>
             </div>
 
             <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
@@ -571,6 +587,7 @@ export default function JobAlertsPanel() {
                     <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 8 }}>
                       已推送 {alert.notify_count} 次
                       {alert.last_notified_at ? ` · 上次：${new Date(alert.last_notified_at).toLocaleString('zh-CN')}` : ''}
+                      {alert.min_notify_interval && alert.min_notify_interval > 0 ? ` · 间隔≥${alert.min_notify_interval}分钟` : ''}
                     </div>
                     <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
                       <Button variant="secondary" onClick={() => handlePreview(alert)}>

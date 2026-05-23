@@ -83,9 +83,28 @@ export async function POST(request: NextRequest) {
     
     for (const [alertId, matchedJobs] of matchedResults) {
       const alert = alerts.find(a => a.id === alertId);
-      
+
       if (!alert) continue;
-      
+
+      // 发送频率控制：检查距上次推送是否超过最短间隔
+      if (alert.min_notify_interval && alert.min_notify_interval > 0 && alert.last_notified_at) {
+        const lastNotified = new Date(alert.last_notified_at);
+        const minIntervalMs = alert.min_notify_interval * 60 * 1000;
+        const elapsed = Date.now() - lastNotified.getTime();
+        if (elapsed < minIntervalMs) {
+          const remainingMin = Math.ceil((minIntervalMs - elapsed) / 60000);
+          logger.info(`Alert ${alertId} skipped: min_notify_interval=${alert.min_notify_interval}min, ${remainingMin}min remaining`);
+          results.push({
+            alert_id: alertId,
+            email: alert.email,
+            matched_count: matchedJobs.length,
+            email_sent: false,
+            error: `频率限制：距上次推送不足 ${alert.min_notify_interval} 分钟（还需 ${remainingMin} 分钟）`,
+          });
+          continue;
+        }
+      }
+
       const jobIds = matchedJobs.map(m => m.job.id);
       let emailSent = false;
       let errorMessage: string | undefined;

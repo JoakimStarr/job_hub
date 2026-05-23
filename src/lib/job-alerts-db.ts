@@ -10,6 +10,7 @@ export interface JobAlert {
   industries: string[];
   min_salary?: string;
   education?: string;
+  min_notify_interval?: number;  // 最短推送间隔（分钟），默认0不限制
   enabled: boolean;
   last_notified_at?: string;
   notify_count: number;
@@ -39,6 +40,7 @@ export function initJobAlertsTables(): void {
       industries TEXT,
       min_salary TEXT,
       education TEXT,
+      min_notify_interval INTEGER DEFAULT 0,
       enabled INTEGER DEFAULT 1,
       last_notified_at TEXT,
       notify_count INTEGER DEFAULT 0,
@@ -63,6 +65,13 @@ export function initJobAlertsTables(): void {
   db.exec(`CREATE INDEX IF NOT EXISTS idx_job_alerts_enabled ON user_job_alerts(enabled)`);
   db.exec(`CREATE INDEX IF NOT EXISTS idx_alert_history_alert_id ON job_alert_history(alert_id)`);
 
+  // 迁移：为已有表添加 min_notify_interval 字段
+  try {
+    db.exec(`ALTER TABLE user_job_alerts ADD COLUMN min_notify_interval INTEGER DEFAULT 0`);
+  } catch {
+    // 字段已存在，忽略
+  }
+
   logger.info('Job alerts tables initialized');
 }
 
@@ -72,7 +81,7 @@ export function getAllEnabledAlerts(): JobAlert[] {
 
   const rows = db.prepare(`
     SELECT id, email, keywords, sources, locations, industries, min_salary, education,
-           enabled, last_notified_at, notify_count, created_at
+           min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     WHERE enabled = 1
     ORDER BY created_at DESC
@@ -87,6 +96,7 @@ export function getAllEnabledAlerts(): JobAlert[] {
     industries: JSON.parse(row.industries as string || '[]'),
     min_salary: row.min_salary as string | undefined,
     education: row.education as string | undefined,
+    min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,
     last_notified_at: row.last_notified_at as string | undefined,
     notify_count: row.notify_count as number,
@@ -100,7 +110,7 @@ export function getAllAlerts(): JobAlert[] {
 
   const rows = db.prepare(`
     SELECT id, email, keywords, sources, locations, industries, min_salary, education,
-           enabled, last_notified_at, notify_count, created_at
+           min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     ORDER BY created_at DESC
   `).all() as Record<string, unknown>[];
@@ -114,6 +124,7 @@ export function getAllAlerts(): JobAlert[] {
     industries: JSON.parse(row.industries as string || '[]'),
     min_salary: row.min_salary as string | undefined,
     education: row.education as string | undefined,
+    min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,
     last_notified_at: row.last_notified_at as string | undefined,
     notify_count: row.notify_count as number,
@@ -126,8 +137,8 @@ export function createAlert(alert: Omit<JobAlert, 'id' | 'notify_count' | 'creat
   const db = getDb();
 
   const result = db.prepare(`
-    INSERT INTO user_job_alerts (email, keywords, sources, locations, industries, min_salary, education, enabled)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO user_job_alerts (email, keywords, sources, locations, industries, min_salary, education, min_notify_interval, enabled)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     alert.email,
     JSON.stringify(alert.keywords),
@@ -136,6 +147,7 @@ export function createAlert(alert: Omit<JobAlert, 'id' | 'notify_count' | 'creat
     JSON.stringify(alert.industries || []),
     alert.min_salary || null,
     alert.education || null,
+    alert.min_notify_interval || 0,
     alert.enabled !== false ? 1 : 0
   );
 
@@ -182,6 +194,10 @@ export function updateAlert(id: number, updates: Partial<JobAlert>): boolean {
     fields.push('education = ?');
     values.push(updates.education);
   }
+  if (updates.min_notify_interval !== undefined) {
+    fields.push('min_notify_interval = ?');
+    values.push(updates.min_notify_interval);
+  }
   if (updates.enabled !== undefined) {
     fields.push('enabled = ?');
     values.push(updates.enabled ? 1 : 0);
@@ -209,7 +225,7 @@ export function getAlertById(id: number): JobAlert | null {
 
   const row = db.prepare(`
     SELECT id, email, keywords, sources, locations, industries, min_salary, education,
-           enabled, last_notified_at, notify_count, created_at
+           min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     WHERE id = ?
   `).get(id) as Record<string, unknown> | undefined;
@@ -225,6 +241,7 @@ export function getAlertById(id: number): JobAlert | null {
     industries: JSON.parse(row.industries as string || '[]'),
     min_salary: row.min_salary as string | undefined,
     education: row.education as string | undefined,
+    min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,
     last_notified_at: row.last_notified_at as string | undefined,
     notify_count: row.notify_count as number,
@@ -301,4 +318,23 @@ export function getAlertHistory(alertId?: number, limit: number = 50): AlertHist
     error_message: row.error_message as string | undefined,
     created_at: row.created_at as string,
   }));
+}
+
+export function getNotifiedJobIds(alertId: number): Set<number> {
+  initJobAlertsTables();
+  const db = getDb();
+
+  const rows = db.prepare(
+    `SELECT job_ids FROM job_alert_history WHERE alert_id = ?`
+  ).all(alertId) as Record<string, unknown>[];
+
+  const jobIds = new Set<number>();
+  for (const row of rows) {
+    const ids = JSON.parse(row.job_ids as string || '[]') as number[];
+    for (const id of ids) {
+      jobIds.add(id);
+    }
+  }
+
+  return jobIds;
 }
