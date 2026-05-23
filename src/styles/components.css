@@ -731,7 +731,6 @@
 
 .job-list-item {
   background: var(--panel);
-  border-bottom: 1px solid var(--border);
   padding: 14px 18px;
   display: flex;
   align-items: center;
@@ -740,18 +739,18 @@
   position: relative;
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--ease-out),
-              border-left-color var(--duration-fast) var(--ease-out),
-              box-shadow var(--duration-fast) var(--ease-out);
+              border-left-color var(--duration-fast) var(--ease-out);
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
   border-left: 3px solid transparent;
 }
 
 .job-list-item:hover {
   background-color: var(--hover);
   border-left-color: var(--primary);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
 .job-list-item:first-child {
+  border-top: 1px solid var(--border-light, rgba(0,0,0,0.06));
   border-top-left-radius: var(--radius-lg);
   border-top-right-radius: var(--radius-lg);
 }
@@ -759,20 +758,11 @@
 .job-list-item:last-child {
   border-bottom-left-radius: var(--radius-lg);
   border-bottom-right-radius: var(--radius-lg);
-  border-bottom-color: transparent;
 }
 
-/* Wrap all items in a container with border */
-.job-list > .job-list-item:not(:last-child) {
-  border-bottom: 1px solid var(--border);
-}
-
-.job-list > .job-list-item:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.01);
-}
-
-[data-theme='dark'] .job-list > .job-list-item:nth-child(even) {
-  background-color: rgba(255, 255, 255, 0.02);
+[data-theme='dark'] .job-list-item {
+  border-bottom-color: rgba(255,255,255,0.06);
+  border-top-color: rgba(255,255,255,0.06);
 }
 
 .job-list-main {
@@ -934,6 +924,11 @@
 }
 
 .job-view-container > * {
+  animation: none;
+}
+
+.view-animating > .job-list-item,
+.view-animating > .grid > * {
   animation: viewSwitchIn var(--duration-normal) var(--ease-out);
 }
 

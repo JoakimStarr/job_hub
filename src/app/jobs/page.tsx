@@ -51,7 +51,24 @@ export default function JobsPage() {
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [statsExpanded, setStatsExpanded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [viewMode, setViewMode] = useState<'card' | 'list'>('list');
+  const [viewMode, setViewMode] = useState<'card' | 'list'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('job_view_mode');
+      return saved === 'card' || saved === 'list' ? saved : 'list';
+    }
+    return 'list';
+  });
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('job_view_mode', viewMode);
+  }, [viewMode]);
+
+  useEffect(() => {
+    setAnimating(true);
+    const timer = setTimeout(() => setAnimating(false), 300);
+    return () => clearTimeout(timer);
+  }, [viewMode]);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -426,24 +443,7 @@ export default function JobsPage() {
         ) : items.length === 0 ? (
           <EmptyState title="没有结果" description="当前筛选条件下没有找到岗位。" />
         ) : (
-          <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" aria-label="岗位列表" key={viewMode}>
-            {viewMode === 'list' && (
-              <div className="job-list-header" role="rowheader" aria-label="列表表头">
-                <div className="job-list-header-main">
-                  <span className="job-list-header-title">岗位名称</span>
-                  <div className="job-list-header-meta">
-                    <span>地点</span>
-                    <span>薪资</span>
-                    <span>类型</span>
-                    <span>学历</span>
-                  </div>
-                </div>
-                <div className="job-list-header-right">
-                  <span>发布日期</span>
-                  <span>操作</span>
-                </div>
-              </div>
-            )}
+          <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'} ${animating ? 'view-animating' : ''}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" aria-label="岗位列表">
             {items.map((job) => (
               <div key={job.id} role="listitem" style={viewMode === 'list' ? undefined : undefined}>
                 <JobCard

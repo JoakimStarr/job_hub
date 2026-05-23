@@ -181,3 +181,314 @@
 2026-05-23 13:22:47 | [32mINFO[0m | lite_crawler | crawl_platform:1254 | ▶ 爬取类型: 实习岗位
 2026-05-23 13:22:48 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 1 页: 获取到 15 条列表项
 2026-05-23 13:22:49 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 300 条
+2026-05-23 13:22:51 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 2 页: 获取到 15 条列表项
+2026-05-23 13:22:53 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 320 条
+2026-05-23 13:22:55 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 3 页: 获取到 15 条列表项
+2026-05-23 13:23:01 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 340 条
+2026-05-23 13:23:03 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 4 页: 获取到 15 条列表项
+2026-05-23 13:23:06 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 5 页: 获取到 15 条列表项
+2026-05-23 13:23:06 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 360 条
+2026-05-23 13:23:09 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 6 页: 获取到 15 条列表项
+2026-05-23 13:23:10 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 380 条
+2026-05-23 13:23:12 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 7 页: 获取到 9 条列表项
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | log_source_end:396 | ✓ [中央财经大学] 完成: 396 条 | 获取:253 | 耗时:131.5s
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | main:1893 | 
+======================================================================
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | main:1894 | 爬取完成 | 总耗时 131.5s
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | main:1895 | 成功入库: 253 条 (已过滤过期数据)
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | main:1896 | ======================================================================
+
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:355 | ======================================================================
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:356 | 爬取会话结束
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:357 | 总耗时: 131.55秒
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:358 | 总岗位数: 253
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:359 | 成功插入: 253
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:360 | 重复跳过: 143
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:361 | 错误次数: 0
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:362 | 重试次数: 1
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:365 | ----------------------------------------------------------------------
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:366 | 各数据源统计:
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:368 |   [      cufe] 获取: 253 | 成功: 253 | 重复: 143 | 错误:   0
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | end_session:375 | ======================================================================
+2026-05-23 13:23:13 | [32mINFO[0m | lite_crawler | trigger_job_alerts:1752 | 正在检查职位提醒订阅...
+2026-05-23 13:23:13 | [33mWARNING[0m | lite_crawler | trigger_job_alerts:1782 | 触发职位提醒失败: name 'os' is not defined
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | set_level:329 | 日志级别设置为: INFO
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | init_database:619 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | start_session:341 | ======================================================================
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | start_session:342 | 轻量化单线程爬虫启动
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | start_session:343 | 启动时间: 2026-05-23 13:28:06
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | start_session:344 | Python版本: 3.13.13
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | start_session:345 | 工作目录: /home/joakim/Project/job_hub
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | start_session:346 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | start_session:347 | ======================================================================
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | main:1869 | 数据源: cufe
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | main:1872 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | main:1873 | ======================================================================
+
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | crawl_source:1801 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | log_source_start:389 | ----------------------------------------------------------------------
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | log_source_start:390 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-23 13:28:06 | [32mINFO[0m | lite_crawler | crawl_platform:1255 | ▶ 爬取类型: 全职岗位
+2026-05-23 13:28:09 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 13:28:09 | [32mINFO[0m | lite_crawler | crawl_platform:1289 | [全职岗位] 第 1 页所有 URL 已存在 (15/15)，停止爬取
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | crawl_platform:1255 | ▶ 爬取类型: 实习岗位
+2026-05-23 13:28:10 | [33mWARNING[0m | lite_crawler | crawl_platform:1416 | 用户中断爬取
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | log_source_end:397 | ✓ [中央财经大学] 完成: 0 条 | 获取:0 | 耗时:4.0s
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | main:1894 | 
+======================================================================
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | main:1895 | 爬取完成 | 总耗时 4.0s
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | main:1896 | 成功入库: 0 条 (已过滤过期数据)
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | main:1897 | ======================================================================
+
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:356 | ======================================================================
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:357 | 爬取会话结束
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:358 | 总耗时: 4.04秒
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:359 | 总岗位数: 0
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:360 | 成功插入: 0
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:361 | 重复跳过: 0
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:362 | 错误次数: 0
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:363 | 重试次数: 0
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:366 | ----------------------------------------------------------------------
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:367 | 各数据源统计:
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:369 |   [      cufe] 获取:   0 | 成功:   0 | 重复:   0 | 错误:   0
+2026-05-23 13:28:10 | [32mINFO[0m | lite_crawler | end_session:376 | ======================================================================
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | set_level:329 | 日志级别设置为: INFO
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | init_database:619 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | main:1855 | 已清除所有增量爬取状态，启用覆盖模式
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | main:1856 | 已存在的数据将被更新覆盖
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | start_session:341 | ======================================================================
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | start_session:342 | 轻量化单线程爬虫启动
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | start_session:343 | 启动时间: 2026-05-23 13:28:38
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | start_session:344 | Python版本: 3.13.13
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | start_session:345 | 工作目录: /home/joakim/Project/job_hub
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | start_session:346 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | start_session:347 | ======================================================================
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | main:1869 | 数据源: cufe
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | main:1872 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | main:1873 | ======================================================================
+
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | crawl_source:1801 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | log_source_start:389 | ----------------------------------------------------------------------
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | log_source_start:390 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-23 13:28:38 | [32mINFO[0m | lite_crawler | crawl_platform:1255 | ▶ 爬取类型: 全职岗位
+2026-05-23 13:28:39 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 13:28:40 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 国务院国资委干部教育培训中心2026年度 公开招聘公告 (id=14282)
+2026-05-23 13:28:40 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 联东集团U等生（园区运营岗） (id=14283)
+2026-05-23 13:28:40 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 国药健康养老有限公司2026届校园招聘 (id=14284)
+2026-05-23 13:28:40 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国建材集团财务有限公司校园招聘公告 (id=14285)
+2026-05-23 13:28:40 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 绥化学院2026年公开招聘博士教师公告 (id=14286)
+2026-05-23 13:28:41 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 向海“湛”放，成就“江”来 5.23线上直播带岗！湛江海洋牧场邀你逐梦深蓝 (id=14287)
+2026-05-23 13:28:41 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 高校人才引进网第十九届博士人才专场双选会邀请函* (id=14288)
+2026-05-23 13:28:41 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 铁矿石采销专员 (id=13966)
+2026-05-23 13:28:41 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 江西裕民银行股份有限公司2026年春季校园招聘公告 (id=13967)
+2026-05-23 13:28:41 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 红塔证券股份有限公司  2026年度招聘公告 (id=13968)
+2026-05-23 13:28:41 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 博士后招聘|前海国际事务研究院 (id=14289)
+2026-05-23 13:28:41 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 国药健康养老有限公司 2026届校园招聘 (id=14290)
+2026-05-23 13:28:42 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 济南市市中区山东电力设备有限公司 2026年招才引才简章（中央财经大学） (id=14291)
+2026-05-23 13:28:42 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 天健会计师事务所四川分所校园招聘2026 (id=14292)
+2026-05-23 13:28:42 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 学大教育（北京）暑期招聘 (id=14293)
+2026-05-23 13:28:43 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 2 页: 获取到 15 条列表项
+2026-05-23 13:28:44 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 招商证券北京东四环中路营业部2026年招聘 (id=14294)
+2026-05-23 13:28:44 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策-校园/实习招聘---------- (id=14295)
+2026-05-23 13:28:44 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 华融控股集团招聘投资经理助理 (id=14296)
+2026-05-23 13:28:44 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 国务院国资委国企绩效评价中心2026年度公开招聘公告 (id=14297)
+2026-05-23 13:28:45 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 山东高速集团有限公司2026年上半年 校园招聘公告 (id=14298)
+2026-05-23 13:28:45 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 20 条
+2026-05-23 13:28:50 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年上海第二工业大学公开招聘公告. (id=14299)
+2026-05-23 13:28:55 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 湖南金叶烟草薄片有限责任公司 2026年公开招聘 (id=14300)
+2026-05-23 13:28:55 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 特区建工产发公司校园招聘公告 (id=14301)
+2026-05-23 13:28:55 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 信永中和2026校园招聘 (id=14302)
+2026-05-23 13:29:00 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 长城证券2027届暑期实习校园招聘 (id=14303)
+2026-05-23 13:29:02 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策-2026校园招聘... (id=14304)
+2026-05-23 13:29:02 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 有道领世【石家庄研习所】班课招聘简章 (id=14305)
+2026-05-23 13:29:02 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国建材集团财务有限公司招聘公告 (id=14306)
+2026-05-23 13:29:02 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 博车网2026校园招聘 (id=14307)
+2026-05-23 13:29:02 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年塔里木大学公开招聘专任教师公告（第二批） (id=14308)
+2026-05-23 13:29:03 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 3 页: 获取到 15 条列表项
+2026-05-23 13:29:04 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国建筑五局北京公司2026年春季招聘（财务补招） (id=14309)
+2026-05-23 13:29:04 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 宁波幼儿师范高等专科学校公开招聘高层次人才公告 (id=14310)
+2026-05-23 13:29:04 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 厦门大学嘉庚学院2025-2026学年人才招聘启事 (id=14311)
+2026-05-23 13:29:04 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中共宁夏区委党校（宁夏行政学院）2026年自主公开招聘高层次人才公告 (id=14312)
+2026-05-23 13:29:04 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 海尔消费金融2027届校园招聘-智启海消未来有你 (id=14313)
+2026-05-23 13:29:05 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 重庆/东莞华翌26招聘——高端机床（新能源、航空、军工） (id=14314)
+2026-05-23 13:29:05 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 斐意特咨询(Fitt Consulting Group) 2026春季校园招聘 (id=14315)
+2026-05-23 13:29:05 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 【公募】中邮创业基金—机构业务经理 (id=14316)
+2026-05-23 13:29:05 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 东风汽车集团有限公司2026年全球博士招募 (id=14317)
+2026-05-23 13:29:05 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 天健会计师事务所四川分所2026届校园招聘 (id=14318)
+2026-05-23 13:29:05 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 40 条
+2026-05-23 13:29:05 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 河南资产博士后创新实践基地招聘公告 (id=14319)
+2026-05-23 13:29:05 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 宿州航空职业学院招聘简章 (id=14320)
+2026-05-23 13:29:06 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 重庆轻工职业学院2026年招聘公告 (id=14321)
+2026-05-23 13:29:06 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中建八局城市发展有限公司2026届校园招聘 (id=14322)
+2026-05-23 13:29:06 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 江投资本板块2026年度春季校园公开招聘公告 (id=14323)
+2026-05-23 13:29:07 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 4 页: 获取到 15 条列表项
+2026-05-23 13:29:07 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国诚通2026届春季校园招聘 (id=14324)
+2026-05-23 13:29:08 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 新疆农业大学塔城校区2026年第一批面向社会引进事业编制工作人员公告 (id=14325)
+2026-05-23 13:29:08 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 江铃汽车2026全球春季校园招聘简章 (id=14326)
+2026-05-23 13:29:08 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 北京保利艺术中心有限公司财务管理岗招聘 (id=14327)
+2026-05-23 13:29:08 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国渔业互助保险社业务管理部业务企划岗 (id=14328)
+2026-05-23 13:29:08 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 西安工业大学2026年专任教师招聘公告 (id=14329)
+2026-05-23 13:29:08 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国外运华中有限公司 OSH“雁翔·展2026”项目暨2026届春季校园招聘 (id=14330)
+2026-05-23 13:29:09 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中信重工2026年度财务岗位招聘简章 (id=14331)
+2026-05-23 13:29:09 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 长沙银行2026年春季校园招聘暨暑期实习生招聘 (id=14332)
+2026-05-23 13:29:10 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 北京燕龙供水有限公司会计专业招聘 (id=14333)
+2026-05-23 13:29:10 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年烟台中农大研究院高层次人才招聘 (id=14334)
+2026-05-23 13:29:10 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 包头市景开中学2026年教师招聘 (id=14335)
+2026-05-23 13:29:11 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国渔业互助保险社会员服务部消费者权益保护岗 (id=14336)
+2026-05-23 13:29:11 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 上证所信息网络有限公司2026年招聘启事 (id=14337)
+2026-05-23 13:29:11 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 华润啤酒2026届校园招聘简章 (id=14338)
+2026-05-23 13:29:11 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 60 条
+2026-05-23 13:29:12 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 5 页: 获取到 15 条列表项
+2026-05-23 13:29:12 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 直播活动|“合肥请您来”2026招才引智云聘会—— 创意文化重点产业链专场 (id=14339)
+2026-05-23 13:29:12 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 山东邮政首届“菁英赋能”管培生校园招聘 ——2026校招直通管理层 菁英赋能赢未来 (id=14340)
+2026-05-23 13:29:12 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国农业大学烟台研究院2026年非事业编学生管理岗招聘启事 (id=14341)
+2026-05-23 13:29:12 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年济宁市“校企双聘”重点产业博士专引 计划公告 (id=14342)
+2026-05-23 13:29:12 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中冶天工集团有限公司2026届校园招聘简章 (id=14343)
+2026-05-23 13:29:12 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 伊利集团液态奶事业部 2026 届校园招聘简章 (id=14344)
+2026-05-23 13:29:13 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 江苏海洋大学2026年诚聘海内外英才 (id=14345)
+2026-05-23 13:29:13 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 广东军辉达进出口贸易有限公司校园招聘（2026) (id=14346)
+2026-05-23 13:29:13 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 北京市基础设施投资有限公司 2026年度春季校园招聘正式启动 (id=14347)
+2026-05-23 13:29:14 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 西安建筑科技大学 2026年公开招聘专职辅导员公告 (id=14348)
+2026-05-23 13:29:14 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 运城学院2026年人才招聘公告 (id=14349)
+2026-05-23 13:29:14 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 徐州医科大学2026年高层次人才招聘公告 (id=14350)
+2026-05-23 13:29:14 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国有色集团沈阳矿业投资有限公司2026年招聘 (id=14351)
+2026-05-23 13:29:14 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策-2026校园招聘/// (id=14352)
+2026-05-23 13:29:14 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 北京建工集团2026校园招聘公告 (id=14353)
+2026-05-23 13:29:15 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 6 页: 获取到 15 条列表项
+2026-05-23 13:29:17 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 央企-职能部室-财务管理 (id=14354)
+2026-05-23 13:29:17 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 浙大宁波理工学院2026年公开招聘高层次人才（教师）公告 (id=14355)
+2026-05-23 13:29:17 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 太原重型机械集团有限公司 2026届校园招聘公告 (id=14356)
+2026-05-23 13:29:17 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 有道领世【石家庄研习所】班课招聘简章 (id=14357)
+2026-05-23 13:29:17 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策-2026校园招聘 (id=14358)
+2026-05-23 13:29:17 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 80 条
+2026-05-23 13:29:18 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 博士后/助理研究员招聘｜前海国际事务研究院 (id=14359)
+2026-05-23 13:29:18 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 高校人才引进网第十八届博士人才专场双选会邀请函.. (id=14360)
+2026-05-23 13:29:18 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 兴业银行深圳分行2026校园招聘 (id=14361)
+2026-05-23 13:29:18 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 青岛理工大学临沂校区2026年诚聘海内外英才（长期招聘） (id=14362)
+2026-05-23 13:29:18 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年上海师范大学天华学院人工智能学院高层次人才招聘启事 (id=14363)
+2026-05-23 13:29:18 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 浙江国际大宗商品交易中心2026届校园招聘财务管理 (id=14364)
+2026-05-23 13:29:18 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 奇瑞智能化研究院 全球招聘 2026届硕/博毕业生及2027届硕/博实习生 (id=14365)
+2026-05-23 13:29:19 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商设计 (id=14366)
+2026-05-23 13:29:19 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 文案编辑 (id=14367)
+2026-05-23 13:29:19 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 拍摄剪辑 (id=14368)
+2026-05-23 13:29:20 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 7 页: 获取到 15 条列表项
+2026-05-23 13:29:20 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 上海盘京投资管理中心（有限合伙）招聘公告 (id=14369)
+2026-05-23 13:29:20 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国建筑科学研究院有限公司2026春季校园招聘 (id=14370)
+2026-05-23 13:29:20 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 泰康人寿四川分公司2026年校园招聘 (id=14371)
+2026-05-23 13:29:20 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国电建集团华东勘测设计研究院有限公司2026春季招聘 (id=14372)
+2026-05-23 13:29:20 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国医学科学院药用植物研究所北京总所2026年度社会公开招聘资讯 (id=14373)
+2026-05-23 13:29:20 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年康复大学公共教学部（马克思主义学院）公开招聘专任教师简章 (id=14374)
+2026-05-23 13:29:21 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年康复大学社会发展学院公开招聘专任教师简章 (id=14375)
+2026-05-23 13:29:21 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年康复大学生命科学与健康学院公开招聘专任教师简章 (id=14376)
+2026-05-23 13:29:21 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年康复大学康复科学与工程学院公开招聘专任教师简章 (id=14377)
+2026-05-23 13:29:21 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: “广聚天下英才 汇聚黔进动能” 第十四届贵州人才博览会欢迎您！ (id=14378)
+2026-05-23 13:29:21 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 100 条
+2026-05-23 13:29:21 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 南方基金2027届暑期实习招聘&2026届春季补招 (id=14379)
+2026-05-23 13:29:21 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策*-2026校园招聘 (id=14380)
+2026-05-23 13:29:22 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 直播活动 |“合肥请您来”2026招才引智云聘会——新一代信息技术重点产业链专场 (id=14381)
+2026-05-23 13:29:22 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 幸福人寿2026年应届生岗位职责与任职要求 (id=14382)
+2026-05-23 13:29:22 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国邮政储蓄银行宁波分行2026校园招聘 (id=14383)
+2026-05-23 13:29:23 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 8 页: 获取到 15 条列表项
+2026-05-23 13:29:23 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 无锡财信商业保理有限公司2026年校园招聘 (id=14384)
+2026-05-23 13:29:23 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年春季厦门企业面向毕业生云端大招聘平台正式上线 (id=14385)
+2026-05-23 13:29:23 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 东莞市步步高实验学校&幼儿园2026春招进行中！ (id=14386)
+2026-05-23 13:29:24 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策-- 2026 校园招聘 (id=14387)
+2026-05-23 13:29:24 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中共南通市委党校2026年公开招聘高层次人才公告 (id=14388)
+2026-05-23 13:29:24 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 茅台集团2026年校园招聘公告 (id=14389)
+2026-05-23 13:29:24 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 东吴证券2026春季校园招聘 (id=14390)
+2026-05-23 13:29:24 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 国联民生证券2026暑期实习生 (id=14391)
+2026-05-23 13:29:24 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 平安产险青海分公司产品管培生 (id=14392)
+2026-05-23 13:29:25 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中共南通市委党校2026年公开招聘高层次人才公告 (id=14393)
+2026-05-23 13:29:25 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中共大连市委党校2026年高层次人才选聘公告 (id=14394)
+2026-05-23 13:29:25 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年克拉玛依市企事业单位高层次、  急需紧缺人才引进公告 (id=14395)
+2026-05-23 13:29:25 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 斐意特咨询(Fitt Consulting Group) 2026春季校园招聘 (id=14396)
+2026-05-23 13:29:25 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国银河证券博士后研究员招聘 (id=14397)
+2026-05-23 13:29:25 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中诚宝捷思货币经纪有限公司2026届校园招聘 (id=14398)
+2026-05-23 13:29:25 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 120 条
+2026-05-23 13:29:26 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 9 页: 获取到 15 条列表项
+2026-05-23 13:29:26 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 智汇潇湘才聚望城长沙市望城区2026年事业引才博士公开引进公告 (id=14399)
+2026-05-23 13:29:27 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中共南通市委党校2026年公开招聘高层次人才公告 (id=14400)
+2026-05-23 13:29:27 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 厦门银行股份有限公司2026年春季校园招聘 (id=14401)
+2026-05-23 13:29:27 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 北汽国际2026届全球英才招聘 (id=14402)
+2026-05-23 13:29:27 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策---2026校园招聘 (id=14403)
+2026-05-23 13:29:27 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 华润置地2026届校园招聘（春季招聘） (id=14404)
+2026-05-23 13:29:28 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 北京搜狐新媒体信息技术有限公司2026年校园招聘 (id=14405)
+2026-05-23 13:29:28 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 虹科电子2026届春季校园招聘 (id=14406)
+2026-05-23 13:29:28 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 鄂尔多斯集团2026春季校园招聘正式启动 (id=14407)
+2026-05-23 13:29:28 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 华安财保资产管理有限责任公司交易员岗位招聘 (id=14408)
+2026-05-23 13:29:28 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策-2026届 校园招聘 (id=14409)
+2026-05-23 13:29:28 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 重庆/东莞华翌26招聘——高端机床（新能源、航空、军工） (id=14410)
+2026-05-23 13:29:28 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国广播电视网络集团有限公司  2026年高校毕业生公开招聘公告 (id=14411)
+2026-05-23 13:29:29 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 联易融科技集团2026春季校园招聘简章 (id=14412)
+2026-05-23 13:29:29 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中国太平保险集团有限责任公司  2026春季校园招聘公告 (id=14413)
+2026-05-23 13:29:30 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 10 页: 获取到 15 条列表项
+2026-05-23 13:29:30 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 标题：鄂尔多斯集团2026春季校园招聘正式启动 (id=14414)
+2026-05-23 13:29:30 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 宝丰集团2026年春季校园招聘简章 (id=14415)
+2026-05-23 13:29:30 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 诺安基金网络金融部26届应届毕业生招聘 (id=14416)
+2026-05-23 13:29:31 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: ByteIntern字节跳动2026实习生招聘 (id=14417)
+2026-05-23 13:29:31 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 金融壹账通2026校园招聘简章 (id=14418)
+2026-05-23 13:29:31 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 140 条
+2026-05-23 13:29:31 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 远大医药2026春季校园招聘简章 (id=14419)
+2026-05-23 13:29:31 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策~-2026校园招聘 (id=14420)
+2026-05-23 13:29:31 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 强生中国2026届校园招聘 (id=14421)
+2026-05-23 13:29:32 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 英才聚南粤，“盐”启新征程——  广盐集团2026校园 (id=14422)
+2026-05-23 13:29:33 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中信兴业2026届校园招聘 (id=14423)
+2026-05-23 13:29:34 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中关村发展集团股份有限公司2026年度校园招聘及博士后招聘 (id=14424)
+2026-05-23 13:29:34 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 止一税务2026春季招聘 (id=14425)
+2026-05-23 13:29:34 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 新东方教育科技集团山东省域2026春季校园招聘 (id=14426)
+2026-05-23 13:29:34 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 中建安装集团有限公司2026届校园招聘 (id=14427)
+2026-05-23 13:29:35 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 物产中大金属集团有限公司2026届春季校园招聘简章 (id=14428)
+2026-05-23 13:29:35 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 11 页: 获取到 15 条列表项
+2026-05-23 13:29:35 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 电商独角兽-掌上先机/慧策 ~2026校园招聘 (id=14429)
+2026-05-23 13:29:36 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 2026年克拉玛依市企事业单位高层次、  急需紧缺人才引进公告 (id=14430)
+2026-05-23 13:29:36 | [32mINFO[0m | lite_crawler | insert_job:749 | [cufe] 覆盖更新: 内蒙古工业大学2026年度“百名博士”高层次人才引进公告 (id=14431)
+2026-05-23 13:29:37 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 160 条
+2026-05-23 13:29:39 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 12 页: 获取到 15 条列表项
+2026-05-23 13:29:41 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 180 条
+2026-05-23 13:29:42 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 13 页: 获取到 15 条列表项
+2026-05-23 13:29:46 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 14 页: 获取到 15 条列表项
+2026-05-23 13:29:46 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 200 条
+2026-05-23 13:29:49 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 15 页: 获取到 15 条列表项
+2026-05-23 13:29:51 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 220 条
+2026-05-23 13:29:54 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 16 页: 获取到 15 条列表项
+2026-05-23 13:29:56 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 240 条
+2026-05-23 13:29:57 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 17 页: 获取到 15 条列表项
+2026-05-23 13:30:01 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 18 页: 获取到 15 条列表项
+2026-05-23 13:30:01 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 260 条
+2026-05-23 13:30:04 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 19 页: 获取到 15 条列表项
+2026-05-23 13:30:05 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 280 条
+2026-05-23 13:30:07 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [全职岗位] 第 20 页: 获取到 15 条列表项
+2026-05-23 13:30:09 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 300 条
+2026-05-23 13:30:10 | [32mINFO[0m | lite_crawler | crawl_platform:1255 | ▶ 爬取类型: 实习岗位
+2026-05-23 13:30:10 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [实习岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 13:30:13 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [实习岗位] 第 2 页: 获取到 15 条列表项
+2026-05-23 13:30:14 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 320 条
+2026-05-23 13:30:17 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [实习岗位] 第 3 页: 获取到 15 条列表项
+2026-05-23 13:30:18 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 340 条
+2026-05-23 13:30:19 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [实习岗位] 第 4 页: 获取到 15 条列表项
+2026-05-23 13:30:22 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 360 条
+2026-05-23 13:30:22 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [实习岗位] 第 5 页: 获取到 15 条列表项
+2026-05-23 13:30:25 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [实习岗位] 第 6 页: 获取到 15 条列表项
+2026-05-23 13:30:26 | [32mINFO[0m | lite_crawler | crawl_platform:1404 |   已完成: 380 条
+2026-05-23 13:30:28 | [32mINFO[0m | lite_crawler | crawl_platform:1281 | [实习岗位] 第 7 页: 获取到 9 条列表项
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | log_source_end:397 | ✓ [中央财经大学] 完成: 399 条 | 获取:256 | 耗时:111.9s
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | main:1894 | 
+======================================================================
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | main:1895 | 爬取完成 | 总耗时 111.9s
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | main:1896 | 成功入库: 256 条 (已过滤过期数据)
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | main:1897 | ======================================================================
+
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:356 | ======================================================================
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:357 | 爬取会话结束
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:358 | 总耗时: 111.88秒
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:359 | 总岗位数: 256
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:360 | 成功插入: 256
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:361 | 重复跳过: 143
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:362 | 错误次数: 0
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:363 | 重试次数: 0
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:366 | ----------------------------------------------------------------------
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:367 | 各数据源统计:
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:369 |   [      cufe] 获取: 256 | 成功: 256 | 重复: 143 | 错误:   0
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | end_session:376 | ======================================================================
+2026-05-23 13:30:30 | [32mINFO[0m | lite_crawler | trigger_job_alerts:1753 | 正在检查职位提醒订阅...
+2026-05-23 13:30:31 | [32mINFO[0m | lite_crawler | trigger_job_alerts:1769 | 职位提醒处理完成: 检查 0 个岗位, 触发 0 个订阅

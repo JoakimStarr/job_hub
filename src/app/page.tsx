@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton, ViewToggle } from '@/components/ui';
@@ -17,7 +17,24 @@ export default function HomePage() {
   const router = useRouter();
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [page, setPage] = useState(1);
-  const [viewMode, setViewMode] = useState<'card' | 'list'>('list');
+  const [viewMode, setViewMode] = useState<'card' | 'list'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('job_view_mode');
+      return saved === 'card' || saved === 'list' ? saved : 'list';
+    }
+    return 'list';
+  });
+  const [animating, setAnimating] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('job_view_mode', viewMode);
+  }, [viewMode]);
+
+  useEffect(() => {
+    setAnimating(true);
+    const timer = setTimeout(() => setAnimating(false), 300);
+    return () => clearTimeout(timer);
+  }, [viewMode]);
 
   const { data: stats, error: statsError, loading: statsLoading, mutate: mutateStats } = useFetch<StatsOverview>(
     '/api/stats/overview',
@@ -105,24 +122,7 @@ export default function HomePage() {
               <EmptyState title="暂无岗位" description="当前数据库里还没有可展示的岗位。" />
             ) : (
               <>
-                <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" key={viewMode}>
-                  {viewMode === 'list' && (
-                    <div className="job-list-header" role="rowheader" aria-label="列表表头">
-                      <div className="job-list-header-main">
-                        <span className="job-list-header-title">岗位名称</span>
-                        <div className="job-list-header-meta">
-                          <span>地点</span>
-                          <span>薪资</span>
-                          <span>类型</span>
-                          <span>学历</span>
-                        </div>
-                      </div>
-                      <div className="job-list-header-right">
-                        <span>发布日期</span>
-                        <span>操作</span>
-                      </div>
-                    </div>
-                  )}
+                <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'} ${animating ? 'view-animating' : ''}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list">
                   {jobs.map((job) => (
                     <div key={job.id} role="listitem">
                       <JobCard job={job} viewMode={viewMode} onToggleFavorite={() => handleToggleFavorite(job)} onClick={(target) => setSelectedJob(target)} onTagClick={handleTagClick} />
