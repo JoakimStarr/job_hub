@@ -166,21 +166,26 @@ export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick, o
         aria-label={`岗位: ${job.title}${job.company ? ` - ${job.company}` : ''}`}
       >
         <div className="job-list-main">
-          <div className="job-list-title-row">
-            <h3>{job.title}</h3>
+          <div className="job-list-title-section">
+            <h3 className="job-list-title">{job.title}</h3>
             {job.company ? <span className="job-list-company">{job.company}</span> : null}
+            {job.salary ? <span className="job-list-salary">💰 {job.salary}</span> : null}
           </div>
           <div className="job-list-meta">
-            {job.location ? <span>📍 {job.location}</span> : null}
-            {job.salary ? <span>💰 {job.salary}</span> : null}
-            {job.job_type ? <Badge tone="slate">{job.job_type}</Badge> : null}
-            {job.education ? <Badge tone="emerald">{job.education}</Badge> : null}
+            {job.location ? <span className="job-list-location">📍 {job.location}</span> : null}
+            {job.job_type ? <Badge tone="slate" style={{ fontSize: 11, padding: '2px 6px' }}>{job.job_type}</Badge> : null}
+            {job.education ? <Badge tone="emerald" style={{ fontSize: 11, padding: '2px 6px' }}>{job.education}</Badge> : null}
+            {job.industry ? <Badge tone="violet" style={{ fontSize: 11, padding: '2px 6px' }}>{job.industry}</Badge> : null}
+            {job.source ? <Badge tone="blue" style={{ fontSize: 11, padding: '2px 6px' }}>{job.source}</Badge> : null}
           </div>
+          {job.description ? (
+            <p className="job-list-desc">{job.description}</p>
+          ) : null}
         </div>
         <div className="job-list-right">
           <span className="job-list-date">{dateStr}</span>
           {onToggleFavorite ? (
-            <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} size="sm" />
+            <StarButton active={!!job.is_favorite} onClick={(e) => { e.stopPropagation(); onToggleFavorite(job); }} size="sm" />
           ) : null}
         </div>
       </article>
@@ -566,9 +571,10 @@ export const ViewToggle = memo(function ViewToggle({ mode, onToggle }: { mode: '
       type="button"
       className="view-toggle-btn"
       onClick={handleClick}
+      onMouseDown={(e) => e.stopPropagation()}
       aria-label={mode === 'list' ? '切换为卡片视图' : '切换为列表视图'}
       title={mode === 'list' ? '切换为卡片视图' : '切换为列表视图'}
-      style={{ position: 'relative', zIndex: 10 }}
+      tabIndex={0}
     >
       {mode === 'list' ? (
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

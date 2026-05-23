@@ -298,11 +298,13 @@ export default function JobsPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span>数据概览</span>
               <button
+                type="button"
                 onClick={() => setStatsExpanded((v) => !v)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: 12 }}
+                className="stats-toggle-btn"
                 aria-label={statsExpanded ? '收起统计面板' : '展开统计面板'}
               >
-                {statsExpanded ? '▲ 收起' : '▼ 展开'}
+                <span className="stats-toggle-icon">{statsExpanded ? '▲' : '▼'}</span>
+                <span>{statsExpanded ? '收起' : '展开'}</span>
               </button>
             </div>
           }
@@ -399,7 +401,14 @@ export default function JobsPage() {
         description="点击卡片查看详情，点击星星切换收藏状态"
         action={
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <ViewToggle mode={viewMode} onToggle={() => setViewMode((m) => m === 'card' ? 'list' : 'card')} />
+            <ViewToggle
+              mode={viewMode}
+              onToggle={() => {
+                const next = viewMode === 'card' ? 'list' : 'card';
+                console.log('Toggle view:', viewMode, '->', next);
+                setViewMode(next);
+              }}
+            />
             <div className="sort-controls">
               <select
                 className="sort-field-select"
@@ -445,7 +454,12 @@ export default function JobsPage() {
         ) : (
           <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'} ${animating ? 'view-animating' : ''}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" aria-label="岗位列表">
             {items.map((job) => (
-              <div key={job.id} role="listitem" style={viewMode === 'list' ? undefined : undefined}>
+              <div
+                key={job.id}
+                role="listitem"
+                style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+                onClick={() => handleJobClick(job)}
+              >
                 <JobCard
                   job={job}
                   viewMode={viewMode}

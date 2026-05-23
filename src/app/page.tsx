@@ -124,7 +124,12 @@ export default function HomePage() {
               <>
                 <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'} ${animating ? 'view-animating' : ''}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list">
                   {jobs.map((job) => (
-                    <div key={job.id} role="listitem">
+                    <div
+                      key={job.id}
+                      role="listitem"
+                      style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+                      onClick={() => setSelectedJob(job)}
+                    >
                       <JobCard job={job} viewMode={viewMode} onToggleFavorite={() => handleToggleFavorite(job)} onClick={(target) => setSelectedJob(target)} onTagClick={handleTagClick} />
                     </div>
                   ))}
