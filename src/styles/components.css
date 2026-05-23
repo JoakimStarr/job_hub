@@ -706,7 +706,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: var(--z-modal);
   padding: 24px;
   animation: fadeIn 0.15s ease;
 }
@@ -1737,9 +1737,10 @@
 }
 
 /* ======== 触摸优化 ======== */
-/* 所有可点击卡片的触摸反馈 - 尊重用户减少动画偏好 */
+/* 可点击卡片的触摸反馈 - 尊重用户减少动画偏好 */
 @media (prefers-reduced-motion: no-preference) {
-  [class*="card"]:active {
+  .job-card:active,
+  .history-card:active {
     transform: scale(0.98);
     transition: transform 0.1s ease;
   }
@@ -1747,12 +1748,14 @@
 
 @media (hover: hover) {
   /* 桌面端使用hover效果 */
-  [class*="card"]:hover {
+  .job-card:hover,
+  .history-card:hover {
     transform: translateY(-1px);
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    [class*="card"]:active {
+    .job-card:active,
+    .history-card:active {
       transform: none;
     }
   }
@@ -1766,7 +1769,7 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: var(--z-modal, 1000);
+  z-index: var(--z-modal);
   display: flex;
   justify-content: center;
   align-items: flex-end;

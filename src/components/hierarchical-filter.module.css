@@ -93,7 +93,7 @@
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
-  z-index: 1000;
+  z-index: calc(var(--z-modal) + 1);
   max-height: 320px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;

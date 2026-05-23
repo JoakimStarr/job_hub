@@ -280,7 +280,7 @@
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 999; /* 移动端最高层级，确保不被任何元素遮挡 */
+    z-index: var(--z-sticky); /* 粘性导航层级，低于侧边栏(z-sidebar:400)，确保侧边栏滑出时覆盖导航栏 */
     margin-bottom: 0; /* 移除margin，由main-shell的padding-top代替 */
     background-color: rgb(var(--bg-rgb)); /* 移动端使用不透明背景 */
     height: auto; /* 允许高度自适应 */
