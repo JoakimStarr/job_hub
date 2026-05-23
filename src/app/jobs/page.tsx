@@ -36,6 +36,8 @@ const EMPTY_FILTERS: FilterOptions = {
 
 export default function JobsPage() {
   const toast = useToast();
+  const toastRef = useRef(toast);
+  toastRef.current = toast;
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [location, setLocation] = useState('');
@@ -137,7 +139,7 @@ export default function JobsPage() {
 
     try {
       await API.toggleFavorite(job.id);
-      toast.success(newFavoriteState ? '已添加到收藏' : '已取消收藏');
+      toastRef.current.success(newFavoriteState ? '已添加到收藏' : '已取消收藏');
     } catch (err) {
       // 回滚
       mutateJobs(
@@ -161,16 +163,20 @@ export default function JobsPage() {
 
       const errorMsg = err instanceof Error ? err.message : '操作失败';
       if (err instanceof APIError && err.status === 404) {
-        toast.error('收藏接口不存在，请检查后端服务');
+        toastRef.current.error('收藏接口不存在，请检查后端服务');
       } else if (err instanceof APIError && err.status === 500) {
-        toast.error('服务器内部错误，收藏操作失败');
+        toastRef.current.error('服务器内部错误，收藏操作失败');
       } else if (err instanceof APIError && err.status === 401) {
-        toast.error('登录已过期，请重新登录');
+        toastRef.current.error('登录已过期，请重新登录');
       } else {
-        toast.error(errorMsg);
+        toastRef.current.error(errorMsg);
       }
     }
-  }, [mutateJobs, toast]);
+  }, [mutateJobs]);
+
+  const handleCloseDetail = useCallback(() => setSelectedJob(null), []);
+
+  const handleJobClick = useCallback((job: JobItem) => setSelectedJob(job), []);
 
   function handleClearFilters() {
     setQuery('');
@@ -406,7 +412,7 @@ export default function JobsPage() {
               <div key={job.id} role="listitem">
                 <JobCard
                   job={job}
-                  onClick={(target) => setSelectedJob(target)}
+                  onClick={handleJobClick}
                   onToggleFavorite={handleToggleFavorite}
                 />
               </div>
@@ -421,7 +427,7 @@ export default function JobsPage() {
       {selectedJob ? (
         <JobDetailModal
           job={selectedJob}
-          onClose={() => setSelectedJob(null)}
+          onClose={handleCloseDetail}
           onToggleFavorite={handleToggleFavorite}
         />
       ) : null}
