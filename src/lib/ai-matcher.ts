@@ -5,6 +5,66 @@ import { getNotifiedJobIds } from './job-alerts-db';
 import { matchJobsToAlert, type MatchedJob as RuleMatchedJob } from './job-matcher';
 import { logger } from './logger';
 
+const FALLBACK_MODELS = [
+  'glm-4.7-flash',           // Primary (fastest, cheapest)
+  'glm-4-flash-250414',      // Fallback 1
+  'glm-4.5-air',             // Fallback 2
+  'glm-4.7',                 // Fallback 3
+  'glm-4.6v-flash',          // Fallback 4 (vision model, still works for text)
+  'glm-4.1v-thinking-flash', // Fallback 5
+  'glm-4.6v',                // Fallback 6
+];
+
+async function chatWithFallback(
+  messages: import('./ai-service').AIMessage[],
+  primaryModel?: string,
+): Promise<import('./ai-service').AIResponse> {
+  const models = primaryModel && !FALLBACK_MODELS.includes(primaryModel)
+    ? [primaryModel, ...FALLBACK_MODELS]
+    : FALLBACK_MODELS;
+
+  let lastError: Error | null = null;
+
+  for (const model of models) {
+    try {
+      const { AIService } = await import('./ai-service');
+      const provider = (process.env.AI_PROVIDER || 'zhipu') as 'openai' | 'zhipu' | 'siliconflow' | 'deepseek' | 'custom';
+      const apiKey = process.env.ZHIPU_API_KEY || process.env.AI_API_KEY || '';
+      const baseUrl = process.env.AI_BASE_URL || 'https://open.bigmodel.cn/api/paas/v4';
+
+      if (!apiKey) {
+        throw new Error('AI API Key not configured');
+      }
+
+      const tempService = new AIService({
+        provider,
+        apiKey,
+        baseUrl,
+        model,
+        temperature: 0.3,
+        maxTokens: 8192,
+      });
+
+      const response = await tempService.chat(messages);
+      if (model !== models[0]) {
+        logger.info(`AI fallback: 使用备用模型 ${model} 成功 (主模型 ${models[0]} 不可用)`);
+      }
+      return response;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      const is429 = lastError.message.includes('429') || lastError.message.includes('rate');
+      if (is429) {
+        logger.warn(`AI模型 ${model} 限流(429)，尝试下一个模型...`);
+      } else {
+        logger.warn(`AI模型 ${model} 调用失败: ${lastError.message}，尝试下一个模型...`);
+      }
+      continue;
+    }
+  }
+
+  throw lastError || new Error('All AI models failed');
+}
+
 export interface AIMatchedJob {
   job_id: number;
   matched_keywords: string[];
@@ -34,15 +94,15 @@ interface LLMJobInput {
   university: string;
 }
 
-function jobToLLMInput(job: JobItem): LLMJobInput {
+function jobToLLMInput(job: JobItem, maxDescLen: number = 200, maxReqLen: number = 150): LLMJobInput {
   return {
     id: job.id,
     title: job.title || '',
     company: job.company || '',
     location: job.location || '',
     salary: job.salary || '面议',
-    description: (job.description || '').slice(0, 500),
-    requirements: (job.requirements || '').slice(0, 300),
+    description: (job.description || '').slice(0, maxDescLen),
+    requirements: (job.requirements || '').slice(0, maxReqLen),
     job_type: job.job_type || '全职',
     industry: job.industry || '',
     education: job.education || '',
@@ -51,22 +111,49 @@ function jobToLLMInput(job: JobItem): LLMJobInput {
   };
 }
 
+function preFilterByKeywords(jobs: JobItem[], alert: JobAlert, notifiedJobIds: Set<number>): JobItem[] {
+  const keywords = alert.keywords || [];
+  if (keywords.length === 0) {
+    // No keywords = match all (but still exclude notified)
+    return jobs.filter(j => !notifiedJobIds.has(j.id));
+  }
+
+  const normalizeText = (text: string): string => text.toLowerCase().replace(/[\s\-_]/g, '');
+
+  return jobs.filter(job => {
+    if (notifiedJobIds.has(job.id)) return false;
+
+    const searchText = normalizeText([
+      job.title,
+      job.company,
+      job.tags,
+      job.industry,
+      (job.description || '').slice(0, 200),
+      (job.requirements || '').slice(0, 100),
+    ].filter(Boolean).join(' '));
+
+    // OR logic: any keyword matches
+    return keywords.some(kw => {
+      const normalized = normalizeText(kw);
+      return normalized && searchText.includes(normalized);
+    });
+  });
+}
+
 function buildMatchPrompt(
   alert: JobAlert,
   jobs: LLMJobInput[],
-  excludedJobIds: Set<number>,
 ): { messages: Array<{ role: string; content: string }> } {
-  const filteredJobs = jobs.filter(j => !excludedJobIds.has(j.id));
-
   const userPreferences = [
     `关键词（OR逻辑，任一匹配即推送）：${alert.keywords.join('、')}`,
     alert.sources?.length ? `数据源筛选：${alert.sources.join('、')}` : null,
     alert.locations?.length ? `期望地点：${alert.locations.join('、')}` : null,
     alert.industries?.length ? `期望行业：${alert.industries.join('、')}` : null,
     alert.education ? `最低学历要求：${alert.education}` : null,
+    alert.exclude_keywords?.length ? `排除关键词（包含这些词的岗位必须排除）：${alert.exclude_keywords.join('、')}` : null,
   ].filter(Boolean).join('\n');
 
-  const jobsText = filteredJobs.map((job, idx) => `
+  const jobsText = jobs.map((job, idx) => `
 【岗位 ${idx + 1}】ID=${job.id}
 - 职位名称：${job.title}
 - 公司名称：${job.company}
@@ -91,17 +178,14 @@ function buildMatchPrompt(
 3. 如果用户设置了数据源/地点/行业/学历筛选条件，必须同时满足
 4. 排除已推送过的岗位（excluded_ids列表中的）
 5. 每个匹配的岗位必须给出简洁的推荐理由（一句话）
-6. 按匹配度从高到低排序输出`,
+6. 排除关键词：如果用户设置了排除关键词，包含这些词的岗位必须排除，不计入匹配`,
     },
     {
       role: 'user',
       content: `## 用户订阅偏好
 ${userPreferences}
 
-## 已推送过的岗位ID（必须排除）
-${Array.from(excludedJobIds).join(', ') || '无'}
-
-## 待筛选的新岗位（共 ${filteredJobs.length} 个）
+## 待筛选的候选岗位（共 ${jobs.length} 个，已过关键词预筛选）
 ${jobsText}
 
 请分析以上岗位，返回JSON格式的匹配结果。只返回JSON，不要其他内容。格式如下：
@@ -155,24 +239,44 @@ export async function aiMatchJobsToAlert(
     return ruleBasedFallback(jobs, alert, notifiedJobIds);
   }
 
-  const llmJobs = jobs.map(jobToLLMInput);
-  const { messages } = buildMatchPrompt(alert, llmJobs, notifiedJobIds);
+  // Stage 1: 规则预筛选 - 用关键词OR逻辑快速过滤出候选岗位
+  const candidates = preFilterByKeywords(jobs, alert, notifiedJobIds);
+
+  if (candidates.length === 0) {
+    logger.info(`AI Alert ${alert.id}: 预筛选后无候选岗位 (从 ${jobs.length} 个中筛选)`);
+    return {
+      alert_id: alert.id,
+      matched_jobs: [],
+      total_candidates: jobs.length,
+      model_used: 'pre-filter-empty',
+    };
+  }
+
+  // Stage 2: AI精排 - 只把候选岗位发给AI进行语义分析和排序
+  // 限制最大候选数，避免上下文过长
+  const MAX_AI_CANDIDATES = 50;
+  const aiCandidates = candidates.slice(0, MAX_AI_CANDIDATES);
+
+  // 截断过长描述，控制上下文长度
+  const llmJobs = aiCandidates.map(j => jobToLLMInput(j, 200, 150));
+  const { messages } = buildMatchPrompt(alert, llmJobs);
 
   try {
-    const response = await aiService.chat(messages as import('./ai-service').AIMessage[]);
+    const primaryModel = process.env.ZHIPU_MODEL || 'glm-4.7-flash';
+    const response = await chatWithFallback(messages as import('./ai-service').AIMessage[], primaryModel);
     const matchedJobs = parseLLMResponse(response.content);
 
     matchedJobs.sort((a, b) => b.relevance_score - a.relevance_score);
 
     logger.info(
-      `AI Alert ${alert.id}: ${matchedJobs.length}/${llmJobs.length} 匹配, ` +
-      `排除 ${notifiedJobIds.size} 已推送, model=${response.model}`
+      `AI Alert ${alert.id}: 预筛选 ${candidates.length}/${jobs.length} → AI匹配 ${matchedJobs.length}, ` +
+      `model=${response.model}`
     );
 
     return {
       alert_id: alert.id,
       matched_jobs: matchedJobs,
-      total_candidates: llmJobs.length,
+      total_candidates: jobs.length,
       model_used: response.model,
     };
   } catch (error) {
