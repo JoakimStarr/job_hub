@@ -8,7 +8,6 @@ export interface MatchRule {
   sources?: string[];
   locations?: string[];
   industries?: string[];
-  minSalary?: number;
   education?: string;
 }
 
@@ -22,42 +21,21 @@ function normalizeText(text: string): string {
   return text.toLowerCase().replace(/[\s\-_]/g, '');
 }
 
-function extractSalaryNumber(salary: string): number {
-  if (!salary || salary === '面议') return 0;
-
-  const patterns = [
-    /(\d+)\s*[kK千]/,
-    /(\d+)\s*万/,
-    /(\d{4,})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = salary.match(pattern);
-    if (match) {
-      const num = parseInt(match[1], 10);
-      if (salary.includes('万')) {
-        return num * 10000;
-      }
-      if (salary.toLowerCase().includes('k') || salary.includes('千')) {
-        return num * 1000;
-      }
-      return num;
-    }
-  }
-
-  return 0;
-}
-
+/**
+ * 关键词匹配（OR 逻辑）
+ * 任一关键词命中即算匹配，返回所有命中的关键词列表
+ * 搜索范围：title + company + tags + industry + description(前200字) + requirements(前100字)
+ */
 function matchKeywords(job: JobItem, keywords: string[]): string[] {
   const matched: string[] = [];
 
   const searchText = normalizeText([
     job.title,
     job.company,
-    job.description,
-    job.requirements,
-    job.industry,
     job.tags,
+    job.industry,
+    (job.description || '').slice(0, 200),
+    (job.requirements || '').slice(0, 100),
   ].filter(Boolean).join(' '));
 
   for (const keyword of keywords) {
@@ -70,37 +48,40 @@ function matchKeywords(job: JobItem, keywords: string[]): string[] {
   return matched;
 }
 
-function matchLocation(job: JobItem, locations: string[]): boolean {
+/**
+ * 数据源匹配：不选默认全通过
+ */
+function matchSource(job: JobItem, sources?: string[]): boolean {
+  if (!sources || sources.length === 0) return true;
+  if (!job.source) return true;
+  return sources.includes(job.source);
+}
+
+/**
+ * 地点匹配：不选默认全通过
+ */
+function matchLocation(job: JobItem, locations?: string[]): boolean {
   if (!locations || locations.length === 0) return true;
-  if (!job.location) return false;
+  if (!job.location) return true;
 
   const jobLocation = normalizeText(job.location);
   return locations.some(loc => jobLocation.includes(normalizeText(loc)));
 }
 
-function matchIndustry(job: JobItem, industries: string[]): boolean {
+/**
+ * 行业匹配：不选默认全通过
+ */
+function matchIndustry(job: JobItem, industries?: string[]): boolean {
   if (!industries || industries.length === 0) return true;
-  if (!job.industry) return false;
+  if (!job.industry) return true;
 
   const jobIndustry = normalizeText(job.industry);
   return industries.some(ind => jobIndustry.includes(normalizeText(ind)));
 }
 
-function matchSource(job: JobItem, sources: string[]): boolean {
-  if (!sources || sources.length === 0) return true;
-  if (!job.source) return false;
-  return sources.includes(job.source);
-}
-
-function matchSalary(job: JobItem, minSalary?: number): boolean {
-  if (!minSalary) return true;
-
-  const jobSalary = extractSalaryNumber(job.salary || '');
-  if (jobSalary === 0) return true;
-
-  return jobSalary >= minSalary;
-}
-
+/**
+ * 学历匹配：不选默认全通过，岗位学历 >= 用户要求学历
+ */
 function matchEducation(job: JobItem, education?: string): boolean {
   if (!education) return true;
   if (!job.education) return true;
@@ -117,26 +98,30 @@ function matchEducation(job: JobItem, education?: string): boolean {
   return jobLevel >= targetLevel;
 }
 
+/**
+ * 单岗位匹配
+ * 关键词为 OR 逻辑：任一关键词命中即匹配
+ * 其他维度（数据源/地点/行业/学历）不选默认全通过
+ * 评分 = 命中关键词数 / 总关键词数 × 100
+ * 排序按命中关键词数降序（关键词多的排前面）
+ */
 export function matchJobToRule(job: JobItem, rule: MatchRule): MatchedJob | null {
   const matchedKeywords = matchKeywords(job, rule.keywords);
 
+  // OR 逻辑：至少命中一个关键词
   if (matchedKeywords.length === 0) {
     return null;
   }
 
-  if (!matchSource(job, rule.sources || [])) {
+  if (!matchSource(job, rule.sources)) {
     return null;
   }
 
-  if (!matchLocation(job, rule.locations || [])) {
+  if (!matchLocation(job, rule.locations)) {
     return null;
   }
 
-  if (!matchIndustry(job, rule.industries || [])) {
-    return null;
-  }
-
-  if (!matchSalary(job, rule.minSalary)) {
+  if (!matchIndustry(job, rule.industries)) {
     return null;
   }
 
@@ -159,7 +144,6 @@ export function matchJobsToAlert(jobs: JobItem[], alert: JobAlert): MatchedJob[]
     sources: alert.sources,
     locations: alert.locations,
     industries: alert.industries,
-    minSalary: alert.min_salary ? parseInt(alert.min_salary, 10) : undefined,
     education: alert.education,
   };
 
@@ -180,7 +164,13 @@ export function matchJobsToAlert(jobs: JobItem[], alert: JobAlert): MatchedJob[]
     }
   }
 
-  results.sort((a, b) => b.matchScore - a.matchScore);
+  // 按匹配关键词数降序排序（关键词多的排前面），相同则按评分降序
+  results.sort((a, b) => {
+    if (b.matchedKeywords.length !== a.matchedKeywords.length) {
+      return b.matchedKeywords.length - a.matchedKeywords.length;
+    }
+    return b.matchScore - a.matchScore;
+  });
 
   if (notifiedJobIds.size > 0) {
     logger.info(`Alert ${alert.id}: skipped ${notifiedJobIds.size} previously notified jobs`);

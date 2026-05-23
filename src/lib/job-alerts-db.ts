@@ -8,7 +8,6 @@ export interface JobAlert {
   sources: string[];
   locations: string[];
   industries: string[];
-  min_salary?: string;
   education?: string;
   min_notify_interval?: number;  // 最短推送间隔（分钟），默认0不限制
   enabled: boolean;
@@ -80,7 +79,7 @@ export function getAllEnabledAlerts(): JobAlert[] {
   const db = getDb();
 
   const rows = db.prepare(`
-    SELECT id, email, keywords, sources, locations, industries, min_salary, education,
+    SELECT id, email, keywords, sources, locations, industries, education,
            min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     WHERE enabled = 1
@@ -94,7 +93,6 @@ export function getAllEnabledAlerts(): JobAlert[] {
     sources: JSON.parse(row.sources as string || '[]'),
     locations: JSON.parse(row.locations as string || '[]'),
     industries: JSON.parse(row.industries as string || '[]'),
-    min_salary: row.min_salary as string | undefined,
     education: row.education as string | undefined,
     min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,
@@ -109,7 +107,7 @@ export function getAllAlerts(): JobAlert[] {
   const db = getDb();
 
   const rows = db.prepare(`
-    SELECT id, email, keywords, sources, locations, industries, min_salary, education,
+    SELECT id, email, keywords, sources, locations, industries, education,
            min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     ORDER BY created_at DESC
@@ -122,7 +120,6 @@ export function getAllAlerts(): JobAlert[] {
     sources: JSON.parse(row.sources as string || '[]'),
     locations: JSON.parse(row.locations as string || '[]'),
     industries: JSON.parse(row.industries as string || '[]'),
-    min_salary: row.min_salary as string | undefined,
     education: row.education as string | undefined,
     min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,
@@ -137,15 +134,14 @@ export function createAlert(alert: Omit<JobAlert, 'id' | 'notify_count' | 'creat
   const db = getDb();
 
   const result = db.prepare(`
-    INSERT INTO user_job_alerts (email, keywords, sources, locations, industries, min_salary, education, min_notify_interval, enabled)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO user_job_alerts (email, keywords, sources, locations, industries, education, min_notify_interval, enabled)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     alert.email,
     JSON.stringify(alert.keywords),
     JSON.stringify(alert.sources || []),
     JSON.stringify(alert.locations || []),
     JSON.stringify(alert.industries || []),
-    alert.min_salary || null,
     alert.education || null,
     alert.min_notify_interval || 0,
     alert.enabled !== false ? 1 : 0
@@ -186,10 +182,6 @@ export function updateAlert(id: number, updates: Partial<JobAlert>): boolean {
     fields.push('industries = ?');
     values.push(JSON.stringify(updates.industries));
   }
-  if (updates.min_salary !== undefined) {
-    fields.push('min_salary = ?');
-    values.push(updates.min_salary);
-  }
   if (updates.education !== undefined) {
     fields.push('education = ?');
     values.push(updates.education);
@@ -224,7 +216,7 @@ export function getAlertById(id: number): JobAlert | null {
   const db = getDb();
 
   const row = db.prepare(`
-    SELECT id, email, keywords, sources, locations, industries, min_salary, education,
+    SELECT id, email, keywords, sources, locations, industries, education,
            min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     WHERE id = ?
@@ -239,7 +231,6 @@ export function getAlertById(id: number): JobAlert | null {
     sources: JSON.parse(row.sources as string || '[]'),
     locations: JSON.parse(row.locations as string || '[]'),
     industries: JSON.parse(row.industries as string || '[]'),
-    min_salary: row.min_salary as string | undefined,
     education: row.education as string | undefined,
     min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,

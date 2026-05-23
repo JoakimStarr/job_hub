@@ -11,7 +11,6 @@ interface JobAlert {
   sources: string[];
   locations: string[];
   industries: string[];
-  min_salary?: string;
   education?: string;
   min_notify_interval?: number;
   enabled: boolean;
@@ -65,7 +64,6 @@ export default function JobAlertsPanel() {
     sources: [] as string[],
     locations: '',
     industries: '',
-    min_salary: '',
     education: '',
     min_notify_interval: '',
   });
@@ -184,7 +182,6 @@ export default function JobAlertsPanel() {
           sources: formData.sources,
           locations: formData.locations.split(/[,，]/).map(l => l.trim()).filter(Boolean),
           industries: formData.industries.split(/[,，]/).map(i => i.trim()).filter(Boolean),
-          min_salary: formData.min_salary || undefined,
           education: formData.education || undefined,
           min_notify_interval: formData.min_notify_interval ? parseInt(formData.min_notify_interval, 10) : 0,
         });
@@ -204,7 +201,6 @@ export default function JobAlertsPanel() {
           sources: formData.sources,
           locations: formData.locations.split(/[,，]/).map(l => l.trim()).filter(Boolean),
           industries: formData.industries.split(/[,，]/).map(i => i.trim()).filter(Boolean),
-          min_salary: formData.min_salary || undefined,
           education: formData.education || undefined,
           min_notify_interval: formData.min_notify_interval ? parseInt(formData.min_notify_interval, 10) : 0,
         });
@@ -230,7 +226,6 @@ export default function JobAlertsPanel() {
       sources: alert.sources || [],
       locations: (alert.locations || []).join(', '),
       industries: (alert.industries || []).join(', '),
-      min_salary: alert.min_salary || '',
       education: alert.education || '',
       min_notify_interval: alert.min_notify_interval ? String(alert.min_notify_interval) : '',
     });
@@ -288,7 +283,6 @@ export default function JobAlertsPanel() {
       sources: [],
       locations: '',
       industries: '',
-      min_salary: '',
       education: '',
       min_notify_interval: '',
     });
@@ -439,18 +433,18 @@ export default function JobAlertsPanel() {
             </label>
 
             <label>
-              <div style={{ marginBottom: 6, fontWeight: 600 }}>关键词 *（多个用逗号分隔）</div>
+              <div style={{ marginBottom: 6, fontWeight: 600 }}>关键词 *（OR 匹配，多个用逗号分隔）</div>
               <textarea
                 className="textarea"
                 rows={3}
                 value={formData.keywords}
                 onChange={e => setFormData(prev => ({ ...prev, keywords: e.target.value }))}
-                placeholder="例如：Python, 数据分析, 实习"
+                placeholder="例如：Python, 数据分析, 实习（任一命中即推送，匹配多的排前面）"
               />
             </label>
 
             <div>
-              <div style={{ marginBottom: 6, fontWeight: 600 }}>数据源（可多选）</div>
+              <div style={{ marginBottom: 6, fontWeight: 600 }}>数据源（可多选，不选默认全部）</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {SOURCE_OPTIONS.map(opt => (
                   <label key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
@@ -466,32 +460,24 @@ export default function JobAlertsPanel() {
             </div>
 
             <label>
-              <div style={{ marginBottom: 6, fontWeight: 600 }}>期望地点（多个用逗号分隔）</div>
+              <div style={{ marginBottom: 6, fontWeight: 600 }}>期望地点（不选不限）</div>
               <Input
                 value={formData.locations}
                 onChange={e => setFormData(prev => ({ ...prev, locations: e.target.value }))}
-                placeholder="例如：上海, 北京"
+                placeholder="例如：上海, 北京（留空则匹配所有地点）"
               />
             </label>
 
             <label>
-              <div style={{ marginBottom: 6, fontWeight: 600 }}>期望行业</div>
+              <div style={{ marginBottom: 6, fontWeight: 600 }}>期望行业（不选不限）</div>
               <Input
                 value={formData.industries}
                 onChange={e => setFormData(prev => ({ ...prev, industries: e.target.value }))}
-                placeholder="例如：金融, 互联网"
+                placeholder="例如：金融, 互联网（留空则匹配所有行业）"
               />
             </label>
 
             <div style={{ display: 'flex', gap: 12 }}>
-              <label style={{ flex: 1 }}>
-                <div style={{ marginBottom: 6, fontWeight: 600 }}>最低薪资</div>
-                <Input
-                  value={formData.min_salary}
-                  onChange={e => setFormData(prev => ({ ...prev, min_salary: e.target.value }))}
-                  placeholder="例如：10000"
-                />
-              </label>
               <label style={{ flex: 1 }}>
                 <div style={{ marginBottom: 6, fontWeight: 600 }}>学历要求</div>
                 <select

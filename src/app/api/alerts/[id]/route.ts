@@ -65,7 +65,7 @@ export async function PUT(
     }
     
     const body = await request.json();
-    const { email, keywords, sources, locations, industries, min_salary, education, enabled } = body;
+    const { email, keywords, sources, locations, industries, education, enabled } = body;
     
     const updates: Record<string, unknown> = {};
     
@@ -74,7 +74,6 @@ export async function PUT(
     if (sources !== undefined) updates.sources = sources;
     if (locations !== undefined) updates.locations = locations;
     if (industries !== undefined) updates.industries = industries;
-    if (min_salary !== undefined) updates.min_salary = min_salary;
     if (education !== undefined) updates.education = education;
     if (enabled !== undefined) updates.enabled = enabled;
     
