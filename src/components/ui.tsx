@@ -150,12 +150,42 @@ function formatDate(dateStr?: string | null): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick, onTagClick }: { job: JobItem; onToggleFavorite?: (job: JobItem) => void; onClick?: (job: JobItem) => void; onTagClick?: (type: string, value: string) => void }) {
+export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick, onTagClick, viewMode }: { job: JobItem; onToggleFavorite?: (job: JobItem) => void; onClick?: (job: JobItem) => void; onTagClick?: (type: string, value: string) => void; viewMode?: 'card' | 'list' }) {
   const handleClick = useCallback(() => {
     if (onClick) onClick(job);
   }, [onClick, job]);
 
   const dateStr = formatDate(job.publish_date || job.created_at);
+
+  if (viewMode === 'list') {
+    return (
+      <article
+        className="job-list-item"
+        onClick={handleClick}
+        role="article"
+        aria-label={`岗位: ${job.title}${job.company ? ` - ${job.company}` : ''}`}
+      >
+        <div className="job-list-main">
+          <div className="job-list-title-row">
+            <h3>{job.title}</h3>
+            {job.company ? <span className="job-list-company">{job.company}</span> : null}
+          </div>
+          <div className="job-list-meta">
+            {job.location ? <span>📍 {job.location}</span> : null}
+            {job.salary ? <span>💰 {job.salary}</span> : null}
+            {job.job_type ? <Badge tone="slate">{job.job_type}</Badge> : null}
+            {job.education ? <Badge tone="emerald">{job.education}</Badge> : null}
+          </div>
+        </div>
+        <div className="job-list-right">
+          <span className="job-list-date">{dateStr}</span>
+          {onToggleFavorite ? (
+            <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} size="sm" />
+          ) : null}
+        </div>
+      </article>
+    );
+  }
 
   return (
     <article
@@ -520,6 +550,31 @@ export function TabNav<T extends string>({ tabs, active, onChange }: { tabs: { k
   );
 }
 
-export function FilterBar({ children }: { children: ReactNode }) {
+export const FilterBar = ({ children }: { children: ReactNode }) => {
   return <div className="filter-bar">{children}</div>;
-}
+};
+
+export const ViewToggle = memo(function ViewToggle({ mode, onToggle }: { mode: 'card' | 'list'; onToggle: () => void }) {
+  return (
+    <button
+      type="button"
+      className="view-toggle-btn"
+      onClick={onToggle}
+      aria-label={mode === 'list' ? '切换为卡片视图' : '切换为列表视图'}
+      title={mode === 'list' ? '切换为卡片视图' : '切换为列表视图'}
+    >
+      {mode === 'list' ? (
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="1" y="1" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+          <rect x="10" y="1" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+          <rect x="1" y="10" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+          <rect x="10" y="10" width="7" height="7" rx="1.5" stroke="currentColor" strokeWidth="1.5"/>
+        </svg>
+      ) : (
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 4.5H15M3 9H15M3 13.5H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      )}
+    </button>
+  );
+});
