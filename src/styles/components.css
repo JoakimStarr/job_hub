@@ -277,6 +277,28 @@
   color: var(--muted);
 }
 
+/* ======== 密码输入框切换按钮 ======== */
+.input-password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.input-password-toggle:hover {
+  color: var(--text);
+}
+
 .filter-bar {
   display: flex;
   flex-wrap: wrap;

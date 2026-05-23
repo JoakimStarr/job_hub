@@ -128,7 +128,7 @@ export default function UsersPage() {
             <label><div style={{ marginBottom: 8, fontWeight: 700 }}>用户名</div><Input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="例如 analyst01" /></label>
             <label><div style={{ marginBottom: 8, fontWeight: 700 }}>显示名称</div><Input type="text" value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="例如 数据分析同学" /></label>
             <label><div style={{ marginBottom: 8, fontWeight: 700 }}>角色</div><Select value={role} onChange={(event) => setRole(event.target.value)}>{roles.map((item) => <option key={item.id} value={item.id}>{item.id}</option>)}</Select></label>
-            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>初始密码</div><Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="至少 8 位" /></label>
+            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>初始密码</div><Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" togglePassword placeholder="至少 8 位" /></label>
             <label className="badge badge-slate" style={{ cursor: 'pointer', gap: 8 }}>
               <input type="checkbox" checked={active} onChange={(event) => setActive(event.target.checked)} />
               创建后启用账号
@@ -240,7 +240,7 @@ export default function UsersPage() {
                   </label>
                 </>
               ) : (
-                <label><div style={{ marginBottom: 8, fontWeight: 700 }}>新密码</div><Input value={dialogPassword} onChange={(event) => setDialogPassword(event.target.value)} type="password" placeholder="请输入新密码" /></label>
+                <label><div style={{ marginBottom: 8, fontWeight: 700 }}>新密码</div><Input value={dialogPassword} onChange={(event) => setDialogPassword(event.target.value)} type="password" togglePassword placeholder="请输入新密码" /></label>
               )}
               <div className="row-gap" style={{ marginTop: 6 }}>
                 <Button variant="primary" onClick={() => void submitDialog()} disabled={saving || (dialogMode === 'reset' && !dialogPassword)}>

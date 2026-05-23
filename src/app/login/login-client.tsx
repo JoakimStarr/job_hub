@@ -151,11 +151,12 @@ export function LoginClient() {
             </label>
             <label>
               <div style={{ marginBottom: 8, fontWeight: 700 }}>密码</div>
-              <Input 
-                value={password} 
-                onChange={(event) => setPassword(event.target.value)} 
-                type="password" 
-                placeholder="请输入密码" 
+              <Input
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                type="password"
+                togglePassword
+                placeholder="请输入密码"
                 required 
                 autoComplete="current-password"
               />
