@@ -105,49 +105,34 @@ export const Button = memo(function Button({ children, variant = 'primary', ...p
   );
 });
 
-export const Input = memo(function Input(props: InputHTMLAttributes<HTMLInputElement> & { togglePassword?: boolean }) {
+export const Input = memo(function Input(props: InputHTMLAttributes<HTMLInputElement>) {
   const composingRef = useRef(false);
-  const [visible, setVisible] = useState(false);
-  const { onChange, onCompositionStart, onCompositionEnd, togglePassword, type, ...rest } = props;
-  const isPassword = type === 'password' && togglePassword;
+  const { onChange, onCompositionStart, onCompositionEnd, ...rest } = props;
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!composingRef.current) {
+      onChange?.(e);
+    }
+  }, [onChange]);
+
+  const handleCompositionStart = useCallback((e: React.CompositionEvent<HTMLInputElement>) => {
+    composingRef.current = true;
+    onCompositionStart?.(e);
+  }, [onCompositionStart]);
+
+  const handleCompositionEnd = useCallback((e: React.CompositionEvent<HTMLInputElement>) => {
+    composingRef.current = false;
+    onCompositionEnd?.(e);
+  }, [onCompositionEnd]);
 
   return (
-    <div className={isPassword ? 'input-password-wrapper' : undefined} style={isPassword ? { position: 'relative', display: 'flex', alignItems: 'center' } : undefined}>
-      <input
-        {...rest}
-        type={isPassword ? (visible ? 'text' : 'password') : type}
-        className={joinClassNames('input', props.className, isPassword ? 'input-password' : undefined)}
-        style={isPassword ? { paddingRight: 40 } : undefined}
-        onCompositionStart={(e) => {
-          composingRef.current = true;
-          onCompositionStart?.(e);
-        }}
-        onCompositionEnd={(e) => {
-          composingRef.current = false;
-          onCompositionEnd?.(e);
-        }}
-        onChange={(e) => {
-          if (!composingRef.current) {
-            onChange?.(e);
-          }
-        }}
-      />
-      {isPassword ? (
-        <button
-          type="button"
-          className="input-password-toggle"
-          onClick={() => setVisible((v) => !v)}
-          tabIndex={-1}
-          aria-label={visible ? '隐藏密码' : '显示密码'}
-        >
-          {visible ? (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-          ) : (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          )}
-        </button>
-      ) : null}
-    </div>
+    <input
+      {...rest}
+      className={joinClassNames('input', rest.className)}
+      onChange={handleChange}
+      onCompositionStart={handleCompositionStart}
+      onCompositionEnd={handleCompositionEnd}
+    />
   );
 });
 
