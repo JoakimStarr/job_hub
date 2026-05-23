@@ -1,8 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState, memo, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
+import dynamic from 'next/dynamic';
 import type { JobItem } from '@/lib/types';
-import JobAnalysisPanel from '@/components/JobAnalysisPanel';
+
+const LazyJobAnalysisPanel = dynamic(() => import('@/components/JobAnalysisPanel'), {
+  loading: () => <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)' }}>加载 AI 分析面板...</div>,
+  ssr: false,
+});
 
 function joinClassNames(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(' ');
@@ -189,18 +194,21 @@ export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick, o
 
 export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobItem; onClose: () => void; onToggleFavorite?: (job: JobItem) => void }) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState<'detail' | 'analysis'>('detail');
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   const detailDate = formatDate(job.publish_date || job.created_at);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        onClose();
+        onCloseRef.current();
       }
     }
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, []);
 
   useEffect(() => {
     if (!modalRef.current) return;
@@ -253,6 +261,11 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
     }
   }
 
+  const detailTabs = useMemo(() => [
+    { key: 'detail' as const, label: '岗位详情' },
+    { key: 'analysis' as const, label: 'AI 分析' },
+  ], []);
+
   return (
     <div className="modal-backdrop" onClick={onClose} role="presentation">
       <div
@@ -293,58 +306,63 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
           </div>
         </div>
 
+        <TabNav tabs={detailTabs} active={activeTab} onChange={setActiveTab} />
+
         <div className="job-detail-body">
-          <div className="job-detail-info-grid">
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">薪资</span>
-              <span>{job.salary || '薪资面议'}</span>
-            </div>
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">类型</span>
-              <span>{job.job_type || '未指定'}</span>
-            </div>
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">行业</span>
-              <span>{job.industry || '未指定'}</span>
-            </div>
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">学历</span>
-              <span>{job.education || '未指定'}</span>
-            </div>
-            <div className="job-detail-info-item">
-              <span className="job-detail-info-label">来源</span>
-              <span>{job.source || '未知'}</span>
-            </div>
-            {detailDate ? (
-              <div className="job-detail-info-item">
-                <span className="job-detail-info-label">日期</span>
-                <span>{detailDate}</span>
+          {activeTab === 'detail' ? (
+            <>
+              <div className="job-detail-info-grid">
+                <div className="job-detail-info-item">
+                  <span className="job-detail-info-label">薪资</span>
+                  <span>{job.salary || '薪资面议'}</span>
+                </div>
+                <div className="job-detail-info-item">
+                  <span className="job-detail-info-label">类型</span>
+                  <span>{job.job_type || '未指定'}</span>
+                </div>
+                <div className="job-detail-info-item">
+                  <span className="job-detail-info-label">行业</span>
+                  <span>{job.industry || '未指定'}</span>
+                </div>
+                <div className="job-detail-info-item">
+                  <span className="job-detail-info-label">学历</span>
+                  <span>{job.education || '未指定'}</span>
+                </div>
+                <div className="job-detail-info-item">
+                  <span className="job-detail-info-label">来源</span>
+                  <span>{job.source || '未知'}</span>
+                </div>
+                {detailDate ? (
+                  <div className="job-detail-info-item">
+                    <span className="job-detail-info-label">日期</span>
+                    <span>{detailDate}</span>
+                  </div>
+                ) : null}
+                {(job.source_url || job.apply_url) ? (
+                  <div className="job-detail-source-link">
+                    <span className="job-detail-source-label">来源链接</span>
+                    <a
+                      href={job.apply_url || job.source_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="job-detail-source-url"
+                    >
+                      {job.apply_url || job.source_url}
+                    </a>
+                  </div>
+                ) : null}
               </div>
-            ) : null}
-            {(job.source_url || job.apply_url) ? (
-              <div className="job-detail-source-link">
-                <span className="job-detail-source-label">来源链接</span>
-                <a
-                  href={job.apply_url || job.source_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="job-detail-source-url"
-                >
-                  {job.apply_url || job.source_url}
-                </a>
+
+              <div className="job-detail-section">
+                <h3>岗位描述</h3>
+                <p className="job-detail-description">{job.description || '暂无描述'}</p>
               </div>
-            ) : null}
-          </div>
-
-          <div className="job-detail-section">
-            <h3>岗位描述</h3>
-            <p className="job-detail-description">{job.description || '暂无描述'}</p>
-          </div>
-
-          <div className="job-detail-section">
-            <h3>AI 分析</h3>
-            <JobAnalysisPanel job={job} />
-          </div>
+            </>
+          ) : (
+            <div className="job-detail-section">
+              <LazyJobAnalysisPanel job={job} />
+            </div>
+          )}
         </div>
       </div>
     </div>
