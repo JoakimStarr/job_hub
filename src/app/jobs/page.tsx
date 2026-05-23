@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
-import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, SectionCard } from '@/components/ui';
+import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, SectionCard, ViewToggle } from '@/components/ui';
 import { Pagination } from '@/components/Pagination';
 import { RefreshButton } from '@/components/RefreshButton';
 import { HierarchicalFilter } from '@/components/HierarchicalFilter';
@@ -51,7 +51,9 @@ export default function JobsPage() {
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [statsExpanded, setStatsExpanded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('list');
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastToggleRef = useRef(0);
 
   useEffect(() => {
     if (debounceTimerRef.current) {
@@ -110,6 +112,10 @@ export default function JobsPage() {
   }, [mutateJobs, mutateFilters]);
 
   const handleToggleFavorite = useCallback(async (job: JobItem) => {
+    const now = Date.now();
+    if (now - lastToggleRef.current < 500) return; // 防抖 500ms
+    lastToggleRef.current = now;
+
     if (useAppStore.getState().isGuest) {
       alert('请登录后收藏岗位');
       return;
@@ -364,6 +370,7 @@ export default function JobsPage() {
         description="点击卡片查看详情，点击星星切换收藏状态"
         action={
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <ViewToggle mode={viewMode} onToggle={() => setViewMode((m) => m === 'card' ? 'list' : 'card')} />
             <div className="sort-controls">
               <select
                 className="sort-field-select"
@@ -407,11 +414,12 @@ export default function JobsPage() {
         ) : items.length === 0 ? (
           <EmptyState title="没有结果" description="当前筛选条件下没有找到岗位。" />
         ) : (
-          <div className="grid" style={{ gap: 14 }} role="list" aria-label="岗位列表">
+          <div className={viewMode === 'list' ? 'job-list' : 'grid'} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" aria-label="岗位列表">
             {items.map((job) => (
-              <div key={job.id} role="listitem">
+              <div key={job.id} role="listitem" style={viewMode === 'list' ? undefined : undefined}>
                 <JobCard
                   job={job}
+                  viewMode={viewMode}
                   onClick={handleJobClick}
                   onToggleFavorite={handleToggleFavorite}
                 />
