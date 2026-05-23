@@ -678,6 +678,197 @@
   transform: scale(1.15);
 }
 
+/* ======== 岗位列表视图样式 ======== */
+.job-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.job-list-item {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  position: relative;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.job-list-item:hover {
+  background-color: var(--hover);
+}
+
+.job-list-item:last-child {
+  border-bottom-left-radius: var(--radius-lg);
+  border-bottom-right-radius: var(--radius-lg);
+  border-bottom-color: transparent;
+}
+
+.job-list-item:first-child {
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+
+/* Wrap all items in a container with border */
+.job-list > .job-list-item:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+
+.job-list-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.job-list-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.job-list-title-row h3 {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--text);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+
+.job-list-company {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.job-list-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--text-sm);
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+.job-list-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.job-list-date {
+  font-size: var(--text-xs);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* View toggle button */
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.view-toggle-btn:hover {
+  background-color: var(--hover);
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+.view-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .view-toggle-btn {
+    display: none;
+  }
+}
+
+/* Mobile responsive for list view */
+@media (max-width: 768px) {
+  .job-list-item {
+    padding: 10px 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .job-list-title-row h3 {
+    max-width: none;
+    font-size: var(--text-sm);
+  }
+
+  .job-list-company {
+    max-width: none;
+  }
+
+  .job-list-right {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    align-self: flex-start;
+  }
+  
+  .job-list-date {
+    display: none; /* Hide date on mobile to save space */
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .job-list-item:active {
+    background-color: var(--hover);
+  }
+}
+
+/* ======== 视图切换动画 ======== */
+.job-view-container {
+  position: relative;
+}
+
+.job-view-container > * {
+  animation: viewSwitchIn var(--duration-normal) var(--ease-out);
+}
+
+@keyframes viewSwitchIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .job-view-container > * {
+    animation: none;
+  }
+}
+
 .star-icon {
   font-size: 20px;
   color: var(--panel-border);

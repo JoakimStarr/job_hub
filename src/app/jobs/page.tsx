@@ -52,6 +52,18 @@ export default function JobsPage() {
   const [statsExpanded, setStatsExpanded] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [viewMode, setViewMode] = useState<'card' | 'list'>('list');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+      if (e.matches) setViewMode('list');
+    };
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastToggleRef = useRef(0);
 
@@ -414,7 +426,7 @@ export default function JobsPage() {
         ) : items.length === 0 ? (
           <EmptyState title="没有结果" description="当前筛选条件下没有找到岗位。" />
         ) : (
-          <div className={viewMode === 'list' ? 'job-list' : 'grid'} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" aria-label="岗位列表">
+          <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" aria-label="岗位列表" key={viewMode}>
             {items.map((job) => (
               <div key={job.id} role="listitem" style={viewMode === 'list' ? undefined : undefined}>
                 <JobCard
