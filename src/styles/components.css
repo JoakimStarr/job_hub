@@ -1247,13 +1247,12 @@
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
+  background: var(--panel);
   border: 1px solid var(--panel-border);
 }
 
 [data-theme='dark'] .glass-card {
-  background: rgba(30, 41, 59, 0.8);
+  background: var(--panel);
 }
 
 .modal-card {
@@ -1738,10 +1737,12 @@
 }
 
 /* ======== 触摸优化 ======== */
-/* 所有可点击卡片的触摸反馈 */
-[class*="card"]:active {
-  transform: scale(0.98);
-  transition: transform 0.1s ease;
+/* 所有可点击卡片的触摸反馈 - 尊重用户减少动画偏好 */
+@media (prefers-reduced-motion: no-preference) {
+  [class*="card"]:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
 }
 
 @media (hover: hover) {
@@ -1750,8 +1751,10 @@
     transform: translateY(-1px);
   }
 
-  [class*="card"]:active {
-    transform: none;
+  @media (prefers-reduced-motion: no-preference) {
+    [class*="card"]:active {
+      transform: none;
+    }
   }
 }
 
