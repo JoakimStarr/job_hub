@@ -47,8 +47,19 @@ export default function AIChatPanel({
     }
   }, [externalSessionId]);
 
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   const handleSend = useCallback(async () => {
     if (!input.trim() || loading || disabled) return;
+
+    // Cancel any existing request
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     const userMessage: ChatMessage = { role: 'user', content: input.trim() };
     setMessages((prev) => [...prev, userMessage]);
@@ -70,6 +81,7 @@ export default function AIChatPanel({
           session_id: currentSessionId || undefined,
           stream: true,
         }),
+        signal: controller.signal,
       });
 
       if (!response.ok || !response.body) {
@@ -127,6 +139,9 @@ export default function AIChatPanel({
       setStreamingContent('');
       onMessageSent?.();
     } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        return;
+      }
       const errorMsg = err instanceof Error ? err.message : '发送失败';
       setMessages((prev) => [
         ...prev,
@@ -134,6 +149,9 @@ export default function AIChatPanel({
       ]);
     } finally {
       setLoading(false);
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
     }
   }, [input, loading, disabled, jobId, currentSessionId, onSessionIdChange, onMessageSent]);
 

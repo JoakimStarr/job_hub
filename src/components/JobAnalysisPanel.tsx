@@ -93,10 +93,23 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
   const [chatLoading, setChatLoading] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastStreamUpdateRef = useRef(0);
+  const streamRafRef = useRef<number>(0);
+  const pendingStreamContentRef = useRef('');
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingContent]);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+      if (streamRafRef.current) {
+        cancelAnimationFrame(streamRafRef.current);
+      }
+    };
+  }, []);
 
   const storageKey = useMemo(() => `job-ai-analysis-expanded:${job.id}`, [job.id]);
 
@@ -179,6 +192,11 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
       return;
     }
 
+    // Cancel any existing request
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     const userMessage: ChatMessage = { role: 'user', content: chatInput.trim() };
     setMessages((current) => [...current, userMessage]);
     setChatInput('');
@@ -199,6 +217,7 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
           session_id: activeSessionId,
           stream: true,
         }),
+        signal: controller.signal,
       });
 
       if (!response.ok || !response.body) {
@@ -239,7 +258,19 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
             }
 
             fullContent += parsed.content || '';
-            setStreamingContent(fullContent);
+            pendingStreamContentRef.current = fullContent;
+
+            const now = Date.now();
+            if (now - lastStreamUpdateRef.current >= 100) {
+              lastStreamUpdateRef.current = now;
+              setStreamingContent(fullContent);
+            } else if (!streamRafRef.current) {
+              streamRafRef.current = requestAnimationFrame(() => {
+                streamRafRef.current = 0;
+                lastStreamUpdateRef.current = Date.now();
+                setStreamingContent(pendingStreamContentRef.current);
+              });
+            }
           } catch (streamError) {
             if (streamError instanceof Error && streamError.message !== 'Unexpected end of JSON input') {
               throw streamError;
@@ -248,14 +279,26 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
         }
       }
 
+      // Ensure final content is always set
+      if (pendingStreamContentRef.current) {
+        setStreamingContent(pendingStreamContentRef.current);
+        pendingStreamContentRef.current = '';
+      }
+
       setMessages((current) => [...current, { role: 'assistant', content: fullContent }]);
       setStreamingContent('');
       await loadHistory();
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
       const errorMessage = error instanceof Error ? error.message : '发送失败';
       setMessages((current) => [...current, { role: 'assistant', content: `❌ ${errorMessage}，请稍后重试` }]);
     } finally {
       setChatLoading(false);
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
     }
   }, [activeAnalysis, activeSessionId, chatInput, chatLoading, isGuest, job.id, loadHistory]);
 
