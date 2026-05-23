@@ -1429,23 +1429,40 @@
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   display: flex;
-  align-items: center;
-  gap: var(--space-md);
+  flex-direction: column;
+  gap: var(--space-sm);
+  transition: box-shadow var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
 }
 
-.user-card__avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-full);
-  object-fit: cover;
-  flex-shrink: 0;
+.user-card:hover {
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .user-card-header {
+  width: 100%;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-sm);
+}
+
+.user-card-avatar-initials {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  flex-shrink: 0;
+}
+
+[data-theme='dark'] .user-card-avatar-initials {
+  background: var(--primary-hover);
 }
 
 .user-card-info {
@@ -1457,7 +1474,6 @@
   font-size: var(--text-base);
   font-weight: var(--font-semibold);
   color: var(--text);
-  margin-bottom: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1466,26 +1482,25 @@
 .user-card-username {
   font-size: var(--text-xs);
   color: var(--muted);
-  margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.user-card__role {
-  font-size: var(--text-xs);
-  color: var(--muted);
-}
-
 .user-card-badges {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .user-card-actions {
+  width: 100%;
   display: flex;
-  gap: var(--space-sm);
+  justify-content: flex-end;
+  gap: var(--space-xs);
+  padding-top: var(--space-xs);
+  border-top: 1px solid var(--panel-border);
 }
 
 .textarea {
@@ -1771,10 +1786,8 @@
     padding: var(--space-lg);
   }
 
-  .user-card__avatar {
-    width: 64px;
-    height: 64px;
-    margin-bottom: var(--space-sm);
+  .user-card-avatar-initials {
+    margin: 0 auto;
   }
 
   .user-card-info {
@@ -1782,6 +1795,7 @@
   }
 
   .user-card-actions {
+    flex-wrap: wrap;
     justify-content: center;
     width: 100%;
     margin-top: var(--space-sm);

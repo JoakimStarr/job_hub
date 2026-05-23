@@ -216,20 +216,40 @@ export async function aiMatchJobsToAllAlerts(
 ): Promise<Map<number, AIMatchResult>> {
   const results = new Map<number, AIMatchResult>();
 
-  for (const alert of alerts) {
-    const result = await aiMatchJobsToAlert(jobs, alert);
-    if (result.matched_jobs.length > 0) {
-      results.set(alert.id, result);
-      const mode = result.model_used === 'rule-fallback' ? '规则匹配(fallback)' : `AI匹配(${result.model_used})`;
-      logger.info(
-        `[${mode}] Alert ${result.alert_id} (${alert.email}): ` +
-        `${result.matched_jobs.length} 个岗位匹配`
-      );
-    } else if (result.model_used) {
-      const mode = result.model_used === 'rule-fallback' ? '规则匹配' : 'AI匹配';
-      logger.debug(
-        `[${mode}] Alert ${result.alert_id} (${alert.email}): 无匹配`
-      );
+  const CONCURRENCY_LIMIT = 5;
+  const chunks: JobAlert[][] = [];
+
+  for (let i = 0; i < alerts.length; i += CONCURRENCY_LIMIT) {
+    chunks.push(alerts.slice(i, i + CONCURRENCY_LIMIT));
+  }
+
+  for (const chunk of chunks) {
+    const chunkResults = await Promise.allSettled(
+      chunk.map(alert => aiMatchJobsToAlert(jobs, alert))
+    );
+
+    for (let i = 0; i < chunk.length; i++) {
+      const alert = chunk[i];
+      const result = chunkResults[i];
+
+      if (result.status === 'fulfilled') {
+        const matchResult = result.value;
+        if (matchResult.matched_jobs.length > 0) {
+          results.set(alert.id, matchResult);
+          const mode = matchResult.model_used === 'rule-fallback' ? '规则匹配(fallback)' : `AI匹配(${matchResult.model_used})`;
+          logger.info(
+            `[${mode}] Alert ${matchResult.alert_id} (${alert.email}): ` +
+            `${matchResult.matched_jobs.length} 个岗位匹配`
+          );
+        } else if (matchResult.model_used) {
+          const mode = matchResult.model_used === 'rule-fallback' ? '规则匹配' : 'AI匹配';
+          logger.debug(
+            `[${mode}] Alert ${matchResult.alert_id} (${alert.email}): 无匹配`
+          );
+        }
+      } else {
+        logger.error(`[ERROR] Alert ${alert.id} (${alert.email}) 匹配失败: ${result.reason}`);
+      }
     }
   }
 

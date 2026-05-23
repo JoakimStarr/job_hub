@@ -150,6 +150,9 @@ export default function UsersPage() {
               {users.map((user) => (
                 <div key={user.id || user.username} className="user-card">
                   <div className="user-card-header">
+                    <div className="user-card-avatar-initials">
+                      {(user.display_name || user.username).charAt(0).toUpperCase()}
+                    </div>
                     <div className="user-card-info">
                       <div className="user-card-name">{user.display_name || user.username}</div>
                       <div className="user-card-username">用户名：{user.username}</div>

@@ -95,3 +95,24 @@
 {"timestamp":"2026-05-23T06:37:30.352Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"0ms","total":573,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
 {"timestamp":"2026-05-23T06:38:58.778Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"0ms","total":573,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
 {"timestamp":"2026-05-23T06:40:49.301Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"0ms","total":573,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-23T06:51:40.530Z","level":"error","message":"AI匹配失败 Alert 1: fetch failed, 降级到规则匹配"}
+{"timestamp":"2026-05-23T06:51:40.531Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-23T06:51:40.533Z","level":"info","message":"Rule Alert 1: 47/103 匹配 (fallback模式), 排除 0 已推送"}
+{"timestamp":"2026-05-23T06:51:40.534Z","level":"info","message":"[规则匹配(fallback)] Alert 1 (Joakimstarr@foxmail.com): 47 个岗位匹配"}
+{"timestamp":"2026-05-23T06:51:42.707Z","level":"info","message":"Email sent to Joakimstarr@foxmail.com: <730f8aad-c7c0-d3c1-4578-064fb8b5642c@foxmail.com>"}
+{"timestamp":"2026-05-23T06:51:42.708Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-23T06:51:42.709Z","level":"info","message":"[TRIGGER] Alert 1: 47 匹配 [规则匹配], 邮件已发送"}
+{"timestamp":"2026-05-23T06:51:42.710Z","level":"info","message":"[TRIGGER] 完成: 103岗位, 1订阅处理, 耗时303227ms"}
+{"timestamp":"2026-05-23T06:59:20.198Z","level":"error","message":"AI匹配失败 Alert 1: AI API 请求失败 (429)，请检查配置或稍后重试, 降级到规则匹配"}
+{"timestamp":"2026-05-23T06:59:20.199Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-23T06:59:20.200Z","level":"info","message":"Rule Alert 1: 0/100 匹配 (fallback模式), 排除 47 已推送"}
+{"timestamp":"2026-05-23T06:59:20.200Z","level":"info","message":"Alert 1: skipped 47 previously notified jobs"}
+{"timestamp":"2026-05-23T06:59:20.201Z","level":"info","message":"[TRIGGER] 完成: 100岗位, 0订阅处理, 耗时480ms"}
+{"timestamp":"2026-05-23T06:59:51.191Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms","total":77,"page":1,"pageSize":8,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-23T07:00:36.352Z","level":"info","message":"API GET /api/stats/overview","context":{"statusCode":200,"duration":"3ms","totalJobs":573,"sources":5}}
+{"timestamp":"2026-05-23T07:00:36.362Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms","total":77,"page":1,"pageSize":8,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-23T07:00:43.778Z","level":"info","message":"API GET /api/stats/overview","context":{"statusCode":200,"duration":"2ms","totalJobs":573,"sources":5}}
+{"timestamp":"2026-05-23T07:00:43.785Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"0ms","total":77,"page":1,"pageSize":8,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-23T07:00:58.319Z","level":"info","message":"API GET /api/stats/overview","context":{"statusCode":200,"duration":"10ms","totalJobs":573,"sources":5}}
+{"timestamp":"2026-05-23T07:00:58.331Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"2ms","total":77,"page":1,"pageSize":8,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-23T07:01:58.649Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"2ms","total":573,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}

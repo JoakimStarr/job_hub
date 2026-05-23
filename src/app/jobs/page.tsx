@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, JobDetailModal, SectionCard, ViewToggle } from '@/components/ui';
 import { Pagination } from '@/components/Pagination';
@@ -34,49 +34,118 @@ const EMPTY_FILTERS: FilterOptions = {
   education_mapping: [],
 };
 
+interface FilterState {
+  query: string;
+  debouncedQuery: string;
+  location: string;
+  jobType: string;
+  industry: string;
+  education: string;
+  source: string;
+  page: number;
+  sortField: 'created_at' | 'publish_date' | 'updated_at';
+  sortOrder: 'desc' | 'asc';
+  selectedJob: JobItem | null;
+  statsExpanded: boolean;
+  refreshing: boolean;
+  viewMode: 'card' | 'list';
+  animating: boolean;
+}
+
+type FilterAction =
+  | { type: 'SET_FIELD'; field: keyof FilterState; value: unknown }
+  | { type: 'SET_PAGE'; page: number }
+  | { type: 'TOGGLE_SORT_ORDER' }
+  | { type: 'TOGGLE_STATS' }
+  | { type: 'SET_VIEW_MODE'; mode: 'card' | 'list' }
+  | { type: 'SET_SELECTED_JOB'; job: JobItem | null }
+  | { type: 'SET_ANIMATING'; animating: boolean }
+  | { type: 'CLEAR_FILTERS' };
+
+function createInitialState(): FilterState {
+  let savedViewMode: 'card' | 'list' = 'list';
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('job_view_mode');
+    if (saved === 'card' || saved === 'list') savedViewMode = saved;
+  }
+  return {
+    query: '',
+    debouncedQuery: '',
+    location: '',
+    jobType: '',
+    industry: '',
+    education: '',
+    source: '',
+    page: 1,
+    sortField: 'publish_date',
+    sortOrder: 'desc',
+    selectedJob: null,
+    statsExpanded: false,
+    refreshing: false,
+    viewMode: savedViewMode,
+    animating: false,
+  };
+}
+
+function filterReducer(state: FilterState, action: FilterAction): FilterState {
+  switch (action.type) {
+    case 'SET_FIELD':
+      return { ...state, [action.field]: action.value as never };
+    case 'SET_PAGE':
+      return { ...state, page: action.page };
+    case 'TOGGLE_SORT_ORDER':
+      return { ...state, sortOrder: state.sortOrder === 'desc' ? 'asc' : 'desc' };
+    case 'TOGGLE_STATS':
+      return { ...state, statsExpanded: !state.statsExpanded };
+    case 'SET_VIEW_MODE':
+      return { ...state, viewMode: action.mode };
+    case 'SET_SELECTED_JOB':
+      return { ...state, selectedJob: action.job };
+    case 'SET_ANIMATING':
+      return { ...state, animating: action.animating };
+    case 'CLEAR_FILTERS':
+      return {
+        ...state,
+        query: '',
+        debouncedQuery: '',
+        location: '',
+        jobType: '',
+        industry: '',
+        education: '',
+        source: '',
+        sortField: 'publish_date',
+        sortOrder: 'desc',
+        page: 1,
+      };
+    default:
+      return state;
+  }
+}
+
 export default function JobsPage() {
   const toast = useToast();
   const toastRef = useRef(toast);
   toastRef.current = toast;
-  const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [location, setLocation] = useState('');
-  const [jobType, setJobType] = useState('');
-  const [industry, setIndustry] = useState('');
-  const [education, setEducation] = useState('');
-  const [source, setSource] = useState('');
-  const [page, setPage] = useState(1);
-  const [sortField, setSortField] = useState<'created_at' | 'publish_date' | 'updated_at'>('publish_date');
-  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
-  const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
-  const [statsExpanded, setStatsExpanded] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [viewMode, setViewMode] = useState<'card' | 'list'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('job_view_mode');
-      return saved === 'card' || saved === 'list' ? saved : 'list';
-    }
-    return 'list';
-  });
-  const [animating, setAnimating] = useState(false);
-
-  useEffect(() => {
-    localStorage.setItem('job_view_mode', viewMode);
-  }, [viewMode]);
-
-  useEffect(() => {
-    setAnimating(true);
-    const timer = setTimeout(() => setAnimating(false), 300);
-    return () => clearTimeout(timer);
-  }, [viewMode]);
+  const [state, dispatch] = useReducer(filterReducer, null, createInitialState);
   const [isMobile, setIsMobile] = useState(false);
+  const [processingFavoriteId, setProcessingFavoriteId] = useState<number | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem('job_view_mode', state.viewMode);
+  }, [state.viewMode]);
+
+  useEffect(() => {
+    dispatch({ type: 'SET_ANIMATING', animating: true });
+    const timer = setTimeout(() => dispatch({ type: 'SET_ANIMATING', animating: false }), 300);
+    return () => clearTimeout(timer);
+  }, [state.viewMode]);
 
   useEffect(() => {
     const mql = window.matchMedia('(max-width: 768px)');
     setIsMobile(mql.matches);
     const handler = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches);
-      if (e.matches) setViewMode('list');
+      if (e.matches) dispatch({ type: 'SET_VIEW_MODE', mode: 'list' });
     };
     mql.addEventListener('change', handler);
     return () => mql.removeEventListener('change', handler);
@@ -89,26 +158,26 @@ export default function JobsPage() {
       clearTimeout(debounceTimerRef.current);
     }
     debounceTimerRef.current = setTimeout(() => {
-      setDebouncedQuery(query);
+      dispatch({ type: 'SET_FIELD', field: 'debouncedQuery', value: state.query });
     }, DEBOUNCE_MS);
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [query]);
+  }, [state.query]);
 
   const filterParams = useMemo(() => ({
-    page,
+    page: state.page,
     page_size: 12,
-    location,
-    job_type: jobType,
-    industry,
-    education,
-    source,
-    sort: sortField,
-    order: sortOrder,
-  }), [page, location, jobType, industry, education, source, sortField, sortOrder]);
+    location: state.location,
+    job_type: state.jobType,
+    industry: state.industry,
+    education: state.education,
+    source: state.source,
+    sort: state.sortField,
+    order: state.sortOrder,
+  }), [state.page, state.location, state.jobType, state.industry, state.education, state.source, state.sortField, state.sortOrder]);
 
   // 筛选选项独立缓存，60秒内不重复请求
   const { data: filterOptions, mutate: mutateFilters } = useFetch<FilterOptions>(
@@ -120,14 +189,14 @@ export default function JobsPage() {
   const filters = filterOptions ?? EMPTY_FILTERS;
 
   // 岗位列表根据筛选条件动态请求
-  const jobsKey = debouncedQuery.trim()
-    ? `/api/jobs/search?q=${debouncedQuery}&${API.buildQuery(filterParams)}`
+  const jobsKey = state.debouncedQuery.trim()
+    ? `/api/jobs/search?q=${state.debouncedQuery}&${API.buildQuery(filterParams)}`
     : `/api/jobs?${API.buildQuery(filterParams)}`;
 
   const { data: jobs, error: jobsError, loading: jobsLoading, mutate: mutateJobs } = useFetch<PagedResponse<JobItem>>(
     jobsKey,
-    () => debouncedQuery.trim()
-      ? API.searchJobs(debouncedQuery, filterParams)
+    () => state.debouncedQuery.trim()
+      ? API.searchJobs(state.debouncedQuery, filterParams)
       : API.getJobs(filterParams),
   );
 
@@ -135,14 +204,14 @@ export default function JobsPage() {
   const error = jobsError?.message || null;
 
   const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
+    dispatch({ type: 'SET_FIELD', field: 'refreshing', value: true });
     await Promise.all([mutateJobs(), mutateFilters()]);
-    setRefreshing(false);
+    dispatch({ type: 'SET_FIELD', field: 'refreshing', value: false });
   }, [mutateJobs, mutateFilters]);
 
   const handleToggleFavorite = useCallback(async (job: JobItem) => {
     const now = Date.now();
-    if (now - lastToggleRef.current < 500) return; // 防抖 500ms
+    if (now - lastToggleRef.current < 500) return;
     lastToggleRef.current = now;
 
     if (useAppStore.getState().isGuest) {
@@ -150,6 +219,8 @@ export default function JobsPage() {
       return;
     }
     const newFavoriteState = job.is_favorite ? 0 : 1;
+
+    setProcessingFavoriteId(job.id);
 
     // 乐观更新：先更新 UI
     mutateJobs(
@@ -165,12 +236,12 @@ export default function JobsPage() {
       { revalidate: false },
     );
 
-    setSelectedJob((prev) => {
-      if (prev && prev.id === job.id) {
-        return { ...prev, is_favorite: newFavoriteState };
-      }
-      return prev;
-    });
+    if (state.selectedJob?.id === job.id) {
+      dispatch({
+        type: 'SET_SELECTED_JOB',
+        job: { ...state.selectedJob, is_favorite: newFavoriteState },
+      });
+    }
 
     try {
       await API.toggleFavorite(job.id);
@@ -189,12 +260,12 @@ export default function JobsPage() {
         },
         { revalidate: false },
       );
-      setSelectedJob((prev) => {
-        if (prev && prev.id === job.id) {
-          return { ...prev, is_favorite: newFavoriteState ? 0 : 1 };
-        }
-        return prev;
-      });
+      if (state.selectedJob?.id === job.id) {
+        dispatch({
+          type: 'SET_SELECTED_JOB',
+          job: { ...state.selectedJob, is_favorite: newFavoriteState ? 0 : 1 },
+        });
+      }
 
       const errorMsg = err instanceof Error ? err.message : '操作失败';
       if (err instanceof APIError && err.status === 404) {
@@ -206,24 +277,17 @@ export default function JobsPage() {
       } else {
         toastRef.current.error(errorMsg);
       }
+    } finally {
+      setProcessingFavoriteId(null);
     }
-  }, [mutateJobs]);
+  }, [mutateJobs, state.selectedJob]);
 
-  const handleCloseDetail = useCallback(() => setSelectedJob(null), []);
+  const handleCloseDetail = useCallback(() => dispatch({ type: 'SET_SELECTED_JOB', job: null }), []);
 
-  const handleJobClick = useCallback((job: JobItem) => setSelectedJob(job), []);
+  const handleJobClick = useCallback((job: JobItem) => dispatch({ type: 'SET_SELECTED_JOB', job }), []);
 
   function handleClearFilters() {
-    setQuery('');
-    setDebouncedQuery('');
-    setLocation('');
-    setJobType('');
-    setIndustry('');
-    setEducation('');
-    setSource('');
-    setSortField('publish_date');
-    setSortOrder('desc');
-    setPage(1);
+    dispatch({ type: 'CLEAR_FILTERS' });
   }
 
   const SORT_OPTIONS = [
@@ -241,12 +305,12 @@ export default function JobsPage() {
         description="按关键词、地点、类型、行业、学历和来源筛选岗位"
       >
         <div className="filter-grid" role="search" aria-label="岗位筛选">
-          <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索岗位或公司" />
+          <Input value={state.query} onChange={(event) => dispatch({ type: 'SET_FIELD', field: 'query', value: event.target.value })} placeholder="搜索岗位或公司" />
           <HierarchicalFilter
             label="地点"
             options={filters.locations}
-            value={location}
-            onChange={setLocation}
+            value={state.location}
+            onChange={(v) => dispatch({ type: 'SET_FIELD', field: 'location', value: v })}
             placeholder="全部地点"
             provinces={filters.provinces}
             mode="hierarchical"
@@ -254,22 +318,22 @@ export default function JobsPage() {
           <HierarchicalFilter
             label="岗位类型"
             options={filters.job_types}
-            value={jobType}
-            onChange={setJobType}
+            value={state.jobType}
+            onChange={(v) => dispatch({ type: 'SET_FIELD', field: 'jobType', value: v })}
             placeholder="全部类型"
           />
           <HierarchicalFilter
             label="行业"
             options={filters.industries}
-            value={industry}
-            onChange={setIndustry}
+            value={state.industry}
+            onChange={(v) => dispatch({ type: 'SET_FIELD', field: 'industry', value: v })}
             placeholder="全部行业"
           />
           <HierarchicalFilter
             label="学历"
             options={filters.education}
-            value={education}
-            onChange={setEducation}
+            value={state.education}
+            onChange={(v) => dispatch({ type: 'SET_FIELD', field: 'education', value: v })}
             placeholder="全部学历"
             educationMapping={filters.education_mapping}
             mode="education"
@@ -277,13 +341,13 @@ export default function JobsPage() {
           <HierarchicalFilter
             label="来源"
             options={filters.sources}
-            value={source}
-            onChange={setSource}
+            value={state.source}
+            onChange={(v) => dispatch({ type: 'SET_FIELD', field: 'source', value: v })}
             placeholder="全部来源"
           />
         </div>
         <div className="row-gap" style={{ marginTop: 16 }}>
-          {query || location || jobType || industry || education || source ? (
+          {state.query || state.location || state.jobType || state.industry || state.education || state.source ? (
             <Button variant="secondary" onClick={handleClearFilters}>清除筛选</Button>
           ) : null}
           <Badge tone="slate">共 {jobs?.total ?? 0} 条</Badge>
@@ -299,18 +363,18 @@ export default function JobsPage() {
               <span>数据概览</span>
               <button
                 type="button"
-                onClick={() => setStatsExpanded((v) => !v)}
+                onClick={() => dispatch({ type: 'TOGGLE_STATS' })}
                 className="stats-toggle-btn"
-                aria-label={statsExpanded ? '收起统计面板' : '展开统计面板'}
+                aria-label={state.statsExpanded ? '收起统计面板' : '展开统计面板'}
               >
-                <span className="stats-toggle-icon">{statsExpanded ? '▲' : '▼'}</span>
-                <span>{statsExpanded ? '收起' : '展开'}</span>
+                <span className="stats-toggle-icon">{state.statsExpanded ? '▲' : '▼'}</span>
+                <span>{state.statsExpanded ? '收起' : '展开'}</span>
               </button>
             </div>
           }
         >
-          {statsExpanded ? (
-            <div className="grid-4">
+          {state.statsExpanded ? (
+            <div className="grid-4" style={{ transition: 'all var(--duration-normal) var(--ease-out)' }}>
               <div className="stat-card">
                 <div className="stat-card-header">
                   <div className="stat-card-title">来源分布</div>
@@ -322,7 +386,7 @@ export default function JobsPage() {
                       key={item.name}
                       className="stat-card-item"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => { setSource(item.name); setPage(1); }}
+                      onClick={() => { dispatch({ type: 'SET_FIELD', field: 'source', value: item.name }); dispatch({ type: 'SET_PAGE', page: 1 }); }}
                     >
                       <span className="stat-card-item-name">{item.name}</span>
                       <span className="stat-card-item-count">{item.count}</span>
@@ -341,7 +405,7 @@ export default function JobsPage() {
                       key={item.name}
                       className="stat-card-item"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => { setJobType(item.name); setPage(1); }}
+                      onClick={() => { dispatch({ type: 'SET_FIELD', field: 'jobType', value: item.name }); dispatch({ type: 'SET_PAGE', page: 1 }); }}
                     >
                       <span className="stat-card-item-name">{item.name}</span>
                       <span className="stat-card-item-count">{item.count}</span>
@@ -360,7 +424,7 @@ export default function JobsPage() {
                       key={item.name}
                       className="stat-card-item"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => { setLocation(item.name); setPage(1); }}
+                      onClick={() => { dispatch({ type: 'SET_FIELD', field: 'location', value: item.name }); dispatch({ type: 'SET_PAGE', page: 1 }); }}
                     >
                       <span className="stat-card-item-name">{item.name}</span>
                       <span className="stat-card-item-count">{item.count}</span>
@@ -379,7 +443,7 @@ export default function JobsPage() {
                       key={item.name}
                       className="stat-card-item"
                       style={{ cursor: 'pointer' }}
-                      onClick={() => { setIndustry(item.name); setPage(1); }}
+                      onClick={() => { dispatch({ type: 'SET_FIELD', field: 'industry', value: item.name }); dispatch({ type: 'SET_PAGE', page: 1 }); }}
                     >
                       <span className="stat-card-item-name">{item.name}</span>
                       <span className="stat-card-item-count">{item.count}</span>
@@ -402,18 +466,17 @@ export default function JobsPage() {
         action={
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <ViewToggle
-              mode={viewMode}
+              mode={state.viewMode}
               onToggle={() => {
-                const next = viewMode === 'card' ? 'list' : 'card';
-                console.log('Toggle view:', viewMode, '->', next);
-                setViewMode(next);
+                const next = state.viewMode === 'card' ? 'list' : 'card';
+                dispatch({ type: 'SET_VIEW_MODE', mode: next });
               }}
             />
             <div className="sort-controls">
               <select
                 className="sort-field-select"
-                value={sortField}
-                onChange={(e) => { setSortField(e.target.value as typeof sortField); setPage(1); }}
+                value={state.sortField}
+                onChange={(e) => { dispatch({ type: 'SET_FIELD', field: 'sortField', value: e.target.value as 'created_at' | 'publish_date' | 'updated_at' }); dispatch({ type: 'SET_PAGE', page: 1 }); }}
                 aria-label="排序字段"
               >
                 {SORT_OPTIONS.map((opt) => (
@@ -422,12 +485,12 @@ export default function JobsPage() {
               </select>
               <button
                 className="sort-dir-btn"
-                onClick={() => { setSortOrder((o) => o === 'desc' ? 'asc' : 'desc'); setPage(1); }}
-                title={sortOrder === 'desc' ? '切换为升序（旧到新）' : '切换为降序（新到旧）'}
-                aria-label={sortOrder === 'desc' ? '切换为升序' : '切换为降序'}
+                onClick={() => { dispatch({ type: 'TOGGLE_SORT_ORDER' }); dispatch({ type: 'SET_PAGE', page: 1 }); }}
+                title={state.sortOrder === 'desc' ? '切换为升序（旧到新）' : '切换为降序（新到旧）'}
+                aria-label={state.sortOrder === 'desc' ? '切换为升序' : '切换为降序'}
               >
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                  {sortOrder === 'desc' ? (
+                  {state.sortOrder === 'desc' ? (
                     <>
                       <path d="M8 3L13 8H3L8 3Z" fill="currentColor" opacity="0.35"/>
                       <path d="M8 13L3 8H13L8 13Z" fill="currentColor"/>
@@ -452,17 +515,18 @@ export default function JobsPage() {
         ) : items.length === 0 ? (
           <EmptyState title="没有结果" description="当前筛选条件下没有找到岗位。" />
         ) : (
-          <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'} ${animating ? 'view-animating' : ''}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" aria-label="岗位列表">
+          <div className={`job-view-container ${state.viewMode === 'list' ? 'job-list' : 'grid'} ${state.animating ? 'view-animating' : ''}`} style={{ gap: state.viewMode === 'list' ? 0 : 14 }} role="list" aria-label="岗位列表">
             {items.map((job) => (
               <div
                 key={job.id}
                 role="listitem"
+                className={processingFavoriteId === job.id ? 'processing-favorite' : ''}
                 style={{ cursor: 'pointer', pointerEvents: 'auto' }}
                 onClick={() => handleJobClick(job)}
               >
                 <JobCard
                   job={job}
-                  viewMode={viewMode}
+                  viewMode={state.viewMode}
                   onClick={handleJobClick}
                   onToggleFavorite={handleToggleFavorite}
                 />
@@ -471,13 +535,13 @@ export default function JobsPage() {
           </div>
         )}
         {jobs?.pages ? (
-          <Pagination current={page} total={jobs.pages} onChange={(p) => setPage(p)} />
+          <Pagination current={state.page} total={jobs.pages} onChange={(p) => dispatch({ type: 'SET_PAGE', page: p })} />
         ) : null}
       </SectionCard>
 
-      {selectedJob ? (
+      {state.selectedJob ? (
         <JobDetailModal
-          job={selectedJob}
+          job={state.selectedJob}
           onClose={handleCloseDetail}
           onToggleFavorite={handleToggleFavorite}
         />

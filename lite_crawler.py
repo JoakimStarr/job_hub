@@ -37,6 +37,28 @@ from pathlib import Path
 from typing import Any, Dict, Iterator, Optional
 from urllib.parse import urljoin, urlparse, parse_qs
 
+# 加载 .env 环境变量文件
+def load_env():
+    """从 .env 文件加载环境变量"""
+    env_path = Path(__file__).parent / '.env'
+    if env_path.exists():
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    key = key.strip()
+                    value = value.strip()
+                    # 移除引号
+                    if (value.startswith('"') and value.endswith('"')) or \
+                       (value.startswith("'") and value.endswith("'")):
+                        value = value[1:-1]
+                    # 只设置未定义的环境变量（不覆盖系统环境变量）
+                    if key not in os.environ:
+                        os.environ[key] = value
+
+load_env()
+
 import requests
 
 sys.path.insert(0, str(Path(__file__).parent / "src" / "spiders"))
@@ -1741,6 +1763,633 @@ def run_scheduled(sources: list, max_items: int, schedule: str):
     crawl_logger.end_session()
 
 
+def call_zhipu_ai(messages: list, model: str = "glm-4.7-flash") -> dict:
+    """直接调用智谱AI API
+
+    Args:
+        messages: 消息列表 [{role: "system"|"user", content: "..."}]
+        model: 模型名称
+
+    Returns:
+        AI响应的JSON字典
+    """
+    import json as _json
+
+    api_key = os.environ.get("ZHIPU_API_KEY", "")
+    if not api_key:
+        raise ValueError("未配置 ZHIPU_API_KEY，请在 .env 文件中设置")
+
+    url = "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": model,
+        "messages": messages,
+        "temperature": 0.3,
+        "max_tokens": 8192
+    }
+
+    logger.debug(f"  调用智谱AI API: {model}")
+    response = requests.post(url, headers=headers, json=data, timeout=60)
+
+    if response.status_code != 200:
+        raise Exception(f"AI API错误 {response.status_code}: {response.text[:200]}")
+
+    result = response.json()
+    return result
+
+
+def get_alerts_from_db() -> list:
+    """从数据库获取所有启用的订阅"""
+    db.conn.row_factory = sqlite3.Row
+    rows = db.execute("""
+        SELECT id, email, keywords, sources, locations, industries, education,
+               min_notify_interval, last_notified_at, notify_count, enabled
+        FROM user_job_alerts
+        WHERE enabled = 1
+        ORDER BY id
+    """).fetchall()
+
+    alerts = []
+    for row in rows:
+        alert = dict(row)
+        # 解析JSON字段
+        for field in ['keywords', 'sources', 'locations', 'industries']:
+            val = alert.get(field)
+            if isinstance(val, str):
+                try:
+                    alert[field] = _json.loads(val)
+                except:
+                    alert[field] = []
+            elif val is None:
+                alert[field] = []
+        alerts.append(alert)
+
+    return alerts
+
+
+def get_jobs_from_db(job_ids: list = None, limit: int = 100) -> list:
+    """从数据库获取岗位数据
+
+    Args:
+        job_ids: 指定的岗位ID列表（如果提供）
+        limit: 限制数量（当job_ids为None时使用）
+
+    Returns:
+        岗位字典列表
+    """
+    db.conn.row_factory = sqlite3.Row
+
+    if job_ids:
+        placeholders = ','.join(['?' for _ in job_ids])
+        rows = db.execute(f"""
+            SELECT id, title, company, location, salary, description, requirements,
+                   job_type, industry, education, experience, source, university,
+                   source_url, apply_url, publish_date, tags, created_at
+            FROM jobs
+            WHERE id IN ({placeholders})
+            ORDER BY id DESC
+        """, job_ids).fetchall()
+    else:
+        rows = db.execute("""
+            SELECT id, title, company, location, salary, description, requirements,
+                   job_type, industry, education, experience, source, university,
+                   source_url, apply_url, publish_date, tags, created_at
+            FROM jobs
+            ORDER BY id DESC
+            LIMIT ?
+        """, (limit,)).fetchall()
+
+    return [dict(row) for row in rows]
+
+
+def build_ai_prompt(alert: dict, jobs: list) -> list:
+    """构建AI分析的prompt
+
+    Args:
+        alert: 订阅字典
+        jobs: 岗位列表
+
+    Returns:
+        消息列表
+    """
+    keywords = alert.get('keywords', [])
+    sources = alert.get('sources', [])
+    locations = alert.get('locations', [])
+    industries = alert.get('industries', [])
+    education = alert.get('education', '')
+
+    user_preferences = [
+        f"关键词（OR逻辑，任一匹配即推送）：{'、'.join(keywords) if keywords else '未设置'}",
+        f"数据源筛选：{'、'.join(sources) if sources else '全部'}",
+        f"期望地点：{'、'.join(locations) if locations else '不限'}",
+        f"期望行业：{'、'.join(industries) if industries else '不限'}",
+        f"最低学历要求：{education or '不限'}",
+    ]
+
+    jobs_text = "\n".join([f"""
+【岗位 {i+1}】ID={job['id']}
+- 职位名称：{job.get('title', '')}
+- 公司名称：{job.get('company', '')}
+- 工作地点：{job.get('location', '')}
+- 薪资范围：{job.get('salary', '面议')}
+- 岗位类型：{job.get('job_type', '全职')}
+- 所属行业：{job.get('industry', '')}
+- 学历要求：{job.get('education', '')}
+- 数据来源：{job.get('university', '')} ({job.get('source', '')})
+- 职位描述：{(job.get('description') or '')[:300]}
+- 任职要求：{(job.get('requirements') or '')[:200]}
+""" for i, job in enumerate(jobs)])
+
+    messages = [
+        {
+            "role": "system",
+            "content": """你是一个专业的职位推荐助手。你的任务是根据用户的订阅偏好，从一批新发布的岗位中筛选出最匹配的岗位。
+
+核心规则：
+1. 关键词采用OR逻辑：用户设置的多个关键词，只要岗位与其中任意一个相关就算匹配
+2. 语义理解：不仅要看字面匹配，还要理解语义相关性。例如"数据分析"可以匹配"数据挖掘"、"BI工程师"、"数据运营"等
+3. 如果用户设置了数据源/地点/行业/学历筛选条件，必须同时满足
+4. 每个匹配的岗位必须给出简洁的推荐理由（一句话）
+5. 按匹配度从高到低排序输出"""
+        },
+        {
+            "role": "user",
+            "content": f"""## 用户订阅偏好
+{chr(10).join(user_preferences)}
+
+## 待筛选的岗位（共 {len(jobs)} 个）
+{jobs_text}
+
+请分析以上岗位，返回JSON格式的匹配结果。只返回JSON，不要其他内容。格式如下：
+{{
+  "matched": [
+    {{
+      "job_id": 岗位ID数字,
+      "matched_keywords": ["命中的关键词1", "命中的关键词2"],
+      "reason": "一句话推荐理由",
+      "relevance_score": 匹配度分数1-100
+    }}
+  ]
+}}
+
+如果没有任何岗位匹配，返回 {{"matched": []}}"""
+        }
+    ]
+
+    return messages
+
+
+def parse_ai_response(ai_result: dict) -> list:
+    """解析AI响应
+
+    Args:
+        ai_result: AI API返回的结果
+
+    Returns:
+        匹配的岗位列表
+    """
+    try:
+        content = ai_result['choices'][0]['message']['content']
+        cleaned = content.replace('```json\n', '').replace('```\n', '').strip()
+        parsed = _json.loads(cleaned)
+
+        if not parsed.get('matched') or not isinstance(parsed['matched'], list):
+            return []
+
+        matched_jobs = []
+        for item in parsed['matched']:
+            matched_jobs.append({
+                'job_id': item.get('job_id'),
+                'matched_keywords': item.get('matched_keywords', []),
+                'reason': item.get('reason', ''),
+                'relevance_score': min(100, max(0, item.get('relevance_score', 50)))
+            })
+
+        # 按匹配度排序
+        matched_jobs.sort(key=lambda x: x['relevance_score'], reverse=True)
+        return matched_jobs
+
+    except Exception as e:
+        logger.error(f"解析AI响应失败: {e}")
+        logger.error(f"原始响应: {str(ai_result)[:500]}")
+        return []
+
+
+def send_email_direct(to: str, subject: str, html_content: str, text_content: str) -> bool:
+    """直接发送邮件（不通过API）
+
+    Args:
+        to: 收件人邮箱
+        subject: 邮件主题
+        html_content: HTML内容
+        text_content: 纯文本内容
+
+    Returns:
+        是否发送成功
+    """
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
+
+    smtp_host = os.environ.get('SMTP_HOST')
+    smtp_port = int(os.environ.get('SMTP_PORT', '587'))
+    smtp_user = os.environ.get('SMTP_USER')
+    smtp_pass = os.environ.get('SMTP_PASS')
+    smtp_from_name = os.environ.get('SMTP_FROM_NAME', '职位提醒')
+    smtp_from_email = os.environ.get('SMTP_FROM_EMAIL', smtp_user)
+
+    if not all([smtp_host, smtp_user, smtp_pass]):
+        logger.warning(f"邮件服务未配置，跳过发送到 {to}")
+        return False
+
+    try:
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = subject
+        msg['From'] = f"{smtp_from_name} <{smtp_from_email}>"
+        msg['To'] = to
+
+        msg.attach(MIMEText(text_content, 'plain', 'utf-8'))
+        msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+
+        server = smtplib.SMTP(smtp_host, smtp_port)
+        server.starttls()
+        server.login(smtp_user, smtp_pass)
+        server.sendmail(smtp_from_email, [to], msg.as_string())
+        server.quit()
+
+        logger.info(f"✅ 邮件发送成功: {to}")
+        return True
+
+    except Exception as e:
+        logger.error(f"❌ 邮件发送失败 ({to}): {e}")
+        return False
+
+
+def build_email_content(alert: dict, matched_jobs: list, all_jobs: list) -> tuple:
+    """构建邮件内容
+
+    Args:
+        alert: 订阅信息
+        matched_jobs: 匹配的岗位列表
+        all_jobs: 所有岗位（用于查找详情）
+
+    Returns:
+        (html_content, text_content)
+    """
+    keywords = alert.get('keywords', [])
+    keyword_str = '、'.join(keywords) if keywords else '未设置'
+
+    job_map = {job['id']: job for job in all_jobs}
+
+    job_list_html = ""
+    job_list_text = ""
+
+    for i, matched in enumerate(matched_jobs):
+        job = job_map.get(matched['job_id'], {})
+        score = matched.get('relevance_score', 0)
+        color = '#10b981' if score >= 80 else ('#3b82f6' if score >= 60 else '#f59e0b')
+
+        job_list_html += f"""
+    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid {color};">
+      <h3 style="margin: 0 0 10px 0; font-size: 16px;">
+        <a href="{job.get('source_url', '#')}" style="color: #3b82f6; text-decoration: none;">
+          {i+1}. {job.get('title', '未知职位')}
+        </a>
+        <span style="margin-left: 8px; font-size: 12px; background: {'#d1fae5' if score >= 80 else ('#dbeafe' if score >= 60 else '#fef3c7')}; color: {'#059669' if score >= 80 else ('#1d4ed8' if score >= 60 else '#d97706')}; padding: 2px 8px; border-radius: 12px;">匹配度 {score}%</span>
+      </h3>
+      {f'<p style="margin: 5px 0; color: #666;"><strong>公司：</strong>{job.get("company", "")}</p>' if job.get('company') else ''}
+      {f'<p style="margin: 5px 0; color: #666;"><strong>地点：</strong>{job.get("location", "")}</p>' if job.get('location') else ''}
+      {f'<p style="margin: 5px 0; color: #666;"><strong>薪资：</strong>{job.get("salary", "")}</p>' if job.get('salary') else ''}
+      {f'<p style="margin: 5px 0; color: #666;"><strong>来源：</strong>{job.get("university", "")}</p>' if job.get('university') else ''}
+      <p style="margin: 5px 0; color: #3b82f6;">
+        <strong>匹配关键词：</strong>{'、'.join(matched.get('matched_keywords', []))}
+      </p>
+      {f'<p style="margin: 5px 0; color: #059669; font-style: italic; background: #ecfdf5; padding: 8px 12px; border-radius: 6px;"><strong>AI推荐理由：</strong>{matched.get("reason", "")}</p>' if matched.get('reason') else ''}
+    </div>
+"""
+
+        job_list_text += f"""
+{i+1}. {job.get('title', '未知职位')} [匹配度 {score}%]
+   公司：{job.get('company', '未知')}
+   地点：{job.get('location', '未知')}
+   薪资：{job.get('salary', '面议')}
+   来源：{job.get('university', '未知')}
+   匹配关键词：{'、'.join(matched.get('matched_keywords', []))}
+   {f'AI推荐理由：{matched.get("reason", "")}' if matched.get('reason') else ''}
+   链接：{job.get('source_url', '')}
+"""
+
+    html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }}
+    .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+    .header {{ background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 30px; border-radius: 12px 12px 0 0; }}
+    .content {{ background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }}
+    .footer {{ text-align: center; padding: 20px; color: #9ca3af; font-size: 12px; }}
+    .keyword-tag {{ display: inline-block; background: #dbeafe; color: #1d4ed8; padding: 4px 12px; border-radius: 20px; margin: 2px; font-size: 14px; }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="margin: 0;">🤖 AI 职位推荐</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.9;">发现 {len(matched_jobs)} 个匹配岗位（AI智能匹配 - 智能语义分析）</p>
+    </div>
+    <div class="content">
+      <p>您好！</p>
+      <p>根据您订阅的关键词：</p>
+      <p style="margin: 15px 0;">
+        {''.join([f'<span class="keyword-tag">{k}</span>' for k in keywords])}
+      </p>
+      <p>我们发现了以下 <strong>{len(matched_jobs)}</strong> 个新岗位：</p>
+      <div style="margin: 20px 0;">
+        {job_list_html}
+      </div>
+      <p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #666;">
+        如需修改订阅设置，请登录系统设置页面。
+      </p>
+    </div>
+    <div class="footer">
+      <p>此邮件由系统自动发送，请勿直接回复。</p>
+      <p>© {datetime.now().year} Job Hub 职位提醒服务</p>
+    </div>
+  </div>
+</body>
+</html>
+"""
+
+    text = f"""
+职位提醒 - 发现 {len(matched_jobs)} 个匹配岗位（AI 智能推荐）
+
+您好！
+
+根据您订阅的关键词：{keyword_str}
+
+AI助手为您筛选出以下 {len(matched_jobs)} 个最相关的岗位：
+
+{job_list_text}
+
+---
+本邮件由 AI 智能匹配引擎生成，根据您的订阅偏好进行语义分析和岗位推荐。
+
+如需修改订阅设置，请登录系统设置页面。
+
+此邮件由系统自动发送，请勿直接回复。
+""".strip()
+
+    return html, text
+
+
+def test_email_mode(count: int = 100):
+    """测试邮件模式（直接AI分析版）：从数据库获取记录 -> AI分析 -> 发送邮件
+
+    流程：
+    1. 从数据库获取最近的岗位记录
+    2. 从数据库获取所有启用的订阅
+    3. 对每个订阅，调用AI进行匹配分析
+    4. 发送邮件
+
+    Args:
+        count: 获取的记录数量 (默认: 100)
+    """
+    import json as _json
+
+    start_time = time.time()
+
+    try:
+        logger.info("=" * 70)
+        logger.info("📧 测试邮件模式（直接AI分析）")
+        logger.info(f"   流程: DB提取数据 -> AI智能分析 -> 发送邮件")
+        logger.info("=" * 70 + "\n")
+
+        # 1. 获取岗位数据
+        logger.info(f"📥 步骤1: 从数据库查询最近 {count} 条岗位记录...")
+        jobs = get_jobs_from_db(limit=count)
+
+        if not jobs:
+            logger.warning("❌ 数据库中没有找到任何岗位记录！")
+            logger.warning("   请先运行爬虫获取数据: python lite_crawler.py")
+            return
+
+        logger.info(f"✅ 找到 {len(jobs)} 条岗位记录 (ID范围: {jobs[-1]['id']} - {jobs[0]['id']})")
+
+        # 显示前5条记录的摘要
+        logger.info("\n📋 岗位样本:")
+        for i, job in enumerate(jobs[:5]):
+            logger.info(f"   {i+1}. [{job['id']}] {job['title'][:40]} - {job.get('company', '未知')} ({job.get('source', '?')})")
+        if len(jobs) > 5:
+            logger.info(f"   ... 还有 {len(jobs) - 5} 条记录")
+        logger.info("")
+
+        # 2. 获取订阅数据
+        logger.info("📥 步骤2: 从数据库查询订阅信息...")
+        alerts = get_alerts_from_db()
+
+        if not alerts:
+            logger.warning("❌ 数据库中没有找到任何已启用的订阅！")
+            logger.warning("   请先在系统中创建订阅")
+            return
+
+        logger.info(f"✅ 找到 {len(alerts)} 个已启用的订阅")
+
+        # 显示订阅摘要
+        logger.info("\n📋 订阅列表:")
+        for i, alert in enumerate(alerts[:10]):
+            keywords = '、'.join(alert.get('keywords', [])[:3])
+            if len(alert.get('keywords', [])) > 3:
+                keywords += f"...(+{len(alert.get('keywords', [])) - 3})"
+            logger.info(f"   {i+1}. [{alert['id']}] {alert['email']} | 关键词: {keywords}")
+        if len(alerts) > 10:
+            logger.info(f"   ... 还有 {len(alerts) - 10} 个订阅")
+        logger.info("")
+
+        # 3. 对每个订阅进行AI分析
+        logger.info("🤖 步骤3: 开始AI智能匹配分析...\n")
+        total_sent = 0
+        total_failed = 0
+        total_skipped = 0
+        results_detail = []
+
+        for idx, alert in enumerate(alerts):
+            alert_id = alert['id']
+            email = alert['email']
+            keywords = alert.get('keywords', [])
+
+            logger.info(f"{'='*50}")
+            logger.info(f"📬 处理订阅 {idx+1}/{len(alerts)}: ID={alert_id}, 邮箱={email}")
+            logger.info(f"   关键词: {'、'.join(keywords) if keywords else '(未设置)'}")
+
+            # 检查频率限制
+            min_interval = alert.get('min_notify_interval', 0)
+            last_notified = alert.get('last_notified_at')
+
+            if min_interval and min_interval > 0 and last_notified:
+                last_time = datetime.strptime(last_notified, '%Y-%m-%d %H:%M:%S') if isinstance(last_notified, str) else datetime.fromisoformat(str(last_notified))
+                elapsed = (datetime.now() - last_time).total_seconds() / 60  # 分钟
+                if elapsed < min_interval:
+                    remaining = int(min_interval - elapsed)
+                    logger.info(f"   ⏭️  跳过(频率限制): 距上次推送不足 {min_interval} 分钟 (还需 {remaining} 分钟)")
+                    total_skipped += 1
+                    results_detail.append({
+                        'alert_id': alert_id,
+                        'email': email,
+                        'status': 'skipped',
+                        'reason': f'频率限制: 还需{remaining}分钟'
+                    })
+                    continue
+
+            try:
+                # 调用AI进行分析
+                logger.info(f"   🤖 正在调用AI分析 {len(jobs)} 个岗位...")
+                ai_start = time.time()
+
+                messages = build_ai_prompt(alert, jobs)
+                ai_result = call_zhipu_ai(messages)
+                matched_jobs = parse_ai_response(ai_result)
+
+                ai_elapsed = time.time() - ai_start
+                logger.info(f"   ✅ AI分析完成 ({ai_elapsed:.1f}s): 匹配 {len(matched_jobs)} 个岗位")
+
+                if not matched_jobs:
+                    logger.info(f"   ⚠️  无匹配岗位")
+                    results_detail.append({
+                        'alert_id': alert_id,
+                        'email': email,
+                        'status': 'no_match',
+                        'matched_count': 0
+                    })
+                    continue
+
+                # 显示匹配结果摘要
+                logger.info(f"   🎯 匹配岗位:")
+                for i, matched in enumerate(matched_jobs[:5]):
+                    job_id = matched['job_id']
+                    job = next((j for j in jobs if j['id'] == job_id), {})
+                    score = matched.get('relevance_score', 0)
+                    kw_str = '、'.join(matched.get('matched_keywords', [])[:3])
+                    logger.info(f"      {i+1}. [{job_id}] {job.get('title', '?')[:30]} | 匹配度:{score}% | 关键词:{kw_str}")
+                if len(matched_jobs) > 5:
+                    logger.info(f"      ... 还有 {len(matched_jobs) - 5} 个岗位")
+
+                # 构建并发送邮件
+                logger.info(f"   📧 正在发送邮件...")
+                html_content, text_content = build_email_content(alert, matched_jobs, jobs)
+                subject = f"【AI职位推荐】发现 {len(matched_jobs)} 个匹配岗位 - {'、'.join(keywords[:3]) if keywords else '全部'}"
+
+                send_success = send_email_direct(email, subject, html_content, text_content)
+
+                if send_success:
+                    total_sent += 1
+                    logger.info(f"   ✅ 邮件发送成功!")
+                    results_detail.append({
+                        'alert_id': alert_id,
+                        'email': email,
+                        'status': 'sent',
+                        'matched_count': len(matched_jobs),
+                        'mode': 'AI直接分析'
+                    })
+
+                    # 记录到历史表（如果需要）
+                    job_ids = [m['job_id'] for m in matched_jobs]
+                    try:
+                        db.execute("""
+                            INSERT INTO job_alert_history (alert_id, job_ids, email_sent, error_message, created_at)
+                            VALUES (?, ?, ?, ?, ?)
+                        """, (alert_id, str(job_ids), 1, '', datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+                        db.commit()
+                    except Exception as e:
+                        logger.debug(f"   记录历史失败(非关键): {e}")
+
+                    # 更新最后通知时间
+                    try:
+                        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                        db.execute("""
+                            UPDATE user_job_alerts SET last_notified_at = ?, notify_count = notify_count + 1 WHERE id = ?
+                        """, (now, alert_id))
+                        db.commit()
+                    except Exception as e:
+                        logger.debug(f"   更新通知时间失败(非关键): {e}")
+
+                else:
+                    total_failed += 1
+                    logger.warning(f"   ❌ 邮件发送失败!")
+                    results_detail.append({
+                        'alert_id': alert_id,
+                        'email': email,
+                        'status': 'failed',
+                        'matched_count': len(matched_jobs),
+                        'reason': '邮件服务错误'
+                    })
+
+            except Exception as e:
+                total_failed += 1
+                logger.error(f"   ❌ 处理失败: {e}")
+                results_detail.append({
+                    'alert_id': alert_id,
+                    'email': email,
+                    'status': 'error',
+                    'reason': str(e)
+                })
+
+        # 4. 输出汇总统计
+        elapsed = time.time() - start_time
+
+        logger.info("\n" + "=" * 70)
+        logger.info("📊 处理完成汇总")
+        logger.info("=" * 70)
+        logger.info(f"\n⏱️  总耗时: {elapsed:.1f}s")
+        logger.info(f"📊 岗位数: {len(jobs)}")
+        logger.info(f"📊 订阅数: {len(alerts)}")
+        logger.info(f"\n📈 结果统计:")
+        logger.info(f"   ✅ 发送成功: {total_sent}")
+        logger.info(f"   ❌ 发送失败: {total_failed}")
+        logger.info(f"   ⏭️  跳过(频率限制/无匹配): {total_skipped}")
+        logger.info(f"   📊 成功率: {(total_sent / len(alerts) * 100) if alerts else 0:.1f}%")
+
+        if results_detail:
+            logger.info(f"\n📋 详细结果:")
+            for r in results_detail:
+                status_icon = {
+                    'sent': '✅',
+                    'failed': '❌',
+                    'skipped': '⏭️ ',
+                    'no_match': '⚠️ ',
+                    'error': '💥'
+                }.get(r.get('status'), '❓')
+
+                status_text = {
+                    'sent': '已发送',
+                    'failed': f"失败: {r.get('reason', '')}",
+                    'skipped': r.get('reason', ''),
+                    'no_match': '无匹配',
+                    'error': f"错误: {r.get('reason', '')}"
+                }.get(r.get('status'), '')
+
+                matched_info = f", {r.get('matched_count', 0)}个匹配" if r.get('matched_count') else ""
+                mode_info = f" [{r.get('mode', '')}]" if r.get('mode') else ''
+
+                logger.info(f"   {status_icon} 订阅{r.get('alert_id')} ({r.get('email')}){matched_info}{mode_info}: {status_text}")
+
+        logger.info("\n" + "=" * 70)
+        logger.info("✨ 测试完成!")
+        logger.info("=" * 70)
+
+    except ValueError as ve:
+        logger.error(f"\n❌ 配置错误: {ve}")
+        logger.error("   请检查 .env 文件中的 ZHIPU_API_KEY 等配置")
+    except Exception as e:
+        logger.error(f"\n❌ 测试邮件失败: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+
+
 def trigger_job_alerts(since_minutes: int = 30):
     """触发职位提醒：检查新增岗位并推送邮件
     
@@ -1882,6 +2531,10 @@ def main():
                         help="时间筛选月数，只入库最近N个月的数据 (默认: 2个月)")
     parser.add_argument("--reset-incremental", action="store_true",
                         help="清除增量爬取状态，强制从头开始爬取")
+    parser.add_argument("--test-email", action="store_true",
+                        help="跳过爬取，直接从数据库获取最近100条记录测试邮件发送")
+    parser.add_argument("--test-email-count", type=int, default=100,
+                        help="测试邮件时使用的记录数量 (默认: 100)")
     args = parser.parse_args()
     
     crawl_logger.set_level(args.log_level)
@@ -1894,6 +2547,17 @@ def main():
         return
     
     init_database()
+
+    # 测试邮件模式：跳过爬取，直接从数据库获取记录
+    if args.test_email:
+        logger.info("=" * 70)
+        logger.info("📧 测试邮件模式")
+        logger.info(f"   将从数据库获取最近 {args.test_email_count} 条岗位记录")
+        logger.info(f"   直接调用职位提醒API进行分析和发送")
+        logger.info("=" * 70 + "\n")
+
+        test_email_mode(args.test_email_count)
+        return
 
     # 清除增量爬取状态并启用覆盖模式
     if args.reset_incremental:
