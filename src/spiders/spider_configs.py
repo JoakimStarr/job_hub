@@ -339,7 +339,7 @@ def get_lite_http_sources():
             lite_sources[key] = {
                 "name": config["university"],
                 "base_url": config["base_url"],
-                "list_url": list_api.replace(config["base_url"], "") + "?type=1&page={page}&limit={limit}",
+                "list_url": list_api.replace(config["base_url"], "") + "?type={type}&page={page}&limit={limit}",
                 "detail_url": detail_api.replace(config["base_url"], "") + "?id={id}",
                 "field_mapping": {k: (v[0] if isinstance(v, list) else v)
                                   for k, v in config.get("field_mapping", {}).items()},

@@ -876,8 +876,29 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
             if max_items > 0 and count >= max_items:
                 break
 
-            logger.info(f"▶ 爬取板块: {section['label']}")
             list_url = urljoin(base_url, section["list_url"])
+
+            # 实习板块先探测第一页是否有数据
+            if section["job_type"] == "实习":
+                probe_data = {"pageNo": "1", "pageSize": "10"}
+                probe_resp = fetch_with_retry(list_url, method="POST", data=probe_data)
+                if not probe_resp:
+                    logger.info(f"[{section['label']}] 探测失败，跳过")
+                    continue
+                try:
+                    probe_result = probe_resp.json()
+                    if probe_result.get("code") != 200:
+                        logger.info(f"[{section['label']}] API异常，跳过")
+                        continue
+                    probe_items = probe_result.get("data", {}).get("list", [])
+                    if not probe_items:
+                        logger.info(f"[{section['label']}] 无数据，跳过")
+                        continue
+                except Exception:
+                    logger.info(f"[{section['label']}] 探测异常，跳过")
+                    continue
+
+            logger.info(f"▶ 爬取板块: {section['label']}")
             page = 1
 
             while page <= MAX_PAGES:
@@ -1003,11 +1024,12 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
 def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
     """爬取 ZUEL - 中南财经政法大学（基于URL去重的增量爬取）
-    
+
     增量策略：
     - 不记录页码，通过 URL 去重判断是否需要继续
     - 每页检查所有 URL 是否已存在，全部存在则停止爬取
     - 最多爬取 MAX_PAGES 页
+    - 支持全职和实习两种岗位类型
     """
     source = "zuel"
     source_name = source_config["name"]
@@ -1015,129 +1037,164 @@ def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
     crawl_logger.log_source_start(source, source_name)
 
-    page = 1
     count = 0
 
+    categories = [
+        {"api_type": "1", "job_type": None, "label": "全职岗位"},  # 使用API返回值
+        {"api_type": "2", "job_type": "实习", "label": "实习岗位"},
+    ]
+
     try:
-        while page <= MAX_PAGES:
+        for category in categories:
             if max_items > 0 and count >= max_items:
-                logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
                 break
 
-            list_url = source_config["list_url"].format(page=page, limit=10)
-            full_url = urljoin(base_url, list_url)
+            # 实习板块先探测第一页是否有数据
+            if category["job_type"] == "实习":
+                probe_url = source_config["list_url"].format(page=1, limit=10, type=category["api_type"])
+                probe_full_url = urljoin(base_url, probe_url)
+                probe_resp = fetch_with_retry(probe_full_url)
+                if not probe_resp:
+                    logger.info(f"[{category['label']}] 探测失败，跳过")
+                    continue
+                try:
+                    probe_result = probe_resp.json()
+                    if probe_result.get("code") != 0:
+                        logger.info(f"[{category['label']}] API异常，跳过")
+                        continue
+                    probe_items = probe_result.get("data", [])
+                    if not probe_items:
+                        logger.info(f"[{category['label']}] 无数据，跳过")
+                        continue
+                except Exception:
+                    logger.info(f"[{category['label']}] 探测异常，跳过")
+                    continue
 
-            response = fetch_with_retry(full_url)
-            if not response:
-                logger.warning(f"第 {page} 页列表获取失败，停止爬取")
-                break
+            logger.info(f"▶ 爬取类型: {category['label']}")
+            page = 1
 
-            try:
-                result = response.json()
-                if result.get("code") != 0:
-                    crawl_logger.log_error(source, Exception(f"API返回code={result.get('code')}"), f"列表页 {page}")
+            while page <= MAX_PAGES:
+                if max_items > 0 and count >= max_items:
+                    logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
                     break
 
-                items = result.get("data", [])
-                if not items:
-                    logger.debug(f"第 {page} 页无数据，爬取结束")
+                list_url = source_config["list_url"].format(page=page, limit=10, type=category["api_type"])
+                full_url = urljoin(base_url, list_url)
+
+                response = fetch_with_retry(full_url)
+                if not response:
+                    logger.warning(f"[{category['label']}] 第 {page} 页列表获取失败，停止爬取")
                     break
 
-                logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
-
-                # 检查当前页所有 URL 是否都已存在（覆盖模式下跳过此检查）
-                if not OVERWRITE_MODE:
-                    page_urls = [f"https://jyzx.zuel.edu.cn/home/career/internship?id={item.get('id')}" 
-                                for item in items if item.get('id')]
-                    existing_count = sum(1 for url in page_urls if url_exists(url))
-                    
-                    if existing_count == len(page_urls) and len(page_urls) > 0:
-                        logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                try:
+                    result = response.json()
+                    if result.get("code") != 0:
+                        crawl_logger.log_error(source, Exception(f"API返回code={result.get('code')}"), f"{category['label']} 列表页 {page}")
                         break
 
-                for item in items:
-                    if max_items > 0 and count >= max_items:
+                    items = result.get("data", [])
+                    if not items:
+                        logger.debug(f"[{category['label']}] 第 {page} 页无数据，爬取结束")
                         break
 
-                    item_id = item.get("id")
-                    if not item_id:
-                        continue
+                    logger.info(f"[{category['label']}] 第 {page} 页: 获取到 {len(items)} 条列表项")
 
-                    view_url = f"https://jyzx.zuel.edu.cn/home/career/internship?id={item_id}"
+                    # 检查当前页所有 URL 是否都已存在（覆盖模式下跳过此检查）
+                    if not OVERWRITE_MODE:
+                        page_urls = [f"https://jyzx.zuel.edu.cn/home/career/internship?id={item.get('id')}"
+                                    for item in items if item.get('id')]
+                        existing_count = sum(1 for url in page_urls if url_exists(url))
 
-                    if not OVERWRITE_MODE and url_exists(view_url):
-                        continue
+                        if existing_count == len(page_urls) and len(page_urls) > 0:
+                            logger.info(f"[{category['label']}] 第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                            break
 
-                    detail_url = source_config["detail_url"].format(id=item_id)
-                    full_detail_url = urljoin(base_url, detail_url)
+                    for item in items:
+                        if max_items > 0 and count >= max_items:
+                            break
 
-                    detail_response = fetch_with_retry(full_detail_url)
-                    if not detail_response:
-                        continue
+                        item_id = item.get("id")
+                        if not item_id:
+                            continue
 
-                    try:
-                        detail_data = detail_response.json().get("data", {})
+                        view_url = f"https://jyzx.zuel.edu.cn/home/career/internship?id={item_id}"
 
-                        company_name = detail_data.get("companyName") or detail_data.get("title", "")
-                        position_name = detail_data.get("jobName", "")
-                        title = f"{position_name} | {company_name}" if position_name and company_name else (position_name or company_name)
+                        if not OVERWRITE_MODE and url_exists(view_url):
+                            continue
 
-                        description_parts = []
-                        zpgw = detail_data.get("zpgw", "")
-                        if zpgw:
-                            description_parts.append(f"【岗位职责】{zpgw}")
-                        xcfl = detail_data.get("xcfl", "")
-                        if xcfl:
-                            description_parts.append(f"【薪酬福利】{xcfl}")
-                        description = "\n\n".join(description_parts)
+                        detail_url = source_config["detail_url"].format(id=item_id)
+                        full_detail_url = urljoin(base_url, detail_url)
 
-                        requirements = detail_data.get("zpdxjtj", "")
+                        detail_response = fetch_with_retry(full_detail_url)
+                        if not detail_response:
+                            continue
 
-                        contact_parts = []
-                        recruit_contact = detail_data.get("recruitContact", "")
-                        recruit_mobile = detail_data.get("recruitMobile", "")
-                        lxfs = detail_data.get("lxfs", "")
-                        if recruit_contact:
-                            contact_parts.append(f"联系人: {recruit_contact}")
-                        if recruit_mobile:
-                            contact_parts.append(f"电话: {recruit_mobile}")
-                        if lxfs:
-                            contact_parts.append(f"邮箱: {lxfs}")
-                        contact = " | ".join(contact_parts)
+                        try:
+                            detail_data = detail_response.json().get("data", {})
 
-                        location = detail_data.get("area", "") or detail_data.get("workCity", "")
+                            company_name = detail_data.get("companyName") or detail_data.get("title", "")
+                            position_name = detail_data.get("jobName", "")
+                            title = f"{position_name} | {company_name}" if position_name and company_name else (position_name or company_name)
 
-                        job = {
-                            "title": title,
-                            "company": company_name,
-                            "location": location,
-                            "salary": detail_data.get("salary", "面议"),
-                            "education": detail_data.get("education", ""),
-                            "requirements": requirements,
-                            "description": truncate_text(description),
-                            "contact": contact,
-                            "publish_date": normalize_date(detail_data.get("createTime", "")),
-                            "source": source,
-                            "university": source_name,
-                            "source_url": view_url,
-                            "apply_url": view_url,
-                        }
+                            description_parts = []
+                            zpgw = detail_data.get("zpgw", "")
+                            if zpgw:
+                                description_parts.append(f"【岗位职责】{zpgw}")
+                            xcfl = detail_data.get("xcfl", "")
+                            if xcfl:
+                                description_parts.append(f"【薪酬福利】{xcfl}")
+                            description = "\n\n".join(description_parts)
 
-                        yield job
-                        count += 1
+                            requirements = detail_data.get("zpdxjtj", "")
 
-                        if count % 20 == 0:
-                            logger.info(f"  已完成: {count} 条")
+                            contact_parts = []
+                            recruit_contact = detail_data.get("recruitContact", "")
+                            recruit_mobile = detail_data.get("recruitMobile", "")
+                            lxfs = detail_data.get("lxfs", "")
+                            if recruit_contact:
+                                contact_parts.append(f"联系人: {recruit_contact}")
+                            if recruit_mobile:
+                                contact_parts.append(f"电话: {recruit_mobile}")
+                            if lxfs:
+                                contact_parts.append(f"邮箱: {lxfs}")
+                            contact = " | ".join(contact_parts)
 
-                    except Exception as e:
-                        crawl_logger.log_error(source, e, f"解析详情页: {full_detail_url}")
-                        continue
+                            location = detail_data.get("area", "") or detail_data.get("workCity", "")
 
-                page += 1
+                            job_type = category["job_type"] or detail_data.get("jobType", "全职")
 
-            except Exception as e:
-                crawl_logger.log_error(source, e, f"解析列表页: {page}")
-                break
+                            job = {
+                                "title": title,
+                                "company": company_name,
+                                "location": location,
+                                "salary": detail_data.get("salary", "面议"),
+                                "education": detail_data.get("education", ""),
+                                "requirements": requirements,
+                                "description": truncate_text(description),
+                                "contact": contact,
+                                "publish_date": normalize_date(detail_data.get("createTime", "")),
+                                "job_type": job_type,
+                                "source": source,
+                                "university": source_name,
+                                "source_url": view_url,
+                                "apply_url": view_url,
+                            }
+
+                            yield job
+                            count += 1
+
+                            if count % 20 == 0:
+                                logger.info(f"  已完成: {count} 条")
+
+                        except Exception as e:
+                            crawl_logger.log_error(source, e, f"解析详情页: {full_detail_url}")
+                            continue
+
+                    page += 1
+
+                except Exception as e:
+                    crawl_logger.log_error(source, e, f"解析列表页: {page}")
+                    break
     except KeyboardInterrupt:
         logger.warning("用户中断爬取")
     except Exception as e:
@@ -1173,6 +1230,26 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
         for pos_type in position_types:
             if max_items > 0 and count >= max_items:
                 break
+
+            # 实习板块先探测第一页是否有数据
+            if pos_type["job_type"] == "实习":
+                probe_data = {"pageNo": "1", "positionType": pos_type["type"]}
+                probe_resp = fetch_with_retry(urljoin(base_url, source_config["list_url"]), method="POST", data=probe_data)
+                if not probe_resp:
+                    logger.info(f"[{pos_type['label']}] 探测失败，跳过")
+                    continue
+                try:
+                    probe_result = probe_resp.json()
+                    if probe_result.get("state") != 1:
+                        logger.info(f"[{pos_type['label']}] API异常，跳过")
+                        continue
+                    probe_items = probe_result.get("object", {}).get("list", [])
+                    if not probe_items:
+                        logger.info(f"[{pos_type['label']}] 无数据，跳过")
+                        continue
+                except Exception:
+                    logger.info(f"[{pos_type['label']}] 探测异常，跳过")
+                    continue
 
             logger.info(f"▶ 爬取类型: {pos_type['label']}")
             page = 1
@@ -1384,6 +1461,23 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
         for list_config in list_configs:
             if max_items > 0 and count >= max_items:
                 break
+
+            # 实习板块先探测第一页是否有数据
+            if list_config["job_type"] == "实习":
+                probe_url = list_config["url_pattern"].format(page=1)
+                probe_resp = fetch_with_retry(probe_url)
+                if not probe_resp:
+                    logger.info(f"[{list_config['label']}] 探测失败，跳过")
+                    continue
+                try:
+                    probe_soup = BeautifulSoup(probe_resp.text, 'html.parser')
+                    probe_list_box = probe_soup.find('div', class_='listb J_allListBox')
+                    if not probe_list_box or not probe_list_box.find_all('div', class_='td-j-name'):
+                        logger.info(f"[{list_config['label']}] 无数据，跳过")
+                        continue
+                except Exception:
+                    logger.info(f"[{list_config['label']}] 探测异常，跳过")
+                    continue
 
             logger.info(f"▶ 爬取板块: {list_config['label']}")
             page = 1
