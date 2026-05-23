@@ -25,6 +25,8 @@ export interface JobAlertEmailData {
     university?: string;
     source_url?: string;
     matchedKeywords: string[];
+    reason?: string;
+    relevanceScore?: number;
   }>;
 }
 
@@ -78,11 +80,12 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
   const unsubscribeUrl = `${baseUrl}/unsubscribe?alert_id=${alertId}&email=${encodeURIComponent(to)}`;
 
   const jobListHtml = jobs.map((job, index) => `
-    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3b82f6;">
+    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid ${job.relevanceScore && job.relevanceScore >= 80 ? '#10b981' : job.relevanceScore && job.relevanceScore >= 60 ? '#3b82f6' : '#f59e0b'};">
       <h3 style="margin: 0 0 10px 0; font-size: 16px;">
         <a href="${job.source_url || '#'}" style="color: #3b82f6; text-decoration: none;">
           ${index + 1}. ${job.title}
         </a>
+        ${job.relevanceScore ? `<span style="margin-left: 8px; font-size: 12px; background: ${job.relevanceScore >= 80 ? '#d1fae5' : job.relevanceScore >= 60 ? '#dbeafe' : '#fef3c7'}; color: ${job.relevanceScore >= 80 ? '#059669' : job.relevanceScore >= 60 ? '#1d4ed8' : '#d97706'}; padding: 2px 8px; border-radius: 12px;">匹配度 ${job.relevanceScore}%</span>` : ''}
       </h3>
       ${job.company ? `<p style="margin: 5px 0; color: #666;"><strong>公司：</strong>${job.company}</p>` : ''}
       ${job.location ? `<p style="margin: 5px 0; color: #666;"><strong>地点：</strong>${job.location}</p>` : ''}
@@ -91,6 +94,9 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
       <p style="margin: 5px 0; color: #3b82f6;">
         <strong>匹配关键词：</strong>${job.matchedKeywords.join('、')}
       </p>
+      ${job.reason ? `<p style="margin: 5px 0; color: #059669; font-style: italic; background: #ecfdf5; padding: 8px 12px; border-radius: 6px;">
+        <strong>AI推荐理由：</strong>${job.reason}
+      </p>` : ''}
     </div>
   `).join('');
 
@@ -113,8 +119,8 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
     <body>
       <div class="container">
         <div class="header">
-          <h1 style="margin: 0;">🎯 职位提醒</h1>
-          <p style="margin: 10px 0 0 0; opacity: 0.9;">发现 ${jobs.length} 个匹配岗位</p>
+          <h1 style="margin: 0;">🤖 AI 职位推荐</h1>
+          <p style="margin: 10px 0 0 0; opacity: 0.9;">发现 ${jobs.length} 个匹配岗位（智能语义分析）</p>
         </div>
         <div class="content">
           <p>您好！</p>
@@ -143,23 +149,27 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
   `;
 
   const text = `
-职位提醒 - 发现 ${jobs.length} 个匹配岗位
+职位提醒 - 发现 ${jobs.length} 个匹配岗位（AI 智能推荐）
 
 您好！
 
 根据您订阅的关键词：${keywordStr}
 
-我们发现了以下 ${jobs.length} 个新岗位：
+AI 助手为您筛选出以下 ${jobs.length} 个最相关的岗位：
 
 ${jobs.map((job, i) => `
-${i + 1}. ${job.title}
+${i + 1}. ${job.title}${job.relevanceScore ? ` [匹配度 ${job.relevanceScore}%]` : ''}
    公司：${job.company || '未知'}
    地点：${job.location || '未知'}
    薪资：${job.salary || '面议'}
    来源：${job.university || '未知'}
    匹配关键词：${job.matchedKeywords.join('、')}
+   ${job.reason ? `AI推荐理由：${job.reason}` : ''}
    链接：${job.source_url || ''}
 `).join('\n')}
+
+---
+本邮件由 AI 智能匹配引擎生成，根据您的订阅偏好进行语义分析和岗位推荐。
 
 如需修改订阅设置，请登录系统设置页面。
 
@@ -173,7 +183,7 @@ ${unsubscribeUrl}
     const info = await transporter.sendMail({
       from: `"${config.fromName}" <${config.fromEmail}>`,
       to,
-      subject: `【职位提醒】发现 ${jobs.length} 个匹配岗位 - ${keywordStr}`,
+      subject: `【AI职位推荐】发现 ${jobs.length} 个匹配岗位 - ${keywordStr}`,
       text,
       html,
     });

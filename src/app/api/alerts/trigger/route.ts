@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllEnabledAlerts, recordAlertHistory, initJobAlertsTables } from '@/lib/job-alerts-db';
-import { matchJobsToAllAlerts, getNewJobsSince } from '@/lib/job-matcher';
+import { getNewJobsSince } from '@/lib/job-matcher';
+import { aiMatchJobsToAllAlerts } from '@/lib/ai-matcher';
 import { sendJobAlertEmail, isEmailConfigured } from '@/lib/email-service';
 import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   try {
     initJobAlertsTables();
-    
+
     const body = await request.json();
     const { since_minutes = 30, job_ids } = body;
-    
+
     const alerts = getAllEnabledAlerts();
-    
+
     if (alerts.length === 0) {
       return NextResponse.json({
         success: true,
@@ -20,12 +21,12 @@ export async function POST(request: NextRequest) {
         results: [],
       });
     }
-    
+
     let jobs;
     if (job_ids && Array.isArray(job_ids) && job_ids.length > 0) {
       const { getDb } = require('@/lib/db-utils');
       const db = getDb();
-      
+
       const placeholders = job_ids.map(() => '?').join(',');
       const rows = db.prepare(`
         SELECT id, title, company, location, salary, description, requirements,
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
         FROM jobs
         WHERE id IN (${placeholders})
       `).all(...job_ids) as Record<string, unknown>[];
-      
+
       jobs = rows.map(row => ({
         id: row.id as number,
         title: row.title as string,
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
       const since = new Date(Date.now() - since_minutes * 60 * 1000);
       jobs = getNewJobsSince(since);
     }
-    
+
     if (jobs.length === 0) {
       return NextResponse.json({
         success: true,
@@ -66,22 +67,24 @@ export async function POST(request: NextRequest) {
         results: [],
       });
     }
-    
-    logger.info(`Processing ${jobs.length} jobs against ${alerts.length} alerts`);
-    
-    const matchedResults = matchJobsToAllAlerts(jobs, alerts);
-    
+
+    logger.info(`Processing ${jobs.length} jobs against ${alerts.length} alerts (AI matching)`);
+
+    const matchedResults = await aiMatchJobsToAllAlerts(jobs, alerts);
+
     const results: Array<{
       alert_id: number;
       email: string;
       matched_count: number;
       email_sent: boolean;
       error?: string;
+      ai_model?: string;
     }> = [];
-    
+
     const emailConfigured = isEmailConfigured();
-    
-    for (const [alertId, matchedJobs] of matchedResults) {
+    const jobMap = new Map(jobs.map(j => [j.id, j]));
+
+    for (const [alertId, aiResult] of matchedResults) {
       const alert = alerts.find(a => a.id === alertId);
 
       if (!alert) continue;
@@ -97,7 +100,7 @@ export async function POST(request: NextRequest) {
           results.push({
             alert_id: alertId,
             email: alert.email,
-            matched_count: matchedJobs.length,
+            matched_count: aiResult.matched_jobs.length,
             email_sent: false,
             error: `频率限制：距上次推送不足 ${alert.min_notify_interval} 分钟（还需 ${remainingMin} 分钟）`,
           });
@@ -105,51 +108,60 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      const jobIds = matchedJobs.map(m => m.job.id);
+      const jobIds = aiResult.matched_jobs.map(m => m.job_id);
       let emailSent = false;
       let errorMessage: string | undefined;
-      
+
       if (emailConfigured) {
         const emailData = {
           to: alert.email,
           alertId: alert.id,
           keywords: alert.keywords,
-          jobs: matchedJobs.map(m => ({
-            id: m.job.id,
-            title: m.job.title,
-            company: m.job.company,
-            location: m.job.location,
-            salary: m.job.salary,
-            source: m.job.source,
-            university: m.job.university,
-            source_url: m.job.source_url,
-            matchedKeywords: m.matchedKeywords,
-          })),
+          jobs: aiResult.matched_jobs.map(m => {
+            const job = jobMap.get(m.job_id);
+            return {
+              id: m.job_id,
+              title: job?.title || '',
+              company: job?.company || '',
+              location: job?.location || '',
+              salary: job?.salary || '',
+              source: job?.source || '',
+              university: job?.university || '',
+              source_url: job?.source_url || '',
+              matchedKeywords: m.matched_keywords,
+              reason: m.reason,
+              relevanceScore: m.relevance_score,
+            };
+          }),
         };
-        
+
         const emailResult = await sendJobAlertEmail(emailData);
         emailSent = emailResult.success;
         errorMessage = emailResult.error;
       } else {
         errorMessage = 'Email service not configured';
       }
-      
+
       recordAlertHistory(alertId, jobIds, emailSent, errorMessage);
-      
+
       results.push({
         alert_id: alertId,
         email: alert.email,
-        matched_count: matchedJobs.length,
+        matched_count: aiResult.matched_jobs.length,
         email_sent: emailSent,
         error: errorMessage,
+        ai_model: aiResult.model_used,
       });
-      
-      logger.info(`Alert ${alertId} processed: ${matchedJobs.length} matches, email ${emailSent ? 'sent' : 'failed'}`);
+
+      logger.info(
+        `Alert ${alertId} processed: ${aiResult.matched_jobs.length} matches, ` +
+        `email ${emailSent ? 'sent' : 'failed'}, model=${aiResult.model_used || 'N/A'}`
+      );
     }
-    
+
     return NextResponse.json({
       success: true,
-      message: `Processed ${jobs.length} jobs, ${results.length} alerts triggered`,
+      message: `Processed ${jobs.length} jobs, ${results.length} alerts triggered (AI mode)`,
       jobs_processed: jobs.length,
       alerts_triggered: results.length,
       results,

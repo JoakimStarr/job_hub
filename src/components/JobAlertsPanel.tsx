@@ -39,6 +39,7 @@ interface PreviewJob {
   source_url?: string;
   matchedKeywords: string[];
   matchScore: number;
+  reason?: string;
 }
 
 const SOURCE_OPTIONS = [
@@ -370,7 +371,7 @@ export default function JobAlertsPanel() {
               ) : (
                 <>
                   <div style={{ marginBottom: 16, fontSize: 14, color: '#4b5563' }}>
-                    从最近 {previewModal.totalJobs} 个岗位中匹配到 <strong>{previewModal.matchedCount}</strong> 个岗位
+                    AI 从最近 {previewModal.totalJobs} 个岗位中匹配到 <strong>{previewModal.matchedCount}</strong> 个岗位
                   </div>
                   
                   {previewModal.jobs.length === 0 ? (
@@ -385,6 +386,7 @@ export default function JobAlertsPanel() {
                             borderRadius: 8,
                             border: '1px solid #e5e7eb',
                             background: '#fff',
+                            borderLeft: `4px solid ${job.matchScore >= 80 ? '#10b981' : job.matchScore >= 60 ? '#3b82f6' : '#f59e0b'}`,
                           }}
                         >
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -405,8 +407,13 @@ export default function JobAlertsPanel() {
                               <div style={{ fontSize: 12, color: '#3b82f6', marginTop: 6 }}>
                                 匹配关键词：{job.matchedKeywords.join('、')}
                               </div>
+                              {job.reason ? (
+                                <div style={{ fontSize: 12, color: '#059669', marginTop: 8, padding: '8px 12px', background: '#ecfdf5', borderRadius: 6, fontStyle: 'italic' }}>
+                                  AI推荐：{job.reason}
+                                </div>
+                              ) : null}
                             </div>
-                            <Badge tone="blue">{job.matchScore}%</Badge>
+                            <Badge tone={job.matchScore >= 80 ? 'emerald' : job.matchScore >= 60 ? 'blue' : 'amber'}>{job.matchScore}%</Badge>
                           </div>
                         </div>
                       ))}
