@@ -2001,9 +2001,26 @@ def parse_ai_response(ai_result: dict) -> list:
     Returns:
         匹配的岗位列表
     """
+    import json as _json
+    import re
+
     try:
         content = ai_result['choices'][0]['message']['content']
-        cleaned = content.replace('```json\n', '').replace('```\n', '').strip()
+
+        # 提取 ```json ... ``` 代码块中的内容
+        json_match = re.search(r'```(?:json)?\s*\n?(.*?)\n?```', content, re.DOTALL)
+        if json_match:
+            cleaned = json_match.group(1).strip()
+        else:
+            # 没有代码块，尝试直接清理
+            cleaned = content.replace('```json', '').replace('```', '').strip()
+
+        # 找到第一个 { 和最后一个 }，提取完整JSON对象
+        start_idx = cleaned.find('{')
+        end_idx = cleaned.rfind('}')
+        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+            cleaned = cleaned[start_idx:end_idx + 1]
+
         parsed = _json.loads(cleaned)
 
         if not parsed.get('matched') or not isinstance(parsed['matched'], list):
@@ -2056,9 +2073,12 @@ def send_email_direct(to: str, subject: str, html_content: str, text_content: st
         return False
 
     try:
+        import email.utils
+        from email.header import Header
+
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
-        msg['From'] = f"{smtp_from_name} <{smtp_from_email}>"
+        msg['From'] = email.utils.formataddr((Header(smtp_from_name, 'utf-8').encode(), smtp_from_email))
         msg['To'] = to
 
         msg.attach(MIMEText(text_content, 'plain', 'utf-8'))
