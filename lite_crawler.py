@@ -1134,7 +1134,7 @@ def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                             company_name = detail_data.get("companyName") or detail_data.get("title", "")
                             position_name = detail_data.get("jobName", "")
-                            title = f"{position_name} | {company_name}" if position_name and company_name else (position_name or company_name)
+                            title = position_name or company_name
 
                             description_parts = []
                             zpgw = detail_data.get("zpgw", "")
@@ -1329,7 +1329,7 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
                             position_info = position_list[0] if position_list else {}
 
                             raw_title = detail.get("title", "")
-                            title = f"{raw_title} | {company}" if raw_title and company else (raw_title or company)
+                            title = raw_title or company
 
                             location = position_info.get("cityName", "")
                             deadline = detail.get("endTime", "")
@@ -1752,7 +1752,7 @@ def trigger_job_alerts(since_minutes: int = 30):
         logger.info("正在检查职位提醒订阅...")
         
         # 调用API触发职位提醒
-        api_url = "http://localhost:3000/api/alerts/trigger"
+        api_url = os.environ.get("API_BASE_URL", "http://localhost:3001") + "/api/alerts/trigger"
         
         response = requests.post(
             api_url,
@@ -1777,7 +1777,7 @@ def trigger_job_alerts(since_minutes: int = 30):
             logger.warning(f"职位提醒API请求失败: HTTP {response.status_code}")
             
     except requests.exceptions.ConnectionError:
-        logger.warning("无法连接到职位提醒API，请确保Web服务正在运行 (http://localhost:3000)")
+        logger.warning(f"无法连接到职位提醒API，请确保Web服务正在运行 ({api_url})")
     except Exception as e:
         logger.warning(f"触发职位提醒失败: {e}")
 

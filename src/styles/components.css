@@ -685,6 +685,50 @@
   gap: 0;
 }
 
+.job-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 10px 18px;
+  background: var(--card);
+  border-bottom: 2px solid var(--border);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+  user-select: none;
+}
+
+.job-list-header-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.job-list-header-title {
+  min-width: 200px;
+}
+
+.job-list-header-meta {
+  display: flex;
+  gap: 16px;
+}
+
+.job-list-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-width: 80px;
+  justify-content: flex-end;
+}
+
 .job-list-item {
   background: var(--panel);
   border-bottom: 1px solid var(--border);
@@ -825,6 +869,31 @@
 
 /* Mobile responsive for list view */
 @media (max-width: 768px) {
+  .job-list-header {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+
+  .job-list-header-title {
+    min-width: 100px;
+  }
+
+  .job-list-header-meta {
+    gap: 8px;
+  }
+
+  .job-list-header-meta span:not(:first-child) {
+    display: none;
+  }
+
+  .job-list-header-right {
+    min-width: auto;
+  }
+
+  .job-list-header-right span:last-child {
+    display: none;
+  }
+
   .job-list-item {
     padding: 10px 12px;
     flex-direction: column;

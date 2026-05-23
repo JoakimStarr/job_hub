@@ -106,6 +106,23 @@ export default function HomePage() {
             ) : (
               <>
                 <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" key={viewMode}>
+                  {viewMode === 'list' && (
+                    <div className="job-list-header" role="rowheader" aria-label="列表表头">
+                      <div className="job-list-header-main">
+                        <span className="job-list-header-title">岗位名称</span>
+                        <div className="job-list-header-meta">
+                          <span>地点</span>
+                          <span>薪资</span>
+                          <span>类型</span>
+                          <span>学历</span>
+                        </div>
+                      </div>
+                      <div className="job-list-header-right">
+                        <span>发布日期</span>
+                        <span>操作</span>
+                      </div>
+                    </div>
+                  )}
                   {jobs.map((job) => (
                     <div key={job.id} role="listitem">
                       <JobCard job={job} viewMode={viewMode} onToggleFavorite={() => handleToggleFavorite(job)} onClick={(target) => setSelectedJob(target)} onTagClick={handleTagClick} />

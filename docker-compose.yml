@@ -42,10 +42,16 @@ services:
       MAX_LOGIN_ATTEMPTS: ${MAX_LOGIN_ATTEMPTS:-5}
       LOGIN_LOCKOUT_MINUTES: ${LOGIN_LOCKOUT_MINUTES:-15}
       
-      # AI服务配置 (可选)
-      AI_API_KEY: ${AI_API_KEY:-}
-      AI_BASE_URL: ${AI_BASE_URL:-}
-      AI_MODEL: ${AI_MODEL:-}
+      # AI服务配置
+      AI_PROVIDER: ${AI_PROVIDER:-zhipu}
+      ZHIPU_API_KEY: ${ZHIPU_API_KEY:-}
+      ZHIPU_MODEL: ${ZHIPU_MODEL:-glm-4.7-flash}
+      SILICONFLOW_API_KEY: ${SILICONFLOW_API_KEY:-}
+      SILICONFLOW_MODEL: ${SILICONFLOW_MODEL:-Qwen/Qwen2.5-7B-Instruct}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      AI_TEMPERATURE: ${AI_TEMPERATURE:-0.3}
+      AI_MAX_TOKENS: ${AI_MAX_TOKENS:-8192}
       
     volumes:
       # 数据持久化

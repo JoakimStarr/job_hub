@@ -353,8 +353,8 @@ class ApiGetStrategy(BaseCrawlStrategy):
             # 岗位名称: jobName
             position_name = detail.get("jobName", "")
 
-            # title格式: 岗位 | 公司
-            title = f"{position_name} | {company_name}" if position_name and company_name else (position_name or company_name)
+            # title使用纯岗位名称，company独立保存
+            title = position_name or company_name
 
             if not title:
                 return None

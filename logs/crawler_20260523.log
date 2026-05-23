@@ -1,0 +1,183 @@
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | set_level:328 | 日志级别设置为: INFO
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | init_database:618 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | start_session:340 | ======================================================================
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | start_session:341 | 轻量化单线程爬虫启动
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | start_session:342 | 启动时间: 2026-05-23 11:25:53
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | start_session:343 | Python版本: 3.13.13
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | start_session:344 | 工作目录: /home/joakim/Project/job_hub
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | start_session:345 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | start_session:346 | ======================================================================
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | main:1868 | 数据源: dufe
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | main:1871 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | main:1872 | ======================================================================
+
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | crawl_source:1800 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | log_source_start:388 | ----------------------------------------------------------------------
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | log_source_start:389 | ▶ 开始爬取 [东北财经大学] (source: dufe)
+2026-05-23 11:25:53 | [32mINFO[0m | lite_crawler | crawl_platform:1254 | ▶ 爬取类型: 全职岗位
+2026-05-23 11:25:54 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 11:26:04 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 2 页: 获取到 15 条列表项
+2026-05-23 11:26:09 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 20 条
+2026-05-23 11:26:15 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 3 页: 获取到 15 条列表项
+2026-05-23 11:26:25 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 40 条
+2026-05-23 11:26:27 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 4 页: 获取到 15 条列表项
+2026-05-23 11:26:38 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 5 页: 获取到 15 条列表项
+2026-05-23 11:26:40 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 60 条
+2026-05-23 11:26:50 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 6 页: 获取到 15 条列表项
+2026-05-23 11:26:56 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 80 条
+2026-05-23 11:27:03 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 7 页: 获取到 15 条列表项
+2026-05-23 11:27:12 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 100 条
+2026-05-23 11:27:17 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 8 页: 获取到 15 条列表项
+2026-05-23 13:00:08 | [33mWARNING[0m | lite_crawler | log_retry:444 | [http] 重试请求 (1/5): https://career.dufe.edu.cn/f/recruitmentinfo/ajax_show...
+2026-05-23 13:00:13 | [33mWARNING[0m | lite_crawler | log_retry:444 | [http] 重试请求 (2/5): https://career.dufe.edu.cn/f/recruitmentinfo/ajax_show...
+2026-05-23 13:00:24 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 9 页: 获取到 15 条列表项
+2026-05-23 13:00:27 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 120 条
+2026-05-23 13:00:36 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 10 页: 获取到 15 条列表项
+2026-05-23 13:00:43 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 140 条
+2026-05-23 13:00:48 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 11 页: 获取到 15 条列表项
+2026-05-23 13:00:59 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 160 条
+2026-05-23 13:01:01 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 12 页: 获取到 15 条列表项
+2026-05-23 13:01:14 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 13 页: 获取到 15 条列表项
+2026-05-23 13:01:16 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 180 条
+2026-05-23 13:01:27 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 14 页: 获取到 15 条列表项
+2026-05-23 13:01:34 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 200 条
+2026-05-23 13:01:40 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 15 页: 获取到 15 条列表项
+2026-05-23 13:01:53 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 220 条
+2026-05-23 13:01:55 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 16 页: 获取到 15 条列表项
+2026-05-23 13:02:09 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 17 页: 获取到 15 条列表项
+2026-05-23 13:02:12 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 240 条
+2026-05-23 13:02:21 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 18 页: 获取到 15 条列表项
+2026-05-23 13:02:27 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 260 条
+2026-05-23 13:02:34 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 19 页: 获取到 15 条列表项
+2026-05-23 13:02:45 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 280 条
+2026-05-23 13:02:49 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 20 页: 获取到 15 条列表项
+2026-05-23 13:03:03 | [32mINFO[0m | lite_crawler | crawl_platform:1254 | ▶ 爬取类型: 实习岗位
+2026-05-23 13:03:04 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 13:03:06 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 300 条
+2026-05-23 13:03:15 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 2 页: 获取到 15 条列表项
+2026-05-23 13:03:20 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 320 条
+2026-05-23 13:03:26 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 3 页: 获取到 15 条列表项
+2026-05-23 13:03:37 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 340 条
+2026-05-23 13:03:43 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 4 页: 获取到 15 条列表项
+2026-05-23 13:04:04 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 5 页: 获取到 15 条列表项
+2026-05-23 13:04:06 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 360 条
+2026-05-23 13:04:19 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 6 页: 获取到 1 条列表项
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 7 页: 获取到 15 条列表项
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | crawl_platform:1288 | [实习岗位] 第 7 页所有 URL 已存在 (15/15)，停止爬取
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | log_source_end:396 | ✓ [东北财经大学] 完成: 373 条 | 获取:230 | 耗时:5907.7s
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | main:1893 | 
+======================================================================
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | main:1894 | 爬取完成 | 总耗时 5907.7s
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | main:1895 | 成功入库: 230 条 (已过滤过期数据)
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | main:1896 | ======================================================================
+
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:355 | ======================================================================
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:356 | 爬取会话结束
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:357 | 总耗时: 5907.69秒
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:358 | 总岗位数: 230
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:359 | 成功插入: 230
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:360 | 重复跳过: 143
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:361 | 错误次数: 0
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:362 | 重试次数: 2
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:365 | ----------------------------------------------------------------------
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:366 | 各数据源统计:
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:368 |   [      dufe] 获取: 230 | 成功: 230 | 重复: 143 | 错误:   0
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | end_session:375 | ======================================================================
+2026-05-23 13:04:21 | [32mINFO[0m | lite_crawler | trigger_job_alerts:1752 | 正在检查职位提醒订阅...
+2026-05-23 13:04:21 | [33mWARNING[0m | lite_crawler | trigger_job_alerts:1777 | 职位提醒API请求失败: HTTP 500
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | set_level:328 | 日志级别设置为: INFO
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | init_database:618 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | start_session:340 | ======================================================================
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | start_session:341 | 轻量化单线程爬虫启动
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | start_session:342 | 启动时间: 2026-05-23 13:20:53
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | start_session:343 | Python版本: 3.13.13
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | start_session:344 | 工作目录: /home/joakim/Project/job_hub
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | start_session:345 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | start_session:346 | ======================================================================
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | main:1868 | 数据源: dufe
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | main:1871 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | main:1872 | ======================================================================
+
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | crawl_source:1800 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | log_source_start:388 | ----------------------------------------------------------------------
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | log_source_start:389 | ▶ 开始爬取 [东北财经大学] (source: dufe)
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | crawl_platform:1254 | ▶ 爬取类型: 全职岗位
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 13:20:53 | [32mINFO[0m | lite_crawler | crawl_platform:1288 | [全职岗位] 第 1 页所有 URL 已存在 (15/15)，停止爬取
+2026-05-23 13:20:54 | [32mINFO[0m | lite_crawler | crawl_platform:1254 | ▶ 爬取类型: 实习岗位
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | crawl_platform:1288 | [实习岗位] 第 1 页所有 URL 已存在 (15/15)，停止爬取
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | log_source_end:396 | ✓ [东北财经大学] 完成: 0 条 | 获取:0 | 耗时:1.9s
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | main:1893 | 
+======================================================================
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | main:1894 | 爬取完成 | 总耗时 1.9s
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | main:1895 | 成功入库: 0 条 (已过滤过期数据)
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | main:1896 | ======================================================================
+
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:355 | ======================================================================
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:356 | 爬取会话结束
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:357 | 总耗时: 1.86秒
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:358 | 总岗位数: 0
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:359 | 成功插入: 0
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:360 | 重复跳过: 0
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:361 | 错误次数: 0
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:362 | 重试次数: 0
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:365 | ----------------------------------------------------------------------
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:366 | 各数据源统计:
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:368 |   [      dufe] 获取:   0 | 成功:   0 | 重复:   0 | 错误:   0
+2026-05-23 13:20:55 | [32mINFO[0m | lite_crawler | end_session:375 | ======================================================================
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | set_level:328 | 日志级别设置为: INFO
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | init_database:618 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | start_session:340 | ======================================================================
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | start_session:341 | 轻量化单线程爬虫启动
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | start_session:342 | 启动时间: 2026-05-23 13:21:02
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | start_session:343 | Python版本: 3.13.13
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | start_session:344 | 工作目录: /home/joakim/Project/job_hub
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | start_session:345 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | start_session:346 | ======================================================================
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | main:1868 | 数据源: cufe
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | main:1871 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | main:1872 | ======================================================================
+
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | crawl_source:1800 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | log_source_start:388 | ----------------------------------------------------------------------
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | log_source_start:389 | ▶ 开始爬取 [中央财经大学] (source: cufe)
+2026-05-23 13:21:02 | [32mINFO[0m | lite_crawler | crawl_platform:1254 | ▶ 爬取类型: 全职岗位
+2026-05-23 13:21:03 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 13:21:08 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 2 页: 获取到 15 条列表项
+2026-05-23 13:21:09 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 20 条
+2026-05-23 13:21:11 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 3 页: 获取到 15 条列表项
+2026-05-23 13:21:14 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 40 条
+2026-05-23 13:21:15 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 4 页: 获取到 15 条列表项
+2026-05-23 13:21:19 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 5 页: 获取到 15 条列表项
+2026-05-23 13:21:19 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 60 条
+2026-05-23 13:21:22 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 6 页: 获取到 15 条列表项
+2026-05-23 13:21:23 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 80 条
+2026-05-23 13:21:25 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 7 页: 获取到 15 条列表项
+2026-05-23 13:21:28 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 100 条
+2026-05-23 13:21:30 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 8 页: 获取到 15 条列表项
+2026-05-23 13:21:34 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 9 页: 获取到 15 条列表项
+2026-05-23 13:21:34 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 120 条
+2026-05-23 13:21:38 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 10 页: 获取到 15 条列表项
+2026-05-23 13:21:39 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 140 条
+2026-05-23 13:21:41 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 11 页: 获取到 15 条列表项
+2026-05-23 13:21:43 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 160 条
+2026-05-23 13:21:45 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 12 页: 获取到 15 条列表项
+2026-05-23 13:21:48 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 13 页: 获取到 15 条列表项
+2026-05-23 13:21:48 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 180 条
+2026-05-23 13:21:51 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 14 页: 获取到 15 条列表项
+2026-05-23 13:21:52 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 200 条
+2026-05-23 13:21:54 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 15 页: 获取到 15 条列表项
+2026-05-23 13:21:56 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 220 条
+2026-05-23 13:21:57 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 16 页: 获取到 15 条列表项
+2026-05-23 13:22:00 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 17 页: 获取到 15 条列表项
+2026-05-23 13:22:01 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 240 条
+2026-05-23 13:22:04 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 18 页: 获取到 15 条列表项
+2026-05-23 13:22:34 | [33mWARNING[0m | lite_crawler | log_retry:444 | [http] 重试请求 (1/5): http://scc.cufe.edu.cn/f/recruitmentinfo/ajax_show...
+2026-05-23 13:22:38 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 260 条
+2026-05-23 13:22:41 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 19 页: 获取到 15 条列表项
+2026-05-23 13:22:43 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 280 条
+2026-05-23 13:22:44 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [全职岗位] 第 20 页: 获取到 15 条列表项
+2026-05-23 13:22:47 | [32mINFO[0m | lite_crawler | crawl_platform:1254 | ▶ 爬取类型: 实习岗位
+2026-05-23 13:22:48 | [32mINFO[0m | lite_crawler | crawl_platform:1280 | [实习岗位] 第 1 页: 获取到 15 条列表项
+2026-05-23 13:22:49 | [32mINFO[0m | lite_crawler | crawl_platform:1403 |   已完成: 300 条

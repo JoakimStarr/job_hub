@@ -126,8 +126,8 @@ def parse_swufe_detail(html: str, url: str, source: str, university: str,
 
         company = clean_company_name(company.lstrip(">").strip()) if company else "未知公司"
 
-        # title格式: 岗位 | 公司
-        title = f"{position_name} | {company}" if position_name and company else (position_name or company)
+        # title使用纯岗位名称，company独立保存
+        title = position_name or company
 
         # 提取职位描述和投递要求 - 从 main_div 或 jobsshow 查找 describe
         description_parts = []

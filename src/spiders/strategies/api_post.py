@@ -852,8 +852,8 @@ class ApiPostStrategy(BaseCrawlStrategy):
             corp_info = detail.get("corporationinfo", {})
             company = clean_company_name(corp_info.get("name", ""))
 
-            # title格式: raw_title | company
-            title = f"{raw_title} | {company}" if raw_title and company else (raw_title or company)
+            # title使用纯岗位名称，company独立保存
+            title = raw_title or company
 
             position_list = detail.get("recruitmentPositionList", [])
             position_info = position_list[0] if position_list else {}

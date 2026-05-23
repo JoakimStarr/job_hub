@@ -167,9 +167,12 @@ export async function POST(request: NextRequest) {
       results,
     });
   } catch (error) {
-    console.error('Failed to trigger alerts:', error);
+    const errMsg = error instanceof Error ? error.message : String(error);
+    const errStack = error instanceof Error ? error.stack : '';
+    console.error('Failed to trigger alerts:', errMsg);
+    console.error('Stack:', errStack);
     return NextResponse.json(
-      { success: false, error: 'Failed to trigger alerts' },
+      { success: false, error: `Failed to trigger alerts: ${errMsg}` },
       { status: 500 }
     );
   }
