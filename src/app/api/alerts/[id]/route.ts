@@ -65,7 +65,7 @@ export async function PUT(
     }
     
     const body = await request.json();
-    const { email, keywords, sources, locations, industries, education, enabled } = body;
+    const { email, keywords, sources, locations, industries, education, exclude_keywords, enabled } = body;
     
     const updates: Record<string, unknown> = {};
     
@@ -75,6 +75,7 @@ export async function PUT(
     if (locations !== undefined) updates.locations = locations;
     if (industries !== undefined) updates.industries = industries;
     if (education !== undefined) updates.education = education;
+    if (exclude_keywords !== undefined) updates.exclude_keywords = exclude_keywords;
     if (enabled !== undefined) updates.enabled = enabled;
     
     const success = updateAlert(alertId, updates);

@@ -9,6 +9,7 @@ export interface MatchRule {
   locations?: string[];
   industries?: string[];
   education?: string;
+  exclude_keywords?: string[];
 }
 
 export interface MatchedJob {
@@ -19,6 +20,33 @@ export interface MatchedJob {
 
 function normalizeText(text: string): string {
   return text.toLowerCase().replace(/[\s\-_]/g, '');
+}
+
+/**
+ * 排除关键词匹配
+ * 搜索范围与 matchKeywords 相同：title + company + tags + industry + description(前200字) + requirements(前100字)
+ * 如果岗位包含任一排除关键词，返回 true（应排除）
+ */
+function matchExcludeKeywords(job: JobItem, excludeKeywords?: string[]): boolean {
+  if (!excludeKeywords || excludeKeywords.length === 0) return false;
+
+  const searchText = normalizeText([
+    job.title,
+    job.company,
+    job.tags,
+    job.industry,
+    (job.description || '').slice(0, 200),
+    (job.requirements || '').slice(0, 100),
+  ].filter(Boolean).join(' '));
+
+  for (const keyword of excludeKeywords) {
+    const normalizedKeyword = normalizeText(keyword);
+    if (normalizedKeyword && searchText.includes(normalizedKeyword)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /**
@@ -106,6 +134,11 @@ function matchEducation(job: JobItem, education?: string): boolean {
  * 排序按命中关键词数降序（关键词多的排前面）
  */
 export function matchJobToRule(job: JobItem, rule: MatchRule): MatchedJob | null {
+  // 排除关键词检查：如果岗位包含任一排除关键词，直接排除
+  if (matchExcludeKeywords(job, rule.exclude_keywords)) {
+    return null;
+  }
+
   const matchedKeywords = matchKeywords(job, rule.keywords);
 
   // OR 逻辑：至少命中一个关键词
@@ -145,6 +178,7 @@ export function matchJobsToAlert(jobs: JobItem[], alert: JobAlert): MatchedJob[]
     locations: alert.locations,
     industries: alert.industries,
     education: alert.education,
+    exclude_keywords: alert.exclude_keywords,
   };
 
   // 防重复推送：获取该订阅已推送过的 job_ids

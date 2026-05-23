@@ -9,6 +9,7 @@ export interface JobAlert {
   locations: string[];
   industries: string[];
   education?: string;
+  exclude_keywords?: string[];  // 排除关键词（包含这些词的岗位不推送）
   min_notify_interval?: number;  // 最短推送间隔（分钟），默认0不限制
   enabled: boolean;
   last_notified_at?: string;
@@ -71,6 +72,13 @@ export function initJobAlertsTables(): void {
     // 字段已存在，忽略
   }
 
+  // 迁移：为已有表添加 exclude_keywords 字段
+  try {
+    db.exec(`ALTER TABLE user_job_alerts ADD COLUMN exclude_keywords TEXT`);
+  } catch {
+    // 字段已存在，忽略
+  }
+
   logger.info('Job alerts tables initialized');
 }
 
@@ -80,7 +88,7 @@ export function getAllEnabledAlerts(): JobAlert[] {
 
   const rows = db.prepare(`
     SELECT id, email, keywords, sources, locations, industries, education,
-           min_notify_interval, enabled, last_notified_at, notify_count, created_at
+           exclude_keywords, min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     WHERE enabled = 1
     ORDER BY created_at DESC
@@ -94,6 +102,7 @@ export function getAllEnabledAlerts(): JobAlert[] {
     locations: JSON.parse(row.locations as string || '[]'),
     industries: JSON.parse(row.industries as string || '[]'),
     education: row.education as string | undefined,
+    exclude_keywords: JSON.parse(row.exclude_keywords as string || '[]'),
     min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,
     last_notified_at: row.last_notified_at as string | undefined,
@@ -108,7 +117,7 @@ export function getAllAlerts(): JobAlert[] {
 
   const rows = db.prepare(`
     SELECT id, email, keywords, sources, locations, industries, education,
-           min_notify_interval, enabled, last_notified_at, notify_count, created_at
+           exclude_keywords, min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     ORDER BY created_at DESC
   `).all() as Record<string, unknown>[];
@@ -121,6 +130,7 @@ export function getAllAlerts(): JobAlert[] {
     locations: JSON.parse(row.locations as string || '[]'),
     industries: JSON.parse(row.industries as string || '[]'),
     education: row.education as string | undefined,
+    exclude_keywords: JSON.parse(row.exclude_keywords as string || '[]'),
     min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,
     last_notified_at: row.last_notified_at as string | undefined,
@@ -134,8 +144,8 @@ export function createAlert(alert: Omit<JobAlert, 'id' | 'notify_count' | 'creat
   const db = getDb();
 
   const result = db.prepare(`
-    INSERT INTO user_job_alerts (email, keywords, sources, locations, industries, education, min_notify_interval, enabled)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO user_job_alerts (email, keywords, sources, locations, industries, education, exclude_keywords, min_notify_interval, enabled)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     alert.email,
     JSON.stringify(alert.keywords),
@@ -143,6 +153,7 @@ export function createAlert(alert: Omit<JobAlert, 'id' | 'notify_count' | 'creat
     JSON.stringify(alert.locations || []),
     JSON.stringify(alert.industries || []),
     alert.education || null,
+    JSON.stringify(alert.exclude_keywords || []),
     alert.min_notify_interval || 0,
     alert.enabled !== false ? 1 : 0
   );
@@ -186,6 +197,10 @@ export function updateAlert(id: number, updates: Partial<JobAlert>): boolean {
     fields.push('education = ?');
     values.push(updates.education);
   }
+  if (updates.exclude_keywords !== undefined) {
+    fields.push('exclude_keywords = ?');
+    values.push(JSON.stringify(updates.exclude_keywords));
+  }
   if (updates.min_notify_interval !== undefined) {
     fields.push('min_notify_interval = ?');
     values.push(updates.min_notify_interval);
@@ -217,7 +232,7 @@ export function getAlertById(id: number): JobAlert | null {
 
   const row = db.prepare(`
     SELECT id, email, keywords, sources, locations, industries, education,
-           min_notify_interval, enabled, last_notified_at, notify_count, created_at
+           exclude_keywords, min_notify_interval, enabled, last_notified_at, notify_count, created_at
     FROM user_job_alerts
     WHERE id = ?
   `).get(id) as Record<string, unknown> | undefined;
@@ -232,6 +247,7 @@ export function getAlertById(id: number): JobAlert | null {
     locations: JSON.parse(row.locations as string || '[]'),
     industries: JSON.parse(row.industries as string || '[]'),
     education: row.education as string | undefined,
+    exclude_keywords: JSON.parse(row.exclude_keywords as string || '[]'),
     min_notify_interval: (row.min_notify_interval as number) || 0,
     enabled: row.enabled === 1,
     last_notified_at: row.last_notified_at as string | undefined,

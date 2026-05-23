@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    const { email, keywords, sources, locations, industries, education } = body;
+    const { email, keywords, sources, locations, industries, education, exclude_keywords } = body;
     
     if (!email || !keywords || !Array.isArray(keywords) || keywords.length === 0) {
       return NextResponse.json(
@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       locations: locations || [],
       industries: industries || [],
       education,
+      exclude_keywords: exclude_keywords || [],
       enabled: true,
     });
     
