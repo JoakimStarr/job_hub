@@ -941,11 +941,15 @@
 .star-icon {
   font-size: 20px;
   color: var(--panel-border);
+  -webkit-text-stroke: 1px var(--text);
+  text-stroke: 1px var(--text);
   transition: color var(--transition), transform var(--transition);
 }
 
 .star-icon-active {
   color: var(--warning);
+  -webkit-text-stroke: 1px var(--warning);
+  text-stroke: 1px var(--warning);
   animation: starPop 0.35s ease;
 }
 

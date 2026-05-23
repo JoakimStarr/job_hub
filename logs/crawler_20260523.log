@@ -2033,3 +2033,555 @@ sqlite3.OperationalError: no such table: job_alerts
 ======================================================================
 2026-05-23 15:01:46 | [32mINFO[0m | lite_crawler | test_email_mode:2381 | ✨ 测试完成!
 2026-05-23 15:01:46 | [32mINFO[0m | lite_crawler | test_email_mode:2382 | ======================================================================
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | main:2553 | ======================================================================
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | main:2554 | 📧 测试邮件模式
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | main:2555 |    将从数据库获取最近 100 条岗位记录
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | main:2556 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | main:2557 | ======================================================================
+
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2167 | ======================================================================
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2168 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2169 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2170 | ======================================================================
+
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2173 | 📥 步骤1: 从数据库查询最近 100 条岗位记录...
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2181 | ✅ 找到 100 条岗位记录 (ID范围: 14435 - 14534)
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2184 | 
+📋 岗位样本:
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2188 |    ... 还有 95 条记录
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2189 | 
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2192 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2200 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2203 | 
+📋 订阅列表:
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2208 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2211 | 
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2214 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2225 | ==================================================
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2226 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2227 |    关键词: (未设置)
+2026-05-23 15:04:28 | [32mINFO[0m | lite_crawler | test_email_mode:2250 |    🤖 正在调用AI分析 100 个岗位...
+2026-05-23 15:04:29 | [31mERROR[0m | lite_crawler | test_email_mode:2333 |    ❌ 处理失败: AI API错误 429: {"error":{"code":"1305","message":"该模型当前访问量过大，请您稍后再试"}}
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2344 | 
+======================================================================
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2345 | 📊 处理完成汇总
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2346 | ======================================================================
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2347 | 
+⏱️  总耗时: 1.1s
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2348 | 📊 岗位数: 100
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2349 | 📊 订阅数: 1
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2350 | 
+📈 结果统计:
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2351 |    ✅ 发送成功: 0
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2352 |    ❌ 发送失败: 1
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2353 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2354 |    📊 成功率: 0.0%
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2357 | 
+📋 详细结果:
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2378 |    💥 订阅1 (Joakimstarr@foxmail.com): 错误: AI API错误 429: {"error":{"code":"1305","message":"该模型当前访问量过大，请您稍后再试"}}
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2380 | 
+======================================================================
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2381 | ✨ 测试完成!
+2026-05-23 15:04:29 | [32mINFO[0m | lite_crawler | test_email_mode:2382 | ======================================================================
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | main:2553 | ======================================================================
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | main:2554 | 📧 测试邮件模式
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | main:2555 |    将从数据库获取最近 100 条岗位记录
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | main:2556 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | main:2557 | ======================================================================
+
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2167 | ======================================================================
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2168 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2169 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2170 | ======================================================================
+
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2173 | 📥 步骤1: 从数据库查询最近 100 条岗位记录...
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2181 | ✅ 找到 100 条岗位记录 (ID范围: 14435 - 14534)
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2184 | 
+📋 岗位样本:
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2188 |    ... 还有 95 条记录
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2189 | 
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2192 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2200 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2203 | 
+📋 订阅列表:
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2208 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2211 | 
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2214 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2225 | ==================================================
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2226 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2227 |    关键词: (未设置)
+2026-05-23 15:08:09 | [32mINFO[0m | lite_crawler | test_email_mode:2250 |    🤖 正在调用AI分析 100 个岗位...
+2026-05-23 15:08:14 | [31mERROR[0m | lite_crawler | test_email_mode:2333 |    ❌ 处理失败: HTTPSConnectionPool(host='open.bigmodel.cn', port=443): Max retries exceeded with url: /api/paas/v4/chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)')))
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2344 | 
+======================================================================
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2345 | 📊 处理完成汇总
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2346 | ======================================================================
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2347 | 
+⏱️  总耗时: 5.0s
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2348 | 📊 岗位数: 100
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2349 | 📊 订阅数: 1
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2350 | 
+📈 结果统计:
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2351 |    ✅ 发送成功: 0
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2352 |    ❌ 发送失败: 1
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2353 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2354 |    📊 成功率: 0.0%
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2357 | 
+📋 详细结果:
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2378 |    💥 订阅1 (Joakimstarr@foxmail.com): 错误: HTTPSConnectionPool(host='open.bigmodel.cn', port=443): Max retries exceeded with url: /api/paas/v4/chat/completions (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1032)')))
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2380 | 
+======================================================================
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2381 | ✨ 测试完成!
+2026-05-23 15:08:14 | [32mINFO[0m | lite_crawler | test_email_mode:2382 | ======================================================================
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | main:2553 | ======================================================================
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | main:2554 | 📧 测试邮件模式
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | main:2555 |    将从数据库获取最近 100 条岗位记录
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | main:2556 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | main:2557 | ======================================================================
+
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2167 | ======================================================================
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2168 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2169 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2170 | ======================================================================
+
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2173 | 📥 步骤1: 从数据库查询最近 100 条岗位记录...
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2181 | ✅ 找到 100 条岗位记录 (ID范围: 14435 - 14534)
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2184 | 
+📋 岗位样本:
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2188 |    ... 还有 95 条记录
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2189 | 
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2192 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2200 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2203 | 
+📋 订阅列表:
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2208 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2211 | 
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2214 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2225 | ==================================================
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2226 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2227 |    关键词: (未设置)
+2026-05-23 15:12:55 | [32mINFO[0m | lite_crawler | test_email_mode:2250 |    🤖 正在调用AI分析 100 个岗位...
+2026-05-23 15:13:56 | [31mERROR[0m | lite_crawler | test_email_mode:2333 |    ❌ 处理失败: HTTPSConnectionPool(host='open.bigmodel.cn', port=443): Read timed out. (read timeout=60)
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2344 | 
+======================================================================
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2345 | 📊 处理完成汇总
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2346 | ======================================================================
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2347 | 
+⏱️  总耗时: 60.3s
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2348 | 📊 岗位数: 100
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2349 | 📊 订阅数: 1
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2350 | 
+📈 结果统计:
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2351 |    ✅ 发送成功: 0
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2352 |    ❌ 发送失败: 1
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2353 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2354 |    📊 成功率: 0.0%
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2357 | 
+📋 详细结果:
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2378 |    💥 订阅1 (Joakimstarr@foxmail.com): 错误: HTTPSConnectionPool(host='open.bigmodel.cn', port=443): Read timed out. (read timeout=60)
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2380 | 
+======================================================================
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2381 | ✨ 测试完成!
+2026-05-23 15:13:56 | [32mINFO[0m | lite_crawler | test_email_mode:2382 | ======================================================================
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | main:2553 | ======================================================================
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | main:2554 | 📧 测试邮件模式
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | main:2555 |    将从数据库获取最近 100 条岗位记录
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | main:2556 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | main:2557 | ======================================================================
+
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2167 | ======================================================================
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2168 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2169 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2170 | ======================================================================
+
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2173 | 📥 步骤1: 从数据库查询最近 100 条岗位记录...
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2181 | ✅ 找到 100 条岗位记录 (ID范围: 14435 - 14534)
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2184 | 
+📋 岗位样本:
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2188 |    ... 还有 95 条记录
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2189 | 
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2192 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2200 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2203 | 
+📋 订阅列表:
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2208 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2211 | 
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2214 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2225 | ==================================================
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2226 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2227 |    关键词: (未设置)
+2026-05-23 15:14:12 | [32mINFO[0m | lite_crawler | test_email_mode:2250 |    🤖 正在调用AI分析 100 个岗位...
+2026-05-23 15:14:13 | [31mERROR[0m | lite_crawler | test_email_mode:2333 |    ❌ 处理失败: AI API错误 429: {"error":{"code":"1302","message":"您的账户已达到速率限制，请您控制请求频率"}}
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2344 | 
+======================================================================
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2345 | 📊 处理完成汇总
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2346 | ======================================================================
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2347 | 
+⏱️  总耗时: 0.9s
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2348 | 📊 岗位数: 100
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2349 | 📊 订阅数: 1
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2350 | 
+📈 结果统计:
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2351 |    ✅ 发送成功: 0
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2352 |    ❌ 发送失败: 1
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2353 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2354 |    📊 成功率: 0.0%
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2357 | 
+📋 详细结果:
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2378 |    💥 订阅1 (Joakimstarr@foxmail.com): 错误: AI API错误 429: {"error":{"code":"1302","message":"您的账户已达到速率限制，请您控制请求频率"}}
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2380 | 
+======================================================================
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2381 | ✨ 测试完成!
+2026-05-23 15:14:13 | [32mINFO[0m | lite_crawler | test_email_mode:2382 | ======================================================================
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | main:2553 | ======================================================================
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | main:2554 | 📧 测试邮件模式
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | main:2555 |    将从数据库获取最近 100 条岗位记录
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | main:2556 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | main:2557 | ======================================================================
+
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2167 | ======================================================================
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2168 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2169 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2170 | ======================================================================
+
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2173 | 📥 步骤1: 从数据库查询最近 100 条岗位记录...
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2181 | ✅ 找到 100 条岗位记录 (ID范围: 14435 - 14534)
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2184 | 
+📋 岗位样本:
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2186 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2188 |    ... 还有 95 条记录
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2189 | 
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2192 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2200 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2203 | 
+📋 订阅列表:
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2208 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2211 | 
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2214 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2225 | ==================================================
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2226 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2227 |    关键词: (未设置)
+2026-05-23 15:41:14 | [32mINFO[0m | lite_crawler | test_email_mode:2250 |    🤖 正在调用AI分析 100 个岗位...
+2026-05-23 15:42:14 | [31mERROR[0m | lite_crawler | test_email_mode:2333 |    ❌ 处理失败: HTTPSConnectionPool(host='open.bigmodel.cn', port=443): Read timed out. (read timeout=60)
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2344 | 
+======================================================================
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2345 | 📊 处理完成汇总
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2346 | ======================================================================
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2347 | 
+⏱️  总耗时: 60.2s
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2348 | 📊 岗位数: 100
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2349 | 📊 订阅数: 1
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2350 | 
+📈 结果统计:
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2351 |    ✅ 发送成功: 0
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2352 |    ❌ 发送失败: 1
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2353 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2354 |    📊 成功率: 0.0%
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2357 | 
+📋 详细结果:
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2378 |    💥 订阅1 (Joakimstarr@foxmail.com): 错误: HTTPSConnectionPool(host='open.bigmodel.cn', port=443): Read timed out. (read timeout=60)
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2380 | 
+======================================================================
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2381 | ✨ 测试完成!
+2026-05-23 15:42:14 | [32mINFO[0m | lite_crawler | test_email_mode:2382 | ======================================================================
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | main:2603 | ======================================================================
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | main:2604 | 📧 测试邮件模式
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | main:2605 |    将从数据库获取最近 100 条岗位记录
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | main:2606 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | main:2607 | ======================================================================
+
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2217 | ======================================================================
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2218 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2219 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2220 | ======================================================================
+
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2223 | 📥 步骤1: 从数据库查询最近 100 条岗位记录...
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2231 | ✅ 找到 100 条岗位记录 (ID范围: 14435 - 14534)
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2234 | 
+📋 岗位样本:
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2236 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2236 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2236 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2236 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2236 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2238 |    ... 还有 95 条记录
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2239 | 
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2242 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2250 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2253 | 
+📋 订阅列表:
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2258 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2261 | 
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2264 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2275 | ==================================================
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2276 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2277 |    关键词: (未设置)
+2026-05-23 15:46:10 | [32mINFO[0m | lite_crawler | test_email_mode:2300 |    🤖 正在调用AI分析 100 个岗位...
+2026-05-23 15:46:10 | [33mWARNING[0m | lite_crawler | call_zhipu_ai_with_fallback:1823 |   AI模型 glm-4.7-flash 限流(429)，尝试下一个... (1/7)
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | call_zhipu_ai_with_fallback:1819 |   AI fallback: 使用备用模型 glm-4-flash-250414 成功 (主模型 glm-4.7-flash 不可用)
+2026-05-23 15:46:38 | [31mERROR[0m | lite_crawler | parse_ai_response:2026 | 解析AI响应失败: name '_json' is not defined
+2026-05-23 15:46:38 | [31mERROR[0m | lite_crawler | parse_ai_response:2027 | 原始响应: {'choices': [{'finish_reason': 'stop', 'index': 0, 'message': {'content': '```json\n{\n  "matched": [\n    {\n      "job_id": 14532,\n      "matched_keywords": ["量化模型", "数据报告", "监控系统", "风险监控"],\n      "reason": "参与策略研发和风险监控，符合量化金融方向",\n      "relevance_score": 90\n    },\n    {\n      "job_id": 14531,\n      "matched_keywords": ["金融创新", "政策研究", "企业调研", "资本市场"],\n      "reason": "国家级金融创新平台运营工作，符合金融专业背景",\n      "relevance_score": 85\n    },\n    {\n      "job_id": 14529,\n      "matched_keywords"
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2308 |    ✅ AI分析完成 (28.1s): 匹配 0 个岗位
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2311 |    ⚠️  无匹配岗位
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2394 | 
+======================================================================
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2395 | 📊 处理完成汇总
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2396 | ======================================================================
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2397 | 
+⏱️  总耗时: 28.1s
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2398 | 📊 岗位数: 100
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2399 | 📊 订阅数: 1
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2400 | 
+📈 结果统计:
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2401 |    ✅ 发送成功: 0
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2402 |    ❌ 发送失败: 0
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2403 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2404 |    📊 成功率: 0.0%
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2407 | 
+📋 详细结果:
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2428 |    ⚠️  订阅1 (Joakimstarr@foxmail.com): 无匹配
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2430 | 
+======================================================================
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2431 | ✨ 测试完成!
+2026-05-23 15:46:38 | [32mINFO[0m | lite_crawler | test_email_mode:2432 | ======================================================================
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | main:2605 | ======================================================================
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | main:2606 | 📧 测试邮件模式
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | main:2607 |    将从数据库获取最近 50 条岗位记录
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | main:2608 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | main:2609 | ======================================================================
+
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2219 | ======================================================================
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2220 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2221 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2222 | ======================================================================
+
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2225 | 📥 步骤1: 从数据库查询最近 50 条岗位记录...
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2233 | ✅ 找到 50 条岗位记录 (ID范围: 14485 - 14534)
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2236 | 
+📋 岗位样本:
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2238 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2238 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2238 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2238 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2238 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2240 |    ... 还有 45 条记录
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2241 | 
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2244 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2252 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2255 | 
+📋 订阅列表:
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2260 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2263 | 
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2266 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2277 | ==================================================
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2278 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2279 |    关键词: (未设置)
+2026-05-23 15:51:30 | [32mINFO[0m | lite_crawler | test_email_mode:2302 |    🤖 正在调用AI分析 50 个岗位...
+2026-05-23 15:51:30 | [33mWARNING[0m | lite_crawler | call_zhipu_ai_with_fallback:1823 |   AI模型 glm-4.7-flash 限流(429)，尝试下一个... (1/7)
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | call_zhipu_ai_with_fallback:1819 |   AI fallback: 使用备用模型 glm-4-flash-250414 成功 (主模型 glm-4.7-flash 不可用)
+2026-05-23 15:51:54 | [31mERROR[0m | lite_crawler | parse_ai_response:2028 | 解析AI响应失败: Extra data: line 65 column 1 (char 2049)
+2026-05-23 15:51:54 | [31mERROR[0m | lite_crawler | parse_ai_response:2029 | 原始响应: {'choices': [{'finish_reason': 'stop', 'index': 0, 'message': {'content': '```json\n{\n  "matched": [\n    {\n      "job_id": 14532,\n      "matched_keywords": ["量化模型", "回测", "组合测算", "自动化数据报告", "监控系统", "风险监控", "算法执行效果", "技术对接"],\n      "reason": "量化金融方向岗位，符合硕士学历要求",\n      "relevance_score": 95\n    },\n    {\n      "job_id": 14531,\n      "matched_keywords": ["金融创新试点平台", "政策研究", "政府服务", "政策咨询", "企业调研", "资本市场", "投融资路演", "材料撰写", "业务审核", "数据统计"],\n      "reason": "经济金融类岗位，符合硕士学历要求",\n      "releva
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2310 |    ✅ AI分析完成 (24.5s): 匹配 0 个岗位
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2313 |    ⚠️  无匹配岗位
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2396 | 
+======================================================================
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2397 | 📊 处理完成汇总
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2398 | ======================================================================
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2399 | 
+⏱️  总耗时: 24.5s
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2400 | 📊 岗位数: 50
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2401 | 📊 订阅数: 1
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2402 | 
+📈 结果统计:
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2403 |    ✅ 发送成功: 0
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2404 |    ❌ 发送失败: 0
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2405 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2406 |    📊 成功率: 0.0%
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2409 | 
+📋 详细结果:
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2430 |    ⚠️  订阅1 (Joakimstarr@foxmail.com): 无匹配
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2432 | 
+======================================================================
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2433 | ✨ 测试完成!
+2026-05-23 15:51:54 | [32mINFO[0m | lite_crawler | test_email_mode:2434 | ======================================================================
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | main:2620 | ======================================================================
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | main:2621 | 📧 测试邮件模式
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | main:2622 |    将从数据库获取最近 50 条岗位记录
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | main:2623 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | main:2624 | ======================================================================
+
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2234 | ======================================================================
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2235 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2236 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2237 | ======================================================================
+
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2240 | 📥 步骤1: 从数据库查询最近 50 条岗位记录...
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2248 | ✅ 找到 50 条岗位记录 (ID范围: 14485 - 14534)
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2251 | 
+📋 岗位样本:
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2253 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2253 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2253 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2253 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2253 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2255 |    ... 还有 45 条记录
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2256 | 
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2259 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2267 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2270 | 
+📋 订阅列表:
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2275 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2278 | 
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2281 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2292 | ==================================================
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2293 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2294 |    关键词: (未设置)
+2026-05-23 15:52:19 | [32mINFO[0m | lite_crawler | test_email_mode:2317 |    🤖 正在调用AI分析 50 个岗位...
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2325 |    ✅ AI分析完成 (101.8s): 匹配 26 个岗位
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2338 |    🎯 匹配岗位:
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2344 |       1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式 | 匹配度:95% | 关键词:
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2344 |       2. [14533] 万兴科技2026实习生春季招聘简章 | 匹配度:95% | 关键词:
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2344 |       3. [14532] 2026年春季校招 | 匹配度:95% | 关键词:
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2344 |       4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招 | 匹配度:95% | 关键词:
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2344 |       5. [14530] 北京市中尊律师事务所2026年实习招聘 | 匹配度:95% | 关键词:
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2346 |       ... 还有 21 个岗位
+2026-05-23 15:54:01 | [32mINFO[0m | lite_crawler | test_email_mode:2349 |    📧 正在发送邮件...
+2026-05-23 15:54:09 | [31mERROR[0m | lite_crawler | send_email_direct:2094 | ❌ 邮件发送失败 (Joakimstarr@foxmail.com): (550, b'The "From" header is missing or invalid. Please follow RFC5322, RFC2047, RFC822 standard protocol. https://service.mail.qq.com/detail/124/995.')
+2026-05-23 15:54:09 | [33mWARNING[0m | lite_crawler | test_email_mode:2389 |    ❌ 邮件发送失败!
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2411 | 
+======================================================================
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2412 | 📊 处理完成汇总
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2413 | ======================================================================
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2414 | 
+⏱️  总耗时: 109.8s
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2415 | 📊 岗位数: 50
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2416 | 📊 订阅数: 1
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2417 | 
+📈 结果统计:
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2418 |    ✅ 发送成功: 0
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2419 |    ❌ 发送失败: 1
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2420 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2421 |    📊 成功率: 0.0%
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2424 | 
+📋 详细结果:
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2445 |    ❌ 订阅1 (Joakimstarr@foxmail.com), 26个匹配: 失败: 邮件服务错误
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2447 | 
+======================================================================
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2448 | ✨ 测试完成!
+2026-05-23 15:54:09 | [32mINFO[0m | lite_crawler | test_email_mode:2449 | ======================================================================
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | main:2623 | ======================================================================
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | main:2624 | 📧 测试邮件模式
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | main:2625 |    将从数据库获取最近 50 条岗位记录
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | main:2626 |    直接调用职位提醒API进行分析和发送
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | main:2627 | ======================================================================
+
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2237 | ======================================================================
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2238 | 📧 测试邮件模式（直接AI分析）
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2239 |    流程: DB提取数据 -> AI智能分析 -> 发送邮件
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2240 | ======================================================================
+
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2243 | 📥 步骤1: 从数据库查询最近 50 条岗位记录...
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2251 | ✅ 找到 50 条岗位记录 (ID范围: 14485 - 14534)
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2254 | 
+📋 岗位样本:
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2256 |    1. [14534] 泰康基金管理有限公司2027届“泰YOUNG”实习生招聘正式启动 （开放暑期实习 - 泰康基金管理有限公司 (cufe)
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2256 |    2. [14533] 万兴科技2026实习生春季招聘简章 - 万兴科技集团股份有限公司 (cufe)
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2256 |    3. [14532] 2026年春季校招 - 上海喜岳投资管理有限公司 (cufe)
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2256 |    4. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招聘 - 北京股权交易中心有限公司 (cufe)
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2256 |    5. [14530] 北京市中尊律师事务所2026年实习招聘 - 北京市中尊律师事务所 (cufe)
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2258 |    ... 还有 45 条记录
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2259 | 
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2262 | 📥 步骤2: 从数据库查询订阅信息...
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2270 | ✅ 找到 1 个已启用的订阅
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2273 | 
+📋 订阅列表:
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2278 |    1. [1] Joakimstarr@foxmail.com | 关键词: 
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2281 | 
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2284 | 🤖 步骤3: 开始AI智能匹配分析...
+
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2295 | ==================================================
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2296 | 📬 处理订阅 1/1: ID=1, 邮箱=Joakimstarr@foxmail.com
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2297 |    关键词: (未设置)
+2026-05-23 15:54:42 | [32mINFO[0m | lite_crawler | test_email_mode:2320 |    🤖 正在调用AI分析 50 个岗位...
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2328 |    ✅ AI分析完成 (102.6s): 匹配 24 个岗位
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2341 |    🎯 匹配岗位:
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2347 |       1. [14532] 2026年春季校招 | 匹配度:100% | 关键词:硕士
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2347 |       2. [14531] 北京股权交易中心2026年经济金融类、市场营销类专业实习生招 | 匹配度:100% | 关键词:硕士
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2347 |       3. [14529] 中粮资本【综合金融中心】实习生招聘 | 匹配度:100% | 关键词:硕士
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2347 |       4. [14527] 永安期货2026年度“黄埔联盟”实习生暨2027届投研提前批 | 匹配度:100% | 关键词:硕士
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2347 |       5. [14524] 菜鸟集团2027届实习生招聘正式启动 | 匹配度:100% | 关键词:硕士
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2349 |       ... 还有 19 个岗位
+2026-05-23 15:56:25 | [32mINFO[0m | lite_crawler | test_email_mode:2352 |    📧 正在发送邮件...
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | send_email_direct:2093 | ✅ 邮件发送成功: Joakimstarr@foxmail.com
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2360 |    ✅ 邮件发送成功!
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2414 | 
+======================================================================
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2415 | 📊 处理完成汇总
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2416 | ======================================================================
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2417 | 
+⏱️  总耗时: 104.6s
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2418 | 📊 岗位数: 50
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2419 | 📊 订阅数: 1
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2420 | 
+📈 结果统计:
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2421 |    ✅ 发送成功: 1
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2422 |    ❌ 发送失败: 0
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2423 |    ⏭️  跳过(频率限制/无匹配): 0
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2424 |    📊 成功率: 100.0%
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2427 | 
+📋 详细结果:
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2448 |    ✅ 订阅1 (Joakimstarr@foxmail.com), 24个匹配 [AI直接分析]: 已发送
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2450 | 
+======================================================================
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2451 | ✨ 测试完成!
+2026-05-23 15:56:27 | [32mINFO[0m | lite_crawler | test_email_mode:2452 | ======================================================================

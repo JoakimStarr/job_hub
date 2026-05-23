@@ -125,8 +125,8 @@ export default function UsersPage() {
       <div className="grid-2">
         <SectionCard title="新建用户" description="管理员可以在这里创建新账号">
           <div className="grid" style={{ gap: 14 }}>
-            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>用户名</div><Input value={username} onChange={(event) => setUsername(event.target.value)} placeholder="例如 analyst01" /></label>
-            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>显示名称</div><Input value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="例如 数据分析同学" /></label>
+            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>用户名</div><Input type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="例如 analyst01" /></label>
+            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>显示名称</div><Input type="text" value={displayName} onChange={(event) => setDisplayName(event.target.value)} placeholder="例如 数据分析同学" /></label>
             <label><div style={{ marginBottom: 8, fontWeight: 700 }}>角色</div><Select value={role} onChange={(event) => setRole(event.target.value)}>{roles.map((item) => <option key={item.id} value={item.id}>{item.id}</option>)}</Select></label>
             <label><div style={{ marginBottom: 8, fontWeight: 700 }}>初始密码</div><Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder="至少 8 位" /></label>
             <label className="badge badge-slate" style={{ cursor: 'pointer', gap: 8 }}>

@@ -125,7 +125,8 @@ export function LoginClient() {
                   setMessage(data.message || '登录成功，正在跳转...');
                   
                   // 立即跳转（无延迟）
-                  router.replace(redirect);
+                  // router.replace(redirect);
+                  window.location.href = redirect;
                 } else {
                   throw new Error(data.error || '登录失败');
                 }
