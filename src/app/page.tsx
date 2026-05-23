@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
-import { Badge, Button, EmptyState, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton } from '@/components/ui';
+import { Badge, Button, EmptyState, JobCard, JobDetailModal, MetricCard, SectionCard, Skeleton, ViewToggle } from '@/components/ui';
 import { Pagination } from '@/components/Pagination';
 import { API } from '@/lib/api';
 import { useAppStore } from '@/store';
@@ -17,6 +17,7 @@ export default function HomePage() {
   const router = useRouter();
   const [selectedJob, setSelectedJob] = useState<JobItem | null>(null);
   const [page, setPage] = useState(1);
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('list');
 
   const { data: stats, error: statsError, loading: statsLoading, mutate: mutateStats } = useFetch<StatsOverview>(
     '/api/stats/overview',
@@ -93,14 +94,22 @@ export default function HomePage() {
             )}
           </SectionCard>
 
-          <SectionCard title="最新岗位" description="最近一周的岗位数据">
+          <SectionCard
+            title="最新岗位"
+            description="最近一周的岗位数据"
+            action={
+              <ViewToggle mode={viewMode} onToggle={() => setViewMode((m) => m === 'card' ? 'list' : 'card')} />
+            }
+          >
             {jobs.length === 0 ? (
               <EmptyState title="暂无岗位" description="当前数据库里还没有可展示的岗位。" />
             ) : (
               <>
-                <div className="grid" style={{ gap: '14px' }}>
+                <div className={`job-view-container ${viewMode === 'list' ? 'job-list' : 'grid'}`} style={{ gap: viewMode === 'list' ? 0 : 14 }} role="list" key={viewMode}>
                   {jobs.map((job) => (
-                    <JobCard key={job.id} job={job} onToggleFavorite={() => handleToggleFavorite(job)} onClick={(target) => setSelectedJob(target)} onTagClick={handleTagClick} />
+                    <div key={job.id} role="listitem">
+                      <JobCard job={job} viewMode={viewMode} onToggleFavorite={() => handleToggleFavorite(job)} onClick={(target) => setSelectedJob(target)} onTagClick={handleTagClick} />
+                    </div>
                   ))}
                 </div>
                 {totalPages > 1 && (

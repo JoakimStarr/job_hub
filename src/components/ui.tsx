@@ -555,13 +555,20 @@ export const FilterBar = ({ children }: { children: ReactNode }) => {
 };
 
 export const ViewToggle = memo(function ViewToggle({ mode, onToggle }: { mode: 'card' | 'list'; onToggle: () => void }) {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onToggle();
+  }, [onToggle]);
+
   return (
     <button
       type="button"
       className="view-toggle-btn"
-      onClick={onToggle}
+      onClick={handleClick}
       aria-label={mode === 'list' ? '切换为卡片视图' : '切换为列表视图'}
       title={mode === 'list' ? '切换为卡片视图' : '切换为列表视图'}
+      style={{ position: 'relative', zIndex: 10 }}
     >
       {mode === 'list' ? (
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
