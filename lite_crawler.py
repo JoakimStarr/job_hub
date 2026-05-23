@@ -1748,37 +1748,86 @@ def trigger_job_alerts(since_minutes: int = 30):
         since_minutes: 检查最近N分钟内新增的岗位
     """
     import requests
+    import json as _json
     
     try:
         logger.info("正在检查职位提醒订阅...")
         
-        # 调用API触发职位提醒
         api_url = os.environ.get("API_BASE_URL", "http://localhost:3001") + "/api/alerts/trigger"
+        logger.debug(f"  API地址: {api_url}")
+        logger.debug(f"  since_minutes: {since_minutes}")
         
         response = requests.post(
             api_url,
             json={"since_minutes": since_minutes},
-            timeout=60
+            timeout=120
         )
+        
+        logger.debug(f"  HTTP状态码: {response.status_code}")
         
         if response.status_code == 200:
             result = response.json()
+            
+            debug_info = result.get("_debug", {})
+            if debug_info:
+                logger.debug(f"  [DEBUG] 请求参数: {debug_info.get('request_params', {})}")
+                logger.debug(f"  [DEBUG] 订阅数量: {debug_info.get('alerts_count', '?')}")
+                logger.debug(f"  [DEBUG] 岗位数量: {debug_info.get('jobs_count', '?')}")
+                logger.debug(f"  [DEBUG] AI服务: {'可用' if debug_info.get('ai_service_available') else '不可用'}")
+                logger.debug(f"  [DEBUG] 邮件服务: {'已配置' if debug_info.get('email_configured') else '未配置'}")
+                
+                if debug_info.get('jobs_count', 0) == 0:
+                    db_total = debug_info.get('db_total_jobs', '?')
+                    latest = debug_info.get('db_latest_job', {})
+                    recent_cnt = debug_info.get('db_recent_jobs_count', '?')
+                    since_t = debug_info.get('since_time', '?')
+                    curr_t = debug_info.get('current_time', '?')
+                    logger.warning(f"  [DEBUG] 无新岗位! DB总岗位={db_total}, 最近岗位={latest}, 近{since_minutes}分钟内={recent_cnt}")
+                    logger.warning(f"  [DEBUG] 时间范围: 当前={curr_t}, 查询起始={since_t}")
+                    
+                    alerts_detail = debug_info.get('alerts_detail', [])
+                    if len(alerts_detail) == 0:
+                        logger.warning("  [DEBUG] 订阅表为空！没有找到任何已启用的订阅")
+                    else:
+                        for a in alerts_detail:
+                            logger.debug(f"  [DEBUG] 订阅 ID={a.get('id')} email={a.get('email')} keywords={a.get('keywords')} enabled={a.get('enabled')}")
+            
             if result.get("success"):
                 alerts_triggered = result.get("alerts_triggered", 0)
                 jobs_processed = result.get("jobs_processed", 0)
-                logger.info(f"职位提醒处理完成: 检查 {jobs_processed} 个岗位, 触发 {alerts_triggered} 个订阅")
+                elapsed = debug_info.get('elapsed_ms', '?')
+                logger.info(f"职位提醒处理完成: 检查 {jobs_processed} 个岗位, 触发 {alerts_triggered} 个订阅 (耗时{elapsed}ms)")
                 
-                # 打印详细结果
-                for r in result.get("results", []):
-                    status = "已发送" if r.get("email_sent") else "发送失败"
-                    logger.info(f"  订阅 {r.get('alert_id')} ({r.get('email')}): {r.get('matched_count')} 个匹配, 邮件{status}")
+                results_list = result.get("results", [])
+                for r in results_list:
+                    skip = r.get("skipped_reason")
+                    if skip:
+                        logger.info(f"  订阅 {r.get('alert_id')} ({r.get('email')}): 跳过 - {skip}")
+                    else:
+                        status = "已发送" if r.get("email_sent") else ("失败: " + str(r.get("error", ""))) if not r.get("email_sent") else "未发送"
+                        model = f" [{r.get('ai_model')}]" if r.get("ai_model") else ""
+                        logger.info(f"  订阅 {r.get('alert_id')} ({r.get('email')}): {r.get('matched_count')} 个匹配, 邮件{status}{model}")
+                    
+                if alerts_triggered == 0 and jobs_processed > 0:
+                    logger.warning(f"  有 {jobs_processed} 个岗位但无任何订阅匹配成功，可能原因:")
+                    logger.warning(f"    1. 订阅关键词与岗位不匹配")
+                    logger.warning(f"    2. 所有匹配的订阅被频率限制拦截")
+                    logger.warning(f"    3. AI服务返回空结果（检查AI配置是否正确）")
             else:
-                logger.warning(f"职位提醒API返回错误: {result.get('error', '未知错误')}")
+                error_msg = result.get("error", "未知错误")
+                err_debug = result.get("_debug", {}).get("error", "")
+                logger.warning(f"职位提醒API返回错误: {error_msg}")
+                if err_debug:
+                    logger.warning(f"  详细错误: {err_debug}")
         else:
+            response_text = response.text[:500] if response.text else "(empty)"
             logger.warning(f"职位提醒API请求失败: HTTP {response.status_code}")
+            logger.warning(f"  响应内容: {response_text}")
             
     except requests.exceptions.ConnectionError:
         logger.warning(f"无法连接到职位提醒API，请确保Web服务正在运行 ({api_url})")
+    except requests.exceptions.Timeout:
+        logger.warning(f"职位提醒API请求超时 (>120秒), API可能处理时间过长 ({api_url})")
     except Exception as e:
         logger.warning(f"触发职位提醒失败: {e}")
 

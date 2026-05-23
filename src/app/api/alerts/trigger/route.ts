@@ -6,19 +6,40 @@ import { sendJobAlertEmail, isEmailConfigured } from '@/lib/email-service';
 import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+  let debugInfo: Record<string, unknown> = {};
+
   try {
     initJobAlertsTables();
 
     const body = await request.json();
     const { since_minutes = 30, job_ids } = body;
 
+    debugInfo.request_params = { since_minutes, job_ids: job_ids?.length || 0, has_job_ids: !!job_ids };
+
     const alerts = getAllEnabledAlerts();
+    debugInfo.alerts_count = alerts.length;
+    debugInfo.alerts_detail = alerts.map(a => ({
+      id: a.id,
+      email: a.email,
+      keywords: a.keywords,
+      sources: a.sources,
+      locations: a.locations,
+      industries: a.industries,
+      education: a.education,
+      min_notify_interval: a.min_notify_interval,
+      enabled: a.enabled,
+      last_notified_at: a.last_notified_at,
+      notify_count: a.notify_count,
+    }));
 
     if (alerts.length === 0) {
+      logger.info(`[TRIGGER] 无已启用的订阅，直接返回`);
       return NextResponse.json({
         success: true,
         message: 'No enabled alerts found',
         results: [],
+        _debug: debugInfo,
       });
     }
 
@@ -27,11 +48,13 @@ export async function POST(request: NextRequest) {
       const { getDb } = require('@/lib/db-utils');
       const db = getDb();
 
+      debugInfo.db_path = process.env.DATABASE_PATH || 'default';
+
       const placeholders = job_ids.map(() => '?').join(',');
       const rows = db.prepare(`
         SELECT id, title, company, location, salary, description, requirements,
                job_type, industry, education, experience, source, university,
-               source_url, apply_url, publish_date, tags
+               source_url, apply_url, publish_date, tags, created_at
         FROM jobs
         WHERE id IN (${placeholders})
       `).all(...job_ids) as Record<string, unknown>[];
@@ -54,23 +77,62 @@ export async function POST(request: NextRequest) {
         apply_url: row.apply_url as string,
         publish_date: row.publish_date as string,
         tags: row.tags as string,
+        created_at: row.created_at as string,
       }));
+      debugInfo.jobs_source = 'job_ids';
     } else {
       const since = new Date(Date.now() - since_minutes * 60 * 1000);
+      debugInfo.since_time = since.toISOString();
+      debugInfo.since_minutes = since_minutes;
+      debugInfo.current_time = new Date().toISOString();
+
       jobs = getNewJobsSince(since);
+      debugInfo.jobs_source = 'since_minutes';
+
+      if (jobs.length > 0) {
+        debugInfo.jobs_sample = jobs.slice(0, 3).map(j => ({
+          id: j.id,
+          title: j.title,
+          created_at: j.publish_date,
+          source: j.source,
+        }));
+      }
     }
 
+    debugInfo.jobs_count = jobs.length;
+
     if (jobs.length === 0) {
+      logger.info(`[TRIGGER] 无新岗位: since_minutes=${since_minutes}, alerts=${alerts.length}`);
+      logger.info(`[TRIGGER-DEBUG] ${JSON.stringify(debugInfo)}`);
+
+      const { getDb } = require('@/lib/db-utils');
+      const db = getDb();
+
+      const totalJobs = db.prepare('SELECT COUNT(*) as cnt FROM jobs').get() as { cnt: number };
+      const latestJob = db.prepare('SELECT id, title, created_at FROM jobs ORDER BY id DESC LIMIT 1').get() as Record<string, unknown> | undefined;
+      const recentJobs = db.prepare(
+        "SELECT COUNT(*) as cnt FROM jobs WHERE created_at >= datetime('now', ? || ' minutes')"
+      ).get(String(-since_minutes)) as { cnt: number };
+
+      debugInfo.db_total_jobs = totalJobs.cnt;
+      debugInfo.db_latest_job = latestJob ? { id: latestJob.id, title: latestJob.title, created_at: latestJob.created_at } : null;
+      debugInfo.db_recent_jobs_count = recentJobs.cnt;
+
       return NextResponse.json({
         success: true,
         message: 'No new jobs found',
         results: [],
+        _debug: debugInfo,
       });
     }
 
-    logger.info(`Processing ${jobs.length} jobs against ${alerts.length} alerts (AI matching)`);
+    logger.info(`[TRIGGER] 开始处理: ${jobs.length} 个岗位 vs ${alerts.length} 个订阅 (AI matching)`);
+
+    const aiServiceAvailable = !!require('@/lib/ai-service').aiService;
+    debugInfo.ai_service_available = aiServiceAvailable;
 
     const matchedResults = await aiMatchJobsToAllAlerts(jobs, alerts);
+    debugInfo.matched_alerts_count = matchedResults.size;
 
     const results: Array<{
       alert_id: number;
@@ -79,9 +141,12 @@ export async function POST(request: NextRequest) {
       email_sent: boolean;
       error?: string;
       ai_model?: string;
+      skipped_reason?: string;
     }> = [];
 
     const emailConfigured = isEmailConfigured();
+    debugInfo.email_configured = emailConfigured;
+
     const jobMap = new Map(jobs.map(j => [j.id, j]));
 
     for (const [alertId, aiResult] of matchedResults) {
@@ -89,20 +154,19 @@ export async function POST(request: NextRequest) {
 
       if (!alert) continue;
 
-      // 发送频率控制：检查距上次推送是否超过最短间隔
       if (alert.min_notify_interval && alert.min_notify_interval > 0 && alert.last_notified_at) {
         const lastNotified = new Date(alert.last_notified_at);
         const minIntervalMs = alert.min_notify_interval * 60 * 1000;
         const elapsed = Date.now() - lastNotified.getTime();
         if (elapsed < minIntervalMs) {
           const remainingMin = Math.ceil((minIntervalMs - elapsed) / 60000);
-          logger.info(`Alert ${alertId} skipped: min_notify_interval=${alert.min_notify_interval}min, ${remainingMin}min remaining`);
+          logger.info(`[TRIGGER] Alert ${alertId}: 跳过(频率限制), interval=${alert.min_notify_interval}min, 剩余${remainingMin}min`);
           results.push({
             alert_id: alertId,
             email: alert.email,
             matched_count: aiResult.matched_jobs.length,
             email_sent: false,
-            error: `频率限制：距上次推送不足 ${alert.min_notify_interval} 分钟（还需 ${remainingMin} 分钟）`,
+            skipped_reason: `频率限制：距上次推送不足 ${alert.min_notify_interval} 分钟（还需 ${remainingMin} 分钟）`,
           });
           continue;
         }
@@ -154,10 +218,22 @@ export async function POST(request: NextRequest) {
       });
 
       logger.info(
-        `Alert ${alertId} processed: ${aiResult.matched_jobs.length} matches, ` +
-        `email ${emailSent ? 'sent' : 'failed'}, model=${aiResult.model_used || 'N/A'}`
+        `[TRIGGER] Alert ${alertId}: ${aiResult.matched_jobs.length} 匹配, 邮件${emailSent ? '已发送' : '失败'}, model=${aiResult.model_used || 'N/A'}`
       );
     }
+
+    const elapsed = Date.now() - startTime;
+    debugInfo.elapsed_ms = elapsed;
+    debugInfo.processed_alerts = results.length;
+    debugInfo.results_summary = results.map(r => ({
+      id: r.alert_id,
+      matched: r.matched_count,
+      sent: r.email_sent,
+      error: r.error,
+      skip: r.skipped_reason,
+    }));
+
+    logger.info(`[TRIGGER] 完成: ${jobs.length}岗位, ${results.length}订阅处理, 耗时${elapsed}ms`);
 
     return NextResponse.json({
       success: true,
@@ -165,14 +241,20 @@ export async function POST(request: NextRequest) {
       jobs_processed: jobs.length,
       alerts_triggered: results.length,
       results,
+      _debug: debugInfo,
     });
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error);
     const errStack = error instanceof Error ? error.stack : '';
     console.error('Failed to trigger alerts:', errMsg);
     console.error('Stack:', errStack);
+
     return NextResponse.json(
-      { success: false, error: `Failed to trigger alerts: ${errMsg}` },
+      {
+        success: false,
+        error: `Failed to trigger alerts: ${errMsg}`,
+        _debug: { error: errMsg, stack: errStack?.slice(0, 1000), ...debugInfo },
+      },
       { status: 500 }
     );
   }
