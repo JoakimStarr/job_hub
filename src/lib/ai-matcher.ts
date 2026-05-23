@@ -2,6 +2,7 @@ import type { JobItem } from './types';
 import type { JobAlert } from './job-alerts-db';
 import { aiService } from './ai-service';
 import { getNotifiedJobIds } from './job-alerts-db';
+import { matchJobsToAlert, type MatchedJob as RuleMatchedJob } from './job-matcher';
 import { logger } from './logger';
 
 export interface AIMatchedJob {
@@ -147,14 +148,14 @@ export async function aiMatchJobsToAlert(
   jobs: JobItem[],
   alert: JobAlert,
 ): Promise<AIMatchResult> {
+  const notifiedJobIds = getNotifiedJobIds(alert.id);
+
   if (!aiService) {
-    logger.warn(`AI服务未配置，Alert ${alert.id} 使用规则匹配回退`);
-    return { alert_id: alert.id, matched_jobs: [], total_candidates: jobs.length };
+    logger.warn(`AI服务未配置，Alert ${alert.id} 降级到规则匹配`);
+    return ruleBasedFallback(jobs, alert, notifiedJobIds);
   }
 
-  const notifiedJobIds = getNotifiedJobIds(alert.id);
   const llmJobs = jobs.map(jobToLLMInput);
-
   const { messages } = buildMatchPrompt(alert, llmJobs, notifiedJobIds);
 
   try {
@@ -175,9 +176,38 @@ export async function aiMatchJobsToAlert(
       model_used: response.model,
     };
   } catch (error) {
-    logger.error(`AI匹配失败 Alert ${alert.id}: ${error instanceof Error ? error.message : String(error)}`);
-    return { alert_id: alert.id, matched_jobs: [], total_candidates: llmJobs.length };
+    logger.error(
+      `AI匹配失败 Alert ${alert.id}: ${error instanceof Error ? error.message : String(error)}, 降级到规则匹配`
+    );
+    return ruleBasedFallback(jobs, alert, notifiedJobIds);
   }
+}
+
+function ruleBasedFallback(
+  jobs: JobItem[],
+  alert: JobAlert,
+  notifiedJobIds: Set<number>,
+): AIMatchResult {
+  const ruleResults: RuleMatchedJob[] = matchJobsToAlert(jobs, alert);
+
+  const matchedJobs: AIMatchedJob[] = ruleResults.map(r => ({
+    job_id: r.job.id,
+    matched_keywords: r.matchedKeywords,
+    reason: `关键词「${r.matchedKeywords.join('、')}」${r.matchScore >= 80 ? '高度匹配' : r.matchScore >= 60 ? '较好匹配' : '基本匹配'}，匹配度 ${r.matchScore}%`,
+    relevance_score: r.matchScore,
+  }));
+
+  logger.info(
+    `Rule Alert ${alert.id}: ${matchedJobs.length}/${jobs.length} 匹配 (fallback模式), ` +
+    `排除 ${notifiedJobIds.size} 已推送`
+  );
+
+  return {
+    alert_id: alert.id,
+    matched_jobs: matchedJobs,
+    total_candidates: jobs.length,
+    model_used: 'rule-fallback',
+  };
 }
 
 export async function aiMatchJobsToAllAlerts(
@@ -190,9 +220,15 @@ export async function aiMatchJobsToAllAlerts(
     const result = await aiMatchJobsToAlert(jobs, alert);
     if (result.matched_jobs.length > 0) {
       results.set(alert.id, result);
+      const mode = result.model_used === 'rule-fallback' ? '规则匹配(fallback)' : `AI匹配(${result.model_used})`;
       logger.info(
-        `AI Alert ${result.alert_id} (${alert.email}): ` +
+        `[${mode}] Alert ${result.alert_id} (${alert.email}): ` +
         `${result.matched_jobs.length} 个岗位匹配`
+      );
+    } else if (result.model_used) {
+      const mode = result.model_used === 'rule-fallback' ? '规则匹配' : 'AI匹配';
+      logger.debug(
+        `[${mode}] Alert ${result.alert_id} (${alert.email}): 无匹配`
       );
     }
   }

@@ -34,8 +34,11 @@ export function useFetch<T>(
     fetcher,
     {
       revalidateOnFocus: false,
+      revalidateOnReconnect: true,
       dedupingInterval: 5000,
-      shouldRetryOnError: false,
+      shouldRetryOnError: true,
+      errorRetryCount: 3,
+      errorRetryInterval: 1500,
       ...options,
     },
   );

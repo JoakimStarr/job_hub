@@ -150,7 +150,7 @@ html, body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 a {
@@ -166,6 +166,15 @@ a:hover {
 button {
   font-family: inherit;
   cursor: pointer;
+}
+
+button, [role="button"], [role="tab"], input[type="submit"] {
+  position: relative;
+  z-index: var(--z-base);
+}
+
+button:disabled, [disabled] {
+  pointer-events: none;
 }
 
 input,

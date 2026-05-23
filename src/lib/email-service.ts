@@ -15,6 +15,7 @@ export interface JobAlertEmailData {
   to: string;
   alertId: number;
   keywords: string[];
+  matchMode?: string;
   jobs: Array<{
     id: number;
     title: string;
@@ -100,6 +101,11 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
     </div>
   `).join('');
 
+  const isAI = emailData.matchMode !== 'rule-fallback';
+  const modeLabel = emailData.matchMode === 'rule-fallback' ? '规则匹配' : `AI智能匹配${emailData.matchMode ? '(' + emailData.matchMode + ')' : ''}`;
+  const modeIcon = isAI ? '🤖' : '📋';
+  const modeDesc = isAI ? '（智能语义分析）' : '（关键词规则匹配）';
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -119,8 +125,8 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
     <body>
       <div class="container">
         <div class="header">
-          <h1 style="margin: 0;">🤖 AI 职位推荐</h1>
-          <p style="margin: 10px 0 0 0; opacity: 0.9;">发现 ${jobs.length} 个匹配岗位（智能语义分析）</p>
+          <h1 style="margin: 0;">${modeIcon} ${isAI ? 'AI' : ''} 职位推荐</h1>
+          <p style="margin: 10px 0 0 0; opacity: 0.9;">发现 ${jobs.length} 个匹配岗位（${modeLabel}${modeDesc}）</p>
         </div>
         <div class="content">
           <p>您好！</p>
@@ -155,7 +161,7 @@ export async function sendJobAlertEmail(emailData: JobAlertEmailData): Promise<{
 
 根据您订阅的关键词：${keywordStr}
 
-AI 助手为您筛选出以下 ${jobs.length} 个最相关的岗位：
+${isAI ? 'AI' : '规则'}助手为您筛选出以下 ${jobs.length} 个最相关的岗位：
 
 ${jobs.map((job, i) => `
 ${i + 1}. ${job.title}${job.relevanceScore ? ` [匹配度 ${job.relevanceScore}%]` : ''}
@@ -169,7 +175,7 @@ ${i + 1}. ${job.title}${job.relevanceScore ? ` [匹配度 ${job.relevanceScore}%
 `).join('\n')}
 
 ---
-本邮件由 AI 智能匹配引擎生成，根据您的订阅偏好进行语义分析和岗位推荐。
+本邮件由${isAI ? ' AI 智能匹配引擎' : '规则匹配引擎'}生成，根据您的订阅偏好进行${isAI ? '语义分析' : '关键词规则'}匹配和岗位推荐。
 
 如需修改订阅设置，请登录系统设置页面。
 
@@ -183,7 +189,7 @@ ${unsubscribeUrl}
     const info = await transporter.sendMail({
       from: `"${config.fromName}" <${config.fromEmail}>`,
       to,
-      subject: `【AI职位推荐】发现 ${jobs.length} 个匹配岗位 - ${keywordStr}`,
+      subject: `【${isAI ? 'AI' : ''}职位推荐】发现 ${jobs.length} 个匹配岗位 - ${keywordStr}`,
       text,
       html,
     });

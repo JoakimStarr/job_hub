@@ -17,18 +17,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  if (!mounted) {
-    return null;
-  }
-
   return (
     <SWRConfig
       value={{
-        revalidateOnFocus: false,
-        shouldRetryOnError: false,
-        dedupingInterval: 5000,
+        revalidateOnFocus: true,
+        revalidateOnReconnect: true,
+        shouldRetryOnError: true,
+        dedupingInterval: 3000,
         onError: (error) => {
-          // 401 错误由 API 层统一处理，这里不重复处理
           if (error?.status === 401) return;
           console.error('SWR 请求错误:', error?.message || error);
         },

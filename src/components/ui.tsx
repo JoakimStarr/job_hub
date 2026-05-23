@@ -135,6 +135,7 @@ export const StarButton = memo(function StarButton({ active, onClick, size = 'md
       onClick={(e) => { e.stopPropagation(); onClick(); }}
       aria-label={active ? '取消收藏' : '收藏'}
       title={active ? '取消收藏' : '收藏'}
+      style={{ border: '1px solid var(--panel-border)', borderRadius: 4 }}
     >
       <span className={joinClassNames('star-icon', active && 'star-icon-active')}>
         {active ? '★' : '☆'}
@@ -153,7 +154,7 @@ function formatDate(dateStr?: string | null): string {
 export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick, onTagClick, viewMode }: { job: JobItem; onToggleFavorite?: (job: JobItem) => void; onClick?: (job: JobItem) => void; onTagClick?: (type: string, value: string) => void; viewMode?: 'card' | 'list' }) {
   const handleClick = useCallback(() => {
     if (onClick) onClick(job);
-  }, [onClick, job]);
+  }, [onClick, job.id, job.title]);
 
   const dateStr = formatDate(job.publish_date || job.created_at);
 
@@ -185,7 +186,7 @@ export const JobCard = memo(function JobCard({ job, onToggleFavorite, onClick, o
         <div className="job-list-right">
           <span className="job-list-date">{dateStr}</span>
           {onToggleFavorite ? (
-            <StarButton active={!!job.is_favorite} onClick={(e) => { e.stopPropagation(); onToggleFavorite(job); }} size="sm" />
+            <StarButton active={!!job.is_favorite} onClick={() => onToggleFavorite(job)} size="sm" />
           ) : null}
         </div>
       </article>
@@ -393,11 +394,12 @@ export function JobDetailModal({ job, onClose, onToggleFavorite }: { job: JobIte
                 <p className="job-detail-description">{job.description || '暂无描述'}</p>
               </div>
             </>
-          ) : (
+          ) : null}
+          {activeTab === 'analysis' ? (
             <div className="job-detail-section">
               <LazyJobAnalysisPanel job={job} />
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
@@ -571,7 +573,9 @@ export const ViewToggle = memo(function ViewToggle({ mode, onToggle }: { mode: '
       type="button"
       className="view-toggle-btn"
       onClick={handleClick}
-      onMouseDown={(e) => e.stopPropagation()}
+      onMouseDown={(e) => {
+        e.stopPropagation();
+      }}
       aria-label={mode === 'list' ? '切换为卡片视图' : '切换为列表视图'}
       title={mode === 'list' ? '切换为卡片视图' : '切换为列表视图'}
       tabIndex={0}

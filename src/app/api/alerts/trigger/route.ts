@@ -141,6 +141,7 @@ export async function POST(request: NextRequest) {
       email_sent: boolean;
       error?: string;
       ai_model?: string;
+      match_mode?: string;
       skipped_reason?: string;
     }> = [];
 
@@ -181,6 +182,7 @@ export async function POST(request: NextRequest) {
           to: alert.email,
           alertId: alert.id,
           keywords: alert.keywords,
+          matchMode: aiResult.model_used,
           jobs: aiResult.matched_jobs.map(m => {
             const job = jobMap.get(m.job_id);
             return {
@@ -215,10 +217,12 @@ export async function POST(request: NextRequest) {
         email_sent: emailSent,
         error: errorMessage,
         ai_model: aiResult.model_used,
+        match_mode: aiResult.model_used === 'rule-fallback' ? '规则匹配' : `AI(${aiResult.model_used || '未知'})`,
       });
 
+      const matchMode = aiResult.model_used === 'rule-fallback' ? '规则匹配' : `AI(${aiResult.model_used || '未知'})`;
       logger.info(
-        `[TRIGGER] Alert ${alertId}: ${aiResult.matched_jobs.length} 匹配, 邮件${emailSent ? '已发送' : '失败'}, model=${aiResult.model_used || 'N/A'}`
+        `[TRIGGER] Alert ${alertId}: ${aiResult.matched_jobs.length} 匹配 [${matchMode}], 邮件${emailSent ? '已发送' : '失败'}`
       );
     }
 

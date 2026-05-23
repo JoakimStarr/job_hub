@@ -37,6 +37,7 @@ export function AppShell({
   const pathname = usePathname();
   const [user, setUser] = useState<AppUser | null>(null);
   const [ready, setReady] = useState(false);
+  const [loadTimedOut, setLoadTimedOut] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -83,6 +84,13 @@ export function AppShell({
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, [mobileOpen]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!ready) setLoadTimedOut(true);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, [ready]);
 
   useEffect(() => {
     let cancelled = false;
@@ -205,6 +213,7 @@ export function AppShell({
         setAuthReady(true);
 
       } catch (error) {
+        console.error('[AppShell] Auth bootstrap failed:', error);
         if (!cancelled) {
           if (GUEST_ALLOWED_PATHS.includes(pathname)) {
             setIsGuest(true);
@@ -236,11 +245,11 @@ export function AppShell({
 
   const currentRouteTitle = ROUTE_TITLES[pathname] || title;
 
-  if (!ready) {
+  if (!ready && !loadTimedOut) {
     return (
       <div className="app-loading">
         <div className="loading-orb" />
-        <div>正在载入 {currentRouteTitle}...</div>
+        <div style={{ marginTop: 16, color: 'var(--muted)', fontSize: 13 }}>正在载入 {currentRouteTitle}...</div>
       </div>
     );
   }

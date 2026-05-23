@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function UnsubscribePage() {
+function UnsubscribeContent() {
   const searchParams = useSearchParams();
   const alertId = searchParams.get('alert_id');
   const email = searchParams.get('email');
@@ -290,5 +290,13 @@ export default function UnsubscribePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function UnsubscribePage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}><p style={{ color: '#fff' }}>加载中...</p></div>}>
+      <UnsubscribeContent />
+    </Suspense>
   );
 }

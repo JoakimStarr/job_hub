@@ -521,10 +521,12 @@
 
 .page-transition-entering {
   animation: pageFadeIn var(--duration-slow) var(--ease-out);
+  animation-fill-mode: forwards;
 }
 
 .page-transition-exiting {
   animation: pageFadeOut var(--duration-fast) var(--ease-in);
+  animation-fill-mode: forwards;
 }
 
 @keyframes pageFadeIn {

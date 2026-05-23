@@ -1805,8 +1805,8 @@ def trigger_job_alerts(since_minutes: int = 30):
                         logger.info(f"  订阅 {r.get('alert_id')} ({r.get('email')}): 跳过 - {skip}")
                     else:
                         status = "已发送" if r.get("email_sent") else ("失败: " + str(r.get("error", ""))) if not r.get("email_sent") else "未发送"
-                        model = f" [{r.get('ai_model')}]" if r.get("ai_model") else ""
-                        logger.info(f"  订阅 {r.get('alert_id')} ({r.get('email')}): {r.get('matched_count')} 个匹配, 邮件{status}{model}")
+                        mode = r.get('match_mode') or (f"AI({r.get('ai_model')})" if r.get('ai_model') else '未知')
+                        logger.info(f"  订阅 {r.get('alert_id')} ({r.get('email')}): {r.get('matched_count')} 个匹配 [{mode}], 邮件{status}")
                     
                 if alerts_triggered == 0 and jobs_processed > 0:
                     logger.warning(f"  有 {jobs_processed} 个岗位但无任何订阅匹配成功，可能原因:")
