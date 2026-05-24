@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import type { ResumeProfile, ParseResult } from '@/lib/resume-types';
 import { API } from '@/lib/api';
+import { getFriendlyErrorMessage } from '@/lib/error-messages';
 import { ResumeParseSummary, type ResumeParseSummaryMeta } from '@/components/ResumeParseSummary';
 import dynamic from 'next/dynamic';
 import styles from './resume-uploader.module.css';
@@ -22,30 +23,35 @@ interface ResumeUploaderProps {
 export default function ResumeUploader({
   onParseSuccess,
   onParseError,
-  acceptedFormats = ['.pdf', '.txt'],
-  maxSize = 5,
+  acceptedFormats = ['.pdf', '.doc', '.docx', '.txt'],
+  maxSize = 10,
 }: ResumeUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [parseProgress, setParseProgress] = useState(0);
   const [resumeText, setResumeText] = useState('');
   const [parseSummary, setParseSummary] = useState<ResumeParseSummaryMeta | null>(null);
   const [parseMessage, setParseMessage] = useState('');
   const [showEditor, setShowEditor] = useState(false);
   const [currentProfile, setCurrentProfile] = useState<ResumeProfile | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
   }, []);
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
   }, []);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(false);
 
     const file = e.dataTransfer.files[0];
@@ -61,41 +67,98 @@ export default function ResumeUploader({
     }
   }, []);
 
-  const handleFile = async (file: File) => {
+  const validateFile = (file: File): string | null => {
     const fileName = file.name.toLowerCase();
-    const supported = fileName.endsWith('.pdf') || fileName.endsWith('.txt');
+    const supportedExtensions = ['.pdf', '.doc', '.docx', '.txt'];
+    const isSupported = supportedExtensions.some(ext => fileName.endsWith(ext));
 
-    if (!supported) {
-      const errorMessage = '目前仅支持 PDF 和 TXT 格式的简历文件';
-      setParseMessage(errorMessage);
-      setParseSummary(null);
-      onParseError(errorMessage);
-      return;
+    if (!isSupported) {
+      return getFriendlyErrorMessage('Invalid file type');
     }
 
     if (file.size > maxSize * 1024 * 1024) {
-      const errorMessage = `文件大小超过${maxSize}MB限制`;
-      setParseMessage(errorMessage);
+      return getFriendlyErrorMessage('File too large');
+    }
+
+    return null;
+  };
+
+  const uploadWithProgress = async (file: File): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+          const progress = Math.round((event.loaded / event.total) * 100);
+          setUploadProgress(progress);
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            resolve(JSON.parse(xhr.responseText));
+          } catch (e) {
+            reject(new Error('解析响应失败'));
+          }
+        } else {
+          try {
+            const errorResponse = JSON.parse(xhr.responseText);
+            reject(new Error(errorResponse.error || '上传失败'));
+          } catch (e) {
+            reject(new Error(`上传失败 (${xhr.status})`));
+          }
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        reject(new Error(getFriendlyErrorMessage('Upload failed')));
+      });
+
+      xhr.open('POST', '/api/resume/upload');
+
+      const formData = new FormData();
+      formData.append('resume', file);
+
+      xhr.send(formData);
+    });
+  };
+
+  const handleFile = async (file: File) => {
+    const validationError = validateFile(file);
+    
+    if (validationError) {
+      setParseMessage(validationError);
       setParseSummary(null);
-      onParseError(errorMessage);
+      onParseError(validationError);
       return;
     }
 
     setIsParsing(true);
+    setUploadProgress(0);
     setParseProgress(0);
-    setParseMessage('正在提取简历文本并构建画像…');
+    setParseMessage('正在上传简历文件…');
     setParseSummary(null);
 
     try {
+      setUploadProgress(10);
+      
       const result: ParseResult = await API.parseResumeFile(file);
+      setUploadProgress(100);
+      
       setResumeText(result.profile.resumeText || '');
       setParseProgress(30);
+      setParseMessage('正在解析简历内容…');
 
+      await new Promise(resolve => setTimeout(resolve, 300));
       setParseProgress(70);
+      setParseMessage('正在构建用户画像…');
+
+      await new Promise(resolve => setTimeout(resolve, 300));
       setParseProgress(100);
 
       setParseSummary(result.meta || null);
-      setParseMessage(result.meta ? 'PDF 已解析完成，可继续进行岗位匹配、AI 分析与推荐生成。' : '简历解析已完成');
+      setParseMessage(result.meta ? '✅ 简历解析成功!' : '简历解析已完成');
 
       if (result.warnings.length > 0) {
         console.warn('解析警告:', result.warnings);
@@ -108,9 +171,16 @@ export default function ResumeUploader({
         setShowEditor(true);
       }
     } catch (error) {
-      onParseError(error instanceof Error ? error.message : '简历解析失败');
+      const errorMessage = error instanceof Error 
+        ? getFriendlyErrorMessage(error.message)
+        : getFriendlyErrorMessage('Upload failed');
+      
+      setParseMessage(errorMessage);
+      setParseSummary(null);
+      onParseError(errorMessage);
     } finally {
       setIsParsing(false);
+      setTimeout(() => setUploadProgress(0), 1000);
     }
   };
 
@@ -134,10 +204,13 @@ export default function ResumeUploader({
       const result: ParseResult = await API.parseResumeText(resumeText);
 
       setParseProgress(70);
+      setParseMessage('正在构建用户画像…');
+
+      await new Promise(resolve => setTimeout(resolve, 300));
       setParseProgress(100);
 
       setParseSummary(result.meta || null);
-      setParseMessage(result.meta ? '文本简历已解析完成，可继续进行岗位匹配与 AI 分析。' : '简历解析已完成');
+      setParseMessage(result.meta ? '✅ 文本简历解析成功!' : '简历解析已完成');
 
       if (result.warnings.length > 0) {
         console.warn('解析警告:', result.warnings);
@@ -146,11 +219,23 @@ export default function ResumeUploader({
       setCurrentProfile(result.profile);
       onParseSuccess(result.profile);
     } catch (error) {
-      onParseError(error instanceof Error ? error.message : '简历解析失败');
+      const errorMessage = error instanceof Error 
+        ? getFriendlyErrorMessage(error.message)
+        : '简历解析失败';
+      
+      setParseMessage(errorMessage);
+      setParseSummary(null);
+      onParseError(errorMessage);
     } finally {
       setIsParsing(false);
     }
   };
+
+  const formatIcons = [
+    { icon: '📄', name: 'PDF文档', ext: '.pdf' },
+    { icon: '📝', name: 'Word文档', ext: '.doc/.docx' },
+    { icon: '📃', name: '纯文本', ext: '.txt' },
+  ];
 
   return (
     <div className={styles.container}>
@@ -167,24 +252,54 @@ export default function ResumeUploader({
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            const fileInput = document.getElementById('resume-upload') as HTMLInputElement;
-            fileInput?.click();
+            fileInputRef.current?.click();
           }
         }}
       >
         {isParsing ? (
           <div className={styles.parsing}>
-            <div className={styles.parsingText}>正在解析简历...</div>
-            <div className={styles.progressBarBg}
-              role="progressbar"
-              aria-label="解析进度"
-            >
-              <div
-                className={styles.progressBarFill}
-                style={{ width: `${parseProgress}%` }}
-              />
+            <div className={styles.parsingText}>
+              {uploadProgress < 100 ? '正在上传文件...' : '正在解析简历...'}
             </div>
-            <div className={styles.progressPercent}>{parseProgress}%</div>
+            
+            {(uploadProgress > 0 && uploadProgress < 100) && (
+              <>
+                <div className={styles.progressBarBg}
+                  role="progressbar"
+                  aria-label="上传进度"
+                  aria-valuenow={uploadProgress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <div
+                    className={`${styles.progressBarFill} ${styles.uploadProgress}`}
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <div className={styles.progressPercent}>
+                  {uploadProgress}% 
+                  {uploadProgress === 100 && <span className={styles.successText}> ✅ 上传成功!</span>}
+                </div>
+              </>
+            )}
+
+            {uploadProgress === 0 || uploadProgress >= 100 ? (
+              <>
+                <div className={styles.progressBarBg}
+                  role="progressbar"
+                  aria-label="解析进度"
+                  aria-valuenow={parseProgress}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                >
+                  <div
+                    className={styles.progressBarFill}
+                    style={{ width: `${parseProgress}%` }}
+                  />
+                </div>
+                <div className={styles.progressPercent}>{parseProgress}%</div>
+              </>
+            ) : null}
           </div>
         ) : (
           <>
@@ -203,12 +318,28 @@ export default function ResumeUploader({
                 />
               </svg>
             </div>
-            <p className={styles.uploadTitle}>拖拽或点击上传简历</p>
-            <p className={styles.uploadHint}>
-              支持格式: {acceptedFormats.join(', ')} | 最大: {maxSize}MB
+            
+            <p className={styles.uploadTitle}>
+              {isDragging ? '📂 松开以上传简历' : '📄 点击或拖拽PDF/Word简历到这里'}
             </p>
+            
+            <div className={styles.formatIcons}>
+              {formatIcons.map(format => (
+                <div key={format.ext} className={styles.formatItem}>
+                  <span className={styles.formatIcon}>{format.icon}</span>
+                  <span className={styles.formatName}>{format.name}</span>
+                  <span className={styles.formatExt}>{format.ext}</span>
+                </div>
+              ))}
+            </div>
+
+            <p className={styles.uploadHint}>
+              最大文件大小: {maxSize}MB
+            </p>
+
             <input
               type="file"
+              ref={fileInputRef}
               accept={acceptedFormats.join(',')}
               onChange={handleFileSelect}
               className={styles.fileInput}
@@ -223,6 +354,58 @@ export default function ResumeUploader({
           </>
         )}
       </div>
+
+      {parseSummary && currentProfile && (
+        <div className={styles.previewSection}>
+          <div className={styles.previewHeader}>
+            <h3>✅ 简历解析成功!</h3>
+          </div>
+          <div className={styles.previewContent}>
+            <div className={styles.previewDivider}>──────────────</div>
+            
+            {currentProfile.name && (
+              <div className={styles.previewRow}>
+                <span className={styles.previewLabel}>👤 姓名:</span>
+                <span className={styles.previewValue}>{currentProfile.name}</span>
+              </div>
+            )}
+            
+            {currentProfile.education.length > 0 && (
+              <div className={styles.previewRow}>
+                <span className={styles.previewLabel}>🎓 学历:</span>
+                <span className={styles.previewValue}>
+                  {currentProfile.education[0]?.degree} - {currentProfile.education[0]?.school}
+                </span>
+              </div>
+            )}
+            
+            {currentProfile.skills.length > 0 && (
+              <div className={styles.previewRow}>
+                <span className={styles.previewLabel}>💻 技能:</span>
+                <span className={styles.previewValue}>{currentProfile.skills.join(', ')}</span>
+              </div>
+            )}
+            
+            {currentProfile.internships.length > 0 && (
+              <div className={styles.previewRow}>
+                <span className={styles.previewLabel}>💼 经验:</span>
+                <span className={styles.previewValue}>
+                  {currentProfile.internships.length}段实习/工作经验
+                </span>
+              </div>
+            )}
+
+            <button
+              className={styles.matchButton}
+              onClick={() => {
+                onParseSuccess(currentProfile);
+              }}
+            >
+              开始智能匹配 →
+            </button>
+          </div>
+        </div>
+      )}
 
       <ResumeParseSummary
         status={isParsing ? 'loading' : parseSummary ? 'success' : parseMessage ? 'error' : 'idle'}

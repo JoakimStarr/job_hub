@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthDb } from '@/lib/auth-db';
 import { logger } from '@/lib/logger';
+import { getFriendlyErrorMessage } from '@/lib/error-messages';
 
 /**
  * POST /api/auth/login
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: result.error,
+          error: getFriendlyErrorMessage(result.error || '登录失败'),
           errorCode: result.errorCode
         },
         { status: 401 }

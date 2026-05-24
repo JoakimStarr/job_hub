@@ -5,6 +5,7 @@ import { logger } from '@/lib/logger';
 import type { ResumeProfile, MatchResult, JobItem } from '@/lib/resume-types';
 import { matchEngine } from '@/lib/match-engine';
 import { scoreEngine } from '@/lib/score-engine';
+import { getFriendlyErrorMessage } from '@/lib/error-messages';
 
 export const POST = withApiHandler(async (request: NextRequest) => {
   const startTime = Date.now();
@@ -22,7 +23,7 @@ export const POST = withApiHandler(async (request: NextRequest) => {
 
   if (!profile) {
     return NextResponse.json(
-      { error: '缺少用户画像数据' },
+      { error: getFriendlyErrorMessage('Missing user profile data') },
       { status: 400 }
     );
   }

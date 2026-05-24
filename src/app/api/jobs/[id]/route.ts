@@ -3,6 +3,7 @@ import { getDb, getSourceName, resolveSourceUrl, isFakeUrl } from '@/lib/db-util
 import { requireAuthUnified } from '@/lib/auth-server';
 import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
+import { getFriendlyErrorMessage } from '@/lib/error-messages';
 
 export async function GET(
   request: NextRequest,
@@ -22,7 +23,7 @@ export async function GET(
     `).get(parseInt(id)) as Record<string, unknown> | undefined;
     
     if (!job) {
-      return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+      return NextResponse.json({ error: getFriendlyErrorMessage('Job not found') }, { status: 404 });
     }
     
     return NextResponse.json({
@@ -34,7 +35,7 @@ export async function GET(
   } catch (error) {
     logger.error('Database error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch job' },
+      { error: getFriendlyErrorMessage('Database error') },
       { status: 500 }
     );
   }
@@ -76,17 +77,17 @@ export async function PATCH(
     const result = db.prepare(sql).run(...values);
 
     if (result.changes === 0) {
-      return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+      return NextResponse.json({ error: getFriendlyErrorMessage('Job not found') }, { status: 404 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     if (error instanceof AuthError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
+      return NextResponse.json({ error: getFriendlyErrorMessage(error.message) }, { status: error.status });
     }
     logger.error('Database error:', error);
     return NextResponse.json(
-      { error: 'Failed to update job' },
+      { error: getFriendlyErrorMessage('Database error') },
       { status: 500 }
     );
   }
