@@ -9,13 +9,21 @@ import {
   PageLoading,
 } from '@/components/Loading'
 
-describe('Loading 组件', () => {
+describe('Loading 组件测试套件', () => {
   beforeEach(() => {
     vi.useFakeTimers()
   })
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  it('应该正确导入所有Loading组件', () => {
+    expect(LoadingSpinner).toBeDefined()
+    expect(LoadingOverlay).toBeDefined()
+    expect(UnifiedSkeletonCard).toBeDefined()
+    expect(SkeletonTable).toBeDefined()
+    expect(PageLoading).toBeDefined()
   })
 })
 

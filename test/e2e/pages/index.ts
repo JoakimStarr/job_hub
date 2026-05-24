@@ -1,0 +1,9 @@
+export { BasePage } from './base-page';
+export { LoginPage } from './login-page';
+export { HomePage } from './home-page';
+export { JobsPage } from './jobs-page';
+export { ResumePage } from './resume-page';
+export { FavoritesPage } from './favorites-page';
+export { SubscriptionPage } from './subscription-page';
+export { AdminUserManagementPage } from './admin-user-management-page';
+export { AdminSystemMonitorPage } from './admin-system-monitor-page';

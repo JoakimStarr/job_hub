@@ -10,6 +10,8 @@ export default defineConfig({
     include: [
       'test/unit/**/*.test.ts',
       'test/integration/**/*.test.{ts,tsx}',
+      'test/performance/**/*.test.ts',
+      'test/security/**/*.test.ts',
     ],
     exclude: [
       'node_modules/',
