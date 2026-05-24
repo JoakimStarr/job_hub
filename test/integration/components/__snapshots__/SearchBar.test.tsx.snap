@@ -15,6 +15,7 @@ exports[`SearchBar 组件 > 快照测试 > 基本状态的快照应该匹配 1`]
       >
         <input
           aria-label="搜索关键词"
+          autocomplete="off"
           class="input search-input"
           placeholder="搜索岗位..."
           type="text"
@@ -47,6 +48,7 @@ exports[`SearchBar 组件 > 快照测试 > 展开筛选器的快照应该匹配 
       >
         <input
           aria-label="搜索关键词"
+          autocomplete="off"
           class="input search-input"
           placeholder="搜索岗位..."
           type="text"

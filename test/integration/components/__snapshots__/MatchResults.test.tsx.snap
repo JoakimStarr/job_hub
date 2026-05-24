@@ -3,7 +3,7 @@
 exports[`MatchResults 组件 > 快照测试 > 有数据时的快照应该匹配 1`] = `
 <div>
   <div
-    class="_container_d885bc"
+    class="_container_d885bc _fadeIn_d885bc"
   >
     <div
       class="_header_d885bc"
@@ -86,9 +86,38 @@ exports[`MatchResults 组件 > 快照测试 > 有数据时的快照应该匹配 
     >
       <div
         class="_card_d885bc"
+        style="position: relative; overflow: hidden;"
       >
+        <style>
+          
+        @keyframes rippleEffect {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+        @keyframes heartBeat {
+          0%, 100% { transform: scale(1); }
+          25% { transform: scale(1.3); }
+          50% { transform: scale(1); }
+          75% { transform: scale(1.15); }
+        }
+        .favorite-btn.liked {
+          animation: heartBeat 0.6s ease;
+          color: #ef4444 !important;
+        }
+        .hover-actions {
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+        .card-wrapper:hover .hover-actions {
+          opacity: 1;
+        }
+      
+        </style>
         <div
-          class="_cardHeader_d885bc"
+          class="_cardHeader_d885bc card-wrapper"
+          style="position: relative;"
         >
           <div
             class="_cardInfo_d885bc"
@@ -131,18 +160,46 @@ exports[`MatchResults 组件 > 快照测试 > 有数据时的快照应该匹配 
             </div>
           </div>
           <div
-            class="_scoreBlock_d885bc"
+            style="display: flex; align-items: center; gap: 12px;"
           >
             <div
-              class="_scoreValue_d885bc"
-              style="color: rgb(16, 185, 129);"
+              class="_scoreBlock_d885bc"
             >
-              88
+              <div
+                class="_scoreValue_d885bc"
+                style="color: rgb(16, 185, 129);"
+              >
+                88
+              </div>
+              <div
+                class="_scoreLabel_d885bc"
+              >
+                冲刺岗
+              </div>
             </div>
             <div
-              class="_scoreLabel_d885bc"
+              class="hover-actions"
+              style="display: flex; gap: 8px; align-items: center;"
             >
-              冲刺岗
+              <button
+                style="background: rgb(243, 244, 246); border: medium; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s ease;"
+                title="快速预览"
+              >
+                👁️
+              </button>
+              <button
+                class="favorite-btn "
+                style="background: rgb(243, 244, 246); border: medium; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: rgb(156, 163, 175); transition: all 0.2s ease;"
+                title="添加收藏"
+              >
+                🤍
+              </button>
+              <button
+                style="background: rgb(243, 244, 246); border: medium; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s ease;"
+                title="分享职位"
+              >
+                🔗
+              </button>
             </div>
           </div>
         </div>
@@ -236,55 +293,266 @@ exports[`MatchResults 组件 > 快照测试 > 有数据时的快照应该匹配 
             </span>
           </div>
         </div>
+        <button
+          class="_toggleDetailsBtn_d885bc"
+        >
+          查看为什么匹配
+          <span
+            class="_toggleIcon_d885bc "
+          >
+            ▼
+          </span>
+        </button>
         <div
-          class="_tagSection_d885bc"
+          class="_detailsPanel_d885bc "
         >
           <div
-            class="_tagSectionLabel_d885bc"
+            class="_detailSection_d885bc"
           >
-            匹配项:
+            <h4
+              class="_detailSectionTitle_d885bc"
+            >
+              <span
+                class="_checkIcon_d885bc"
+              >
+                ✅
+              </span>
+              匹配项列表
+            </h4>
+            <ul
+              class="_detailList_d885bc"
+            >
+              <li
+                class="_detailListItemMatched_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✓
+                </span>
+                Python
+              </li>
+              <li
+                class="_detailListItemMatched_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✓
+                </span>
+                SQL
+              </li>
+              <li
+                class="_detailListItemMatched_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✓
+                </span>
+                机器学习
+              </li>
+              <li
+                class="_detailListItemMatched_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✓
+                </span>
+                数据分析
+              </li>
+            </ul>
           </div>
           <div
-            class="_tagList_d885bc"
+            class="_detailSection_d885bc"
           >
-            <span
-              class="_matchTag_d885bc"
+            <h4
+              class="_detailSectionTitle_d885bc"
             >
-              Python
-            </span>
-            <span
-              class="_matchTag_d885bc"
+              <span
+                class="_crossIcon_d885bc"
+              >
+                ❌
+              </span>
+              能力缺口列表
+            </h4>
+            <ul
+              class="_detailList_d885bc"
             >
-              SQL
-            </span>
-            <span
-              class="_matchTag_d885bc"
-            >
-              机器学习
-            </span>
-            <span
-              class="_matchTag_d885bc"
-            >
-              数据分析
-            </span>
-          </div>
-        </div>
-        <div
-          class="_tagSection_d885bc"
-        >
-          <div
-            class="_tagSectionLabel_d885bc"
-          >
-            能力缺口:
+              <li
+                class="_detailListItemGap_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✗
+                </span>
+                缺乏Spark经验
+              </li>
+            </ul>
           </div>
           <div
-            class="_tagList_d885bc"
+            class="_detailSection_d885bc"
           >
-            <span
-              class="_gapTag_d885bc"
+            <h4
+              class="_detailSectionTitle_d885bc"
             >
-              缺乏Spark经验
-            </span>
+              <span
+                class="_chartIcon_d885bc"
+              >
+                📈
+              </span>
+              各维度得分详情
+            </h4>
+            <div
+              class="_dimensionBars_d885bc"
+            >
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  技能
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 83.33333333333334%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  25
+                  /
+                  30
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  学历
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 90%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  18
+                  /
+                  20
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  专业
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 80%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  12
+                  /
+                  15
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  地点
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 90%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  9
+                  /
+                  10
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  经验
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 86.66666666666667%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  13
+                  /
+                  15
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  行业
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 80%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  8
+                  /
+                  10
+                </span>
+              </div>
+            </div>
           </div>
         </div>
         <div
@@ -304,9 +572,38 @@ exports[`MatchResults 组件 > 快照测试 > 有数据时的快照应该匹配 
       </div>
       <div
         class="_card_d885bc"
+        style="position: relative; overflow: hidden;"
       >
+        <style>
+          
+        @keyframes rippleEffect {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+        @keyframes heartBeat {
+          0%, 100% { transform: scale(1); }
+          25% { transform: scale(1.3); }
+          50% { transform: scale(1); }
+          75% { transform: scale(1.15); }
+        }
+        .favorite-btn.liked {
+          animation: heartBeat 0.6s ease;
+          color: #ef4444 !important;
+        }
+        .hover-actions {
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+        .card-wrapper:hover .hover-actions {
+          opacity: 1;
+        }
+      
+        </style>
         <div
-          class="_cardHeader_d885bc"
+          class="_cardHeader_d885bc card-wrapper"
+          style="position: relative;"
         >
           <div
             class="_cardInfo_d885bc"
@@ -349,18 +646,46 @@ exports[`MatchResults 组件 > 快照测试 > 有数据时的快照应该匹配 
             </div>
           </div>
           <div
-            class="_scoreBlock_d885bc"
+            style="display: flex; align-items: center; gap: 12px;"
           >
             <div
-              class="_scoreValue_d885bc"
-              style="color: rgb(59, 130, 246);"
+              class="_scoreBlock_d885bc"
             >
-              72
+              <div
+                class="_scoreValue_d885bc"
+                style="color: rgb(59, 130, 246);"
+              >
+                72
+              </div>
+              <div
+                class="_scoreLabel_d885bc"
+              >
+                匹配岗
+              </div>
             </div>
             <div
-              class="_scoreLabel_d885bc"
+              class="hover-actions"
+              style="display: flex; gap: 8px; align-items: center;"
             >
-              匹配岗
+              <button
+                style="background: rgb(243, 244, 246); border: medium; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s ease;"
+                title="快速预览"
+              >
+                👁️
+              </button>
+              <button
+                class="favorite-btn "
+                style="background: rgb(243, 244, 246); border: medium; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: rgb(156, 163, 175); transition: all 0.2s ease;"
+                title="添加收藏"
+              >
+                🤍
+              </button>
+              <button
+                style="background: rgb(243, 244, 246); border: medium; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: all 0.2s ease;"
+                title="分享职位"
+              >
+                🔗
+              </button>
             </div>
           </div>
         </div>
@@ -454,55 +779,266 @@ exports[`MatchResults 组件 > 快照测试 > 有数据时的快照应该匹配 
             </span>
           </div>
         </div>
+        <button
+          class="_toggleDetailsBtn_d885bc"
+        >
+          查看为什么匹配
+          <span
+            class="_toggleIcon_d885bc "
+          >
+            ▼
+          </span>
+        </button>
         <div
-          class="_tagSection_d885bc"
+          class="_detailsPanel_d885bc "
         >
           <div
-            class="_tagSectionLabel_d885bc"
+            class="_detailSection_d885bc"
           >
-            匹配项:
+            <h4
+              class="_detailSectionTitle_d885bc"
+            >
+              <span
+                class="_checkIcon_d885bc"
+              >
+                ✅
+              </span>
+              匹配项列表
+            </h4>
+            <ul
+              class="_detailList_d885bc"
+            >
+              <li
+                class="_detailListItemMatched_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✓
+                </span>
+                Python
+              </li>
+              <li
+                class="_detailListItemMatched_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✓
+                </span>
+                SQL
+              </li>
+              <li
+                class="_detailListItemMatched_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✓
+                </span>
+                机器学习
+              </li>
+              <li
+                class="_detailListItemMatched_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✓
+                </span>
+                数据分析
+              </li>
+            </ul>
           </div>
           <div
-            class="_tagList_d885bc"
+            class="_detailSection_d885bc"
           >
-            <span
-              class="_matchTag_d885bc"
+            <h4
+              class="_detailSectionTitle_d885bc"
             >
-              Python
-            </span>
-            <span
-              class="_matchTag_d885bc"
+              <span
+                class="_crossIcon_d885bc"
+              >
+                ❌
+              </span>
+              能力缺口列表
+            </h4>
+            <ul
+              class="_detailList_d885bc"
             >
-              SQL
-            </span>
-            <span
-              class="_matchTag_d885bc"
-            >
-              机器学习
-            </span>
-            <span
-              class="_matchTag_d885bc"
-            >
-              数据分析
-            </span>
-          </div>
-        </div>
-        <div
-          class="_tagSection_d885bc"
-        >
-          <div
-            class="_tagSectionLabel_d885bc"
-          >
-            能力缺口:
+              <li
+                class="_detailListItemGap_d885bc"
+              >
+                <span
+                  class="_listItemIcon_d885bc"
+                >
+                  ✗
+                </span>
+                缺乏Spark经验
+              </li>
+            </ul>
           </div>
           <div
-            class="_tagList_d885bc"
+            class="_detailSection_d885bc"
           >
-            <span
-              class="_gapTag_d885bc"
+            <h4
+              class="_detailSectionTitle_d885bc"
             >
-              缺乏Spark经验
-            </span>
+              <span
+                class="_chartIcon_d885bc"
+              >
+                📈
+              </span>
+              各维度得分详情
+            </h4>
+            <div
+              class="_dimensionBars_d885bc"
+            >
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  技能
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 83.33333333333334%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  25
+                  /
+                  30
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  学历
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 90%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  18
+                  /
+                  20
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  专业
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 80%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  12
+                  /
+                  15
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  地点
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 90%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  9
+                  /
+                  10
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  经验
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 86.66666666666667%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  13
+                  /
+                  15
+                </span>
+              </div>
+              <div
+                class="_dimensionBarRow_d885bc"
+              >
+                <span
+                  class="_dimensionLabel_d885bc"
+                >
+                  行业
+                </span>
+                <div
+                  class="_dimensionBarContainer_d885bc"
+                >
+                  <div
+                    class="_dimensionBarFill_d885bc"
+                    style="width: 80%; background-color: var(--success);"
+                  />
+                </div>
+                <span
+                  class="_dimensionValue_d885bc"
+                >
+                  8
+                  /
+                  10
+                </span>
+              </div>
+            </div>
           </div>
         </div>
         <div
