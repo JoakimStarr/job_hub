@@ -15,10 +15,6 @@ export default function UsersPage() {
   const [saving, setSaving] = useState(false);
   const [dialogMode, setDialogMode] = useState<UserActionMode | null>(null);
   const [selectedUser, setSelectedUser] = useState<AppUser | null>(null);
-  const [dialogDisplayName, setDialogDisplayName] = useState('');
-  const [dialogRole, setDialogRole] = useState('');
-  const [dialogPassword, setDialogPassword] = useState('');
-  const [dialogActive, setDialogActive] = useState(true);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [deletingUserId, setDeletingUserId] = useState<number | null>(null);
 
@@ -26,10 +22,8 @@ export default function UsersPage() {
     setLoadingUsers(true);
     try {
       const [roleResponse, userResponse] = await Promise.all([API.getRoles(), API.getUsers()]);
-      // roles API 返回数组格式: [{ id, name }, ...]
       const rolesArray = Array.isArray(roleResponse) ? roleResponse : (roleResponse.roles || []);
       setRoles(rolesArray);
-      // users API 返回 { success, users } 或直接返回数组
       const rawResponse = userResponse as Record<string, unknown> | AppUser[];
       let usersData: AppUser[] = [];
       if (Array.isArray(rawResponse)) {
@@ -48,29 +42,20 @@ export default function UsersPage() {
   function openEditDialog(user: AppUser) {
     setSelectedUser(user);
     setDialogMode('edit');
-    setDialogDisplayName(user.display_name || user.username);
-    setDialogRole(user.role || roles[0]?.id || 'viewer');
-    setDialogActive(user.is_active ?? true);
   }
 
   function openResetDialog(user: AppUser) {
     setSelectedUser(user);
     setDialogMode('reset');
-    setDialogPassword('');
   }
 
   function closeDialog() {
     setDialogMode(null);
     setSelectedUser(null);
-    setDialogDisplayName('');
-    setDialogRole('');
-    setDialogPassword('');
-    setDialogActive(true);
   }
 
   async function handleCreateUser(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSaving(true);
     const form = e.currentTarget;
     const fd = new FormData(form);
     const username = (fd.get('username') as string).trim();
@@ -78,6 +63,13 @@ export default function UsersPage() {
     const password = fd.get('password') as string;
     const role = fd.get('role') as string;
     const active = fd.get('active') === 'on';
+
+    if (!username || !password) {
+      setMessage('用户名和密码不能为空');
+      return;
+    }
+
+    setSaving(true);
     try {
       await API.createUser({ username, display_name: displayName || username, role, password, is_active: active });
       form.reset();
@@ -90,23 +82,25 @@ export default function UsersPage() {
     }
   }
 
-  async function submitDialog() {
+  async function handleDialogSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     if (!selectedUser) return;
     setSaving(true);
     try {
-        if (dialogMode === 'edit') {
-          if (!selectedUser.id) throw new Error('用户 ID 缺失');
-          await API.updateUser(selectedUser.id, {
-            display_name: dialogDisplayName || selectedUser.username,
-            role: dialogRole,
-            is_active: dialogActive,
-          });
-          await loadUsers();
-        } else if (dialogMode === 'reset') {
-          if (!selectedUser.id) throw new Error('用户 ID 缺失');
-          await API.resetUserPassword(selectedUser.id, { password: dialogPassword });
-          setMessage('密码已重置');
-        }
+      const fd = new FormData(e.currentTarget);
+      if (dialogMode === 'edit') {
+        if (!selectedUser.id) throw new Error('用户 ID 缺失');
+        await API.updateUser(selectedUser.id, {
+          display_name: (fd.get('displayName') as string) || selectedUser.username,
+          role: fd.get('role') as string,
+          is_active: fd.get('active') === 'on',
+        });
+        await loadUsers();
+      } else if (dialogMode === 'reset') {
+        if (!selectedUser.id) throw new Error('用户 ID 缺失');
+        await API.resetUserPassword(selectedUser.id, { password: fd.get('password') as string });
+        setMessage('密码已重置');
+      }
       closeDialog();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '操作失败');
@@ -210,13 +204,14 @@ export default function UsersPage() {
         <div
           className="modal-backdrop"
           onClick={() => {
+            const form = document.querySelector('#dialog-form') as HTMLFormElement;
+            if (!form) { closeDialog(); return; }
+            const fd = new FormData(form);
             const dirty = dialogMode === 'edit'
-              ? !!selectedUser && (
-                  dialogDisplayName !== (selectedUser.display_name || selectedUser.username)
-                  || dialogRole !== (selectedUser.role || roles[0]?.id || 'viewer')
-                  || dialogActive !== (selectedUser.is_active ?? true)
-                )
-              : dialogPassword.trim().length > 0;
+              ? (fd.get('displayName') !== (selectedUser.display_name || selectedUser.username)
+                  || fd.get('role') !== (selectedUser.role || roles[0]?.id || 'viewer')
+                  || (fd.get('active') === 'on') !== (selectedUser.is_active ?? true))
+              : (fd.get('password') as string)?.trim().length > 0;
             if (dirty && !window.confirm('关闭后会丢失未保存的更改，是否继续？')) return;
             closeDialog();
           }}
@@ -229,26 +224,26 @@ export default function UsersPage() {
               </div>
               <Button variant="ghost" onClick={closeDialog}>关闭</Button>
             </div>
-            <div className="grid" style={{ gap: 14, marginTop: 18 }}>
+            <form id="dialog-form" className="grid" style={{ gap: 14, marginTop: 18 }} onSubmit={handleDialogSubmit}>
               {dialogMode === 'edit' ? (
                 <>
-                  <label><div style={{ marginBottom: 8, fontWeight: 700 }}>显示名称</div><Input value={dialogDisplayName} onChange={(event) => setDialogDisplayName(event.target.value)} /></label>
-                  <label><div style={{ marginBottom: 8, fontWeight: 700 }}>角色</div><Select value={dialogRole} onChange={(event) => setDialogRole(event.target.value)}>{roles.map((item) => <option key={item.id} value={item.id}>{item.id}</option>)}</Select></label>
+                  <label><div style={{ marginBottom: 8, fontWeight: 700 }}>显示名称</div><Input name="displayName" defaultValue={selectedUser.display_name || selectedUser.username} /></label>
+                  <label><div style={{ marginBottom: 8, fontWeight: 700 }}>角色</div><Select name="role" defaultValue={selectedUser.role || roles[0]?.id || 'viewer'}>{roles.map((item) => <option key={item.id} value={item.id}>{item.id}</option>)}</Select></label>
                   <label className="badge badge-slate" style={{ cursor: 'pointer', gap: 8 }}>
-                    <input type="checkbox" checked={dialogActive} onChange={(event) => setDialogActive(event.target.checked)} />
+                    <input type="checkbox" name="active" defaultChecked={selectedUser.is_active ?? true} />
                     启用账号
                   </label>
                 </>
               ) : (
-                <label><div style={{ marginBottom: 8, fontWeight: 700 }}>新密码</div><Input value={dialogPassword} onChange={(event) => setDialogPassword(event.target.value)} type="password" placeholder="请输入新密码" /></label>
+                <label><div style={{ marginBottom: 8, fontWeight: 700 }}>新密码</div><Input name="password" defaultValue="" type="password" placeholder="请输入新密码" /></label>
               )}
               <div className="row-gap" style={{ marginTop: 6 }}>
-                <Button variant="primary" onClick={() => void submitDialog()} disabled={saving || (dialogMode === 'reset' && !dialogPassword)}>
+                <Button type="submit" variant="primary" disabled={saving}>
                   {saving ? '保存中...' : '确认'}
                 </Button>
                 <Button variant="secondary" onClick={closeDialog}>取消</Button>
               </div>
-            </div>
+            </form>
           </section>
         </div>
       ) : null}

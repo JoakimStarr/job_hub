@@ -107,28 +107,25 @@ export const Button = memo(function Button({ children, variant = 'primary', ...p
 
 export const Input = memo(function Input(props: InputHTMLAttributes<HTMLInputElement>) {
   const composingRef = useRef(false);
-  const { onChange, onCompositionStart, onCompositionEnd, ...rest } = props;
-
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!composingRef.current) {
-      onChange?.(e);
-    }
-  }, [onChange]);
-
-  const handleCompositionStart = useCallback((e: React.CompositionEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (composingRef.current) return;
+    props.onChange?.(e);
+  };
+  const handleCompositionStart = (e: React.CompositionEvent<HTMLInputElement>) => {
     composingRef.current = true;
-    onCompositionStart?.(e);
-  }, [onCompositionStart]);
-
-  const handleCompositionEnd = useCallback((e: React.CompositionEvent<HTMLInputElement>) => {
+    props.onCompositionStart?.(e);
+  };
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLInputElement>) => {
     composingRef.current = false;
-    onCompositionEnd?.(e);
-  }, [onCompositionEnd]);
-
+    // Chrome 特殊处理：compositionend 在 onChange 之后才触发，
+    // 需要手动再触发一次 onChange 获取最终的合成值
+    props.onChange?.(e as unknown as React.ChangeEvent<HTMLInputElement>);
+    props.onCompositionEnd?.(e);
+  };
   return (
     <input
-      {...rest}
-      className={joinClassNames('input', rest.className)}
+      {...props}
+      className={joinClassNames('input', props.className)}
       onChange={handleChange}
       onCompositionStart={handleCompositionStart}
       onCompositionEnd={handleCompositionEnd}
