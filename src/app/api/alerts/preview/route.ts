@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
       tags: row.tags as string,
     }));
 
-    const aiResult = await aiMatchJobsToAlert(jobs, alert);
+    const aiResult = await aiMatchJobsToAlert(jobs, alert, { skipNotifiedFilter: true });
 
     logger.info(`Preview alert ${alertId}: ${aiResult.matched_jobs.length} matched from ${jobs.length} jobs (AI mode)`);
 

@@ -60,6 +60,15 @@ export function isFakeUrl(url: string | null | undefined): boolean {
   return FAKE_URL_PATTERNS.some((p) => p.test(url));
 }
 
+export function splitMultiDelimiter(value: string | null | undefined | string[]): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.map(s => String(s).trim()).filter(Boolean);
+  return String(value)
+    .split(/[,，;；\s、]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+}
+
 export function resolveSourceUrl(source: string, sourceUrl: string | null | undefined, id: number): string {
   if (sourceUrl && !isFakeUrl(sourceUrl)) return sourceUrl;
   const generator = SOURCE_URL_TEMPLATES[source];

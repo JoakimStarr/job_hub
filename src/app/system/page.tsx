@@ -19,13 +19,7 @@ function safeJsonParse(value: string) {
   }
 }
 
-function SubscriptionAnalysisModal({
-  subscription,
-  analysisResult,
-  onReanalyze,
-  onViewHistory,
-  onClose,
-}: {
+function SubscriptionAnalysisModal(props: {
   subscription: { id: number; name: string } | null;
   analysisResult: AnalysisResult | null;
   loading: boolean;
@@ -33,6 +27,8 @@ function SubscriptionAnalysisModal({
   onViewHistory?: () => void;
   onClose: () => void;
 }) {
+  const { subscription, analysisResult, loading, onReanalyze, onViewHistory, onClose } = props;
+
   if (!subscription) return null;
 
   if (loading) {
@@ -255,10 +251,17 @@ export default function SystemPage() {
               <SubscriptionPanel
                 subscriptions={subscriptionsList}
                 reload={reloadAll}
-                onPreview={(subscription) => {
+                onPreview={async (subscription) => {
                   setAnalysisModal({ subscription, analysisResult: { analysis_id: 0, status: 'running', summary: null, results: [] }, loading: false });
 
-                  const response = API.previewSubscriptionAnalysisStream(subscription.id);
+                  let response: Response;
+                  try {
+                    response = await API.previewSubscriptionAnalysisStream(subscription.id);
+                  } catch {
+                    setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
+                    setFeedback({ tone: 'error', text: '无法连接到分析服务' });
+                    return;
+                  }
                   const reader = response.body?.getReader();
                   if (!reader) {
                     setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
@@ -366,11 +369,18 @@ export default function SystemPage() {
           subscription={analysisModal.subscription}
           analysisResult={analysisModal.analysisResult}
           loading={analysisModal.loading}
-          onReanalyze={() => {
+          onReanalyze={async () => {
             if (!analysisModal.subscription) return;
             setAnalysisModal((prev) => ({ ...prev, analysisResult: { analysis_id: 0, status: 'running', summary: null, results: [] }, loading: false }));
 
-            const response = API.previewSubscriptionAnalysisStream(analysisModal.subscription.id, true);
+            let response: Response;
+            try {
+              response = await API.previewSubscriptionAnalysisStream(analysisModal.subscription.id, true);
+            } catch {
+              setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
+              setFeedback({ tone: 'error', text: '无法连接到分析服务' });
+              return;
+            }
             const reader = response.body?.getReader();
             if (!reader) {
               setAnalysisModal({ subscription: null, analysisResult: null, loading: false });

@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
-import { db } from '@/lib/db-utils';
+import { getDb } from '@/lib/db-utils';
 import { sendSubscriptionAnalysisEmail, isEmailConfigured } from '@/lib/email-service';
 
 function getUserEmails(): string[] {
   const emails: string[] = [];
+  const db = getDb();
 
   try {
     const profiles = db.prepare(`
@@ -35,6 +36,7 @@ export async function POST() {
       return NextResponse.json({ success: false, error: '邮件服务未配置' }, { status: 400 });
     }
 
+    const db = getDb();
     const subscriptions = db.prepare('SELECT id, name, enabled FROM subscriptions WHERE enabled = 1').all() as Array<{ id: number; name: string; enabled: number }>;
 
     if (subscriptions.length === 0) {
@@ -149,6 +151,7 @@ export async function GET() {
   try {
     const emails = getUserEmails();
 
+    const db = getDb();
     const config = {
       emailConfigured: isEmailConfigured(),
       recipientEmails: emails,

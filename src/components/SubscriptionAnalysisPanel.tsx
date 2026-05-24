@@ -45,7 +45,7 @@ interface SubscriptionAnalysisPanelProps {
 
 function getScoreColor(score: number): string {
   if (score >= 85) return 'emerald';
-  if (score >= 70) return 'sky';
+  if (score >= 70) return 'blue';
   if (score >= 55) return 'amber';
   return 'rose';
 }
@@ -183,12 +183,12 @@ export function SubscriptionAnalysisPanel({
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             {onViewHistory && (
-              <Button variant="ghost" size="sm" onClick={onViewHistory}>历史</Button>
+              <Button variant="ghost" onClick={onViewHistory}>历史</Button>
             )}
             {onReanalyze && (
-              <Button variant="ghost" size="sm" onClick={onReanalyze}>重新分析</Button>
+              <Button variant="ghost" onClick={onReanalyze}>重新分析</Button>
             )}
-            <Button variant="ghost" size="sm" onClick={onClose}>关闭</Button>
+            <Button variant="ghost" onClick={onClose}>关闭</Button>
           </div>
         </div>
 
@@ -323,7 +323,7 @@ export function SubscriptionAnalysisPanel({
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: 12 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                        {job.is_new && <Badge tone="sky">新</Badge>}
+                        {job.is_new && <Badge tone="blue">新</Badge>}
                         <strong style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {job.title}
                         </strong>
@@ -387,9 +387,9 @@ export function SubscriptionAnalysisPanel({
                       )}
 
                       <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-                        <Button variant="primary" size="sm">查看详情</Button>
-                        <Button variant="secondary" size="sm">感兴趣</Button>
-                        <Button variant="secondary" size="sm">投递</Button>
+                        <Button variant="primary">查看详情</Button>
+                        <Button variant="secondary">感兴趣</Button>
+                        <Button variant="secondary">投递</Button>
                       </div>
                     </div>
                   )}

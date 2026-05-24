@@ -235,11 +235,22 @@ export class SubscriptionAnalyzer {
       params.push(startJobId);
     }
 
-    // 关键词搜索（标题/公司/描述/要求）
+    // 关键词搜索（支持多关键词，OR逻辑）
     if (subscription.keyword) {
-      conditions.push('(j.title LIKE ? OR j.company LIKE ? OR j.description LIKE ? OR j.requirements LIKE ?)');
-      const kw = `%${subscription.keyword}%`;
-      params.push(kw, kw, kw, kw);
+      const keywords = String(subscription.keyword)
+        .split(/[,，;；\s、]+/)
+        .map(k => k.trim())
+        .filter(k => k.length > 0);
+
+      if (keywords.length > 0) {
+        const kwConditions: string[] = [];
+        for (const kw of keywords) {
+          const pattern = `%${kw}%`;
+          kwConditions.push('(j.title LIKE ? OR j.company LIKE ? OR j.description LIKE ? OR j.requirements LIKE ?)');
+          params.push(pattern, pattern, pattern, pattern);
+        }
+        conditions.push(`(${kwConditions.join(' OR ')})`);
+      }
     }
 
     // 地点筛选
@@ -286,7 +297,12 @@ export class SubscriptionAnalyzer {
       try {
         const matchScore = matchEngine.match(profile, job);
 
-        if (matchScore.total < 30) {
+        let finalScore = matchScore.total;
+
+        const keywordBonus = this.calcKeywordBonus(job, subscription.keyword);
+        finalScore = Math.min(100, Math.max(finalScore, keywordBonus));
+
+        if (finalScore < 15) {
           if (onMatchProgress) onMatchProgress(i + 1, jobs.length);
           continue;
         }
@@ -294,14 +310,17 @@ export class SubscriptionAnalyzer {
         results.push({
           job_id: job.id!,
           title: job.title,
-          company: job.company,
+          company: job.company || '',
           location: job.location || '',
           salary: job.salary || '面议',
           education: job.education || '',
-          match_score: matchScore.total,
+          match_score: Math.round(finalScore),
           skill_match: matchScore.breakdown.skills,
           education_match: matchScore.breakdown.education,
           location_match: matchScore.breakdown.location,
+          ai_reasoning: undefined,
+          ai_suggestions: undefined,
+          is_new: false,
         });
       } catch (e) {
         console.error(`分析岗位 ${job.id} 失败:`, e);
@@ -316,13 +335,25 @@ export class SubscriptionAnalyzer {
 
   private subscriptionToProfile(subscription: SubscriptionCondition): ResumeProfile {
     const skills: string[] = [];
-    
+
     if (subscription.keyword) {
-      const knownSkills = ['Python', 'Excel', 'SQL', '数据分析', '财务分析', 'CFA', 'CPA', 
+      const kw = subscription.keyword;
+      const knownSkills = ['Python', 'Excel', 'SQL', '数据分析', '财务分析', 'CFA', 'CPA',
                            'Java', 'JavaScript', '机器学习', '深度学习', '金融', '会计'];
-      skills.push(...knownSkills.filter(s => 
-        subscription.keyword.toLowerCase().includes(s.toLowerCase())
+      skills.push(...knownSkills.filter(s =>
+        kw.toLowerCase().includes(s.toLowerCase())
       ));
+
+      const rawKeywords = String(kw)
+        .split(/[,，;；\s、]+/)
+        .map(k => k.trim())
+        .filter(k => k.length > 0 && k.length <= 10);
+
+      rawKeywords.forEach(kw => {
+        if (!skills.some(s => s.toLowerCase() === kw.toLowerCase())) {
+          skills.push(kw);
+        }
+      });
     }
 
     return {
@@ -344,6 +375,37 @@ export class SubscriptionAnalyzer {
       languages: [],
       resumeText: `求职意向: ${subscription.keyword || ''}; 地点: ${(subscription.locations || []).join(',')}; 行业: ${(subscription.industries || []).join(',')}`,
     };
+  }
+
+  private calcKeywordBonus(job: JobItem, keyword: string | null | undefined): number {
+    if (!keyword) return 20;
+
+    const keywords = String(keyword)
+      .split(/[,，;；\s、]+/)
+      .map(k => k.trim())
+      .filter(k => k.length > 0);
+
+    if (keywords.length === 0) return 20;
+
+    const searchText = `${job.title} ${job.company} ${job.tags || ''} ${job.industry || ''} ${(job.description || '').slice(0, 200)} ${(job.requirements || '').slice(0, 100)}`.toLowerCase();
+
+    let maxBonus = 20;
+    for (const kw of keywords) {
+      const normalized = kw.toLowerCase();
+      if (searchText.includes(normalized)) {
+        if (job.title.toLowerCase().includes(normalized)) {
+          maxBonus = Math.max(maxBonus, 55);
+        } else if ((job.requirements || '').toLowerCase().includes(normalized)) {
+          maxBonus = Math.max(maxBonus, 45);
+        } else if ((job.description || '').toLowerCase().includes(normalized)) {
+          maxBonus = Math.max(maxBonus, 35);
+        } else {
+          maxBonus = Math.max(maxBonus, 25);
+        }
+      }
+    }
+
+    return maxBonus;
   }
 
   private async analyzeSingleJob(result: AnalysisJobResult, subscription: SubscriptionCondition): Promise<{

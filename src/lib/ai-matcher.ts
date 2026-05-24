@@ -15,7 +15,16 @@ const FALLBACK_MODELS = [
   'glm-4.6v',                // Fallback 6
 ];
 
-const AI_TIMEOUT_MS = 120000; // AI调用超时120秒
+const AI_TIMEOUT_MS = 120000;
+
+function parseKeywords(keywords: string | string[] | null | undefined): string[] {
+  if (!keywords) return [];
+  if (Array.isArray(keywords)) return keywords.map(k => String(k).trim()).filter(Boolean);
+  return String(keywords)
+    .split(/[,，;；\s]+/)
+    .map(k => k.trim())
+    .filter(k => k.length > 0);
+}
 
 function getApiKeyForProvider(provider: string): string {
   switch (provider) {
@@ -149,17 +158,23 @@ function jobToLLMInput(job: JobItem, maxDescLen: number = 200, maxReqLen: number
   };
 }
 
-function preFilterByKeywords(jobs: JobItem[], alert: JobAlert, notifiedJobIds: Set<number>): JobItem[] {
-  const keywords = alert.keywords || [];
+function preFilterByKeywords(
+  jobs: JobItem[],
+  alert: JobAlert,
+  notifiedJobIds: Set<number>,
+  options?: { skipNotifiedFilter?: boolean }
+): JobItem[] {
+  const keywords = parseKeywords(alert.keywords);
   if (keywords.length === 0) {
-    // No keywords = match all (but still exclude notified)
-    return jobs.filter(j => !notifiedJobIds.has(j.id));
+    return options?.skipNotifiedFilter
+      ? jobs
+      : jobs.filter(j => !notifiedJobIds.has(j.id));
   }
 
   const normalizeText = (text: string): string => text.toLowerCase().replace(/[\s\-_]/g, '');
 
   return jobs.filter(job => {
-    if (notifiedJobIds.has(job.id)) return false;
+    if (!options?.skipNotifiedFilter && notifiedJobIds.has(job.id)) return false;
 
     const searchText = normalizeText([
       job.title,
@@ -170,7 +185,6 @@ function preFilterByKeywords(jobs: JobItem[], alert: JobAlert, notifiedJobIds: S
       (job.requirements || '').slice(0, 100),
     ].filter(Boolean).join(' '));
 
-    // OR logic: any keyword matches
     return keywords.some(kw => {
       const normalized = normalizeText(kw);
       return normalized && searchText.includes(normalized);
@@ -269,8 +283,9 @@ function parseLLMResponse(responseContent: string): AIMatchedJob[] {
 export async function aiMatchJobsToAlert(
   jobs: JobItem[],
   alert: JobAlert,
+  options?: { skipNotifiedFilter?: boolean }
 ): Promise<AIMatchResult> {
-  const notifiedJobIds = getNotifiedJobIds(alert.id);
+  const notifiedJobIds = options?.skipNotifiedFilter ? new Set<number>() : getNotifiedJobIds(alert.id);
 
   if (!aiService) {
     logger.warn(`AI服务未配置，Alert ${alert.id} 降级到规则匹配`);
@@ -278,7 +293,7 @@ export async function aiMatchJobsToAlert(
   }
 
   // Stage 1: 规则预筛选 - 用关键词OR逻辑快速过滤出候选岗位
-  const candidates = preFilterByKeywords(jobs, alert, notifiedJobIds);
+  const candidates = preFilterByKeywords(jobs, alert, notifiedJobIds, options);
 
   if (candidates.length === 0) {
     logger.info(`AI Alert ${alert.id}: 预筛选后无候选岗位 (从 ${jobs.length} 个中筛选)`);
