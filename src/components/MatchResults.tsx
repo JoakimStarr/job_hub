@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, memo } from 'react';
+import { useMemo, useState, memo } from 'react';
 import type { MatchResult } from '@/lib/resume-types';
 import { scoreEngine } from '@/lib/score-engine';
 import { SCORE_THRESHOLDS } from '@/lib/constants';
@@ -126,10 +126,85 @@ const MatchCard = memo(function MatchCard({ match, onViewDetail, onExportReport 
   const { job, score, rank } = match;
   const level = scoreEngine.getMatchLevel(score.total);
   const color = scoreEngine.getMatchColor(score.total);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [ripples, setRipples] = useState<Array<{ x: number; y: number; id: number }>>([]);
+
+  const hasDetailedData = score.matchedFields && score.gaps && score.breakdown;
+
+  const handleRipple = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const id = Date.now();
+    setRipples(prev => [...prev, { x, y, id }]);
+    setTimeout(() => {
+      setRipples(prev => prev.filter(r => r.id !== id));
+    }, 600);
+  };
+
+  const handleShare = async () => {
+    const url = `${window.location.origin}/jobs/${job.id}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      alert('链接已复制到剪贴板');
+    } catch (err) {
+      console.error('复制失败:', err);
+    }
+  };
 
   return (
-    <div className={styles.card}>
-      <div className={styles.cardHeader}>
+    <div
+      className={styles.card}
+      onClick={(e) => handleRipple(e)}
+      style={{ position: 'relative', overflow: 'hidden' }}
+    >
+      {ripples.map(ripple => (
+        <span
+          key={ripple.id}
+          className="ripple-effect"
+          style={{
+            position: 'absolute',
+            borderRadius: '50%',
+            background: 'rgba(102, 126, 234, 0.3)',
+            transform: 'scale(0)',
+            animation: 'rippleEffect 0.6s linear',
+            width: 20,
+            height: 20,
+            left: ripple.x - 10,
+            top: ripple.y - 10,
+            pointerEvents: 'none',
+          }}
+        />
+      ))}
+      <style>{`
+        @keyframes rippleEffect {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+        @keyframes heartBeat {
+          0%, 100% { transform: scale(1); }
+          25% { transform: scale(1.3); }
+          50% { transform: scale(1); }
+          75% { transform: scale(1.15); }
+        }
+        .favorite-btn.liked {
+          animation: heartBeat 0.6s ease;
+          color: #ef4444 !important;
+        }
+        .hover-actions {
+          opacity: 0;
+          transition: opacity 0.2s ease;
+        }
+        .card-wrapper:hover .hover-actions {
+          opacity: 1;
+        }
+      `}</style>
+
+      <div className={`${styles.cardHeader} card-wrapper`} style={{ position: 'relative' }}>
         <div className={styles.cardInfo}>
           <div className={styles.cardTitleRow}>
             <span className={styles.rank}>#{rank}</span>
@@ -148,14 +223,120 @@ const MatchCard = memo(function MatchCard({ match, onViewDetail, onExportReport 
           </div>
         </div>
 
-        <div className={styles.scoreBlock}>
-          <div
-            className={styles.scoreValue}
-            style={{ color }}
-          >
-            {score.total}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className={styles.scoreBlock}>
+            <div
+              className={styles.scoreValue}
+              style={{ color }}
+            >
+              {score.total}
+            </div>
+            <div className={styles.scoreLabel}>{level}</div>
           </div>
-          <div className={styles.scoreLabel}>{level}</div>
+
+          <div className="hover-actions" style={{
+            display: 'flex',
+            gap: 8,
+            alignItems: 'center',
+          }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowPreview(!showPreview);
+              }}
+              title="快速预览"
+              style={{
+                background: '#f3f4f6',
+                border: 'none',
+                borderRadius: '50%',
+                width: 32,
+                height: 32,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 16,
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.background = '#e5e7eb';
+                (e.target as HTMLElement).style.transform = 'scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.background = '#f3f4f6';
+                (e.target as HTMLElement).style.transform = 'scale(1)';
+              }}
+            >
+              👁️
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsFavorite(!isFavorite);
+              }}
+              className={`favorite-btn ${isFavorite ? 'liked' : ''}`}
+              title={isFavorite ? '取消收藏' : '添加收藏'}
+              style={{
+                background: '#f3f4f6',
+                border: 'none',
+                borderRadius: '50%',
+                width: 32,
+                height: 32,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 16,
+                color: isFavorite ? '#ef4444' : '#9ca3af',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.background = '#fee2e2';
+                (e.target as HTMLElement).style.transform = 'scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                if (!isFavorite) {
+                  (e.target as HTMLElement).style.background = '#f3f4f6';
+                  (e.target as HTMLElement).style.color = '#9ca3af';
+                }
+                (e.target as HTMLElement).style.transform = 'scale(1)';
+              }}
+            >
+              {isFavorite ? '❤️' : '🤍'}
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShare();
+              }}
+              title="分享职位"
+              style={{
+                background: '#f3f4f6',
+                border: 'none',
+                borderRadius: '50%',
+                width: 32,
+                height: 32,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 16,
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.background = '#e5e7eb';
+                (e.target as HTMLElement).style.transform = 'scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.background = '#f3f4f6';
+                (e.target as HTMLElement).style.transform = 'scale(1)';
+              }}
+            >
+              🔗
+            </button>
+          </div>
         </div>
       </div>
 
@@ -193,31 +374,105 @@ const MatchCard = memo(function MatchCard({ match, onViewDetail, onExportReport 
         </div>
       </div>
 
-      {score.matchedFields.length > 0 && (
-        <div className={styles.tagSection}>
-          <div className={styles.tagSectionLabel}>匹配项:</div>
-          <div className={styles.tagList}>
-            {score.matchedFields.map((field, index) => (
-              <span key={index} className={styles.matchTag}>
-                {field}
-              </span>
-            ))}
-          </div>
-        </div>
+      {hasDetailedData && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={styles.toggleDetailsBtn}
+        >
+          {isExpanded ? '收起详情' : '查看为什么匹配'}
+          <span className={`${styles.toggleIcon} ${isExpanded ? styles.toggleIconExpanded : ''}`}>
+            ▼
+          </span>
+        </button>
       )}
 
-      {score.gaps.length > 0 && (
-        <div className={styles.tagSection}>
-          <div className={styles.tagSectionLabel}>能力缺口:</div>
-          <div className={styles.tagList}>
-            {score.gaps.map((gap, index) => (
-              <span key={index} className={styles.gapTag}>
-                {gap}
-              </span>
-            ))}
+      <div className={`${styles.detailsPanel} ${isExpanded ? styles.detailsPanelExpanded : ''}`}>
+        {hasDetailedData ? (
+          <>
+            {score.matchedFields.length > 0 && (
+              <div className={styles.detailSection}>
+                <h4 className={styles.detailSectionTitle}>
+                  <span className={styles.checkIcon}>✅</span>
+                  匹配项列表
+                </h4>
+                <ul className={styles.detailList}>
+                  {score.matchedFields.map((field, index) => (
+                    <li key={index} className={styles.detailListItemMatched}>
+                      <span className={styles.listItemIcon}>✓</span>
+                      {field}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {score.gaps.length > 0 && (
+              <div className={styles.detailSection}>
+                <h4 className={styles.detailSectionTitle}>
+                  <span className={styles.crossIcon}>❌</span>
+                  能力缺口列表
+                </h4>
+                <ul className={styles.detailList}>
+                  {score.gaps.map((gap, index) => (
+                    <li key={index} className={styles.detailListItemGap}>
+                      <span className={styles.listItemIcon}>✗</span>
+                      {gap}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className={styles.detailSection}>
+              <h4 className={styles.detailSectionTitle}>
+                <span className={styles.chartIcon}>📈</span>
+                各维度得分详情
+              </h4>
+              <div className={styles.dimensionBars}>
+                {Object.entries(score.breakdown).map(([key, value]) => {
+                  const dimensionConfig: Record<string, { label: string; max: number }> = {
+                    skills: { label: '技能', max: 30 },
+                    education: { label: '学历', max: 20 },
+                    major: { label: '专业', max: 15 },
+                    location: { label: '地点', max: 10 },
+                    experience: { label: '经验', max: 15 },
+                    industry: { label: '行业', max: 10 },
+                  };
+                  
+                  const config = dimensionConfig[key];
+                  if (!config) return null;
+                  
+                  const percentage = (value / config.max) * 100;
+                  
+                  return (
+                    <div key={key} className={styles.dimensionBarRow}>
+                      <span className={styles.dimensionLabel}>{config.label}</span>
+                      <div className={styles.dimensionBarContainer}>
+                        <div
+                          className={styles.dimensionBarFill}
+                          style={{
+                            width: `${percentage}%`,
+                            backgroundColor: percentage >= 80 ? 'var(--success)' :
+                                           percentage >= 60 ? 'var(--primary)' :
+                                           percentage >= 40 ? 'var(--warning)' : 'var(--danger)',
+                          }}
+                        />
+                      </div>
+                      <span className={styles.dimensionValue}>
+                        {Math.round(value)}/{config.max}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className={styles.noDataMessage}>
+            暂无详细分析数据
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className={styles.actions}>
         <button

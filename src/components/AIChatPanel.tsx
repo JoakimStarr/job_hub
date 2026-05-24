@@ -10,6 +10,21 @@ interface ChatMessage {
   timestamp?: string;
 }
 
+const friendlyErrors: Record<string, string> = {
+  '请求失败 (401)': '登录已过期，请重新登录后再试',
+  '请求失败 (429)': 'AI服务繁忙，请稍等几秒再问',
+  '请求失败 (500)': 'AI服务暂时不可用，请稍后重试',
+  'Failed to fetch': '网络连接失败，请检查网络',
+  'timeout': 'AI响应超时，请简化问题后重试',
+};
+
+const quickQuestions = [
+  '这个岗位的面试流程是怎样的？',
+  '我的薪资谈判空间有多大？',
+  '需要准备哪些技术面试题？',
+  '这家公司的文化如何？',
+];
+
 interface AIChatPanelProps {
   jobId: number;
   sessionId?: string;
@@ -145,9 +160,10 @@ export default function AIChatPanel({
         return;
       }
       const errorMsg = err instanceof Error ? err.message : '发送失败';
+      const displayMsg = friendlyErrors[errorMsg] || errorMsg || 'AI暂时无法回答';
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', content: `❌ ${errorMsg}，请稍后重试` },
+        { role: 'assistant', content: `❌ ${displayMsg}` },
       ]);
     } finally {
       setLoading(false);
@@ -208,12 +224,87 @@ export default function AIChatPanel({
           <div style={{
             flex: 1,
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#9ca3af',
-            fontSize: 14,
+            padding: '40px 20px',
+            gap: 24,
           }}>
-            💬 可以对分析结果进行追问，AI 会基于职位信息继续回答
+            <div style={{
+              width: 80,
+              height: 80,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 40,
+              boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)',
+            }}>
+              🤖
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <h3 style={{
+                margin: 0,
+                color: '#1f2937',
+                fontSize: 18,
+                fontWeight: 600,
+                marginBottom: 8,
+              }}>
+                我是你的AI求职助手
+              </h3>
+              <p style={{
+                margin: 0,
+                color: '#6b7280',
+                fontSize: 14,
+                lineHeight: 1.6,
+              }}>
+                选择下方问题快速开始，或直接输入你想了解的内容
+              </p>
+            </div>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 10,
+              width: '100%',
+              maxWidth: 400,
+            }}>
+              {quickQuestions.map((question, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setInput(question);
+                    setTimeout(() => {
+                      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+                      document.querySelector('input[placeholder*="输入"]')?.dispatchEvent(event);
+                    }, 100);
+                  }}
+                  style={{
+                    padding: '12px 16px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: 8,
+                    background: '#fff',
+                    color: '#374151',
+                    fontSize: 13,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLElement).style.borderColor = '#667eea';
+                    (e.target as HTMLElement).style.background = '#f9fafb';
+                    (e.target as HTMLElement).style.transform = 'translateX(4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLElement).style.borderColor = '#e5e7eb';
+                    (e.target as HTMLElement).style.background = '#fff';
+                    (e.target as HTMLElement).style.transform = 'translateX(0)';
+                  }}
+                >
+                  💬 {question}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -222,10 +313,55 @@ export default function AIChatPanel({
         ))}
 
         {streamingContent && (
-          <ChatBubble
-            message={{ role: 'assistant', content: streamingContent }}
-            isStreaming
-          />
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <div style={{
+              maxWidth: '85%',
+              padding: '10px 14px',
+              borderRadius: '4px 16px 16px 16px',
+              background: '#fff',
+              color: '#1f2937',
+              fontSize: 14,
+              lineHeight: 1.7,
+              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+              wordBreak: 'break-word',
+              position: 'relative',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <span style={{ fontSize: 12, color: '#9ca3af' }}>AI正在思考</span>
+                <span className="dot-flashing" style={{
+                  display: 'inline-block',
+                  width: 20,
+                  height: 20,
+                  position: 'relative',
+                }}>
+                  <style>{`
+                    @keyframes dotFlashing {
+                      0%, 20% { opacity: 0; }
+                      50% { opacity: 1; }
+                      80%, 100% { opacity: 0; }
+                    }
+                    .dot-flashing::before, .dot-flashing::after {
+                      content: '';
+                      position: absolute;
+                      width: 4px;
+                      height: 4px;
+                      border-radius: 50%;
+                      background: #667eea;
+                    }
+                    .dot-flashing::before {
+                      left: 0;
+                      animation: dotFlashing 1.5s infinite;
+                    }
+                    .dot-flashing::after {
+                      left: 8px;
+                      animation: dotFlashing 1.5s infinite 0.3s;
+                    }
+                  `}</style>
+                </span>
+              </div>
+              <MarkdownRenderer content={streamingContent + '▌'} />
+            </div>
+          </div>
         )}
 
         <div ref={messagesEndRef} />
