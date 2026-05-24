@@ -1,9 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const mockSendMail = vi.fn()
-const mockCreateTransport = vi.fn(() => ({
-  sendMail: mockSendMail,
-}))
+const { mockSendMail, mockCreateTransport } = vi.hoisted(() => {
+  const mockSendMail = vi.fn()
+  const mockCreateTransport = vi.fn(() => ({
+    sendMail: mockSendMail,
+  }))
+  return { mockSendMail, mockCreateTransport }
+})
 
 vi.mock('nodemailer', () => ({
   default: {

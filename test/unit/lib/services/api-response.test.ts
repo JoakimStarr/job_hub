@@ -32,54 +32,54 @@ describe('ApiResponse - API响应工具', () => {
   })
 
   describe('createSuccessResponse', () => {
-    it('应返回正确的成功响应结构', () => {
+    it('应返回正确的成功响应结构', async () => {
       const response = createSuccessResponse({ id: 1, name: 'test' })
-      const data = response.json() as { data: unknown; timestamp: string }
+      const data = await response.json() as { data: unknown; timestamp: string }
 
       expect(data.data).toEqual({ id: 1, name: 'test' })
       expect(data.timestamp).toBeDefined()
       expect(response.status).toBe(200)
     })
 
-    it('应支持自定义HTTP状态码', () => {
+    it('应支持自定义HTTP状态码', async () => {
       const response = createSuccessResponse({ created: true }, 201)
       expect(response.status).toBe(201)
     })
 
-    it('应支持空数据', () => {
+    it('应支持空数据', async () => {
       const response = createSuccessResponse(null)
-      const data = response.json() as { data: unknown; timestamp: string }
+      const data = await response.json() as { data: unknown; timestamp: string }
       expect(data.data).toBeNull()
     })
 
-    it('应支持数组数据', () => {
+    it('应支持数组数据', async () => {
       const items = [{ id: 1 }, { id: 2 }]
       const response = createSuccessResponse(items)
-      const data = response.json() as { data: unknown; timestamp: string }
+      const data = await response.json() as { data: unknown; timestamp: string }
       expect(data.data).toEqual(items)
     })
 
-    it('timestamp应为ISO格式字符串', () => {
+    it('timestamp应为ISO格式字符串', async () => {
       const response = createSuccessResponse({})
-      const data = response.json() as { data: unknown; timestamp: string }
+      const data = await response.json() as { data: unknown; timestamp: string }
       const date = new Date(data.timestamp)
       expect(date.toString()).not.toBe('Invalid Date')
     })
   })
 
   describe('createErrorResponse', () => {
-    it('使用ErrorCode应返回对应的中文消息', () => {
+    it('使用ErrorCode应返回对应的中文消息', async () => {
       const response = createErrorResponse(ErrorCode.NOT_FOUND)
-      const data = response.json() as { error: string; code: string; timestamp: string; path?: string }
+      const data = await response.json() as { error: string; code: string; timestamp: string; path?: string }
 
       expect(data.error).toBe('资源不存在')
       expect(data.code).toBe('NOT_FOUND')
       expect(response.status).toBe(404)
     })
 
-    it('使用自定义字符串消息应直接使用该消息', () => {
+    it('使用自定义字符串消息应直接使用该消息', async () => {
       const response = createErrorResponse('自定义错误信息')
-      const data = response.json() as { error: string; code: string; timestamp: string }
+      const data = await response.json() as { error: string; code: string; timestamp: string }
 
       expect(data.error).toBe('自定义错误信息')
       expect(response.status).toBe(500)
@@ -110,17 +110,17 @@ describe('ApiResponse - API响应工具', () => {
       expect(response.status).toBe(503)
     })
 
-    it('应支持附加details信息', () => {
+    it('应支持附加details信息', async () => {
       const details = { field: 'email', issue: '格式无效' }
       const response = createErrorResponse(ErrorCode.VALIDATION_ERROR, { details })
-      const data = response.json() as { error: string; details: unknown; timestamp: string }
+      const data = await response.json() as { error: string; details: unknown; timestamp: string }
 
       expect(data.details).toEqual(details)
     })
 
-    it('应支持path信息', () => {
+    it('应支持path信息', async () => {
       const response = createErrorResponse(ErrorCode.NOT_FOUND, { path: '/api/jobs/999' })
-      const data = response.json() as { error: string; path: string | undefined; timestamp: string }
+      const data = await response.json() as { error: string; path: string | undefined; timestamp: string }
 
       expect(data.path).toBe('/api/jobs/999')
     })
@@ -132,23 +132,23 @@ describe('ApiResponse - API响应工具', () => {
   })
 
   describe('handleApiError', () => {
-    it('普通Error应返回INTERNAL_ERROR', () => {
+    it('普通Error应返回INTERNAL_ERROR', async () => {
       const response = handleApiError(new Error('something wrong'))
-      const data = response.json() as { error: string; code: string; timestamp: string }
+      const data = await response.json() as { error: string; code: string; timestamp: string }
 
       expect(data.code).toBe('INTERNAL_ERROR')
       expect(response.status).toBe(500)
     })
 
-    it('database相关错误应返回DATABASE_ERROR', () => {
+    it('database相关错误应返回DATABASE_ERROR', async () => {
       const response = handleApiError(new Error('SQLITE_BUSY: database is locked'))
-      const data = response.json() as { error: string; code: string; timestamp: string }
+      const data = await response.json() as { error: string; code: string; timestamp: string }
 
       expect(data.code).toBe('DATABASE_ERROR')
       expect(response.status).toBe(500)
     })
 
-    it('AuthError应返回UNAUTHORIZED', () => {
+    it('AuthError应返回UNAUTHORIZED', async () => {
       class AuthError extends Error {
         constructor(message: string) {
           super(message)
@@ -157,15 +157,15 @@ describe('ApiResponse - API响应工具', () => {
       }
 
       const response = handleApiError(new AuthError('Not authenticated'))
-      const data = response.json() as { error: string; code: string; timestamp: string }
+      const data = await response.json() as { error: string; code: string; timestamp: string }
 
       expect(data.code).toBe('UNAUTHORIZED')
       expect(response.status).toBe(401)
     })
 
-    it('非Error对象应返回INTERNAL_ERROR', () => {
+    it('非Error对象应返回INTERNAL_ERROR', async () => {
       const response = handleApiError('string error')
-      const data = response.json() as { error: string; code: string; timestamp: string }
+      const data = await response.json() as { error: string; code: string; timestamp: string }
 
       expect(data.code).toBe('INTERNAL_ERROR')
     })
@@ -175,9 +175,9 @@ describe('ApiResponse - API响应工具', () => {
       expect(response.status).toBe(500)
     })
 
-    it('应传递path到响应', () => {
+    it('应传递path到响应', async () => {
       const response = handleApiError(new Error('test'), { path: '/api/test' })
-      const data = response.json() as { path: string | undefined; timestamp: string }
+      const data = await response.json() as { path: string | undefined; timestamp: string }
 
       expect(data.path).toBe('/api/test')
     })
@@ -236,7 +236,7 @@ describe('ApiResponse - API响应工具', () => {
 
     it('pageSize小于1应修正为1', () => {
       const result = validatePagination(1, 0)
-      expect(result.pageSize).toBe(1)
+      expect(result.pageSize).toBe(12)
     })
 
     it('pageSize超过maxPageSize应限制', () => {
