@@ -46,7 +46,6 @@ export const SearchBar = memo(function SearchBar({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -135,7 +134,6 @@ export const SearchBar = memo(function SearchBar({
       <form onSubmit={handleSubmit} className="search-form">
         <div className="search-input-group">
           <Input
-            ref={inputRef}
             type="text"
             value={query}
             onChange={handleInputChange}
