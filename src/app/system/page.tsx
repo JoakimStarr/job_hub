@@ -6,7 +6,7 @@ import { Badge, Button, EmptyState, Input, JobCard, MetricCard, SectionCard, Sel
 import { SubscriptionAnalysisPanel } from '@/components/SubscriptionAnalysisPanel';
 import { API } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
-import type { JobItem, SystemConfig, SystemStatus, SubscriptionItem } from '@/lib/types';
+import type { JobItem, SystemConfig, SystemStatus, SubscriptionItem, AnalysisResult } from '@/lib/types';
 
 type Feedback = { tone: 'success' | 'error'; text: string };
 type TabKey = 'config' | 'subscriptions' | 'diagnostics';
@@ -18,33 +18,6 @@ function safeJsonParse(value: string) {
     return null;
   }
 }
-
-type AnalysisResult = {
-  analysis_id: number;
-  status: 'completed' | 'running' | 'failed' | 'cached' | 'no_analysis';
-  summary: {
-    total_scanned: number;
-    new_jobs: number;
-    matched: number;
-    ai_summary?: string;
-  } | null;
-  results: Array<{
-    job_id: number;
-    title: string;
-    company: string;
-    location: string;
-    salary: string;
-    education: string;
-    match_score: number;
-    skill_match: number;
-    education_match: number;
-    location_match: number;
-    ai_reasoning?: string;
-    ai_suggestions?: string;
-    is_new: boolean;
-  }>;
-  cached_at?: string;
-};
 
 function SubscriptionAnalysisModal({
   subscription,
@@ -283,15 +256,59 @@ export default function SystemPage() {
                 subscriptions={subscriptionsList}
                 reload={reloadAll}
                 onPreview={(subscription) => {
-                  setAnalysisModal({ subscription, analysisResult: null, loading: true });
-                  API.previewSubscriptionAnalysis(subscription.id)
-                    .then((result) => {
-                      setAnalysisModal({ subscription, analysisResult: result, loading: false });
-                    })
-                    .catch((requestError) => {
+                  setAnalysisModal({ subscription, analysisResult: { analysis_id: 0, status: 'running', summary: null, results: [] }, loading: false });
+
+                  const response = API.previewSubscriptionAnalysisStream(subscription.id);
+                  const reader = response.body?.getReader();
+                  if (!reader) {
+                    setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
+                    setFeedback({ tone: 'error', text: '无法连接到分析服务' });
+                    return;
+                  }
+
+                  const decoder = new TextDecoder();
+                  let buffer = '';
+
+                  const readStream = (): void => {
+                    reader.read().then(({ done, value }) => {
+                      if (done) {
+                        setAnalysisModal((prev) => ({ ...prev, loading: false }));
+                        return;
+                      }
+                      buffer += decoder.decode(value, { stream: true });
+                      const lines = buffer.split('\n');
+                      buffer = lines.pop() || '';
+
+                      for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                          try {
+                            const data = JSON.parse(line.slice(6));
+                            if (data.type === 'complete') {
+                              setAnalysisModal((prev) => ({
+                                ...prev,
+                                analysisResult: {
+                                  analysis_id: data.analysis_id,
+                                  status: 'completed',
+                                  summary: data.summary,
+                                  results: data.results || [],
+                                  cached_at: undefined,
+                                },
+                                loading: false,
+                              }));
+                            } else if (data.type === 'error') {
+                              setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
+                              setFeedback({ tone: 'error', text: data.message || '分析失败' });
+                            }
+                          } catch { /* 忽略非JSON数据 */ }
+                        }
+                      }
+                      readStream();
+                    }).catch(() => {
                       setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
-                      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '预览分析失败' });
+                      setFeedback({ tone: 'error', text: '分析连接中断' });
                     });
+                  };
+                  readStream();
                 }}
               />
             </div>
@@ -351,15 +368,59 @@ export default function SystemPage() {
           loading={analysisModal.loading}
           onReanalyze={() => {
             if (!analysisModal.subscription) return;
-            setAnalysisModal((prev) => ({ ...prev, loading: true, analysisResult: null }));
-            API.previewSubscriptionAnalysis(analysisModal.subscription.id)
-              .then((result) => {
-                setAnalysisModal((prev) => ({ ...prev, analysisResult: result, loading: false }));
-              })
-              .catch((requestError) => {
+            setAnalysisModal((prev) => ({ ...prev, analysisResult: { analysis_id: 0, status: 'running', summary: null, results: [] }, loading: false }));
+
+            const response = API.previewSubscriptionAnalysisStream(analysisModal.subscription.id, true);
+            const reader = response.body?.getReader();
+            if (!reader) {
+              setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
+              setFeedback({ tone: 'error', text: '无法连接到分析服务' });
+              return;
+            }
+
+            const decoder = new TextDecoder();
+            let buffer = '';
+
+            const readStream = (): void => {
+              reader.read().then(({ done, value }) => {
+                if (done) {
+                  setAnalysisModal((prev) => ({ ...prev, loading: false }));
+                  return;
+                }
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
+
+                for (const line of lines) {
+                  if (line.startsWith('data: ')) {
+                    try {
+                      const data = JSON.parse(line.slice(6));
+                      if (data.type === 'complete') {
+                        setAnalysisModal((prev) => ({
+                          ...prev,
+                          analysisResult: {
+                            analysis_id: data.analysis_id,
+                            status: 'completed',
+                            summary: data.summary,
+                            results: data.results || [],
+                            cached_at: undefined,
+                          },
+                          loading: false,
+                        }));
+                      } else if (data.type === 'error') {
+                        setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
+                        setFeedback({ tone: 'error', text: data.message || '重新分析失败' });
+                      }
+                    } catch { /* 忽略 */ }
+                  }
+                }
+                readStream();
+              }).catch(() => {
                 setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
-                setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '重新分析失败' });
+                setFeedback({ tone: 'error', text: '分析连接中断' });
               });
+            };
+            readStream();
           }}
           onViewHistory={() => {
             console.log('查看历史记录 - 功能开发中');

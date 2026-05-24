@@ -583,6 +583,7 @@ export function initSubscriptionAnalysisTables(db: Database.Database): void {
       analyzed_at TEXT DEFAULT CURRENT_TIMESTAMP,
       total_jobs_scanned INTEGER DEFAULT 0,
       new_jobs_count INTEGER DEFAULT 0,
+      filtered_count INTEGER DEFAULT 0,
       matched_jobs_count INTEGER DEFAULT 0,
       last_job_id_analyzed INTEGER DEFAULT 0,
       analysis_hash TEXT,
@@ -594,6 +595,10 @@ export function initSubscriptionAnalysisTables(db: Database.Database): void {
       FOREIGN KEY (subscription_id) REFERENCES subscriptions(id)
     )
   `);
+
+  try {
+    db.exec(`ALTER TABLE subscription_analyses ADD COLUMN filtered_count INTEGER DEFAULT 0`);
+  } catch { /* 列已存在 */ }
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS subscription_analysis_results (

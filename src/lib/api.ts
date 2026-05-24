@@ -157,6 +157,18 @@ export const API = {
   previewSubscription: (id: number) => request<JobItem[]>(`/api/system/subscriptions/${id}/preview`),
 
   previewSubscriptionAnalysis: (id: number) => request<AnalysisResult>(`/api/system/subscriptions/${id}/preview`, { method: 'POST' }, AI_REQUEST_TIMEOUT_MS),
+  previewSubscriptionAnalysisStream: (id: number, forceRefresh = false) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem(AUTH_TOKEN_KEY) : '';
+    return fetch(`/api/system/subscriptions/${id}/preview`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'text/event-stream',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ force_refresh: forceRefresh }),
+    });
+  },
   getSubscriptionAnalysisHistory: (subscriptionId: number) => request<{ analyses: Array<{ id: number; status: string; created_at: string; summary_text?: string }> }>(`/api/system/subscriptions/${subscriptionId}/analyses/history`),
   getSubscriptionAnalysisResults: (subscriptionId: number, analysisId: number, page = 1, pageSize = 20) => {
     const query = new URLSearchParams();

@@ -14,11 +14,22 @@ export interface SubscriptionCondition {
   education?: string | null;
 }
 
+export type AnalysisPhase = 'scanning' | 'matching' | 'ai_analyzing' | 'completed' | 'failed';
+
+export interface AnalysisProgress {
+  phase: AnalysisPhase;
+  phaseLabel: string;
+  current: number;
+  total: number;
+  message: string;
+}
+
 export interface AnalysisResult {
   analysis_id: number;
   status: 'completed' | 'running' | 'failed' | 'cached';
   summary: {
     total_scanned: number;
+    filtered_count: number;
     new_jobs: number;
     matched: number;
     ai_summary?: string;
@@ -48,10 +59,19 @@ export interface SubscriptionAnalyzerConfig {
     chat(messages: AIMessage[]): Promise<AIResponse>;
   } | null;
   maxJobsPerAnalysis?: number;
+  onProgress?: (progress: AnalysisProgress) => void;
 }
 
 const DEFAULT_CONFIG: Required<Pick<SubscriptionAnalyzerConfig, 'maxJobsPerAnalysis'>> = {
   maxJobsPerAnalysis: 500,
+};
+
+const PHASE_LABELS: Record<AnalysisPhase, string> = {
+  scanning: '扫描岗位数据',
+  matching: '本地规则匹配',
+  ai_analyzing: 'AI 深度分析',
+  completed: '分析完成',
+  failed: '分析失败',
 };
 
 export class SubscriptionAnalyzer {
@@ -59,6 +79,18 @@ export class SubscriptionAnalyzer {
 
   constructor(config: SubscriptionAnalyzerConfig) {
     this.config = { ...DEFAULT_CONFIG, ...config };
+  }
+
+  private emitProgress(phase: AnalysisPhase, current: number, total: number, message: string): void {
+    if (this.config.onProgress) {
+      this.config.onProgress({
+        phase,
+        phaseLabel: PHASE_LABELS[phase],
+        current,
+        total,
+        message,
+      });
+    }
   }
 
   async preview(subscription: SubscriptionCondition, forceRefresh = false): Promise<AnalysisResult> {
@@ -69,46 +101,55 @@ export class SubscriptionAnalyzer {
     const lastAnalysis = getLastAnalysis(db, subscription.id);
     const maxJobId = getMaxJobId(db);
 
-    // 检查是否可以使用缓存
+    // 缓存检查
     if (!forceRefresh && lastAnalysis && lastAnalysis.status === 'completed') {
       if (lastAnalysis.analysis_hash === currentHash && maxJobId <= (lastAnalysis.last_job_id_analyzed || 0)) {
-        // 条件未变且无新数据，返回缓存
         return this.getCachedResults(db, lastAnalysis.id);
       }
     }
 
-    // 创建新的分析记录
     const analysisId = this.createAnalysisRecord(db, subscription.id, currentHash);
 
     try {
-      // 更新状态为 running
       db.prepare('UPDATE subscription_analyses SET status = ? WHERE id = ?').run('running', analysisId);
 
-      // 确定扫描范围
       let startJobId = 0;
       if (!forceRefresh && lastAnalysis && lastAnalysis.analysis_hash === currentHash) {
         startJobId = lastAnalysis.last_job_id_analyzed || 0;
       }
 
-      // 获取待分析的岗位
-      const jobsToAnalyze = this.getJobsToAnalyze(db, subscription, startJobId);
+      // ===== 阶段1: 关键词筛选 =====
+      this.emitProgress('scanning', 0, 100, '正在从数据库筛选匹配岗位...');
+      const allJobs = this.keywordFilterJobs(db, subscription, startJobId);
+      this.emitProgress('scanning', allJobs.length, allJobs.length, `筛选完成，共 ${allJobs.length} 个候选岗位`);
 
-      // 统计信息
-      const totalScanned = jobsToAnalyze.length;
-      const newJobsCount = startJobId > 0 ? jobsToAnalyze.length : totalScanned;
+      // ===== 阶段2: 本地匹配评分 =====
+      this.emitProgress('matching', 0, allJobs.length, '正在进行本地规则匹配评分...');
+      const matchedResults = await this.scoreMatchJobs(allJobs, subscription, (curr, total) => {
+        this.emitProgress('matching', curr, total, `已匹配 ${curr}/${total} 个岗位`);
+      });
+      this.emitProgress('matching', matchedResults.length, matchedResults.length, `匹配完成，${matchedResults.length} 个岗位通过`);
 
-      // 执行匹配和分析
-      const matchedResults = await this.analyzeJobs(jobsToAnalyze, subscription);
-
-      // 存储结果
-      this.storeResults(db, analysisId, matchedResults);
-
-      // AI 摘要生成
+      // ===== 阶段3: AI 深度分析（Top-N） =====
       let aiSummary = '';
       let aiModel = '';
       let tokensUsed = 0;
 
       if (this.config.aiService && matchedResults.length > 0) {
+        const topN = Math.min(matchedResults.length, 20);
+        this.emitProgress('ai_analyzing', 0, topN, `正在对 Top-${topN} 岗位进行 AI 深度分析...`);
+
+        for (let i = 0; i < topN; i++) {
+          try {
+            const aiAnalysis = await this.analyzeSingleJob(matchedResults[i], subscription);
+            matchedResults[i].ai_reasoning = aiAnalysis.reasoning;
+            matchedResults[i].ai_suggestions = aiAnalysis.suggestions;
+          } catch (e) {
+            console.error(`AI分析岗位 ${matchedResults[i].job_id} 失败:`, e);
+          }
+          this.emitProgress('ai_analyzing', i + 1, topN, `AI 分析进度 ${i + 1}/${topN}`);
+        }
+
         try {
           const summaryResult = await this.generateAISummary(matchedResults.slice(0, 10), subscription);
           aiSummary = summaryResult.content;
@@ -119,13 +160,18 @@ export class SubscriptionAnalyzer {
         }
       }
 
-      // 更新分析记录
+      this.storeResults(db, analysisId, matchedResults);
+
+      const totalScanned = allJobs.length;
+      const newJobsCount = startJobId > 0 ? allJobs.length : totalScanned;
+
       db.prepare(`
         UPDATE subscription_analyses SET 
           status = ?, 
           analyzed_at = CURRENT_TIMESTAMP,
           total_jobs_scanned = ?,
           new_jobs_count = ?,
+          filtered_count = ?,
           matched_jobs_count = ?,
           last_job_id_analyzed = ?,
           ai_summary = ?,
@@ -136,6 +182,7 @@ export class SubscriptionAnalyzer {
         'completed',
         totalScanned,
         newJobsCount,
+        allJobs.length,
         matchedResults.length,
         maxJobId,
         aiSummary,
@@ -144,14 +191,16 @@ export class SubscriptionAnalyzer {
         analysisId
       );
 
-      // 清理过期历史
       cleanupOldAnalyses(db, subscription.id);
+
+      this.emitProgress('completed', matchedResults.length, matchedResults.length, '分析完成');
 
       return {
         analysis_id: analysisId,
         status: 'completed',
         summary: {
           total_scanned: totalScanned,
+          filtered_count: allJobs.length,
           new_jobs: newJobsCount,
           matched: matchedResults.length,
           ai_summary: aiSummary || undefined,
@@ -162,7 +211,7 @@ export class SubscriptionAnalyzer {
     } catch (error) {
       db.prepare('UPDATE subscription_analyses SET status = ?, error_message = ? WHERE id = ?')
         .run('failed', error instanceof Error ? error.message : String(error), analysisId);
-
+      this.emitProgress('failed', 0, 0, error instanceof Error ? error.message : '未知错误');
       throw error;
     }
   }
@@ -174,16 +223,19 @@ export class SubscriptionAnalyzer {
     return result.lastInsertRowid as number;
   }
 
-  private getJobsToAnalyze(db: ReturnType<typeof getDb>, subscription: SubscriptionCondition, startJobId: number): JobItem[] {
+  /**
+   * 阶段1: 关键词筛选 - 从全量数据库中按订阅条件过滤岗位
+   */
+  private keywordFilterJobs(db: ReturnType<typeof getDb>, subscription: SubscriptionCondition, startJobId: number): JobItem[] {
     const conditions: string[] = [];
-    const params: any[] = [];
+    const params: unknown[] = [];
 
     if (startJobId > 0) {
       conditions.push('j.id > ?');
       params.push(startJobId);
     }
 
-    // 关键词搜索
+    // 关键词搜索（标题/公司/描述/要求）
     if (subscription.keyword) {
       conditions.push('(j.title LIKE ? OR j.company LIKE ? OR j.description LIKE ? OR j.requirements LIKE ?)');
       const kw = `%${subscription.keyword}%`;
@@ -192,9 +244,9 @@ export class SubscriptionAnalyzer {
 
     // 地点筛选
     if (subscription.locations && subscription.locations.length > 0) {
-      const locConditions = subscription.locations.map(() => 'j.location LIKE ?').join(' OR ');
+      const locConditions = subscription.locations.map(() => '(j.location LIKE ? OR j.location = ?)').join(' OR ');
       conditions.push(`(${locConditions})`);
-      subscription.locations.forEach(loc => params.push(`%${loc}%`));
+      subscription.locations.forEach(loc => { params.push(`%${loc}%`, loc); });
     }
 
     // 行业筛选
@@ -222,19 +274,22 @@ export class SubscriptionAnalyzer {
     return db.prepare(sql).all(...params) as JobItem[];
   }
 
-  private async analyzeJobs(jobs: JobItem[], subscription: SubscriptionCondition): Promise<AnalysisJobResult[]> {
-    // 将订阅条件转换为伪简历画像用于匹配
+  /**
+   * 阶段2: 本地匹配评分 - 对筛选后的岗位进行 match-engine + score-engine 评分
+   */
+  private async scoreMatchJobs(jobs: JobItem[], subscription: SubscriptionCondition, onMatchProgress?: (current: number, total: number) => void): Promise<AnalysisJobResult[]> {
     const profile = this.subscriptionToProfile(subscription);
-
     const results: AnalysisJobResult[] = [];
 
-    for (const job of jobs) {
+    for (let i = 0; i < jobs.length; i++) {
+      const job = jobs[i];
       try {
-        // 本地规则匹配
         const matchScore = matchEngine.match(profile, job);
-        
-        // 只保留匹配度 > 30 的岗位（有基本相关性）
-        if (matchScore.total < 30) continue;
+
+        if (matchScore.total < 30) {
+          if (onMatchProgress) onMatchProgress(i + 1, jobs.length);
+          continue;
+        }
 
         results.push({
           job_id: job.id!,
@@ -251,33 +306,17 @@ export class SubscriptionAnalyzer {
       } catch (e) {
         console.error(`分析岗位 ${job.id} 失败:`, e);
       }
+
+      if (onMatchProgress) onMatchProgress(i + 1, jobs.length);
     }
 
-    // 按 match_score 降序排序
     results.sort((a, b) => b.match_score - a.match_score);
-
-    // AI 深度分析 Top 结果
-    if (this.config.aiService && results.length > 0) {
-      const topResults = results.slice(0, Math.min(results.length, 20));
-      
-      for (let i = 0; i < topResults.length; i++) {
-        try {
-          const aiAnalysis = await this.analyzeSingleJob(topResults[i], subscription);
-          topResults[i].ai_reasoning = aiAnalysis.reasoning;
-          topResults[i].ai_suggestions = aiAnalysis.suggestions;
-        } catch (e) {
-          console.error(`AI分析岗位 ${topResults[i].job_id} 失败:`, e);
-        }
-      }
-    }
-
     return results;
   }
 
   private subscriptionToProfile(subscription: SubscriptionCondition): ResumeProfile {
     const skills: string[] = [];
     
-    // 从关键词提取技能
     if (subscription.keyword) {
       const knownSkills = ['Python', 'Excel', 'SQL', '数据分析', '财务分析', 'CFA', 'CPA', 
                            'Java', 'JavaScript', '机器学习', '深度学习', '金融', '会计'];
@@ -415,7 +454,7 @@ ${jobsSummary}
   }
 
   private getCachedResults(db: ReturnType<typeof getDb>, analysisId: number): AnalysisResult {
-    const analysis = db.prepare('SELECT * FROM subscription_analyses WHERE id = ?').get(analysisId) as any;
+    const analysis = db.prepare('SELECT * FROM subscription_analyses WHERE id = ?').get(analysisId) as Record<string, unknown>;
 
     const results = db.prepare(`
       SELECT sar.*, j.title, j.company, j.location, j.salary, j.education
@@ -423,33 +462,34 @@ ${jobsSummary}
       JOIN jobs j ON sar.job_id = j.id
       WHERE sar.analysis_id = ?
       ORDER BY sar.match_score DESC
-    `).all(analysisId) as any[];
+    `).all(analysisId) as Record<string, unknown>[];
 
     return {
       analysis_id: analysisId,
       status: 'cached',
       summary: {
-        total_scanned: analysis.total_jobs_scanned,
-        new_jobs: analysis.new_jobs_count,
-        matched: analysis.matched_jobs_count,
-        ai_summary: analysis.ai_summary || undefined,
+        total_scanned: analysis.total_jobs_scanned as number,
+        filtered_count: (analysis.filtered_count as number) ?? (analysis.total_jobs_scanned as number),
+        new_jobs: analysis.new_jobs_count as number,
+        matched: analysis.matched_jobs_count as number,
+        ai_summary: (analysis.ai_summary as string) || undefined,
       },
       results: results.map(r => ({
-        job_id: r.job_id,
-        title: r.title,
-        company: r.company,
-        location: r.location || '',
-        salary: r.salary || '面议',
-        education: r.education || '',
-        match_score: r.match_score,
-        skill_match: r.skill_match,
-        education_match: r.education_match,
-        location_match: r.location_match,
-        ai_reasoning: r.ai_reasoning || undefined,
-        ai_suggestions: r.ai_suggestions || undefined,
+        job_id: r.job_id as number,
+        title: r.title as string,
+        company: r.company as string,
+        location: (r.location as string) || '',
+        salary: (r.salary as string) || '面议',
+        education: (r.education as string) || '',
+        match_score: r.match_score as number,
+        skill_match: r.skill_match as number,
+        education_match: r.education_match as number,
+        location_match: r.location_match as number,
+        ai_reasoning: (r.ai_reasoning as string) || undefined,
+        ai_suggestions: (r.ai_suggestions as string) || undefined,
         is_new: false,
       })),
-      cached_at: analysis.analyzed_at,
+      cached_at: analysis.analyzed_at as string,
     };
   }
 
@@ -457,7 +497,7 @@ ${jobsSummary}
     initSubscriptionAnalysisTables(db);
     
     return db.prepare(`
-      SELECT id, analyzed_at, status, total_jobs_scanned, new_jobs_count, matched_jobs_count, ai_summary
+      SELECT id, analyzed_at, status, total_jobs_scanned, new_jobs_count, matched_jobs_count, filtered_count, ai_summary
       FROM subscription_analyses
       WHERE subscription_id = ?
       ORDER BY analyzed_at DESC
@@ -487,22 +527,22 @@ ${jobsSummary}
       WHERE sar.analysis_id = ?
       ORDER BY sar.match_score DESC
       LIMIT ? OFFSET ?
-    `).all(analysisId, limit, offset) as any[];
+    `).all(analysisId, limit, offset) as Record<string, unknown>[];
 
     return {
       results: results.map(r => ({
-        job_id: r.job_id,
-        title: r.title,
-        company: r.company,
-        location: r.location || '',
-        salary: r.salary || '面议',
-        education: r.education || '',
-        match_score: r.match_score,
-        skill_match: r.skill_match,
-        education_match: r.education_match,
-        location_match: r.location_match,
-        ai_reasoning: r.ai_reasoning || undefined,
-        ai_suggestions: r.ai_suggestions || undefined,
+        job_id: r.job_id as number,
+        title: r.title as string,
+        company: r.company as string,
+        location: (r.location as string) || '',
+        salary: (r.salary as string) || '面议',
+        education: (r.educ as string) || '',
+        match_score: r.match_score as number,
+        skill_match: r.skill_match as number,
+        education_match: r.education_match as number,
+        location_match: r.location_match as number,
+        ai_reasoning: (r.ai_reasoning as string) || undefined,
+        ai_suggestions: (r.ai_suggestions as string) || undefined,
         is_new: false,
       })),
       total: count.cnt,
@@ -512,7 +552,6 @@ ${jobsSummary}
   }
 }
 
-// 单例实例
 let analyzerInstance: SubscriptionAnalyzer | null = null;
 
 export function getSubscriptionAnalyzer(config?: SubscriptionAnalyzerConfig): SubscriptionAnalyzer {

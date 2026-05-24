@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button, Badge, Skeleton, EmptyState } from '@/components/ui';
+import type { AnalysisProgress } from '@/lib/subscription-analyzer';
 
 interface AnalysisJobResult {
   job_id: number;
@@ -21,6 +22,7 @@ interface AnalysisJobResult {
 
 interface AnalysisSummary {
   total_scanned: number;
+  filtered_count?: number;
   new_jobs: number;
   matched: number;
   ai_summary?: string;
@@ -55,6 +57,83 @@ function getScoreLabel(score: number): string {
   return '挑战岗';
 }
 
+function ProgressStep({ phase, currentPhase, label }: { phase: string; currentPhase: string; label: string }) {
+  const phases = ['scanning', 'matching', 'ai_analyzing', 'completed'];
+  const idx = phases.indexOf(phase);
+  const curIdx = phases.indexOf(currentPhase);
+  const isActive = phase === currentPhase;
+  const isDone = idx < curIdx || (curIdx === -1 && idx < 3);
+  const isFailed = currentPhase === 'failed';
+
+  let bg = 'var(--surface)';
+  let border = 'var(--border)';
+  let textColor = 'var(--muted)';
+  let icon = '⏳';
+
+  if (isFailed && isActive) {
+    bg = 'var(--rose-subtle)';
+    border = 'var(--rose)';
+    textColor = 'var(--rose)';
+    icon = '✕';
+  } else if (isActive) {
+    bg = 'var(--sky-subtle)';
+    border = 'var(--sky)';
+    textColor = 'var(--sky)';
+    icon = '🔄';
+  } else if (isDone) {
+    bg = 'var(--emerald-subtle)';
+    border = 'var(--emerald)';
+    textColor = 'var(--emerald)';
+    icon = '✓';
+  }
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      padding: '8px 14px',
+      borderRadius: 12,
+      background: bg,
+      border: `1.5px solid ${border}`,
+      fontSize: 13,
+      fontWeight: isActive ? 700 : 400,
+      color: textColor,
+      transition: 'all 0.3s',
+      opacity: isDone && !isActive ? 0.8 : 1,
+    }}>
+      <span style={{ fontSize: 16 }}>{icon}</span>
+      <span>{label}</span>
+    </div>
+  );
+}
+
+function ProgressBar({ progress, message }: { progress: number; message: string }) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+        <span style={{ fontSize: 13, color: 'var(--muted)', fontWeight: 600 }}>{message}</span>
+        <span style={{ fontSize: 13, color: 'var(--sky)', fontWeight: 700 }}>{Math.round(progress)}%</span>
+      </div>
+      <div style={{
+        width: '100%',
+        height: 6,
+        background: 'var(--surface)',
+        borderRadius: 3,
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          width: `${Math.min(progress, 100)}%`,
+          height: '100%',
+          background: 'linear-gradient(90deg, var(--sky), var(--violet))',
+          borderRadius: 3,
+          transition: 'width 0.4s ease',
+        }} />
+      </div>
+    </div>
+  );
+}
+
 export function SubscriptionAnalysisPanel({
   subscriptionName,
   analysisResult,
@@ -63,10 +142,26 @@ export function SubscriptionAnalysisPanel({
   onClose,
 }: SubscriptionAnalysisPanelProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [progress, setProgress] = useState<AnalysisProgress | null>(null);
 
   const { status, summary, results } = analysisResult;
 
+  useEffect(() => {
+    if (status !== 'running') setProgress(null);
+  }, [status]);
+
   const isLoading = status === 'running';
+
+  const phaseOrder = ['scanning', 'matching', 'ai_analyzing'] as const;
+
+  const calcProgress = useCallback((): number => {
+    if (!progress) return 0;
+    const phaseIdx = phaseOrder.indexOf(progress.phase as any);
+    if (phaseIdx === -1) return progress.phase === 'completed' ? 100 : 0;
+    const baseProgress = (phaseIdx / phaseOrder.length) * 80;
+    const phaseProgress = progress.total > 0 ? (progress.current / progress.total) * (100 / phaseOrder.length) : 0;
+    return Math.min(baseProgress + phaseProgress, 95);
+  }, [progress]);
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -81,39 +176,80 @@ export function SubscriptionAnalysisPanel({
             <p style={{ color: 'var(--muted)', fontSize: 13 }}>
               {status === 'cached' && `缓存于 ${analysisResult.cached_at}`}
               {status === 'completed' && '分析完成'}
-              {status === 'running' && '正在分析中...'}
+              {status === 'running' && (progress?.message || '正在分析中...')}
               {status === 'failed' && '分析失败'}
               {status === 'no_analysis' && '暂无分析记录'}
             </p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             {onViewHistory && (
-              <Button variant="ghost" size="sm" onClick={onViewHistory}>
-                历史
-              </Button>
+              <Button variant="ghost" size="sm" onClick={onViewHistory}>历史</Button>
             )}
             {onReanalyze && (
-              <Button variant="ghost" size="sm" onClick={onReanalyze}>
-                重新分析
-              </Button>
+              <Button variant="ghost" size="sm" onClick={onReanalyze}>重新分析</Button>
             )}
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              关闭
-            </Button>
+            <Button variant="ghost" size="sm" onClick={onClose}>关闭</Button>
           </div>
         </div>
 
         {isLoading ? (
-          <div style={{ padding: 40, textAlign: 'center' }}>
-            <Skeleton type="card" />
-            <p style={{ marginTop: 16, color: 'var(--muted)' }}>正在分析岗位数据，请稍候...</p>
+          <div style={{ padding: 32, textAlign: 'center' }}>
+            {/* 步骤指示器 */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 10,
+              marginBottom: 24,
+              maxWidth: 480,
+              margin: '0 auto 24px auto',
+            }}>
+              <ProgressStep phase="scanning" currentPhase={progress?.phase || ''} label="扫描岗位数据" />
+              <ProgressStep phase="matching" currentPhase={progress?.phase || ''} label="本地规则匹配" />
+              <ProgressStep phase="ai_analyzing" currentPhase={progress?.phase || ''} label="AI 深度分析" />
+            </div>
+
+            {/* 进度条 */}
+            <ProgressBar progress={calcProgress()} message={progress?.message || '准备中...'} />
+
+            {/* 统计信息 */}
+            {(summary || progress) && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: 12,
+                marginTop: 16,
+              }}>
+                <div style={{ padding: 12, background: 'var(--surface)', borderRadius: 12, textAlign: 'center' }}>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--fg)' }}>
+                    {progress?.current ?? summary?.total_scanned ?? 0}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>已处理</div>
+                </div>
+                <div style={{ padding: 12, background: 'var(--surface)', borderRadius: 12, textAlign: 'center' }}>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--fg)' }}>
+                    {progress?.total ?? summary?.total_scanned ?? 0}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>总计</div>
+                </div>
+                <div style={{ padding: 12, background: 'var(--surface)', borderRadius: 12, textAlign: 'center' }}>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--violet)' }}>
+                    {Math.round(calcProgress())}%
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>进度</div>
+                </div>
+              </div>
+            )}
+
+            <p style={{ marginTop: 24, color: 'var(--muted)', fontSize: 13 }}>
+              分析过程中请勿关闭此窗口...
+            </p>
           </div>
         ) : status === 'failed' ? (
           <EmptyState title="分析失败" description="请稍后重试或检查配置。" />
         ) : !summary || results.length === 0 ? (
           <EmptyState title={status === 'no_analysis' ? '暂无分析记录' : '未找到匹配岗位'} description={
             status === 'no_analysis'
-              ? '点击"预览"按钮开始分析'
+              ? '点击"预览分析"按钮开始'
               : '当前订阅条件没有匹配到岗位，建议调整筛选条件'
           } />
         ) : (
@@ -121,7 +257,7 @@ export function SubscriptionAnalysisPanel({
             {/* 统计摘要 */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
+              gridTemplateColumns: summary?.filtered_count && summary.filtered_count !== summary?.total_scanned ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)',
               gap: 12,
               padding: 16,
               background: 'var(--surface)',
@@ -132,6 +268,12 @@ export function SubscriptionAnalysisPanel({
                 <div style={{ fontSize: 24, fontWeight: 800 }}>{summary.total_scanned}</div>
                 <div style={{ color: 'var(--muted)', fontSize: 12 }}>扫描总数</div>
               </div>
+              {summary?.filtered_count != null && summary.filtered_count > 0 && summary.filtered_count !== summary.total_scanned && (
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--amber)' }}>{summary.filtered_count}</div>
+                  <div style={{ color: 'var(--muted)', fontSize: 12 }}>筛选通过</div>
+                </div>
+              )}
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--sky)' }}>{summary.new_jobs}</div>
                 <div style={{ color: 'var(--muted)', fontSize: 12 }}>新增岗位</div>
@@ -141,7 +283,7 @@ export function SubscriptionAnalysisPanel({
                 <div style={{ color: 'var(--muted)', fontSize: 12 }}>匹配岗位</div>
               </div>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 14, fontWeight: 600 }}>{Math.round((summary.matched / summary.total_scanned) * 100)}%</div>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>{summary.total_scanned > 0 ? Math.round((summary.matched / summary.total_scanned) * 100) : 0}%</div>
                 <div style={{ color: 'var(--muted)', fontSize: 12 }}>命中率</div>
               </div>
             </div>
@@ -214,10 +356,8 @@ export function SubscriptionAnalysisPanel({
                     </div>
                   </div>
 
-                  {/* 展开的详情 */}
                   {expandedId === job.job_id && (
                     <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
-                      {/* 匹配详情 */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 12 }}>
                         <div style={{ padding: 8, background: 'var(--bg)', borderRadius: 10, textAlign: 'center' }}>
                           <div style={{ fontSize: 11, color: 'var(--muted)' }}>技能匹配</div>
@@ -233,7 +373,6 @@ export function SubscriptionAnalysisPanel({
                         </div>
                       </div>
 
-                      {/* AI 分析 */}
                       {job.ai_reasoning && (
                         <div style={{ marginBottom: 8 }}>
                           <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4, color: 'var(--muted)' }}>匹配理由</div>
@@ -247,7 +386,6 @@ export function SubscriptionAnalysisPanel({
                         </div>
                       )}
 
-                      {/* 操作按钮 */}
                       <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                         <Button variant="primary" size="sm">查看详情</Button>
                         <Button variant="secondary" size="sm">感兴趣</Button>
