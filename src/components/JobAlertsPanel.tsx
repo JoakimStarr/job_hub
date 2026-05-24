@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Badge, Button, EmptyState, Input, SectionCard, Skeleton } from '@/components/ui';
+import { Badge, Button, EmptyState, Input, SectionCard, Skeleton, Textarea } from '@/components/ui';
 import { API } from '@/lib/api';
 
 interface JobAlert {
@@ -441,13 +441,7 @@ export default function JobAlertsPanel() {
 
             <label>
               <div style={{ marginBottom: 6, fontWeight: 600 }}>关键词 *（OR 匹配，多个用逗号分隔）</div>
-              <textarea
-                className="textarea"
-                rows={3}
-                value={formData.keywords}
-                onChange={e => setFormData(prev => ({ ...prev, keywords: e.target.value }))}
-                placeholder="例如：Python, 数据分析, 实习（任一命中即推送，匹配多的排前面）"
-              />
+              <Textarea rows={3} value={formData.keywords} onChange={e => setFormData(prev => ({ ...prev, keywords: e.target.value }))} placeholder="例如：Python, 数据分析, 实习（任一命中即推送，匹配多的排前面）" />
             </label>
 
             <div>

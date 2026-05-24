@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Input } from '@/components/ui';
 import type { ResumeProfile, Education, Internship, Project, Award, SocialLink } from '@/types';
 import { maskPhone, maskEmail } from '@/lib/privacy';
 import { API } from '@/lib/api';
@@ -253,7 +254,7 @@ export default function ProfileEditor({
         <div className={styles.grid}>
           <div className={styles.field}>
             <label>姓名</label>
-            <input type="text" value={profile.name}
+            <Input type="text" value={profile.name}
               onChange={(e) => updateField('name', e.target.value)}
               placeholder="请输入姓名" disabled={readOnly} />
           </div>
@@ -290,7 +291,7 @@ export default function ProfileEditor({
           </div>
           <div className={styles.fieldFull}>
             <label>现居地址</label>
-            <input type="text" value={profile.address || ''}
+            <Input type="text" value={profile.address || ''}
               onChange={(e) => updateField('address', e.target.value)}
               placeholder="如：北京市海淀区" disabled={readOnly} />
           </div>
@@ -311,13 +312,13 @@ export default function ProfileEditor({
             <div className={styles.grid}>
               <div className={styles.field}>
                 <label>学校</label>
-                <input type="text" value={edu.school}
+                <Input type="text" value={edu.school}
                   onChange={(e) => updateEducation(index, 'school', e.target.value)}
                   placeholder="学校名称" disabled={readOnly} />
               </div>
               <div className={styles.field}>
                 <label>专业</label>
-                <input type="text" value={edu.major}
+                <Input type="text" value={edu.major}
                   onChange={(e) => updateEducation(index, 'major', e.target.value)}
                   placeholder="专业名称" disabled={readOnly} />
               </div>
@@ -357,7 +358,7 @@ export default function ProfileEditor({
           ))}
           {!readOnly && (
             <div className={styles.tagInput}>
-              <input id="new-skill-input" type="text" placeholder="输入技能后回车添加"
+              <Input id="new-skill-input" type="text" placeholder="输入技能后回车添加"
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSkill(); } }} />
               <button onClick={addSkill} className={styles.addTagButton}>添加</button>
             </div>
@@ -379,19 +380,19 @@ export default function ProfileEditor({
             <div className={styles.grid}>
               <div className={styles.field}>
                 <label>公司名称</label>
-                <input type="text" value={intern.company}
+                <Input type="text" value={intern.company}
                   onChange={(e) => updateInternship(index, 'company', e.target.value)}
                   placeholder="公司名称" disabled={readOnly} />
               </div>
               <div className={styles.field}>
                 <label>职位</label>
-                <input type="text" value={intern.position}
+                <Input type="text" value={intern.position}
                   onChange={(e) => updateInternship(index, 'position', e.target.value)}
                   placeholder="职位名称" disabled={readOnly} />
               </div>
               <div className={styles.field}>
                 <label>时长</label>
-                <input type="text" value={intern.duration}
+                <Input type="text" value={intern.duration}
                   onChange={(e) => updateInternship(index, 'duration', e.target.value)}
                   placeholder="如：3个月" disabled={readOnly} />
               </div>
@@ -421,13 +422,13 @@ export default function ProfileEditor({
             <div className={styles.grid}>
               <div className={styles.field}>
                 <label>项目名称</label>
-                <input type="text" value={proj.name}
+                <Input type="text" value={proj.name}
                   onChange={(e) => updateProject(index, 'name', e.target.value)}
                   placeholder="项目名称" disabled={readOnly} />
               </div>
               <div className={styles.field}>
                 <label>担任角色</label>
-                <input type="text" value={proj.role}
+                <Input type="text" value={proj.role}
                   onChange={(e) => updateProject(index, 'role', e.target.value)}
                   placeholder="如：负责人/核心成员" disabled={readOnly} />
               </div>
@@ -451,19 +452,19 @@ export default function ProfileEditor({
             <div className={styles.grid}>
               <div className={styles.field}>
                 <label>奖项名称</label>
-                <input type="text" value={award.name}
+                <Input type="text" value={award.name}
                   onChange={(e) => updateAward(index, 'name', e.target.value)}
                   placeholder="如：全国大学生数学建模竞赛一等奖" disabled={readOnly} />
               </div>
               <div className={styles.field}>
                 <label>级别</label>
-                <input type="text" value={award.level || ''}
+                <Input type="text" value={award.level || ''}
                   onChange={(e) => updateAward(index, 'level', e.target.value)}
                   placeholder="如：国家级/省级/校级" disabled={readOnly} />
               </div>
               <div className={styles.field}>
                 <label>获奖时间</label>
-                <input type="text" value={award.date || ''}
+                <Input type="text" value={award.date || ''}
                   onChange={(e) => updateAward(index, 'date', e.target.value)}
                   placeholder="如：2025-06" disabled={readOnly} />
               </div>
@@ -484,7 +485,7 @@ export default function ProfileEditor({
         <div className={styles.grid}>
           <div className={styles.field}>
             <label>证书资质</label>
-            <input type="text" value={profile.certifications?.join(', ') || ''}
+            <Input type="text" value={profile.certifications?.join(', ') || ''}
               onChange={(e) => setProfile(prev => ({
                 ...prev,
                 certifications: e.target.value.split(',').map(s => s.trim()).filter(Boolean),
@@ -493,7 +494,7 @@ export default function ProfileEditor({
           </div>
           <div className={styles.field}>
             <label>语言能力</label>
-            <input type="text" value={profile.languages?.join(', ') || ''}
+            <Input type="text" value={profile.languages?.join(', ') || ''}
               onChange={(e) => setProfile(prev => ({
                 ...prev,
                 languages: e.target.value.split(',').map(s => s.trim()).filter(Boolean),
@@ -509,23 +510,23 @@ export default function ProfileEditor({
         <div className={styles.grid}>
           <div className={styles.field}>
             <label>GitHub</label>
-            <input type="text" value={profile.github || ''}
+            <Input type="text" value={profile.github || ''}
               onChange={(e) => updateField('github', e.target.value)}
               placeholder="GitHub 主页链接" disabled={readOnly} />
           </div>
           <div className={styles.field}>
             <label>个人作品集</label>
-            <input type="text" value={profile.portfolio || ''}
+            <Input type="text" value={profile.portfolio || ''}
               onChange={(e) => updateField('portfolio', e.target.value)}
               placeholder="个人网站/作品集链接" disabled={readOnly} />
           </div>
         </div>
         {(profile.socialLinks || []).map((link, index) => (
           <div key={index} className={styles.inlineFields}>
-            <input type="text" value={link.platform}
+            <Input type="text" value={link.platform}
               onChange={(e) => updateSocialLink(index, 'platform', e.target.value)}
               placeholder="平台名（如：LinkedIn）" disabled={readOnly} />
-            <input type="text" value={link.url}
+            <Input type="text" value={link.url}
               onChange={(e) => updateSocialLink(index, 'url', e.target.value)}
               placeholder="链接地址" disabled={readOnly} />
             {!readOnly && (
@@ -551,25 +552,25 @@ export default function ProfileEditor({
         <div className={styles.grid}>
           <div className={styles.field}>
             <label>目标职位</label>
-            <input type="text" value={profile.targetPosition || ''}
+            <Input type="text" value={profile.targetPosition || ''}
               onChange={(e) => updateField('targetPosition', e.target.value)}
               placeholder="如：数据分析师、前端开发" disabled={readOnly} />
           </div>
           <div className={styles.field}>
             <label>目标工作地点</label>
-            <input type="text" value={profile.targetLocation || ''}
+            <Input type="text" value={profile.targetLocation || ''}
               onChange={(e) => updateField('targetLocation', e.target.value)}
               placeholder="如：北京、上海、深圳" disabled={readOnly} />
           </div>
           <div className={styles.field}>
             <label>期望薪资范围</label>
-            <input type="text" value={profile.targetSalary || ''}
+            <Input type="text" value={profile.targetSalary || ''}
               onChange={(e) => updateField('targetSalary', e.target.value)}
               placeholder="如：8-12K, 15-25K" disabled={readOnly} />
           </div>
           <div className={styles.field}>
             <label>目标行业</label>
-            <input type="text" value={profile.targetIndustry || ''}
+            <Input type="text" value={profile.targetIndustry || ''}
               onChange={(e) => updateField('targetIndustry', e.target.value)}
               placeholder="如：金融、互联网、咨询" disabled={readOnly} />
           </div>

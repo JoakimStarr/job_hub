@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
-import { Badge, Button, EmptyState, FileUpload, Input, JobCard, SectionCard, Skeleton, TabNav } from '@/components/ui';
+import { Badge, Button, EmptyState, FileUpload, Input, JobCard, SectionCard, Skeleton, TabNav, Textarea } from '@/components/ui';
 import { API } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
 import type { JobItem, ParseResult } from '@/lib/types';
@@ -339,23 +339,11 @@ export default function RecommendationsPage() {
             <SectionCard title="个人画像" description="输入你的教育背景、经历和求职偏好">
               <label style={{ display: 'block' }}>
                 <div style={{ marginBottom: 8, fontWeight: 700 }}>个人画像</div>
-                <textarea
-                  className="textarea"
-                  rows={6}
-                  value={profile}
-                  onChange={(event) => setProfile(event.target.value)}
-                  placeholder="输入教育背景、工作/实习经历、技能特长等"
-                />
+                <Textarea rows={6} value={profile} onChange={(event) => setProfile(event.target.value)} placeholder="输入教育背景、工作/实习经历、技能特长等" />
               </label>
               <label style={{ display: 'block', marginTop: 14 }}>
                 <div style={{ marginBottom: 8, fontWeight: 700 }}>附加提示</div>
-                <textarea
-                  className="textarea"
-                  rows={4}
-                  value={prompt}
-                  onChange={(event) => setPrompt(event.target.value)}
-                  placeholder="例如：偏好上海、券商、投研方向"
-                />
+                <Textarea rows={4} value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="例如：偏好上海、券商、投研方向" />
               </label>
               <label style={{ display: 'block', marginTop: 14 }}>
                 <div style={{ marginBottom: 8, fontWeight: 700 }}>岗位 ID</div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, memo, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, memo, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 import dynamic from 'next/dynamic';
 import type { JobItem } from '@/lib/types';
 
@@ -126,6 +126,32 @@ export const Input = memo(function Input(props: InputHTMLAttributes<HTMLInputEle
     <input
       {...props}
       className={joinClassNames('input', props.className)}
+      onChange={handleChange}
+      onCompositionStart={handleCompositionStart}
+      onCompositionEnd={handleCompositionEnd}
+    />
+  );
+});
+
+export const Textarea = memo(function Textarea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const composingRef = useRef(false);
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (composingRef.current) return;
+    props.onChange?.(e);
+  };
+  const handleCompositionStart = (e: React.CompositionEvent<HTMLTextAreaElement>) => {
+    composingRef.current = true;
+    props.onCompositionStart?.(e);
+  };
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLTextAreaElement>) => {
+    composingRef.current = false;
+    props.onChange?.(e as unknown as React.ChangeEvent<HTMLTextAreaElement>);
+    props.onCompositionEnd?.(e);
+  };
+  return (
+    <textarea
+      {...props}
+      className={joinClassNames('textarea', props.className)}
       onChange={handleChange}
       onCompositionStart={handleCompositionStart}
       onCompositionEnd={handleCompositionEnd}

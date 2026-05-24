@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react';
 import type { FilterOption, ProvinceWithCities, EducationMapping } from '@/types';
+import { Input } from '@/components/ui';
 import styles from './hierarchical-filter.module.css';
 
 interface HierarchicalFilterProps {
@@ -133,7 +134,7 @@ export function HierarchicalFilter({
       {isOpen && (
         <div className={styles.filterDropdown}>
           <div style={{ position: 'relative' }}>
-            <input
+            <Input
               type="text"
               className={styles.filterSearch}
               placeholder="搜索..."
