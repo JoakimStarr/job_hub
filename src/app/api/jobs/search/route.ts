@@ -2,6 +2,27 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb, getSourceName, buildJobWhereClause, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
 import { logger } from '@/lib/logger';
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function highlightKeyword(text: string, keyword: string): string {
+  if (!keyword || !text) return escapeHtml(text);
+  const escaped = escapeHtml(text);
+  const escapedKeyword = escapeHtml(keyword);
+  try {
+    const regex = new RegExp(`(${escapedKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return escaped.replace(regex, '<mark>$1</mark>');
+  } catch {
+    return escaped;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const q = searchParams.get('q') || '';
@@ -58,6 +79,8 @@ export async function GET(request: NextRequest) {
       source: getSourceName(String(job.source || '')),
       source_url: resolveSourceUrl(String(job.source || ''), job.source_url as string, job.id as number),
       apply_url: (!job.apply_url || isFakeUrl(job.apply_url as string)) ? resolveSourceUrl(String(job.source || ''), job.source_url as string, job.id as number) : job.apply_url,
+      title_highlighted: highlightKeyword(String(job.title || ''), q),
+      description_highlighted: highlightKeyword(String(job.description || '').slice(0, 200), q),
     }));
     
     return NextResponse.json({

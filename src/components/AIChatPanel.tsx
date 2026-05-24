@@ -18,6 +18,7 @@ interface AIChatPanelProps {
   placeholder?: string;
   disabled?: boolean;
   onMessageSent?: () => void;
+  isMockData?: boolean;  // 新增: 标识是否为Mock数据
 }
 
 export default function AIChatPanel({
@@ -28,6 +29,7 @@ export default function AIChatPanel({
   placeholder = '输入追问内容，如：这个岗位的面试流程是怎样的？',
   disabled = false,
   onMessageSent,
+  isMockData = false,  // 新增参数
 }: AIChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState('');
@@ -181,6 +183,27 @@ export default function AIChatPanel({
         gap: 12,
         background: '#fafafa',
       }}>
+        {isMockData && (
+          <div style={{
+            background: '#fef3c7',
+            border: '1px solid #f59e0b',
+            borderRadius: 8,
+            padding: '12px 16px',
+            marginBottom: 8,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}>
+            <span style={{ fontSize: '18px' }}>⚠️</span>
+            <div style={{ flex: 1 }}>
+              <strong style={{ color: '#92400e', fontSize: '13px' }}>当前使用模拟数据分析</strong>
+              <p style={{ color: '#b45309', fontSize: '12px', margin: '4px 0 0 0' }}>
+                AI分析功能未配置，显示的是模板化建议（非真实AI分析）。请在 .env 文件中设置 AI_API_KEY 以获得个性化分析结果。
+              </p>
+            </div>
+          </div>
+        )}
+
         {messages.length === 0 && !streamingContent && (
           <div style={{
             flex: 1,

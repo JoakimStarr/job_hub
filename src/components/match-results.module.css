@@ -284,6 +284,194 @@
   background: var(--bg-subtle);
 }
 
+/* ======== 折叠面板样式 ======== */
+.toggleDetailsBtn {
+  width: 100%;
+  padding: 10px 16px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(147,51,234,0.08) 100%);
+  border: 1px solid rgba(59,130,246,0.2);
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition);
+}
+
+.toggleDetailsBtn:hover {
+  background: linear-gradient(135deg, rgba(59,130,246,0.15) 0%, rgba(147,51,234,0.15) 100%);
+  border-color: rgba(59,130,246,0.3);
+  transform: translateY(-1px);
+}
+
+.toggleIcon {
+  display: inline-block;
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.toggleIconExpanded {
+  transform: rotate(180deg);
+}
+
+.detailsPanel {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+  opacity: 0;
+  margin-top: 0;
+}
+
+.detailsPanelExpanded {
+  max-height: 800px;
+  opacity: 1;
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.detailSection {
+  margin-bottom: 20px;
+}
+
+.detailSection:last-child {
+  margin-bottom: 0;
+}
+
+.detailSectionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.checkIcon, .crossIcon, .chartIcon {
+  font-size: 18px;
+}
+
+.detailList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detailListItemMatched,
+.detailListItemGap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.detailListItemMatched {
+  background: rgba(16,185,129,0.06);
+  border-left: 3px solid var(--success);
+  color: rgba(6,95,70,1);
+}
+
+.detailListItemGap {
+  background: rgba(239,68,68,0.06);
+  border-left: 3px solid var(--danger);
+  color: rgba(153,27,27,1);
+}
+
+.listItemIcon {
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 20px;
+  text-align: center;
+}
+
+.detailListItemMatched .listItemIcon {
+  color: var(--success);
+}
+
+.detailListItemGap .listItemIcon {
+  color: var(--danger);
+}
+
+.dimensionBars {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dimensionBarRow {
+  display: grid;
+  grid-template-columns: 50px 1fr 60px;
+  align-items: center;
+  gap: 12px;
+}
+
+.dimensionLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-align: right;
+}
+
+.dimensionBarContainer {
+  height: 24px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.dimensionBarFill {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  transition: width 0.6s ease-in-out;
+  position: relative;
+}
+
+.dimensionBarFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.dimensionValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.noDataMessage {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--muted);
+  font-size: 14px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+}
+
 /* ======== 移动端适配 ======== */
 @media (max-width: 768px) {
   .container { padding: 16px 12px; }
@@ -321,6 +509,23 @@
   
   .actions { flex-direction: column; gap: 8px; }
   .viewBtn, .exportBtn { padding: 10px 14px; font-size: 13px; min-height: 40px; text-align: center; }
+  
+  /* 折叠面板移动端适配 */
+  .toggleDetailsBtn { padding: 12px 14px; font-size: 13px; margin-top: 10px; }
+  .detailsPanelExpanded { max-height: 600px; margin-top: 12px; }
+  
+  .detailSection { margin-bottom: 16px; }
+  .detailSectionTitle { font-size: 15px; margin-bottom: 10px; }
+  
+  .detailListItemMatched,
+  .detailListItemGap { padding: 8px 12px; font-size: 13px; gap: 8px; }
+  .listItemIcon { font-size: 14px; width: 18px; }
+  
+  .dimensionBars { gap: 12px; }
+  .dimensionBarRow { grid-template-columns: 45px 1fr 55px; gap: 8px; }
+  .dimensionLabel { font-size: 12px; }
+  .dimensionBarContainer { height: 20px; }
+  .dimensionValue { font-size: 12px; }
 }
 
 @media (max-width: 480px) {
@@ -342,4 +547,133 @@
   
   .tagSectionLabel { font-size: 12px; }
   .viewBtn, .exportBtn { min-height: 44px; padding: 12px 16px; font-size: 14px; }
+  
+  /* 折叠面板小屏幕适配 */
+  .toggleDetailsBtn { padding: 14px 16px; font-size: 14px; margin-top: 8px; }
+  .detailsPanelExpanded { max-height: 500px; margin-top: 10px; }
+  
+  .detailSection { margin-bottom: 14px; }
+  .detailSectionTitle { font-size: 14px; margin-bottom: 8px; gap: 6px; }
+  .checkIcon, .crossIcon, .chartIcon { font-size: 16px; }
+  
+  .detailListItemMatched,
+  .detailListItemGap { padding: 10px 12px; font-size: 13px; gap: 8px; flex-wrap: wrap; }
+  
+  .dimensionBars { gap: 10px; }
+  .dimensionBarRow { grid-template-columns: 40px 1fr 50px; gap: 6px; }
+  .dimensionLabel { font-size: 11px; }
+  .dimensionBarContainer { height: 18px; }
+  .dimensionValue { font-size: 11px; }
+}
+
+/* ======== 骨架屏样式 ======== */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.skeleton {
+  animation: pulse 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  border-radius: 4px;
+}
+
+.skeletonHeader {
+  margin-bottom: 24px;
+}
+
+.skeletonTitle {
+  width: 120px;
+  height: 24px;
+  margin-bottom: 8px;
+}
+
+.skeletonSubtitle {
+  width: 200px;
+  height: 16px;
+}
+
+.skeletonStatCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px !important;
+  background: var(--bg-subtle) !important;
+  border-color: transparent !important;
+}
+
+.skeletonCircle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.skeletonText {
+  width: 60px;
+  height: 16px;
+}
+
+.skeletonCard {
+  padding: 24px !important;
+  background: var(--bg-subtle) !important;
+  border-color: transparent !important;
+}
+
+.skeletonCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.skeletonJobTitle {
+  width: 180px;
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skeletonJobMeta {
+  width: 280px;
+  height: 14px;
+}
+
+.skeletonScore {
+  width: 60px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.skeletonProgress {
+  width: 100%;
+  height: 8px;
+  margin-bottom: 16px;
+  border-radius: 9999px;
+}
+
+.skeletonBreakdownGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.skeletonSmallText {
+  width: 80px;
+  height: 12px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 0.3s ease-out;
 }

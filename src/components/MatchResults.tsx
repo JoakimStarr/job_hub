@@ -8,15 +8,57 @@ import styles from './match-results.module.css';
 
 interface MatchResultsProps {
   matches: MatchResult[];
+  loading?: boolean;
   onViewDetail: (jobId: number) => void;
   onExportReport?: (jobId: number) => void;
 }
 
 export default function MatchResults({
   matches,
+  loading = false,
   onViewDetail,
   onExportReport,
 }: MatchResultsProps) {
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.skeletonHeader}>
+          <div className={`${styles.skeleton} ${styles.skeletonTitle}`} />
+          <div className={`${styles.skeleton} ${styles.skeletonSubtitle}`} />
+        </div>
+
+        <div className={styles.statsGrid}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className={`${styles.statCard} ${styles.skeletonStatCard}`}>
+              <div className={`${styles.skeleton} ${styles.skeletonCircle}`} />
+              <div className={`${styles.skeleton} ${styles.skeletonText}`} />
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.cardList}>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className={`${styles.card} ${styles.skeletonCard}`}>
+              <div className={styles.skeletonCardHeader}>
+                <div>
+                  <div className={`${styles.skeleton} ${styles.skeletonJobTitle}`} />
+                  <div className={`${styles.skeleton} ${styles.skeletonJobMeta}`} />
+                </div>
+                <div className={`${styles.skeleton} ${styles.skeletonScore}`} />
+              </div>
+              <div className={`${styles.skeleton} ${styles.skeletonProgress}`} />
+              <div className={styles.skeletonBreakdownGrid}>
+                {Array.from({ length: 6 }).map((_, j) => (
+                  <div key={j} className={`${styles.skeleton} ${styles.skeletonSmallText}`} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (matches.length === 0) {
     return (
       <div className={styles.emptyState}>
@@ -35,7 +77,7 @@ export default function MatchResults({
   const { sprintJobs, matchJobs, potentialJobs, challengeJobs } = groupedResults;
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${!loading && matches.length > 0 ? styles.fadeIn : ''}`}>
       <div className={styles.header}>
         <h2 className={styles.title}>匹配结果</h2>
         <p className={styles.subtitle}>找到 {matches.length} 个匹配岗位</p>

@@ -216,7 +216,14 @@ export const POST = withApiHandler(async (
       jobId: parseInt(id),
       userId: user.id,
     });
-    return NextResponse.json(mockResult);
+    return NextResponse.json({
+      ...mockResult,
+      _meta: {
+        isMock: true,
+        warning: 'AI分析功能未配置，当前显示的是模拟数据。请在 .env 文件中设置 AI_API_KEY 以获得真实AI分析结果。',
+        mockProvider: 'static-template'
+      }
+    });
   }
 
   const sessionId = session_id || `analysis_${id}_${Date.now()}`;

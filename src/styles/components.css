@@ -2173,3 +2173,119 @@
     display: none !important;
   }
 }
+
+/* ======== 搜索建议面板 ======== */
+.search-bar-wrapper {
+  position: relative;
+}
+
+.search-suggestions-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: var(--panel);
+  border: 1px solid var(--panel-border, rgba(0,0,0,0.1));
+  border-radius: var(--radius-md, 8px);
+  box-shadow: var(--shadow-lg, 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.05));
+  z-index: var(--z-dropdown, 100);
+  max-height: 400px;
+  overflow-y: auto;
+  animation: suggestionFadeIn 0.15s ease-out;
+}
+
+@keyframes suggestionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suggestion-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light, rgba(0,0,0,0.06));
+}
+
+.suggestion-section:last-child {
+  border-bottom: none;
+}
+
+.suggestion-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.suggestion-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.suggestion-hot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.suggestion-item {
+  padding: 6px 14px;
+  background: var(--bg-subtle, rgba(0,0,0,0.03));
+  border: 1px solid transparent;
+  border-radius: var(--radius-full, 9999px);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--duration-fast, 0.15s);
+  white-space: nowrap;
+}
+
+.suggestion-item:hover {
+  background: var(--primary-bg, rgba(59,130,246,0.08));
+  border-color: var(--primary-light, rgba(59,130,246,0.3));
+  color: var(--primary);
+}
+
+.suggestion-item.hot-tag {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-color: #fbbf24;
+  color: #92400e;
+  font-weight: 500;
+}
+
+.suggestion-item.hot-tag:hover {
+  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+  border-color: #f59e0b;
+  transform: translateY(-1px);
+}
+
+[data-theme='dark'] .suggestion-item {
+  background: rgba(255,255,255,0.06);
+}
+
+[data-theme='dark'] .suggestion-item:hover {
+  background: rgba(59,130,246,0.15);
+  border-color: rgba(59,130,246,0.4);
+}
+
+[data-theme='dark'] .suggestion-item.hot-tag {
+  background: linear-gradient(135deg, rgba(251,191,36,0.2) 0%, rgba(245,158,11,0.2) 100%);
+  border-color: rgba(251,191,36,0.4);
+  color: #fbbf24;
+}
+
+/* ======== 搜索高亮标记 ======== */
+mark {
+  background-color: #fef08a;
+  padding: 0 2px;
+  border-radius: 2px;
+  font-weight: 600;
+}

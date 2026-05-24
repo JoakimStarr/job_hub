@@ -55,14 +55,22 @@ export const POST = withApiHandler(async (request: NextRequest) => {
 
   const jobs = db.prepare(query).all(...params) as JobItem[];
 
-  const matches: MatchResult[] = jobs.map(job => {
-    const score = matchEngine.match(profile, job);
-    return {
-      job,
-      score,
-      rank: 0,
-    };
-  });
+  const BATCH_SIZE = Math.ceil(jobs.length / 4);
+  const batches = Array.from({ length: 4 }, (_, i) =>
+    jobs.slice(i * BATCH_SIZE, (i + 1) * BATCH_SIZE)
+  );
+
+  const batchResults = await Promise.all(
+    batches.map(batch =>
+      Promise.all(batch.map(job => matchEngine.match(profile, job)))
+    )
+  );
+
+  const matches: MatchResult[] = batchResults.flat().map((score, index) => ({
+    job: jobs[index],
+    score,
+    rank: 0,
+  }));
 
   matches.sort((a, b) => b.score.total - a.score.total);
 
