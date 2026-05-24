@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, initSubscriptionAnalysisTables } from '@/lib/db-utils';
+import { getDb, initSubscriptionAnalysisTables, splitMultiDelimiter } from '@/lib/db-utils';
 import { getSubscriptionAnalyzer, type AnalysisProgress } from '@/lib/subscription-analyzer';
 import { requirePermissionUnified } from '@/lib/auth-server';
 import { AuthError } from '@/lib/auth';
@@ -18,7 +18,7 @@ export async function POST(
   }
 
   try {
-    await requirePermissionUnified(request);
+    await requirePermissionUnified(request, 'system:read');
     
     const db = getDb();
     initSubscriptionAnalysisTables(db);
@@ -46,15 +46,15 @@ export async function POST(
 
     const condition = {
       ...subscription,
-      locations: subscription.locations ? subscription.locations.split(',').map(s => s.trim()).filter(Boolean) : [],
-      industries: subscription.industries ? subscription.industries.split(',').map(s => s.trim()).filter(Boolean) : [],
-      job_types: subscription.job_types ? subscription.job_types.split(',').map(s => s.trim()).filter(Boolean) : [],
+      locations: splitMultiDelimiter(subscription.locations),
+      industries: splitMultiDelimiter(subscription.industries),
+      job_types: splitMultiDelimiter(subscription.job_types),
     };
 
     let aiService = null;
     try {
-      const { getAIService } = await import('@/lib/ai-service');
-      aiService = getAIService();
+      const { createAIService } = await import('@/lib/ai-service');
+      aiService = createAIService();
     } catch (e) {
       logger.warn('AI服务未配置，将使用本地规则匹配');
     }
@@ -78,7 +78,7 @@ export async function POST(
 
 async function handleSSEPreview(request: NextRequest, subscriptionId: number) {
   try {
-    await requirePermissionUnified(request);
+    await requirePermissionUnified(request, 'system:read');
     
     const db = getDb();
     initSubscriptionAnalysisTables(db);
@@ -109,15 +109,15 @@ async function handleSSEPreview(request: NextRequest, subscriptionId: number) {
 
     const condition = {
       ...subscription,
-      locations: subscription.locations ? subscription.locations.split(',').map(s => s.trim()).filter(Boolean) : [],
-      industries: subscription.industries ? subscription.industries.split(',').map(s => s.trim()).filter(Boolean) : [],
-      job_types: subscription.job_types ? subscription.job_types.split(',').map(s => s.trim()).filter(Boolean) : [],
+      locations: splitMultiDelimiter(subscription.locations),
+      industries: splitMultiDelimiter(subscription.industries),
+      job_types: splitMultiDelimiter(subscription.job_types),
     };
 
     let aiService = null;
     try {
-      const { getAIService } = await import('@/lib/ai-service');
-      aiService = getAIService();
+      const { createAIService } = await import('@/lib/ai-service');
+      aiService = createAIService();
     } catch (e) {
       logger.warn('AI服务未配置，将使用本地规则匹配');
     }
@@ -138,7 +138,7 @@ async function handleSSEPreview(request: NextRequest, subscriptionId: number) {
           const analyzer = getSubscriptionAnalyzer({
             aiService,
             onProgress: (progress: AnalysisProgress) => {
-              sendEvent(progress);
+              sendEvent(progress as unknown as Record<string, unknown>);
             },
           });
 
@@ -178,7 +178,7 @@ export async function GET(
   const { id } = await params;
   
   try {
-    await requirePermissionUnified(request);
+    await requirePermissionUnified(request, 'system:read');
     
     const db = getDb();
     initSubscriptionAnalysisTables(db);
@@ -188,7 +188,7 @@ export async function GET(
       WHERE subscription_id = ?
       ORDER BY analyzed_at DESC 
       LIMIT 1
-    `).get(parseInt(id));
+    `).get(parseInt(id)) as Record<string, unknown> | undefined;
 
     if (!latestAnalysis) {
       return NextResponse.json({

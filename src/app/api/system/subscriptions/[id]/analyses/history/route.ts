@@ -12,7 +12,7 @@ export async function GET(
   const { id } = await params;
   
   try {
-    await requirePermissionUnified(request);
+    await requirePermissionUnified(request, 'system:read');
     
     const db = getDb();
     initSubscriptionAnalysisTables(db);

@@ -11,7 +11,7 @@ export async function POST(
   const { id, analysisId, resultId } = await params;
   
   try {
-    await requirePermissionUnified(request);
+    await requirePermissionUnified(request, 'system:write');
     
     const db = getDb();
     initSubscriptionAnalysisTables(db);
