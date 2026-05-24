@@ -441,13 +441,6 @@ function SubscriptionPanel({
   reload: () => Promise<boolean>;
   onPreview: (subscription: { id: number; name: string }) => void;
 }) {
-  const [name, setName] = useState('');
-  const [keyword, setKeyword] = useState('');
-  const [locations, setLocations] = useState('');
-  const [industries, setIndustries] = useState('');
-  const [jobTypes, setJobTypes] = useState('');
-  const [education, setEducation] = useState('');
-  const [enabled, setEnabled] = useState(true);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -455,29 +448,33 @@ function SubscriptionPanel({
   const [feedback, setFeedback] = useState<Feedback | null>(null);
 
   function resetForm() {
-    setName('');
-    setKeyword('');
-    setLocations('');
-    setIndustries('');
-    setJobTypes('');
-    setEducation('');
-    setEnabled(true);
     setEditingId(null);
+    setFeedback(null);
   }
 
   function editSubscription(item: SubscriptionItem) {
     setEditingId(item.id);
-    setName(item.name);
-    setKeyword(item.keyword || '');
-    setLocations((item.locations || []).join(', '));
-    setIndustries((item.industries || []).join(', '));
-    setJobTypes((item.job_types || []).join(', '));
-    setEducation(item.education || '');
-    setEnabled(item.enabled ?? true);
     setFeedback(null);
   }
 
-  async function submitSubscription() {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const name = (fd.get('name') as string).trim();
+    const keyword = (fd.get('keyword') as string).trim();
+    const locationsStr = (fd.get('locations') as string || '').trim();
+    const industriesStr = (fd.get('industries') as string || '').trim();
+    const jobTypesStr = (fd.get('jobTypes') as string || '').trim();
+    const education = (fd.get('education') as string || '').trim();
+    const enabled = fd.get('enabled') === 'on';
+
+    if (!name) { setFeedback({ tone: 'error', text: '请输入订阅名称' }); return; }
+    if (!keyword) { setFeedback({ tone: 'error', text: '请输入关键词' }); return; }
+
+    const locations = locationsStr ? locationsStr.split(/[,，]/).map(s => s.trim()).filter(Boolean) : [];
+    const industries = industriesStr ? industriesStr.split(/[,，]/).map(s => s.trim()).filter(Boolean) : [];
+    const jobTypes = jobTypesStr ? jobTypesStr.split(/[,，]/).map(s => s.trim()).filter(Boolean) : [];
+
     setSaving(true);
     setFeedback(null);
     try {
@@ -530,44 +527,46 @@ function SubscriptionPanel({
     }
   }
 
+  const editingItem = editingId ? subscriptions.find(s => s.id === editingId) : null;
+
   return (
-    <div className="grid-2">
+    <form className="grid-2" key={editingId || 'new'} onSubmit={handleSubmit}>
       <div>
         <div className="grid-2">
           <label>
             <div style={{ marginBottom: 8, fontWeight: 700 }}>订阅名称</div>
-            <Input value={name} onChange={(event) => setName(event.target.value)} placeholder="例如：上海基金实习" />
+            <Input name="name" defaultValue={editingItem?.name || ''} placeholder="例如：上海基金实习" />
           </label>
           <label>
             <div style={{ marginBottom: 8, fontWeight: 700 }}>关键词</div>
-            <Input value={keyword} onChange={(event) => setKeyword(event.target.value)} placeholder="例如：投研 / 量化" />
+            <Input name="keyword" defaultValue={editingItem?.keyword || ''} placeholder="例如：投研 / 量化" />
           </label>
           <label>
             <div style={{ marginBottom: 8, fontWeight: 700 }}>地点</div>
-            <Input value={locations} onChange={(event) => setLocations(event.target.value)} placeholder="逗号分隔" />
+            <Input name="locations" defaultValue={(editingItem?.locations || []).join(', ') || ''} placeholder="逗号分隔" />
           </label>
           <label>
             <div style={{ marginBottom: 8, fontWeight: 700 }}>行业</div>
-            <Input value={industries} onChange={(event) => setIndustries(event.target.value)} placeholder="逗号分隔" />
+            <Input name="industries" defaultValue={(editingItem?.industries || []).join(', ') || ''} placeholder="逗号分隔" />
           </label>
           <label>
             <div style={{ marginBottom: 8, fontWeight: 700 }}>类型</div>
-            <Input value={jobTypes} onChange={(event) => setJobTypes(event.target.value)} placeholder="逗号分隔" />
+            <Input name="jobTypes" defaultValue={(editingItem?.job_types || []).join(', ') || ''} placeholder="逗号分隔" />
           </label>
           <label>
             <div style={{ marginBottom: 8, fontWeight: 700 }}>学历</div>
-            <Input value={education} onChange={(event) => setEducation(event.target.value)} placeholder="例如：硕士" />
+            <Input name="education" defaultValue={editingItem?.education || ''} placeholder="例如：硕士" />
           </label>
         </div>
         <div className="row-gap" style={{ marginTop: 16 }}>
           <label className="badge badge-slate" style={{ cursor: 'pointer', gap: 8 }}>
-            <input type="checkbox" checked={enabled} onChange={(event) => setEnabled(event.target.checked)} />
+            <input type="checkbox" name="enabled" defaultChecked={editingItem?.enabled ?? true} />
             启用该订阅
           </label>
           <Button
             variant="primary"
+            type="submit"
             disabled={saving}
-            onClick={() => { void submitSubscription(); }}
           >
             {saving ? (editingId ? '更新中...' : '保存中...') : (editingId ? '更新订阅' : '保存订阅')}
           </Button>
@@ -629,6 +628,6 @@ function SubscriptionPanel({
           ))
         )}
       </div>
-    </div>
+    </form>
   );
 }

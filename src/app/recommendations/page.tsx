@@ -137,9 +137,7 @@ function renderResult(data: unknown, submitting: boolean) {
 
 export default function RecommendationsPage() {
   const [mode, setMode] = useState<RecommendationMode>('analyze');
-  const [jobId, setJobId] = useState('');
-  const [profile, setProfile] = useState('');
-  const [prompt, setPrompt] = useState('');
+  const [profile] = useState('');
   const [response, setResponse] = useState<unknown>(null);
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -149,6 +147,7 @@ export default function RecommendationsPage() {
   const [resumeParseMessage, setResumeParseMessage] = useState('');
   const [analysisSessionId, setAnalysisSessionId] = useState<string>('');
   const [showChat, setShowChat] = useState(false);
+  const [submittedJobIdNum, setSubmittedJobIdNum] = useState<number | undefined>();
 
   const { data: historyData, loading: historyLoading, mutate: mutateHistory } = useFetch<unknown[]>(
     '/api/recommendations/history?limit=20',
@@ -172,12 +171,12 @@ export default function RecommendationsPage() {
     }
   }, []);
 
-  async function submitAction() {
+  async function submitAction(profileVal: string, promptVal: string, jobIdVal: string) {
     setMessage('');
     setShowChat(false);
     setAnalysisSessionId('');
 
-    const trimmedJobId = jobId.trim();
+    const trimmedJobId = jobIdVal.trim();
     let parsedJobId: number | undefined;
 
     if (trimmedJobId) {
@@ -190,11 +189,11 @@ export default function RecommendationsPage() {
 
     setSubmitting(true);
     try {
-      const combinedProfile = [profile, resumeContent].filter(Boolean).join('\n\n');
+      const combinedProfile = [profileVal, resumeContent].filter(Boolean).join('\n\n');
       let result: unknown = null;
 
       if (mode === 'analyze') {
-        result = await API.getRecommendations({ job_id: parsedJobId, profile: combinedProfile, prompt });
+        result = await API.getRecommendations({ job_id: parsedJobId, profile: combinedProfile, prompt: promptVal });
         if (result && typeof result === 'object' && '_meta' in (result as Record<string, unknown>)) {
           const meta = (result as Record<string, unknown>)._meta as Record<string, unknown>;
           if (meta?.session_id) {
@@ -203,12 +202,13 @@ export default function RecommendationsPage() {
           }
         }
       } else if (mode === 'resume') {
-        result = await API.getResumeAdvice({ profile: combinedProfile, prompt });
+        result = await API.getResumeAdvice({ profile: combinedProfile, prompt: promptVal });
       } else {
-        result = await API.getDeliveryAssistant({ profile: combinedProfile, prompt });
+        result = await API.getDeliveryAssistant({ profile: combinedProfile, prompt: promptVal });
       }
 
       setResponse(result);
+      setSubmittedJobIdNum(parsedJobId);
       void mutateHistory();
     } catch (requestError) {
       setMessage(requestError instanceof Error ? requestError.message : '请求失败');
@@ -219,7 +219,7 @@ export default function RecommendationsPage() {
 
   const hasResumeFile = resumeFile !== null;
   const activeTabLabel = TABS.find((t) => t.key === mode)?.label || '岗位分析';
-  const currentJobIdNum = jobId ? parseInt(jobId) : undefined;
+  const currentJobIdNum = submittedJobIdNum;
   const hasAnalysisResult = response !== null && isAnalysisResult(response);
 
   const historyList = Array.isArray(historyData) ? historyData : [];
@@ -337,30 +337,40 @@ export default function RecommendationsPage() {
 
           <div style={{ marginTop: 20 }}>
             <SectionCard title="个人画像" description="输入你的教育背景、经历和求职偏好">
-              <label style={{ display: 'block' }}>
-                <div style={{ marginBottom: 8, fontWeight: 700 }}>个人画像</div>
-                <Textarea rows={6} value={profile} onChange={(event) => setProfile(event.target.value)} placeholder="输入教育背景、工作/实习经历、技能特长等" />
-              </label>
-              <label style={{ display: 'block', marginTop: 14 }}>
-                <div style={{ marginBottom: 8, fontWeight: 700 }}>附加提示</div>
-                <Textarea rows={4} value={prompt} onChange={(event) => setPrompt(event.target.value)} placeholder="例如：偏好上海、券商、投研方向" />
-              </label>
-              <label style={{ display: 'block', marginTop: 14 }}>
-                <div style={{ marginBottom: 8, fontWeight: 700 }}>岗位 ID</div>
-                <Input
-                  value={jobId}
-                  onChange={(event) => setJobId(event.target.value)}
-                  placeholder="可选，仅岗位分析模式使用"
-                />
-              </label>
-              <div className="row-gap" style={{ marginTop: 16 }}>
-                <Button variant="primary" onClick={submitAction} disabled={submitting}>
-                  {submitting ? '生成中...' : '生成结果'}
-                </Button>
-                <Button variant="secondary" onClick={() => { void mutateHistory(); }}>
-                  刷新历史
-                </Button>
-              </div>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const fd = new FormData(e.currentTarget);
+                void submitAction(
+                  (fd.get('profile') as string) || '',
+                  (fd.get('prompt') as string) || '',
+                  (fd.get('jobId') as string) || ''
+                );
+              }}>
+                <label style={{ display: 'block' }}>
+                  <div style={{ marginBottom: 8, fontWeight: 700 }}>个人画像</div>
+                  <Textarea name="profile" defaultValue={profile} rows={6} placeholder="输入教育背景、工作/实习经历、技能特长等" />
+                </label>
+                <label style={{ display: 'block', marginTop: 14 }}>
+                  <div style={{ marginBottom: 8, fontWeight: 700 }}>附加提示</div>
+                  <Textarea name="prompt" defaultValue="" rows={4} placeholder="例如：偏好上海、券商、投研方向" />
+                </label>
+                <label style={{ display: 'block', marginTop: 14 }}>
+                  <div style={{ marginBottom: 8, fontWeight: 700 }}>岗位 ID</div>
+                  <Input
+                    name="jobId"
+                    defaultValue=""
+                    placeholder="可选，仅岗位分析模式使用"
+                  />
+                </label>
+                <div className="row-gap" style={{ marginTop: 16 }}>
+                  <Button variant="primary" type="submit" disabled={submitting}>
+                    {submitting ? '生成中...' : '生成结果'}
+                  </Button>
+                  <Button variant="secondary" onClick={() => { void mutateHistory(); }}>
+                    刷新历史
+                  </Button>
+                </div>
+              </form>
             </SectionCard>
           </div>
         </div>

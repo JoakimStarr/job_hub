@@ -59,15 +59,6 @@ export default function JobAlertsPanel() {
   const [showDisabled, setShowDisabled] = useState(false);
   
   const [editingAlert, setEditingAlert] = useState<JobAlert | null>(null);
-  const [formData, setFormData] = useState({
-    email: '',
-    keywords: '',
-    sources: [] as string[],
-    locations: '',
-    industries: '',
-    education: '',
-    min_notify_interval: '',
-  });
 
   const [previewModal, setPreviewModal] = useState<{
     open: boolean;
@@ -162,13 +153,21 @@ export default function JobAlertsPanel() {
     }
   };
 
-  const handleSubmit = async () => {
-    if (!formData.email || !formData.keywords) {
-      setMessage('请填写邮箱和关键词');
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    const email = (fd.get('email') as string).trim();
+    const keywordsRaw = (fd.get('keywords') as string || '').trim();
+    const locations = (fd.get('locations') as string || '').trim();
+    const industries = (fd.get('industries') as string || '').trim();
+    const education = (fd.get('education') as string) || null;
+    const minNotifyInterval = parseInt(fd.get('min_notify_interval') as string) || 0;
+    const sources = fd.getAll('sources') as string[];
 
-    const keywords = formData.keywords.split(/[,，]/).map(k => k.trim()).filter(Boolean);
+    if (!email) { setMessage('请输入接收邮箱'); return; }
+    if (!keywordsRaw) { setMessage('请输入至少一个关键词'); return; }
+
+    const keywords = keywordsRaw.split(/[,，]/).map(k => k.trim()).filter(Boolean);
     
     if (keywords.length === 0) {
       setMessage('请至少输入一个关键词');
@@ -178,13 +177,13 @@ export default function JobAlertsPanel() {
     try {
       if (editingAlert) {
         const res = await API.updateJobAlert(editingAlert.id, {
-          email: formData.email,
+          email,
           keywords,
-          sources: formData.sources,
-          locations: formData.locations.split(/[,，]/).map(l => l.trim()).filter(Boolean),
-          industries: formData.industries.split(/[,，]/).map(i => i.trim()).filter(Boolean),
-          education: formData.education || undefined,
-          min_notify_interval: formData.min_notify_interval ? parseInt(formData.min_notify_interval, 10) : 0,
+          sources,
+          locations: locations.split(/[,，]/).map(l => l.trim()).filter(Boolean),
+          industries: industries.split(/[,，]/).map(i => i.trim()).filter(Boolean),
+          education: education || undefined,
+          min_notify_interval: minNotifyInterval,
         });
 
         if (res.success) {
@@ -197,13 +196,13 @@ export default function JobAlertsPanel() {
         }
       } else {
         const res = await API.createJobAlert({
-          email: formData.email,
+          email,
           keywords,
-          sources: formData.sources,
-          locations: formData.locations.split(/[,，]/).map(l => l.trim()).filter(Boolean),
-          industries: formData.industries.split(/[,，]/).map(i => i.trim()).filter(Boolean),
-          education: formData.education || undefined,
-          min_notify_interval: formData.min_notify_interval ? parseInt(formData.min_notify_interval, 10) : 0,
+          sources,
+          locations: locations.split(/[,，]/).map(l => l.trim()).filter(Boolean),
+          industries: industries.split(/[,，]/).map(i => i.trim()).filter(Boolean),
+          education: education || undefined,
+          min_notify_interval: minNotifyInterval,
         });
         
         if (res.success) {
@@ -221,15 +220,6 @@ export default function JobAlertsPanel() {
 
   const handleEdit = (alert: JobAlert) => {
     setEditingAlert(alert);
-    setFormData({
-      email: alert.email,
-      keywords: alert.keywords.join(', '),
-      sources: alert.sources || [],
-      locations: (alert.locations || []).join(', '),
-      industries: (alert.industries || []).join(', '),
-      education: alert.education || '',
-      min_notify_interval: alert.min_notify_interval ? String(alert.min_notify_interval) : '',
-    });
   };
 
   const handleDelete = async (id: number) => {
@@ -260,13 +250,15 @@ export default function JobAlertsPanel() {
   };
 
   const handleTestEmail = async () => {
-    if (!formData.email) {
+    const emailInput = document.getElementById('alert-email') as HTMLInputElement | null;
+    const email = emailInput?.value?.trim();
+    if (!email) {
       setMessage('请先填写邮箱');
       return;
     }
     
     try {
-      const res = await API.sendTestEmail(formData.email);
+      const res = await API.sendTestEmail(email);
       if (res.success) {
         setMessage('测试邮件已发送，请检查收件箱');
       } else {
@@ -278,25 +270,7 @@ export default function JobAlertsPanel() {
   };
 
   const resetForm = () => {
-    setFormData({
-      email: '',
-      keywords: '',
-      sources: [],
-      locations: '',
-      industries: '',
-      education: '',
-      min_notify_interval: '',
-    });
     setEditingAlert(null);
-  };
-
-  const toggleSource = (source: string) => {
-    setFormData(prev => ({
-      ...prev,
-      sources: prev.sources.includes(source)
-        ? prev.sources.filter(s => s !== source)
-        : [...prev.sources, source],
-    }));
   };
 
   if (loading) {
@@ -428,20 +402,21 @@ export default function JobAlertsPanel() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
         <SectionCard title={editingAlert ? '编辑订阅' : '新建订阅'} description="设置关键词，当有新岗位匹配时自动邮件通知">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <form style={{ display: 'flex', flexDirection: 'column', gap: 16 }} onSubmit={handleSubmit}>
             <label>
               <div style={{ marginBottom: 6, fontWeight: 600 }}>接收邮箱 *</div>
               <Input
                 type="email"
-                value={formData.email}
-                onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                name="email"
+                id="alert-email"
+                defaultValue={editingAlert ? editingAlert.email : ''}
                 placeholder="your@email.com"
               />
             </label>
 
             <label>
               <div style={{ marginBottom: 6, fontWeight: 600 }}>关键词 *（OR 匹配，多个用逗号分隔）</div>
-              <Textarea rows={3} value={formData.keywords} onChange={e => setFormData(prev => ({ ...prev, keywords: e.target.value }))} placeholder="例如：Python, 数据分析, 实习（任一命中即推送，匹配多的排前面）" />
+              <Textarea name="keywords" defaultValue={editingAlert ? editingAlert.keywords.join(', ') : ''} rows={3} placeholder="例如：Python, 数据分析, 实习（任一命中即推送，匹配多的排前面）" />
             </label>
 
             <div>
@@ -451,8 +426,9 @@ export default function JobAlertsPanel() {
                   <label key={opt.value} style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer' }}>
                     <input
                       type="checkbox"
-                      checked={formData.sources.includes(opt.value)}
-                      onChange={() => toggleSource(opt.value)}
+                      name="sources"
+                      value={opt.value}
+                      defaultChecked={editingAlert ? editingAlert.sources.includes(opt.value) : false}
                     />
                     <span style={{ fontSize: 13 }}>{opt.label}</span>
                   </label>
@@ -463,8 +439,8 @@ export default function JobAlertsPanel() {
             <label>
               <div style={{ marginBottom: 6, fontWeight: 600 }}>期望地点（不选不限）</div>
               <Input
-                value={formData.locations}
-                onChange={e => setFormData(prev => ({ ...prev, locations: e.target.value }))}
+                name="locations"
+                defaultValue={editingAlert ? editingAlert.locations.join(', ') : ''}
                 placeholder="例如：上海, 北京（留空则匹配所有地点）"
               />
             </label>
@@ -472,8 +448,8 @@ export default function JobAlertsPanel() {
             <label>
               <div style={{ marginBottom: 6, fontWeight: 600 }}>期望行业（不选不限）</div>
               <Input
-                value={formData.industries}
-                onChange={e => setFormData(prev => ({ ...prev, industries: e.target.value }))}
+                name="industries"
+                defaultValue={editingAlert ? editingAlert.industries.join(', ') : ''}
                 placeholder="例如：金融, 互联网（留空则匹配所有行业）"
               />
             </label>
@@ -483,8 +459,8 @@ export default function JobAlertsPanel() {
                 <div style={{ marginBottom: 6, fontWeight: 600 }}>学历要求</div>
                 <select
                   className="select"
-                  value={formData.education}
-                  onChange={e => setFormData(prev => ({ ...prev, education: e.target.value }))}
+                  name="education"
+                  defaultValue={editingAlert ? editingAlert.education || '' : ''}
                 >
                   <option value="">不限</option>
                   <option value="大专">大专</option>
@@ -497,8 +473,8 @@ export default function JobAlertsPanel() {
                 <div style={{ marginBottom: 6, fontWeight: 600 }}>推送间隔（分钟）</div>
                 <Input
                   type="number"
-                  value={formData.min_notify_interval}
-                  onChange={e => setFormData(prev => ({ ...prev, min_notify_interval: e.target.value }))}
+                  name="min_notify_interval"
+                  defaultValue={editingAlert ? String(editingAlert.min_notify_interval) : '0'}
                   placeholder="0=不限"
                   min="0"
                 />
@@ -506,7 +482,7 @@ export default function JobAlertsPanel() {
             </div>
 
             <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-              <Button variant="primary" onClick={handleSubmit}>
+              <Button variant="primary" type="submit">
                 {editingAlert ? '更新订阅' : '创建订阅'}
               </Button>
               {editingAlert ? (
@@ -518,7 +494,7 @@ export default function JobAlertsPanel() {
                 发送测试邮件
               </Button>
             </div>
-          </div>
+          </form>
         </SectionCard>
 
         <div>
