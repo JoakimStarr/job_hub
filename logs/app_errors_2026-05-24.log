@@ -1,0 +1,12 @@
+[2026-05-24T08:52:38.379Z] [ERROR] Failed to send email to fail@test.com: {
+  "error": "Connection refused"
+}
+[2026-05-24T08:52:38.382Z] [ERROR] Failed to send test email to fail@test.com: {
+  "error": "Network error"
+}
+[2026-05-24T08:52:52.363Z] [ERROR] Failed to send email to fail@test.com: {
+  "error": "Connection refused"
+}
+[2026-05-24T08:52:52.365Z] [ERROR] Failed to send test email to fail@test.com: {
+  "error": "Network error"
+}

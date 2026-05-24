@@ -76,3 +76,31 @@
 {"timestamp":"2026-05-24T07:03:17.111Z","level":"info","message":"Job alerts tables initialized"}
 {"timestamp":"2026-05-24T07:03:17.634Z","level":"warn","message":"AI模型 glm-4.7-flash 限流(429)，尝试下一个模型... (1/7)"}
 {"timestamp":"2026-05-24T07:03:17.635Z","level":"warn","message":"等待 3s 后重试..."}
+{"timestamp":"2026-05-24T08:52:38.257Z","level":"warn","message":"SMTP configuration not complete. Email sending will be disabled."}
+{"timestamp":"2026-05-24T08:52:38.263Z","level":"warn","message":"SMTP configuration not complete. Email sending will be disabled."}
+{"timestamp":"2026-05-24T08:52:38.271Z","level":"info","message":"Email sent to recipient@test.com: <test-123@test.com>"}
+{"timestamp":"2026-05-24T08:52:38.373Z","level":"info","message":"Test email sent to test@example.com: <test-123@test.com>"}
+{"timestamp":"2026-05-24T08:52:38.379Z","level":"error","message":"Failed to send email to fail@test.com:","context":{"error":"Connection refused"}}
+{"timestamp":"2026-05-24T08:52:38.382Z","level":"error","message":"Failed to send test email to fail@test.com:","context":{"error":"Network error"}}
+{"timestamp":"2026-05-24T08:52:38.389Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:38.396Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:38.399Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:38.401Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:38.402Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:38.403Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:38.406Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:38.407Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:52.314Z","level":"warn","message":"SMTP configuration not complete. Email sending will be disabled."}
+{"timestamp":"2026-05-24T08:52:52.320Z","level":"warn","message":"SMTP configuration not complete. Email sending will be disabled."}
+{"timestamp":"2026-05-24T08:52:52.335Z","level":"info","message":"Email sent to recipient@test.com: <test-123@test.com>"}
+{"timestamp":"2026-05-24T08:52:52.362Z","level":"info","message":"Test email sent to test@example.com: <test-123@test.com>"}
+{"timestamp":"2026-05-24T08:52:52.363Z","level":"error","message":"Failed to send email to fail@test.com:","context":{"error":"Connection refused"}}
+{"timestamp":"2026-05-24T08:52:52.365Z","level":"error","message":"Failed to send test email to fail@test.com:","context":{"error":"Network error"}}
+{"timestamp":"2026-05-24T08:52:52.368Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:52.372Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:52.376Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:52.378Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:52.381Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:52.383Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:52.384Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T08:52:52.385Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
