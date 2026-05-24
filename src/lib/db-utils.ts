@@ -570,3 +570,127 @@ export function normalizeEducationName(name: string): string {
   );
   return mapping?.name ?? name;
 }
+
+// ==================== 订阅分析相关表 ====================
+
+const MAX_ANALYSIS_HISTORY = 40;
+
+export function initSubscriptionAnalysisTables(db: Database.Database): void {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS subscription_analyses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      subscription_id INTEGER NOT NULL,
+      analyzed_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      total_jobs_scanned INTEGER DEFAULT 0,
+      new_jobs_count INTEGER DEFAULT 0,
+      matched_jobs_count INTEGER DEFAULT 0,
+      last_job_id_analyzed INTEGER DEFAULT 0,
+      analysis_hash TEXT,
+      ai_summary TEXT,
+      ai_model TEXT,
+      tokens_used INTEGER,
+      status TEXT DEFAULT 'pending',
+      error_message TEXT,
+      FOREIGN KEY (subscription_id) REFERENCES subscriptions(id)
+    )
+  `);
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS subscription_analysis_results (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      analysis_id INTEGER NOT NULL,
+      job_id INTEGER NOT NULL,
+      match_score REAL DEFAULT 0,
+      skill_match REAL DEFAULT 0,
+      education_match REAL DEFAULT 0,
+      location_match REAL DEFAULT 0,
+      ai_reasoning TEXT,
+      ai_suggestions TEXT,
+      is_read INTEGER DEFAULT 0,
+      is_interested INTEGER DEFAULT 0,
+      applied_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(analysis_id, job_id),
+      FOREIGN KEY (analysis_id) REFERENCES subscription_analyses(id),
+      FOREIGN KEY (job_id) REFERENCES jobs(id)
+    )
+  `);
+
+  // 索引
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_sa_subscription ON subscription_analyses(subscription_id)`);
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_sa_status ON subscription_analyses(status)`);
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_sar_analysis ON subscription_analysis_results(analysis_id)`);
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_sar_job ON subscription_analysis_results(job_id)`);
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_sar_score ON subscription_analysis_results(match_score DESC)`);
+}
+
+export function cleanupOldAnalyses(db: Database.Database, subscriptionId: number): void {
+  const count = db.prepare(
+    'SELECT COUNT(*) as cnt FROM subscription_analyses WHERE subscription_id = ?'
+  ).get(subscriptionId) as { cnt: number };
+
+  if (count.cnt > MAX_ANALYSIS_HISTORY) {
+    const toDelete = count.cnt - MAX_ANALYSIS_HISTORY;
+    const oldIds = db.prepare(
+      'SELECT id FROM subscription_analyses WHERE subscription_id = ? ORDER BY analyzed_at ASC LIMIT ?'
+    ).all(subscriptionId, toDelete) as { id: number }[];
+
+    for (const row of oldIds) {
+      db.prepare('DELETE FROM subscription_analysis_results WHERE analysis_id = ?').run(row.id);
+    }
+    
+    const idList = oldIds.map(r => r.id).join(',');
+    db.prepare(`DELETE FROM subscription_analyses WHERE id IN (${idList})`).run();
+  }
+}
+
+export function computeSubscriptionHash(subscription: {
+  keyword?: string | null;
+  locations?: string[] | null;
+  industries?: string[] | null;
+  job_types?: string[] | null;
+  education?: string | null;
+}): string {
+  const data = JSON.stringify({
+    k: subscription.keyword || '',
+    l: (subscription.locations || []).sort().join(','),
+    i: (subscription.industries || []).sort().join(','),
+    j: (subscription.job_types || []).sort().join(','),
+    e: subscription.education || '',
+  });
+  
+  let hash = 0;
+  for (let i = 0; i < data.length; i++) {
+    const char = data.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+export interface SubscriptionAnalysisRecord {
+  id: number;
+  subscription_id: number;
+  analyzed_at: string;
+  total_jobs_scanned: number;
+  new_jobs_count: number;
+  matched_jobs_count: number;
+  last_job_id_analyzed: number;
+  analysis_hash: string | null;
+  ai_summary: string | null;
+  ai_model: string | null;
+  tokens_used: number | null;
+  status: string;
+  error_message: string | null;
+}
+
+export function getLastAnalysis(db: Database.Database, subscriptionId: number): SubscriptionAnalysisRecord | null {
+  return db.prepare(
+    'SELECT * FROM subscription_analyses WHERE subscription_id = ? ORDER BY analyzed_at DESC LIMIT 1'
+  ).get(subscriptionId) as SubscriptionAnalysisRecord | null;
+}
+
+export function getMaxJobId(db: Database.Database): number {
+  const result = db.prepare('SELECT MAX(id) as max_id FROM jobs').get() as { max_id: number | null };
+  return result?.max_id ?? 0;
+}

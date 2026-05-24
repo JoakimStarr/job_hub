@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, buildJobWhereClause, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
+import { getDb, initSubscriptionAnalysisTables } from '@/lib/db-utils';
+import { getSubscriptionAnalyzer } from '@/lib/subscription-analyzer';
+import { requirePermissionUnified } from '@/lib/auth-server';
+import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
-export async function GET(
+export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  
   try {
+    await requirePermissionUnified(request);
+    
     const db = getDb();
+    initSubscriptionAnalysisTables(db);
 
+    // 获取订阅信息
     const subscription = db.prepare(`
       SELECT id, name, keyword, locations, industries, job_types, education
       FROM subscriptions
@@ -25,39 +33,97 @@ export async function GET(
     } | undefined;
 
     if (!subscription) {
-      return NextResponse.json({ error: 'Subscription not found' }, { status: 404 });
+      return NextResponse.json({ error: '订阅不存在' }, { status: 404 });
     }
 
-    const { whereClause, params } = buildJobWhereClause({
-      keyword: subscription.keyword || undefined,
-      keywordFields: ['title', 'description'],
-      multiLocation: subscription.locations ? subscription.locations.split(',').map(s => s.trim()).filter(Boolean) : undefined,
-      multiIndustry: subscription.industries ? subscription.industries.split(',').map(s => s.trim()).filter(Boolean) : undefined,
-      multiJobType: subscription.job_types ? subscription.job_types.split(',').map(s => s.trim()).filter(Boolean) : undefined,
-      education: subscription.education || undefined,
+    // 解析请求参数
+    const body = await request.json().catch(() => ({}));
+    const forceRefresh = body.force_refresh === true;
+
+    // 转换格式
+    const condition = {
+      ...subscription,
+      locations: subscription.locations ? subscription.locations.split(',').map(s => s.trim()).filter(Boolean) : [],
+      industries: subscription.industries ? subscription.industries.split(',').map(s => s.trim()).filter(Boolean) : [],
+      job_types: subscription.job_types ? subscription.job_types.split(',').map(s => s.trim()).filter(Boolean) : [],
+    };
+
+    // 获取 AI 服务
+    let aiService = null;
+    try {
+      const { getAIService } = await import('@/lib/ai-service');
+      aiService = getAIService();
+    } catch (e) {
+      logger.warn('AI服务未配置，将使用本地规则匹配');
+    }
+
+    // 执行分析
+    const analyzer = getSubscriptionAnalyzer({ aiService });
+    const result = await analyzer.preview(condition, forceRefresh);
+
+    return NextResponse.json(result);
+
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    logger.error('订阅预览分析错误:', error);
+    return NextResponse.json(
+      { error: '分析失败，请稍后重试' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  
+  try {
+    await requirePermissionUnified(request);
+    
+    const db = getDb();
+    initSubscriptionAnalysisTables(db);
+
+    // 获取最新分析状态
+    const latestAnalysis = db.prepare(`
+      SELECT * FROM subscription_analyses 
+      WHERE subscription_id = ?
+      ORDER BY analyzed_at DESC 
+      LIMIT 1
+    `).get(parseInt(id));
+
+    if (!latestAnalysis) {
+      return NextResponse.json({
+        analysis_id: null,
+        status: 'no_analysis',
+        message: '暂无分析记录',
+        summary: null,
+        results: [],
+      });
+    }
+
+    return NextResponse.json({
+      analysis_id: latestAnalysis.id,
+      status: latestAnalysis.status,
+      summary: {
+        total_scanned: latestAnalysis.total_jobs_scanned,
+        new_jobs: latestAnalysis.new_jobs_count,
+        matched: latestAnalysis.matched_jobs_count,
+        ai_summary: latestAnalysis.ai_summary || undefined,
+      },
+      cached_at: latestAnalysis.analyzed_at,
     });
 
-    const jobs = db.prepare(`
-      SELECT
-        id, title, company, location, salary, description, requirements,
-        job_type, industry, education, experience, source, university,
-        source_url, apply_url, publish_date, deadline, category, tags,
-        is_favorite, is_read, created_at, updated_at
-      FROM jobs
-      ${whereClause}
-      ORDER BY created_at DESC
-      LIMIT 20
-    `).all(...params) as Record<string, unknown>[];
-
-    return NextResponse.json(jobs.map(job => ({
-      ...job,
-      source_url: resolveSourceUrl(String(job.source || ''), job.source_url as string, job.id as number),
-      apply_url: (!job.apply_url || isFakeUrl(job.apply_url as string)) ? resolveSourceUrl(String(job.source || ''), job.source_url as string, job.id as number) : job.apply_url,
-    })));
   } catch (error) {
-    logger.error('Subscription preview error:', error);
+    if (error instanceof AuthError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
+    logger.error('获取分析状态错误:', error);
     return NextResponse.json(
-      { error: 'Failed to preview subscription' },
+      { error: '获取分析状态失败' },
       { status: 500 }
     );
   }

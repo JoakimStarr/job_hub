@@ -12,6 +12,7 @@ import type {
   FilterOption,
   ProvinceWithCities,
   EducationMapping,
+  AnalysisResult,
 } from '@/lib/types';
 import { AUTH_EXPIRED_EVENT, AUTH_TOKEN_KEY, AUTH_USER_KEY } from '@/lib/constants';
 
@@ -154,6 +155,16 @@ export const API = {
   updateSubscription: (id: number, data: Record<string, unknown>) => request(`/api/system/subscriptions/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   deleteSubscription: (id: number) => request(`/api/system/subscriptions/${id}`, { method: 'DELETE' }),
   previewSubscription: (id: number) => request<JobItem[]>(`/api/system/subscriptions/${id}/preview`),
+
+  previewSubscriptionAnalysis: (id: number) => request<AnalysisResult>(`/api/system/subscriptions/${id}/preview`, { method: 'POST' }, AI_REQUEST_TIMEOUT_MS),
+  getSubscriptionAnalysisHistory: (subscriptionId: number) => request<{ analyses: Array<{ id: number; status: string; created_at: string; summary_text?: string }> }>(`/api/system/subscriptions/${subscriptionId}/analyses/history`),
+  getSubscriptionAnalysisResults: (subscriptionId: number, analysisId: number, page = 1, pageSize = 20) => {
+    const query = new URLSearchParams();
+    query.set('page', String(page));
+    query.set('page_size', String(pageSize));
+    return request<{ results: unknown[]; total: number; page: number; page_size: number }>(`/api/system/subscriptions/${subscriptionId}/analyses/${analysisId}/results?${query.toString()}`);
+  },
+  markAnalysisResultInterest: (subscriptionId: number, analysisId: number, resultId: number, interested: boolean) => request(`/api/system/subscriptions/${subscriptionId}/analyses/${analysisId}/results/${resultId}/interest`, { method: 'POST', body: JSON.stringify({ interested }) }),
 
   getRecommendations: (data: Record<string, unknown> = {}) => request('/api/recommendations/analyze', { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),
   getRecommendationChat: (data: Record<string, unknown> = {}) => request('/api/recommendations/chat', { method: 'POST', body: JSON.stringify(data) }, AI_REQUEST_TIMEOUT_MS),

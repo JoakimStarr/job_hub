@@ -1,0 +1,22 @@
+# Checklist
+
+- [ ] 数据库表 `subscription_analyses` 创建成功，包含所有必需字段
+- [ ] 数据库表 `subscription_analysis_results` 创建成功，包含唯一约束
+- [ ] 索引创建正确（subscription_id, status, analysis_id, job_id, match_score）
+- [ ] 订阅条件哈希计算函数实现正确
+- [ ] 增量扫描逻辑：首次全量、后续增量
+- [ ] 条件变更检测：哈希值变化时触发全量重扫
+- [ ] 本地规则匹配复用 match-engine 和 score-engine
+- [ ] AI 批量分析复用 ai-service
+- [ ] POST /api/subscriptions/:id/preview 端点正常工作
+- [ ] GET /api/subscriptions/:id/analyses/history 返回历史列表
+- [ ] GET /api/subscriptions/:id/analyses/:analysisId/results 分页返回结果
+- [ ] force_refresh 参数强制重新分析生效
+- [ ] 前端"预览"按钮触发分析并展示结果
+- [ ] 前端"重新分析"按钮功能正常
+- [ ] 前端历史记录查看面板正常显示
+- [ ] 分析状态（pending/running/completed/failed）正确流转
+- [ ] 历史记录超过40条时自动清理最旧记录
+- [ ] 邮件服务模块创建完成
+- [ ] 邮件模板包含匹配岗位摘要和 AI 建议
+- [ ] 每日汇总定时任务逻辑正确

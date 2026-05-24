@@ -114,6 +114,35 @@ export interface SubscriptionItem {
   enabled?: boolean;
 }
 
+export interface AnalysisJobResult {
+  job_id: number;
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+  education: string;
+  match_score: number;
+  skill_match: number;
+  education_match: number;
+  location_match: number;
+  ai_reasoning?: string;
+  ai_suggestions?: string;
+  is_new: boolean;
+}
+
+export interface AnalysisResult {
+  analysis_id: number;
+  status: 'completed' | 'running' | 'failed' | 'cached' | 'no_analysis';
+  summary: {
+    total_scanned: number;
+    new_jobs: number;
+    matched: number;
+    ai_summary?: string;
+  } | null;
+  results: AnalysisJobResult[];
+  cached_at?: string;
+}
+
 export interface RoleItem {
   id: string;
   name?: string;

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { Badge, Button, EmptyState, Input, JobCard, MetricCard, SectionCard, Select, Skeleton, TabNav } from '@/components/ui';
+import { SubscriptionAnalysisPanel } from '@/components/SubscriptionAnalysisPanel';
 import { API } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
 import type { JobItem, SystemConfig, SystemStatus, SubscriptionItem } from '@/lib/types';
@@ -18,44 +19,79 @@ function safeJsonParse(value: string) {
   }
 }
 
-function PreviewModal({
+type AnalysisResult = {
+  analysis_id: number;
+  status: 'completed' | 'running' | 'failed' | 'cached' | 'no_analysis';
+  summary: {
+    total_scanned: number;
+    new_jobs: number;
+    matched: number;
+    ai_summary?: string;
+  } | null;
+  results: Array<{
+    job_id: number;
+    title: string;
+    company: string;
+    location: string;
+    salary: string;
+    education: string;
+    match_score: number;
+    skill_match: number;
+    education_match: number;
+    location_match: number;
+    ai_reasoning?: string;
+    ai_suggestions?: string;
+    is_new: boolean;
+  }>;
+  cached_at?: string;
+};
+
+function SubscriptionAnalysisModal({
   subscription,
-  jobs,
-  loading,
+  analysisResult,
+  onReanalyze,
+  onViewHistory,
   onClose,
 }: {
   subscription: { id: number; name: string } | null;
-  jobs: JobItem[];
+  analysisResult: AnalysisResult | null;
   loading: boolean;
+  onReanalyze?: () => void;
+  onViewHistory?: () => void;
   onClose: () => void;
 }) {
   if (!subscription) return null;
 
-  return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <section className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 780, width: '100%' }}>
-        <div className="modal-head">
-          <div>
-            <h3>预览命中 · {subscription.name}</h3>
-            <p>当前订阅匹配到的岗位列表</p>
-          </div>
-          <Button variant="ghost" onClick={onClose}>关闭</Button>
-        </div>
-        <div style={{ marginTop: 20 }}>
-          {loading ? (
-            <Skeleton type="card" />
-          ) : jobs.length === 0 ? (
-            <EmptyState title="暂无命中" description="当前订阅没有匹配到岗位。" />
-          ) : (
-            <div className="grid" style={{ gap: 12, maxHeight: '60vh', overflowY: 'auto' }}>
-              {jobs.map((job) => (
-                <JobCard key={job.id} job={job} />
-              ))}
+  if (loading) {
+    return (
+      <div className="modal-backdrop" onClick={onClose}>
+        <section className="modal-card" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 860, width: '100%' }}>
+          <div className="modal-head">
+            <div>
+              <h3>分析中 · {subscription.name}</h3>
+              <p>正在分析匹配岗位...</p>
             </div>
-          )}
-        </div>
-      </section>
-    </div>
+            <Button variant="ghost" onClick={onClose}>关闭</Button>
+          </div>
+          <div style={{ padding: 40, textAlign: 'center' }}>
+            <Skeleton type="card" />
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  if (!analysisResult) return null;
+
+  return (
+    <SubscriptionAnalysisPanel
+      subscriptionId={subscription.id}
+      subscriptionName={subscription.name}
+      analysisResult={analysisResult}
+      onReanalyze={onReanalyze}
+      onViewHistory={onViewHistory}
+      onClose={onClose}
+    />
   );
 }
 
@@ -65,11 +101,11 @@ export default function SystemPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('config');
   const [savingConfig, setSavingConfig] = useState(false);
   const [cleaning, setCleaning] = useState(false);
-  const [previewModal, setPreviewModal] = useState<{
+  const [analysisModal, setAnalysisModal] = useState<{
     subscription: { id: number; name: string } | null;
-    jobs: JobItem[];
+    analysisResult: AnalysisResult | null;
     loading: boolean;
-  }>({ subscription: null, jobs: [], loading: false });
+  }>({ subscription: null, analysisResult: null, loading: false });
 
   const {
     data: status,
@@ -247,14 +283,14 @@ export default function SystemPage() {
                 subscriptions={subscriptionsList}
                 reload={reloadAll}
                 onPreview={(subscription) => {
-                  setPreviewModal({ subscription, jobs: [], loading: true });
-                  API.previewSubscription(subscription.id)
+                  setAnalysisModal({ subscription, analysisResult: null, loading: true });
+                  API.previewSubscriptionAnalysis(subscription.id)
                     .then((result) => {
-                      setPreviewModal({ subscription, jobs: Array.isArray(result) ? result : [], loading: false });
+                      setAnalysisModal({ subscription, analysisResult: result, loading: false });
                     })
                     .catch((requestError) => {
-                      setPreviewModal({ subscription: null, jobs: [], loading: false });
-                      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '预览订阅失败' });
+                      setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
+                      setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '预览分析失败' });
                     });
                 }}
               />
@@ -308,12 +344,29 @@ export default function SystemPage() {
         )}
       </SectionCard>
 
-      <PreviewModal
-        subscription={previewModal.subscription}
-        jobs={previewModal.jobs}
-        loading={previewModal.loading}
-        onClose={() => setPreviewModal({ subscription: null, jobs: [], loading: false })}
-      />
+      {analysisModal.subscription && (
+        <SubscriptionAnalysisModal
+          subscription={analysisModal.subscription}
+          analysisResult={analysisModal.analysisResult}
+          loading={analysisModal.loading}
+          onReanalyze={() => {
+            if (!analysisModal.subscription) return;
+            setAnalysisModal((prev) => ({ ...prev, loading: true, analysisResult: null }));
+            API.previewSubscriptionAnalysis(analysisModal.subscription.id)
+              .then((result) => {
+                setAnalysisModal((prev) => ({ ...prev, analysisResult: result, loading: false }));
+              })
+              .catch((requestError) => {
+                setAnalysisModal({ subscription: null, analysisResult: null, loading: false });
+                setFeedback({ tone: 'error', text: requestError instanceof Error ? requestError.message : '重新分析失败' });
+              });
+          }}
+          onViewHistory={() => {
+            console.log('查看历史记录 - 功能开发中');
+          }}
+          onClose={() => setAnalysisModal({ subscription: null, analysisResult: null, loading: false })}
+        />
+      )}
     </AppShell>
   );
 }
@@ -491,7 +544,7 @@ function SubscriptionPanel({
                   variant="secondary"
                   onClick={() => onPreview({ id: item.id, name: item.name })}
                 >
-                  预览命中
+                  预览分析
                 </Button>
                 <Button variant="secondary" onClick={() => editSubscription(item)}>
                   编辑

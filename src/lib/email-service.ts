@@ -239,3 +239,193 @@ export async function sendTestEmail(to: string): Promise<{ success: boolean; err
 export function isEmailConfigured(): boolean {
   return getSmtpConfig() !== null;
 }
+
+export interface SubscriptionAnalysisEmailData {
+  to: string;
+  subscriptionId: number;
+  subscriptionName: string;
+  totalScanned: number;
+  newJobsCount: number;
+  matchedCount: number;
+  aiSummary?: string;
+  jobs: Array<{
+    job_id: number;
+    title: string;
+    company: string;
+    location: string;
+    salary: string;
+    education: string;
+    match_score: number;
+    ai_reasoning?: string;
+    is_new: boolean;
+  }>;
+}
+
+export async function sendSubscriptionAnalysisEmail(emailData: SubscriptionAnalysisEmailData): Promise<{ success: boolean; error?: string }> {
+  const config = getSmtpConfig();
+
+  if (!config) {
+    return { success: false, error: 'SMTP configuration not complete' };
+  }
+
+  const transporter = createTransporter(config);
+
+  const { to, subscriptionName, totalScanned, newJobsCount, matchedCount, aiSummary, jobs } = emailData;
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const subscriptionUrl = `${baseUrl}/system?tab=subscriptions`;
+
+  const topJobs = jobs.slice(0, 10);
+  const jobListHtml = topJobs.map((job, index) => `
+    <div style="margin-bottom: 16px; padding: 14px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid ${job.match_score >= 85 ? '#10b981' : job.match_score >= 70 ? '#3b82f6' : job.match_score >= 55 ? '#f59e0b' : '#ef4444'};">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="margin: 0; font-size: 15px;">
+          ${job.is_new ? '<span style="background:#0ea5e9;color:white;padding:2px 8px;border-radius:10px;font-size:11px;margin-right:6px;">新</span>' : ''}
+          ${index + 1}. ${job.title}
+        </h3>
+        <span style="font-size: 14px; font-weight: 700; color: ${job.match_score >= 85 ? '#059669' : job.match_score >= 70 ? '#1d4ed8' : job.match_score >= 55 ? '#d97706' : '#dc2626'};">
+          ${job.match_score}分
+        </span>
+      </div>
+      <p style="margin: 4px 0; color: #666; font-size: 13px;">
+        📍 ${job.location || '未知'} | 💰 ${job.salary || '面议'} | 🎓 ${job.education || '未要求'}
+      </p>
+      ${job.ai_reasoning ? `<p style="margin: 6px 0; color: #059669; font-size: 12px; background: #ecfdf5; padding: 6px 10px; border-radius: 6px;">💡 ${job.ai_reasoning}</p>` : ''}
+    </div>
+  `).join('');
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 620px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; padding: 28px; border-radius: 12px 12px 0 0; }
+        .content { background: #ffffff; padding: 28px; border: 1px solid #e5e7eb; border-top: none; }
+        .footer { text-align: center; padding: 18px; color: #9ca3af; font-size: 12px; }
+        .stat-box { display: inline-block; text-align: center; padding: 12px 20px; margin: 4px; background: #f1f5f9; border-radius: 10px; }
+        .stat-num { font-size: 24px; font-weight: 800; }
+        .stat-label { font-size: 11px; color: #64748b; }
+        .ai-box { background: linear-gradient(135deg, #fef3c7, #ede9fe); padding: 16px; border-radius: 10px; margin: 16px 0; border: 1px solid #e5e7eb; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1 style="margin: 0;">📊 订阅分析日报</h1>
+          <p style="margin: 8px 0 0 0; opacity: 0.9;">${subscriptionName} - 每日岗位匹配汇总</p>
+        </div>
+        <div class="content">
+          <p>您好！</p>
+          <p>以下是您订阅「<strong>${subscriptionName}</strong>」的今日分析结果：</p>
+
+          <div style="text-align: center; margin: 20px 0;">
+            <div class="stat-box">
+              <div class="stat-num">${totalScanned}</div>
+              <div class="stat-label">扫描总数</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" style="color: #0ea5e9;">${newJobsCount}</div>
+              <div class="stat-label">新增岗位</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" style="color: #10b981;">${matchedCount}</div>
+              <div class="stat-label">匹配岗位</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">${matchedCount > 0 && totalScanned > 0 ? Math.round((matchedCount / totalScanned) * 100) : 0}%</div>
+              <div class="stat-label">命中率</div>
+            </div>
+          </div>
+
+          ${aiSummary ? `
+          <div class="ai-box">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <span style="font-size: 18px;">🤖</span>
+              <strong>AI 分析摘要</strong>
+            </div>
+            <p style="margin: 0; font-size: 14px; line-height: 1.7;">${aiSummary}</p>
+          </div>
+          ` : ''}
+
+          ${topJobs.length > 0 ? `
+          <h3 style="margin: 20px 0 12px 0; color: #374151;">📋 Top 匹配岗位（${Math.min(topJobs.length, jobs.length)}/${jobs.length}）</h3>
+          <div style="margin: 16px 0;">
+            ${jobListHtml}
+          </div>
+          ` : `
+          <div style="text-align: center; padding: 30px; color: #9ca3af;">
+            <p style="font-size: 48px; margin: 0;">📭</p>
+            <p style="margin: 10px 0 0 0;">今日暂无新的匹配岗位</p>
+            <p style="margin: 4px 0 0 0; font-size: 13px;">我们会持续监控，有新匹配时会通知您</p>
+          </div>
+          `}
+
+          <p style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb; color: #666; font-size: 13px;">
+            查看完整分析结果请访问：<a href="${subscriptionUrl}" style="color: #6366f1;">订阅管理页面</a>
+          </p>
+        </div>
+        <div class="footer">
+          <p>此邮件由系统自动发送，请勿直接回复。</p>
+          <p>© ${new Date().getFullYear()} Job Hub 订阅分析服务</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const text = `
+订阅分析日报 - ${subscriptionName}
+
+您好！
+
+以下是您订阅「${subscriptionName}」的今日分析结果：
+
+📊 统计摘要
+  扫描总数：${totalScanned}
+  新增岗位：${newJobsCount}
+  匹配岗位：${matchedCount}
+  命中率：${matchedCount > 0 && totalScanned > 0 ? Math.round((matchedCount / totalScanned) * 100) : 0}%
+
+${aiSummary ? `
+🤖 AI 分析摘要
+${aiSummary}
+` : ''}
+
+${topJobs.length > 0 ? `
+📋 Top 匹配岗位：
+${topJobs.map((job, i) => `
+${i + 1}. [${job.match_score}分] ${job.title}
+   公司：${job.company}
+   地点：${job.location || '未知'}
+   薪资：${job.salary || '面议'}
+   ${job.ai_reasoning ? `AI建议：${job.ai_reasoning}` : ''}
+`).join('')}
+` : '今日暂无新的匹配岗位'}
+
+---
+查看完整分析结果：${subscriptionUrl}
+
+此邮件由系统自动发送，请勿直接回复。
+© ${new Date().getFullYear()} Job Hub 订阅分析服务
+  `.trim();
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"${config.fromName}" <${config.fromEmail}>`,
+      to,
+      subject: `【订阅分析】${subscriptionName} - 发现 ${matchedCount} 个匹配岗位`,
+      text,
+      html,
+    });
+
+    logger.info(`Subscription analysis email sent to ${to}: ${info.messageId}`);
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`Failed to send subscription analysis email to ${to}:`, errorMessage);
+    return { success: false, error: errorMessage };
+  }
+}
