@@ -92,9 +92,11 @@ RUN rm -f /etc/apt/sources.list.d/debian.sources \
     && echo "deb http://mirrors.aliyun.com/debian-security bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
     && echo "deb http://mirrors.aliyun.com/debian bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
-# 安装 curl 用于健康检查
+# 安装 curl 用于健康检查，以及 tesseract-ocr 用于扫描版 PDF 文字识别
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
+    tesseract-ocr \
+    tesseract-ocr-chi-sim \
     && rm -rf /var/lib/apt/lists/*
 
 # 创建非 root 用户

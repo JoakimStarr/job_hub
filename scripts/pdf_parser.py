@@ -81,7 +81,7 @@ def main():
             'success': False,
             'error': 'Usage: python pdf_parser.py <pdf_file_path>'
         }))
-        sys.exit(1)
+        sys.exit(0)
 
     filepath = sys.argv[1]
 
@@ -90,7 +90,7 @@ def main():
             'success': False,
             'error': f'File not found: {filepath}'
         }))
-        sys.exit(1)
+        sys.exit(0)
 
     try:
         text, pages, raw_length, used_ocr = extract_pdf_text(filepath)
@@ -111,13 +111,13 @@ def main():
             'error': str(e),
             'need_install': True
         }, ensure_ascii=False))
-        sys.exit(1)
+        sys.exit(0)
     except Exception as e:
         print(json.dumps({
             'success': False,
             'error': str(e)
         }, ensure_ascii=False))
-        sys.exit(1)
+        sys.exit(0)
 
 if __name__ == '__main__':
     main()

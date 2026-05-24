@@ -30,6 +30,17 @@ beautifulsoup4>=4.12.0,<5.0.0
 # Playwright浏览器自动化（UIBE/JXUFE/NEU/SMARTEDU等数据源）
 playwright>=1.40.0,<2.0.0
 
+# --- PDF解析依赖（必需，用于pdf_parser.py）---
+
+# 高精度PDF文本提取（支持扫描件+OCR）
+pypdfium2>=4.30.0,<5.0.0
+
+# PDF转图片（OCR前置步骤）
+pdf2image>=1.16.0,<2.0.0
+
+# OCR文字识别引擎Python封装
+pytesseract>=0.3.10,<1.0.0
+
 # --- 开发工具（可选）---
 
 # 代码质量检查

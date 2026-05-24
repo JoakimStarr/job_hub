@@ -11,7 +11,6 @@ type UserActionMode = 'edit' | 'reset';
 export default function UsersPage() {
   const [roles, setRoles] = useState<Array<{ id: string; name?: string }>>([]);
   const [users, setUsers] = useState<AppUser[]>([]);
-  const [role, setRole] = useState('');
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
   const [dialogMode, setDialogMode] = useState<UserActionMode | null>(null);
@@ -39,7 +38,6 @@ export default function UsersPage() {
         usersData = rawResponse.users as AppUser[];
       }
       setUsers(usersData);
-      setRole((current) => current || (rolesArray[0]?.id || ''));
     } catch (error) {
       setMessage(error instanceof Error ? error.message : '加载用户失败');
     } finally {
@@ -70,24 +68,18 @@ export default function UsersPage() {
     setDialogActive(true);
   }
 
-  async function submitCreateUser(e: React.FormEvent<HTMLFormElement>) {
+  async function handleCreateUser(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setSaving(true);
     const form = e.currentTarget;
     const fd = new FormData(form);
-    const username = fd.get('username') as string;
-    const displayName = fd.get('displayName') as string;
-    const roleVal = fd.get('role') as string;
+    const username = (fd.get('username') as string).trim();
+    const displayName = (fd.get('displayName') as string).trim();
     const password = fd.get('password') as string;
+    const role = fd.get('role') as string;
     const active = fd.get('active') === 'on';
-
-    if (!username || !password) {
-      setMessage('用户名和密码不能为空');
-      return;
-    }
-
-    setSaving(true);
     try {
-      await API.createUser({ username, display_name: displayName || username, role: roleVal, password, is_active: active });
+      await API.createUser({ username, display_name: displayName || username, role, password, is_active: active });
       form.reset();
       setMessage('');
       await loadUsers();
@@ -132,11 +124,11 @@ export default function UsersPage() {
       {message ? <div className="notice notice-error">{message}</div> : null}
       <div className="grid-2">
         <SectionCard title="新建用户" description="管理员可以在这里创建新账号">
-          <form className="grid" style={{ gap: 14 }} onSubmit={(e) => { void submitCreateUser(e); }}>
-            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>用户名</div><Input type="text" name="username" placeholder="例如 analyst01" /></label>
-            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>显示名称</div><Input type="text" name="displayName" placeholder="例如 数据分析同学" /></label>
-            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>角色</div><Select name="role" defaultValue={role}>{roles.map((item) => <option key={item.id} value={item.id}>{item.id}</option>)}</Select></label>
-            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>初始密码</div><Input name="password" type="password" placeholder="至少 8 位" /></label>
+          <form className="grid" style={{ gap: 14 }} onSubmit={handleCreateUser}>
+            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>用户名</div><Input type="text" name="username" defaultValue="" placeholder="例如 analyst01" required /></label>
+            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>显示名称</div><Input type="text" name="displayName" defaultValue="" placeholder="例如 数据分析同学" /></label>
+            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>角色</div><Select name="role" defaultValue={roles[0]?.id || ''} key={roles.length}>{roles.map((item) => <option key={item.id} value={item.id}>{item.id}</option>)}</Select></label>
+            <label><div style={{ marginBottom: 8, fontWeight: 700 }}>初始密码</div><Input name="password" defaultValue="" type="password" placeholder="至少 8 位" required /></label>
             <label className="badge badge-slate" style={{ cursor: 'pointer', gap: 8 }}>
               <input type="checkbox" name="active" defaultChecked />
               创建后启用账号
