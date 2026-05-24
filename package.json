@@ -1,7 +1,7 @@
 {
   "name": "finintern-hub-next",
   "private": true,
-  "version": "8.24.2",
+  "version": "8.24.3",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

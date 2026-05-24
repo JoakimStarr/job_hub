@@ -5,6 +5,8 @@ import path from 'path';
 import fs from 'fs';
 import crypto from 'crypto';
 
+const mockAuthDbRef = vi.hoisted(() => ({ current: null as any }));
+
 describe('增强版认证 API 集成测试', () => {
   let authDb: any;
   let originalEnv: NodeJS.ProcessEnv;
@@ -358,9 +360,11 @@ describe('增强版认证 API 集成测试', () => {
     authDb.createUser('testoperator', 'Operator@123', 'operator');
     authDb.createUser('testviewer', 'Viewer@123', 'viewer');
 
+    mockAuthDbRef.current = authDb;
+
     vi.mock('@/lib/auth-db', () => ({
-      getAuthDb: () => authDb,
-      AuthDatabase: authDb
+      getAuthDb: () => mockAuthDbRef.current,
+      AuthDatabase: mockAuthDbRef.current
     }));
 
     vi.mock('@/lib/logger', () => ({
@@ -964,7 +968,7 @@ describe('增强版认证 API 集成测试', () => {
       );
 
       authDb.authenticate({ username: 'testviewer', password: 'Viewer@123' }, '192.168.1.1');
-      authDb.authenticate({ username: 'testviewer', password: 'Viewer@123' }, '192.168.1.2' });
+      authDb.authenticate({ username: 'testviewer', password: 'Viewer@123' }, '192.168.1.2');
 
       const response = await createLogsRequest(loginResult.sessionToken);
 
