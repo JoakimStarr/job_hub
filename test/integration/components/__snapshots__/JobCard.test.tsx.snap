@@ -1,0 +1,292 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`JobCard 组件 > 快照测试 > 列表视图的快照应该匹配 1`] = `
+<div>
+  <article
+    aria-label="岗位: 高级数据分析师 - 某科技公司"
+    class="job-list-item"
+    role="article"
+  >
+    <div
+      class="job-list-main"
+    >
+      <div
+        class="job-list-title-section"
+      >
+        <h3
+          class="job-list-title"
+        >
+          高级数据分析师
+        </h3>
+        <span
+          class="job-list-company"
+        >
+          某科技公司
+        </span>
+        <span
+          class="job-list-salary"
+        >
+          💰 
+          25-40K
+        </span>
+      </div>
+      <div
+        class="job-list-meta"
+      >
+        <span
+          class="job-list-location"
+        >
+          📍 
+          北京
+        </span>
+        <span
+          class="badge badge-slate"
+          style="font-size: 11px; padding: 2px 6px;"
+        >
+          全职
+        </span>
+        <span
+          class="badge badge-emerald"
+          style="font-size: 11px; padding: 2px 6px;"
+        >
+          硕士及以上学历
+        </span>
+        <span
+          class="badge badge-violet"
+          style="font-size: 11px; padding: 2px 6px;"
+        >
+          互联网
+        </span>
+        <span
+          class="badge badge-blue"
+          style="font-size: 11px; padding: 2px 6px;"
+        >
+          boss直聘
+        </span>
+      </div>
+      <p
+        class="job-list-desc"
+      >
+        负责业务数据分析和建模工作，需要精通Python和SQL
+      </p>
+    </div>
+    <div
+      class="job-list-right"
+    >
+      <span
+        class="job-list-date"
+      >
+        2026-01-15
+      </span>
+      <button
+        aria-label="收藏"
+        class="star-btn star-btn-sm"
+        style="border: 1px solid var(--panel-border); border-radius: 4px;"
+        title="收藏"
+        type="button"
+      >
+        <span
+          class="star-icon"
+        >
+          ☆
+        </span>
+      </button>
+    </div>
+  </article>
+</div>
+`;
+
+exports[`JobCard 组件 > 快照测试 > 卡片视图的快照应该匹配 1`] = `
+<div>
+  <article
+    aria-label="岗位: 高级数据分析师 - 某科技公司"
+    class="job-card job-card-clickable"
+    role="article"
+  >
+    <div
+      class="job-card-main"
+    >
+      <div
+        class="job-title-row"
+      >
+        <h3>
+          高级数据分析师
+        </h3>
+      </div>
+      <div
+        class="job-meta"
+      >
+        <span
+          style="cursor: pointer;"
+        >
+          某科技公司
+        </span>
+        <span
+          style="cursor: pointer;"
+        >
+          📍 
+          北京
+        </span>
+        <span>
+          💰 
+          25-40K
+        </span>
+        <span>
+          📅 
+          2026-01-15
+        </span>
+      </div>
+      <p
+        class="job-description"
+      >
+        负责业务数据分析和建模工作，需要精通Python和SQL
+      </p>
+      <div
+        class="job-tags"
+      >
+        <span
+          class="badge badge-blue"
+          style="cursor: pointer;"
+        >
+          boss直聘
+        </span>
+        <span
+          class="badge badge-slate"
+          style="cursor: pointer;"
+        >
+          全职
+        </span>
+        <span
+          class="badge badge-violet"
+          style="cursor: pointer;"
+        >
+          互联网
+        </span>
+        <span
+          class="badge badge-emerald"
+          style="cursor: pointer;"
+        >
+          硕士及以上学历
+        </span>
+      </div>
+    </div>
+    <div
+      class="job-card-star"
+    >
+      <button
+        aria-label="收藏"
+        class="star-btn star-btn-md"
+        style="border: 1px solid var(--panel-border); border-radius: 4px;"
+        title="收藏"
+        type="button"
+      >
+        <span
+          class="star-icon"
+        >
+          ☆
+        </span>
+      </button>
+    </div>
+  </article>
+</div>
+`;
+
+exports[`JobCard 组件 > 快照测试 > 已收藏状态的快照应该匹配 1`] = `
+<div>
+  <article
+    aria-label="岗位: 高级数据分析师 - 某科技公司"
+    class="job-card"
+    role="article"
+  >
+    <div
+      class="job-card-main"
+    >
+      <div
+        class="job-title-row"
+      >
+        <h3>
+          高级数据分析师
+        </h3>
+        <span
+          class="badge badge-amber"
+        >
+          收藏
+        </span>
+      </div>
+      <div
+        class="job-meta"
+      >
+        <span
+          style="cursor: pointer;"
+        >
+          某科技公司
+        </span>
+        <span
+          style="cursor: pointer;"
+        >
+          📍 
+          北京
+        </span>
+        <span>
+          💰 
+          25-40K
+        </span>
+        <span>
+          📅 
+          2026-01-15
+        </span>
+      </div>
+      <p
+        class="job-description"
+      >
+        负责业务数据分析和建模工作，需要精通Python和SQL
+      </p>
+      <div
+        class="job-tags"
+      >
+        <span
+          class="badge badge-blue"
+          style="cursor: pointer;"
+        >
+          boss直聘
+        </span>
+        <span
+          class="badge badge-slate"
+          style="cursor: pointer;"
+        >
+          全职
+        </span>
+        <span
+          class="badge badge-violet"
+          style="cursor: pointer;"
+        >
+          互联网
+        </span>
+        <span
+          class="badge badge-emerald"
+          style="cursor: pointer;"
+        >
+          硕士及以上学历
+        </span>
+      </div>
+    </div>
+    <div
+      class="job-card-star"
+    >
+      <button
+        aria-label="取消收藏"
+        class="star-btn star-btn-md"
+        style="border: 1px solid var(--panel-border); border-radius: 4px;"
+        title="取消收藏"
+        type="button"
+      >
+        <span
+          class="star-icon star-icon-active"
+        >
+          ★
+        </span>
+      </button>
+    </div>
+  </article>
+</div>
+`;

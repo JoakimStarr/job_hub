@@ -1,0 +1,95 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchBar 组件 > 快照测试 > 基本状态的快照应该匹配 1`] = `
+<div>
+  <div
+    aria-label="搜索栏"
+    class="search-bar-wrapper"
+    role="search"
+  >
+    <form
+      class="search-form"
+    >
+      <div
+        class="search-input-group"
+      >
+        <input
+          aria-label="搜索关键词"
+          class="input search-input"
+          placeholder="搜索岗位..."
+          type="text"
+          value=""
+        />
+        <button
+          class="btn btn-primary search-submit-btn"
+          type="submit"
+        >
+          搜索
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`SearchBar 组件 > 快照测试 > 展开筛选器的快照应该匹配 1`] = `
+<div>
+  <div
+    aria-label="搜索栏"
+    class="search-bar-wrapper"
+    role="search"
+  >
+    <form
+      class="search-form"
+    >
+      <div
+        class="search-input-group"
+      >
+        <input
+          aria-label="搜索关键词"
+          class="input search-input"
+          placeholder="搜索岗位..."
+          type="text"
+          value=""
+        />
+        <button
+          class="btn btn-primary search-submit-btn"
+          type="submit"
+        >
+          搜索
+        </button>
+      </div>
+      <button
+        aria-expanded="true"
+        aria-label="收起筛选器"
+        class="btn btn-secondary search-filter-toggle"
+        type="button"
+      >
+        收起筛选
+      </button>
+    </form>
+    <div
+      aria-label="筛选选项"
+      class="search-filters-panel"
+      role="region"
+    >
+      <div
+        class="filters"
+      >
+        <label>
+          <input
+            type="checkbox"
+          />
+           全职
+        </label>
+        <label>
+          <input
+            type="checkbox"
+          />
+           实习
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+`;

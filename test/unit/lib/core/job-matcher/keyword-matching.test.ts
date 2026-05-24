@@ -167,13 +167,20 @@ describe('JobMatcher - 关键词匹配', () => {
     })
 
     it('部分关键词命中应该按比例得分', () => {
-      const job = jobFactory.create({ title: 'Python开发' })
+      const job = jobFactory.create({ 
+        title: 'Pythontest',
+        description: '',
+        requirements: '',
+        tags: '',
+        company: '',
+        industry: ''
+      })
       
       const rule = { keywords: ['Python', 'SQL', 'Excel', 'R'] }
       const result = matchJobToRule(job, rule)
       
       expect(result).not.toBeNull()
-      // 1/4 = 25%
+      // 1/4 = 25% (只匹配到Python)
       expect(result!.matchScore).toBe(25)
     })
 
