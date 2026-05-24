@@ -305,7 +305,15 @@ export default function JobsPage() {
         description="按关键词、地点、类型、行业、学历和来源筛选岗位"
       >
         <div className="filter-grid" role="search" aria-label="岗位筛选">
-          <Input value={state.query} onChange={(event) => dispatch({ type: 'SET_FIELD', field: 'query', value: event.target.value })} placeholder="搜索岗位或公司" />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const fd = new FormData(e.currentTarget);
+              dispatch({ type: 'SET_FIELD', field: 'query', value: (fd.get('query') as string) || '' });
+            }}
+          >
+            <Input name="query" defaultValue={state.query} placeholder="搜索岗位或公司" />
+          </form>
           <HierarchicalFilter
             label="地点"
             options={filters.locations}
