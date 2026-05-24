@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseResumeText } from '@/lib/resume-parser';
-import { requireAuthUnified } from '@/lib/auth-server';
-import { AuthError } from '@/lib/auth';
+import { createErrorResponse, ErrorCode, withApiHandler } from '@/lib/api-response';
 import { logger } from '@/lib/logger';
 import {
   initUserProfileTables,
@@ -208,109 +207,98 @@ function buildParseMeta(
   };
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const user = await requireAuthUnified(request);
-    const userId = user.id || 1;
+export const POST = withApiHandler(async (request: NextRequest) => {
+  const { requireAuthUnified } = await import('@/lib/auth-server');
+  const user = await requireAuthUnified(request);
+  const userId = user.id || 1;
 
-    const contentType = request.headers.get('content-type') || '';
-    let text = '';
-    let parseMeta: ParseResumeMeta = buildParseMeta('', 'text');
-    let fileHash = '';
+  const contentType = request.headers.get('content-type') || '';
+  let text = '';
+  let parseMeta: ParseResumeMeta = buildParseMeta('', 'text');
+  let fileHash = '';
 
-    if (contentType.includes('multipart/form-data')) {
-      const formData = await request.formData();
-      const file = formData.get('file');
+  if (contentType.includes('multipart/form-data')) {
+    const formData = await request.formData();
+    const file = formData.get('file');
 
-      if (!(file instanceof File)) {
-        return NextResponse.json(
-          { error: '缺少简历文件' },
-          { status: 400 }
-        );
-      }
-
-      fileHash = await calculateFileHash(file);
-      const sourceType = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf' ? 'pdf' : 'txt';
-      
-      const extractionResult = await extractTextFromFile(file);
-      text = extractionResult.text;
-      
-      parseMeta = buildParseMeta(text, sourceType, file.name, {
-        cacheHit: extractionResult.isPdf && extractionResult.durationMs === 0,
-        durationMs: extractionResult.durationMs,
-        usedOcr: extractionResult.usedOcr,
-      });
-
-    } else {
-      const body = await request.json();
-      text = body.text;
-      parseMeta = buildParseMeta(text || '', 'text');
-    }
-
-    if (!text || typeof text !== 'string') {
+    if (!(file instanceof File)) {
       return NextResponse.json(
-        { error: '缺少简历文本内容' },
+        { error: '缺少简历文件' },
         { status: 400 }
       );
     }
 
-    if (text.length < 50) {
-      return NextResponse.json(
-        { error: '简历文本内容过短，请提供完整的简历内容' },
-        { status: 400 }
-      );
-    }
-
-    if (text.length > 100000) {
-      return NextResponse.json(
-        { error: '简历文本内容过长，请控制在100KB以内' },
-        { status: 500 }
-      );
-    }
-
-    const result = parseResumeText(text);
-
-    let profileSaved = false;
-
-    try {
-      if (fileHash && parseMeta.source_type === 'pdf') {
-        saveParsedProfile(
-          userId,
-          result.profile,
-          fileHash,
-          parseMeta.file_name || '',
-          result.confidence
-        );
-        profileSaved = true;
-        
-        logger.info('自动保存解析后的用户画像', {
-          userId,
-          fileName: parseMeta.file_name,
-          confidence: result.confidence,
-        });
-      }
-    } catch (saveError) {
-      logger.warn('保存用户画像失败（不影响返回结果）', {
-        error: saveError instanceof Error ? saveError.message : saveError
-      });
-    }
-
-    return NextResponse.json({
-      ...result,
-      meta: {
-        ...parseMeta,
-        profile_saved: profileSaved,
-      },
+    fileHash = await calculateFileHash(file);
+    const sourceType = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf' ? 'pdf' : 'txt';
+    
+    const extractionResult = await extractTextFromFile(file);
+    text = extractionResult.text;
+    
+    parseMeta = buildParseMeta(text, sourceType, file.name, {
+      cacheHit: extractionResult.isPdf && extractionResult.durationMs === 0,
+      durationMs: extractionResult.durationMs,
+      usedOcr: extractionResult.usedOcr,
     });
 
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    logger.error('简历解析错误:', error);
+  } else {
+    const body = await request.json();
+    text = body.text;
+    parseMeta = buildParseMeta(text || '', 'text');
+  }
+
+  if (!text || typeof text !== 'string') {
     return NextResponse.json(
-      { error: '简历解析失败，请检查格式是否正确' },
+      { error: '缺少简历文本内容' },
+      { status: 400 }
+    );
+  }
+
+  if (text.length < 50) {
+    return NextResponse.json(
+      { error: '简历文本内容过短，请提供完整的简历内容' },
+      { status: 400 }
+    );
+  }
+
+  if (text.length > 100000) {
+    return NextResponse.json(
+      { error: '简历文本内容过长，请控制在100KB以内' },
       { status: 500 }
     );
   }
-}
+
+  const result = parseResumeText(text);
+
+  let profileSaved = false;
+
+  try {
+    if (fileHash && parseMeta.source_type === 'pdf') {
+      saveParsedProfile(
+        userId,
+        result.profile,
+        fileHash,
+        parseMeta.file_name || '',
+        result.confidence
+      );
+      profileSaved = true;
+      
+      logger.info('自动保存解析后的用户画像', {
+        userId,
+        fileName: parseMeta.file_name,
+        confidence: result.confidence,
+      });
+    }
+  } catch (saveError) {
+    logger.warn('保存用户画像失败（不影响返回结果）', {
+      error: saveError instanceof Error ? saveError.message : saveError
+    });
+  }
+
+  return NextResponse.json({
+    ...result,
+    meta: {
+      ...parseMeta,
+      profile_saved: profileSaved,
+    },
+  });
+}, { requireAuth: true });

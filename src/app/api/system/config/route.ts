@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
 import { APP_VERSION } from '@/lib/constants';
-import { requirePermissionUnified } from '@/lib/auth-server';
-import { AuthError } from '@/lib/auth';
+import { withApiHandler, ErrorCode, createErrorResponse } from '@/lib/api-response';
 import { logger } from '@/lib/logger';
 
 const CONFIG_FILE = path.join(process.cwd(), 'data', 'system_config.json');
@@ -45,44 +44,24 @@ function saveConfig(config: Record<string, unknown>): void {
   }
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    await requirePermissionUnified(request, 'system:read');
+export const GET = withApiHandler(async (request: NextRequest) => {
+  const { requirePermissionUnified } = await import('@/lib/auth-server');
+  await requirePermissionUnified(request, 'system:read');
 
-    const config = loadConfig();
-    return NextResponse.json(config);
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    logger.error('Config error:', error);
-    return NextResponse.json(
-      { error: 'Failed to load config' },
-      { status: 500 }
-    );
-  }
-}
+  const config = loadConfig();
+  return NextResponse.json(config);
+}, { path: '/api/system/config' });
 
-export async function PUT(request: NextRequest) {
-  try {
-    await requirePermissionUnified(request, 'system:write');
+export const PUT = withApiHandler(async (request: NextRequest) => {
+  const { requirePermissionUnified } = await import('@/lib/auth-server');
+  await requirePermissionUnified(request, 'system:write');
 
-    const body = await request.json();
+  const body = await request.json();
 
-    const currentConfig = loadConfig();
-    const newConfig = { ...currentConfig, ...body };
+  const currentConfig = loadConfig();
+  const newConfig = { ...currentConfig, ...body };
 
-    saveConfig(newConfig);
+  saveConfig(newConfig);
 
-    return NextResponse.json({ success: true, config: newConfig });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    logger.error('Config update error:', error);
-    return NextResponse.json(
-      { error: 'Failed to update config' },
-      { status: 500 }
-    );
-  }
-}
+  return NextResponse.json({ success: true, config: newConfig });
+}, { path: '/api/system/config' });

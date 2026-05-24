@@ -1,0 +1,78 @@
+{"timestamp":"2026-05-24T05:15:58.689Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:15:58.689Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:15:58.700Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:15:58.701Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:30:37.450Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:30:37.450Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:30:37.456Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:30:37.457Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:32:00.633Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:32:00.633Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:32:00.640Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:32:00.640Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:32:00.671Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:32:00.671Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:32:00.681Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:32:00.681Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:33:21.584Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms","total":148,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"北京","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-24T05:33:21.584Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms"}}
+{"timestamp":"2026-05-24T05:33:25.290Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms","total":573,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-24T05:33:25.290Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"1ms"}}
+{"timestamp":"2026-05-24T05:34:01.839Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:01.839Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:01.845Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:01.845Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:15.409Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:15.410Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:15.427Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:15.427Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:15.452Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:15.452Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:15.458Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:34:15.458Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:39:10.511Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:39:10.511Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:49:13.299Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:49:13.299Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:49:13.331Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:49:13.332Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:49:13.338Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T05:49:13.339Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:03:58.943Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:03:58.943Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:03:58.950Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:03:58.951Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:34:06.358Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:34:06.358Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:34:06.364Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:34:06.364Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:34:14.840Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"0ms","total":573,"page":1,"pageSize":12,"sort":"publish_date","order":"desc","filters":{"location":"","keyword":"","jobType":"","industry":"","education":"","source":""}}}
+{"timestamp":"2026-05-24T06:34:14.841Z","level":"info","message":"API GET /api/jobs","context":{"statusCode":200,"duration":"2ms"}}
+{"timestamp":"2026-05-24T06:41:13.044Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:41:13.045Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:41:13.050Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T06:41:13.050Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:01:22.688Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:01:22.689Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:01:22.697Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:01:22.697Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:14.876Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:14.877Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:14.878Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:14.934Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:14.935Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:14.944Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:14.944Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:25.690Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:25.690Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:02:33.930Z","level":"warn","message":"AI模型 glm-4.7-flash 限流(429)，尝试下一个模型... (1/7)"}
+{"timestamp":"2026-05-24T07:02:33.931Z","level":"warn","message":"等待 3s 后重试..."}
+{"timestamp":"2026-05-24T07:02:44.605Z","level":"info","message":"AI fallback: 使用备用模型 glm-4-flash-250414 成功 (主模型 glm-4.7-flash 不可用)"}
+{"timestamp":"2026-05-24T07:02:44.607Z","level":"info","message":"AI Alert 1: 预筛选 16/20 → AI匹配 4, model=glm-4-flash-250414"}
+{"timestamp":"2026-05-24T07:02:44.608Z","level":"info","message":"Preview alert 1: 4 matched from 20 jobs (AI mode)"}
+{"timestamp":"2026-05-24T07:02:46.656Z","level":"info","message":"AI Alert 1: 预筛选 16/20 → AI匹配 14, model=glm-4.7-flash"}
+{"timestamp":"2026-05-24T07:02:46.656Z","level":"info","message":"Preview alert 1: 14 matched from 20 jobs (AI mode)"}
+{"timestamp":"2026-05-24T07:03:17.110Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:03:17.111Z","level":"info","message":"Job alerts tables initialized"}
+{"timestamp":"2026-05-24T07:03:17.634Z","level":"warn","message":"AI模型 glm-4.7-flash 限流(429)，尝试下一个模型... (1/7)"}
+{"timestamp":"2026-05-24T07:03:17.635Z","level":"warn","message":"等待 3s 后重试..."}

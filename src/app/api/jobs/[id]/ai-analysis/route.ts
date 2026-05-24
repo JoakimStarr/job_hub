@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb, getSourceName, resolveSourceUrl, isFakeUrl } from '@/lib/db-utils';
 import { aiService, AIMessage, AIStreamChunk } from '@/lib/ai-service';
-import { requireAuthUnified } from '@/lib/auth-server';
-import { AuthError } from '@/lib/auth';
+import { withApiHandler } from '@/lib/api-response';
 import { logger } from '@/lib/logger';
 import type { ResumeProfile } from '@/lib/resume-types';
 import { buildRAGContext, buildRAGPrompt } from '@/lib/embedding-service';
@@ -171,168 +170,147 @@ function parseAIResponse(content: string): AnalysisResult | null {
   }
 }
 
-export async function POST(
+export const POST = withApiHandler(async (
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+) => {
   const startTime = Date.now();
   const { id } = await params;
 
-  try {
-    const user = await requireAuthUnified(request);
+  const { requireAuthUnified } = await import('@/lib/auth-server');
+  const user = await requireAuthUnified(request);
 
-    const body = await request.json();
-    const { profile, message, session_id, stream } = body;
+  const body = await request.json();
+  const { profile, message, session_id, stream } = body;
 
-    const db = getDb();
-    const job = db.prepare(`
-      SELECT 
-        id, title, company, location, salary, description, requirements,
-        job_type, industry, education, experience, source, university,
-        source_url, apply_url, publish_date, deadline, category, tags
-      FROM jobs WHERE id = ?
-    `).get(parseInt(id)) as Record<string, unknown> | undefined;
+  const db = getDb();
+  const job = db.prepare(`
+    SELECT 
+      id, title, company, location, salary, description, requirements,
+      job_type, industry, education, experience, source, university,
+      source_url, apply_url, publish_date, deadline, category, tags
+    FROM jobs WHERE id = ?
+  `).get(parseInt(id)) as Record<string, unknown> | undefined;
 
-    if (!job) {
-      return NextResponse.json({ error: 'Job not found' }, { status: 404 });
-    }
+  if (!job) {
+    return NextResponse.json({ error: 'Job not found' }, { status: 404 });
+  }
 
-    job.source_url = resolveSourceUrl(String(job.source || ''), job.source_url as string, parseInt(id));
-    if (!job.apply_url || isFakeUrl(job.apply_url as string)) {
-      job.apply_url = resolveSourceUrl(String(job.source || ''), job.source_url as string, parseInt(id));
-    }
+  job.source_url = resolveSourceUrl(String(job.source || ''), job.source_url as string, parseInt(id));
+  if (!job.apply_url || isFakeUrl(job.apply_url as string)) {
+    job.apply_url = resolveSourceUrl(String(job.source || ''), job.source_url as string, parseInt(id));
+  }
 
-    if (!aiService) {
-      logger.warn('AI服务未配置，使用Mock数据');
-      const mockResult = generateMockAnalysis(job, profile);
-      logAICall({
-        sessionId: session_id || `analysis_${id}_${Date.now()}`,
-        type: 'analysis',
-        provider: 'none',
-        model: 'mock',
-        status: 'fallback',
-        durationMs: Date.now() - startTime,
-        inputSummary: `Job ID: ${id}, hasProfile: ${!!profile}`,
-        outputSummary: JSON.stringify(mockResult),
-        jobId: parseInt(id),
-        userId: user.id,
-      });
-      return NextResponse.json(mockResult);
-    }
+  if (!aiService) {
+    logger.warn('AI服务未配置，使用Mock数据');
+    const mockResult = generateMockAnalysis(job, profile);
+    logAICall({
+      sessionId: session_id || `analysis_${id}_${Date.now()}`,
+      type: 'analysis',
+      provider: 'none',
+      model: 'mock',
+      status: 'fallback',
+      durationMs: Date.now() - startTime,
+      inputSummary: `Job ID: ${id}, hasProfile: ${!!profile}`,
+      outputSummary: JSON.stringify(mockResult),
+      jobId: parseInt(id),
+      userId: user.id,
+    });
+    return NextResponse.json(mockResult);
+  }
 
-    const sessionId = session_id || `analysis_${id}_${Date.now()}`;
-    const systemContent = `你是一位专业的金融行业职业分析师，擅长评估职位信息和匹配度。
+  const sessionId = session_id || `analysis_${id}_${Date.now()}`;
+  const systemContent = `你是一位专业的金融行业职业分析师，擅长评估职位信息和匹配度。
 请始终以JSON格式返回结果。如果用户追问，可以用Markdown格式自由回答，不必拘泥于JSON格式。
 当前时间：${new Date().toLocaleString('zh-CN')}`;
 
-    if (message && typeof message === 'string') {
-      const accept = request.headers.get('accept') || '';
-      const wantsStream = accept.includes('text/event-stream') || stream === true;
+  if (message && typeof message === 'string') {
+    const accept = request.headers.get('accept') || '';
+    const wantsStream = accept.includes('text/event-stream') || stream === true;
 
-      const messages: AIMessage[] = [
-        { role: 'system', content: systemContent },
-        { role: 'user', content: buildAnalysisPrompt(job, profile) },
-        { role: 'assistant', content: JSON.stringify(generateMockAnalysis(job, profile)) },
-        { role: 'user', content: message },
-      ];
-
-      if (wantsStream) {
-        return handleStreamResponse(messages, sessionId, user.id ?? 0, Number(id) || 0, startTime);
-      }
-
-      return handleChatResponse(messages, sessionId, user.id ?? 0, Number(id) || 0, startTime);
-    }
-
-    const analysisMessages: AIMessage[] = [
+    const messages: AIMessage[] = [
       { role: 'system', content: systemContent },
       { role: 'user', content: buildAnalysisPrompt(job, profile) },
+      { role: 'assistant', content: JSON.stringify(generateMockAnalysis(job, profile)) },
+      { role: 'user', content: message },
     ];
 
-    const response = await aiService.chat(analysisMessages);
-    let result = parseAIResponse(response.content);
-
-    if (!result) {
-      logger.warn('AI响应解析失败，使用Mock数据');
-      result = generateMockAnalysis(job, profile);
-      logAICall({
-        sessionId,
-        type: 'analysis',
-        provider: process.env.AI_PROVIDER || 'unknown',
-        model: response.model,
-        status: 'error',
-        durationMs: Date.now() - startTime,
-        inputSummary: `Job: ${job.title} at ${job.company}`,
-        outputSummary: response.content.slice(0, 500),
-        errorMessage: 'AI响应解析失败',
-        jobId: parseInt(id),
-        userId: user.id,
-        inputTokens: response.usage?.prompt_tokens,
-        outputTokens: response.usage?.completion_tokens,
-        totalTokens: response.usage?.total_tokens,
-      });
-    } else {
-      logAICall({
-        sessionId,
-        type: 'analysis',
-        provider: process.env.AI_PROVIDER || 'unknown',
-        model: response.model,
-        status: 'success',
-        durationMs: Date.now() - startTime,
-        inputSummary: `Job: ${job.title} at ${job.company}`,
-        outputSummary: JSON.stringify(result),
-        jobId: parseInt(id),
-        userId: user.id,
-        inputTokens: response.usage?.prompt_tokens,
-        outputTokens: response.usage?.completion_tokens,
-        totalTokens: response.usage?.total_tokens,
-      });
+    if (wantsStream) {
+      return handleStreamResponse(messages, sessionId, user.id ?? 0, Number(id) || 0, startTime);
     }
 
-    const duration = Date.now() - startTime;
-    logger.api('POST', `/api/jobs/${id}/ai-analysis`, 200, duration);
+    return handleChatResponse(messages, sessionId, user.id ?? 0, Number(id) || 0, startTime);
+  }
 
-    saveRecommendationHistory({
-      userId: user.id,
-      mode: 'ai_analysis',
-      jobId: parseInt(id),
-      profileSummary: profile ? `姓名:${profile.name} 技能:${profile.skills.join(',')}` : undefined,
-      prompt: body.prompt || undefined,
-      result: { ...result, _meta: { session_id: sessionId, model: response.model, usage: response.usage, duration_ms: duration } },
-      sessionId,
-      model: response.model,
-      durationMs: duration,
-    });
+  const analysisMessages: AIMessage[] = [
+    { role: 'system', content: systemContent },
+    { role: 'user', content: buildAnalysisPrompt(job, profile) },
+  ];
 
-    return NextResponse.json({
-      ...result,
-      _meta: {
-        session_id: sessionId,
-        model: response.model,
-        usage: response.usage,
-        duration_ms: duration,
-      },
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return NextResponse.json({ error: error.message }, { status: error.status });
-    }
-    const duration = Date.now() - startTime;
-    logger.error('AI analysis error:', error);
+  const response = await aiService.chat(analysisMessages);
+  let result = parseAIResponse(response.content);
+
+  if (!result) {
+    logger.warn('AI响应解析失败，使用Mock数据');
+    result = generateMockAnalysis(job, profile);
     logAICall({
-      sessionId: `analysis_${id}_${Date.now()}`,
+      sessionId,
       type: 'analysis',
       provider: process.env.AI_PROVIDER || 'unknown',
-      model: '',
+      model: response.model,
       status: 'error',
-      durationMs: duration,
-      inputSummary: `Job ID: ${id}`,
-      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      durationMs: Date.now() - startTime,
+      inputSummary: `Job: ${job.title} at ${job.company}`,
+      outputSummary: response.content.slice(0, 500),
+      errorMessage: 'AI响应解析失败',
       jobId: parseInt(id),
+      userId: user.id,
+      inputTokens: response.usage?.prompt_tokens,
+      outputTokens: response.usage?.completion_tokens,
+      totalTokens: response.usage?.total_tokens,
     });
-    logger.api('POST', `/api/jobs/${id}/ai-analysis`, 500, duration);
-    return NextResponse.json({ error: 'Failed to analyze job' }, { status: 500 });
+  } else {
+    logAICall({
+      sessionId,
+      type: 'analysis',
+      provider: process.env.AI_PROVIDER || 'unknown',
+      model: response.model,
+      status: 'success',
+      durationMs: Date.now() - startTime,
+      inputSummary: `Job: ${job.title} at ${job.company}`,
+      outputSummary: JSON.stringify(result),
+      jobId: parseInt(id),
+      userId: user.id,
+      inputTokens: response.usage?.prompt_tokens,
+      outputTokens: response.usage?.completion_tokens,
+      totalTokens: response.usage?.total_tokens,
+    });
   }
-}
+
+  const duration = Date.now() - startTime;
+
+  saveRecommendationHistory({
+    userId: user.id,
+    mode: 'ai_analysis',
+    jobId: parseInt(id),
+    profileSummary: profile ? `姓名:${profile.name} 技能:${profile.skills.join(',')}` : undefined,
+    prompt: body.prompt || undefined,
+    result: { ...result, _meta: { session_id: sessionId, model: response.model, usage: response.usage, duration_ms: duration } },
+    sessionId,
+    model: response.model,
+    durationMs: duration,
+  });
+
+  return NextResponse.json({
+    ...result,
+    _meta: {
+      session_id: sessionId,
+      model: response.model,
+      usage: response.usage,
+      duration_ms: duration,
+    },
+  });
+}, {});
 
 async function handleChatResponse(
   messages: AIMessage[],

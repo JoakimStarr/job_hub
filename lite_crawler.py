@@ -1853,6 +1853,7 @@ def call_zhipu_ai(messages: list, model: str = "glm-4.7-flash") -> dict:
 
 def get_alerts_from_db() -> list:
     """从数据库获取所有启用的订阅"""
+    import json as _json
     db.conn.row_factory = sqlite3.Row
     rows = db.execute("""
         SELECT id, email, keywords, sources, locations, industries, education,

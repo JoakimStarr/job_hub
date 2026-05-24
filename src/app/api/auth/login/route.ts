@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthDb } from '@/lib/auth-db';
+import { logger } from '@/lib/logger';
 
 /**
  * POST /api/auth/login
@@ -78,11 +79,11 @@ export async function POST(request: NextRequest) {
       path: '/',             // 全站可用
     });
 
-    console.log(`✅ 登录成功: ${username} (${result.user?.role})`);
+    logger.info(`登录成功: ${username} (${result.user?.role})`);
     return response;
 
   } catch (error) {
-    console.error('❌ 登录失败:', error);
+    logger.error('登录失败', error);
     return NextResponse.json(
       { success: false, error: '服务器内部错误', errorCode: 'INTERNAL_ERROR' },
       { status: 500 }

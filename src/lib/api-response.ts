@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import type { ApiErrorResponse, ApiSuccessResponse } from '@/types';
+import { logger } from './logger';
 
 export enum ErrorCode {
   BAD_REQUEST = 'BAD_REQUEST',
@@ -92,6 +93,15 @@ export function handleApiError(
   context?: { path?: string; operation?: string }
 ): NextResponse<ApiErrorResponse> {
   if (error instanceof Error) {
+    // Handle AuthError (import dynamically to avoid circular dependency)
+    if (error.constructor.name === 'AuthError') {
+      const authError = error as Error & { status?: number };
+      return createErrorResponse(ErrorCode.UNAUTHORIZED, {
+        status: authError.status || 401,
+        path: context?.path,
+      });
+    }
+
     if (error.message.includes('database') || error.message.includes('SQLITE')) {
       return createErrorResponse(ErrorCode.DATABASE_ERROR, {
         details: process.env.NODE_ENV === 'development' ? error.message : undefined,
@@ -99,9 +109,8 @@ export function handleApiError(
       });
     }
     
-    return createErrorResponse(error.message, {
-      code: ErrorCode.INTERNAL_ERROR,
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+    return createErrorResponse(ErrorCode.INTERNAL_ERROR, {
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
       path: context?.path,
     });
   }
@@ -109,6 +118,75 @@ export function handleApiError(
   return createErrorResponse(ErrorCode.INTERNAL_ERROR, {
     path: context?.path,
   });
+}
+
+/**
+ * API路由包装器 - 统一认证检查、错误处理和日志记录
+ *
+ * @example
+ * // 需要认证的路由
+ * export const POST = withApiHandler(async (request) => {
+ *   const user = getCurrentUser(request);
+ *   // 业务逻辑...
+ * }, { requireAuth: true });
+ *
+ * // 需要特定权限的路由
+ * export const GET = withApiHandler(async (request) => {
+ *   // 业务逻辑...
+ * }, { requiredPermission: 'system:read' });
+ *
+ * // 公开路由
+ * export const GET = withApiHandler(async (request) => {
+ *   // 业务逻辑...
+ * });
+ */
+export function withApiHandler(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (request: NextRequest, context?: any) => Promise<Response>,
+  options?: {
+    requireAuth?: boolean;
+    requiredPermission?: string;
+    path?: string;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): (request: NextRequest, context?: any) => Promise<Response> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return async (request: NextRequest, context?: any) => {
+    const startTime = Date.now();
+    const path = options?.path || request.nextUrl.pathname;
+
+    try {
+      // Auth check
+      if (options?.requiredPermission) {
+        const { requirePermissionUnified } = await import('./auth-server');
+        await requirePermissionUnified(request, options.requiredPermission);
+      } else if (options?.requireAuth) {
+        const { requireAuthUnified } = await import('./auth-server');
+        await requireAuthUnified(request);
+      }
+
+      const response = await handler(request, context);
+
+      // Log successful API call
+      logger.api(request.method, path, response.status, Date.now() - startTime);
+
+      return response;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+
+      // Handle AuthError specifically
+      if (error instanceof Error && error.constructor.name === 'AuthError') {
+        const authError = error as Error & { status?: number };
+        return createErrorResponse(ErrorCode.UNAUTHORIZED, {
+          status: authError.status || 401,
+          path,
+        });
+      }
+
+      logger.error('API Error', error, { path, duration: `${duration}ms` });
+      return handleApiError(error, { path });
+    }
+  };
 }
 
 export function validateRequired(

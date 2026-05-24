@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db-utils';
+import { getDb, splitMultiDelimiter } from '@/lib/db-utils';
 import { requirePermissionUnified } from '@/lib/auth-server';
 import { AuthError } from '@/lib/auth';
 import { logger } from '@/lib/logger';
@@ -45,9 +45,9 @@ export async function GET() {
       id: item.id,
       name: item.name,
       keyword: item.keyword || undefined,
-      locations: item.locations ? item.locations.split(',').map(s => s.trim()).filter(Boolean) : [],
-      industries: item.industries ? item.industries.split(',').map(s => s.trim()).filter(Boolean) : [],
-      job_types: item.job_types ? item.job_types.split(',').map(s => s.trim()).filter(Boolean) : [],
+      locations: splitMultiDelimiter(item.locations),
+      industries: splitMultiDelimiter(item.industries),
+      job_types: splitMultiDelimiter(item.job_types),
       education: item.education || undefined,
       enabled: item.enabled === 1,
     }));
@@ -95,9 +95,9 @@ export async function POST(request: NextRequest) {
       id: newId,
       name,
       keyword,
-      locations: Array.isArray(locations) ? locations : (locations ? locations.split(',').map((s: string) => s.trim()).filter(Boolean) : []),
-      industries: Array.isArray(industries) ? industries : (industries ? industries.split(',').map((s: string) => s.trim()).filter(Boolean) : []),
-      job_types: Array.isArray(job_types) ? job_types : (job_types ? job_types.split(',').map((s: string) => s.trim()).filter(Boolean) : []),
+      locations: splitMultiDelimiter(locations),
+      industries: splitMultiDelimiter(industries),
+      job_types: splitMultiDelimiter(job_types),
       education,
       enabled: enabled !== false,
     });
