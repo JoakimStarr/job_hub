@@ -104,3 +104,7 @@
 {"timestamp":"2026-05-24T08:52:52.383Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
 {"timestamp":"2026-05-24T08:52:52.384Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
 {"timestamp":"2026-05-24T08:52:52.385Z","level":"info","message":"Email sent to user@test.com: <test-123>"}
+{"timestamp":"2026-05-24T11:10:30.377Z","level":"warn","message":"SMTP configuration not complete. Email sending will be disabled."}
+{"timestamp":"2026-05-24T11:10:30.379Z","level":"warn","message":"SMTP configuration not complete. Email sending will be disabled."}
+{"timestamp":"2026-05-24T11:10:30.380Z","level":"info","message":"Email sent to recipient@test.com: <test-123@test.com>"}
+{"timestamp":"2026-05-24T11:10:30.388Z","level":"info","message":"Test email sent to test@example.com: <test-123@test.com>"}
