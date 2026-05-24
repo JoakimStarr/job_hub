@@ -136,10 +136,10 @@ export class SubscriptionAnalyzer {
       let tokensUsed = 0;
 
       if (this.config.aiService && matchedResults.length > 0) {
-        const topN = Math.min(matchedResults.length, 20);
-        this.emitProgress('ai_analyzing', 0, topN, `正在对 Top-${topN} 岗位进行 AI 深度分析...`);
+        const totalToAnalyze = matchedResults.length;
+        this.emitProgress('ai_analyzing', 0, totalToAnalyze, `正在对全部 ${totalToAnalyze} 个匹配岗位进行 AI 深度分析...`);
 
-        for (let i = 0; i < topN; i++) {
+        for (let i = 0; i < totalToAnalyze; i++) {
           try {
             const aiAnalysis = await this.analyzeSingleJob(matchedResults[i], subscription);
             matchedResults[i].ai_reasoning = aiAnalysis.reasoning;
@@ -147,11 +147,12 @@ export class SubscriptionAnalyzer {
           } catch (e) {
             console.error(`AI分析岗位 ${matchedResults[i].job_id} 失败:`, e);
           }
-          this.emitProgress('ai_analyzing', i + 1, topN, `AI 分析进度 ${i + 1}/${topN}`);
+          this.emitProgress('ai_analyzing', i + 1, totalToAnalyze, `AI 分析进度 ${i + 1}/${totalToAnalyze}`);
         }
 
         try {
-          const summaryResult = await this.generateAISummary(matchedResults.slice(0, 10), subscription);
+          const summaryTopN = Math.min(10, matchedResults.length);
+          const summaryResult = await this.generateAISummary(matchedResults.slice(0, summaryTopN), subscription);
           aiSummary = summaryResult.content;
           aiModel = summaryResult.model;
           tokensUsed = summaryResult.usage?.total_tokens || 0;
@@ -440,27 +441,43 @@ export class SubscriptionAnalyzer {
 {"reasoning": "...", "suggestions": "..."}
 `;
 
-    try {
-      const response = await this.config.aiService.chat([
-        { role: 'system', content: '你是专业的求职顾问，请简洁地分析岗位匹配度。只返回JSON格式结果。' },
-        { role: 'user', content: prompt },
-      ]);
+    const maxRetries = 2;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await this.config.aiService.chat([
+          { role: 'system', content: '你是专业的求职顾问，请简洁地分析岗位匹配度。只返回JSON格式结果。' },
+          { role: 'user', content: prompt },
+        ]);
 
-      const content = response.content.trim();
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        return {
-          reasoning: parsed.reasoning || '',
-          suggestions: parsed.suggestions || '',
-        };
+        const content = response.content?.trim();
+        
+        if (!content) {
+          if (attempt < maxRetries) {
+            console.warn(`AI分析岗位 ${result.job_id} 返回空响应，重试 ${attempt + 1}/${maxRetries}`);
+            continue;
+          }
+          return { reasoning: '', suggestions: '' };
+        }
+
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          return {
+            reasoning: parsed.reasoning || '',
+            suggestions: parsed.suggestions || '',
+          };
+        }
+
+        return { reasoning: content, suggestions: '' };
+      } catch (e) {
+        console.error(`AI分析岗位 ${result.job_id} 失败 (尝试 ${attempt + 1}/${maxRetries + 1}):`, e);
+        if (attempt === maxRetries) {
+          return { reasoning: '', suggestions: '' };
+        }
       }
-
-      return { reasoning: content, suggestions: '' };
-    } catch (e) {
-      console.error('AI分析失败:', e);
-      return { reasoning: '', suggestions: '' };
     }
+
+    return { reasoning: '', suggestions: '' };
   }
 
   private async generateAISummary(topResults: AnalysisJobResult[], subscription: SubscriptionCondition): Promise<AIResponse> {

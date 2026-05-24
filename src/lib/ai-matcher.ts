@@ -260,7 +260,17 @@ ${jobsText}
 }
 
 function parseLLMResponse(responseContent: string): AIMatchedJob[] {
+  if (!responseContent || !responseContent.trim()) {
+    logger.warn('LLM返回空响应，降级为空结果');
+    return [];
+  }
+
   const cleaned = responseContent.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+
+  if (!cleaned) {
+    logger.warn('LLM响应清理后为空');
+    return [];
+  }
 
   try {
     const parsed = JSON.parse(cleaned);
