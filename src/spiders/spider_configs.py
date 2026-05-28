@@ -268,6 +268,109 @@ SPIDER_CONFIGS: Dict[str, Dict[str, Any]] = {
             "detail_content": ".details-mge .info",
         },
     },
+    "zjgsu": {
+        "name": "zjgsu_jobs",
+        "university": "浙江工商大学",
+        "base_url": "https://jyw.zjgsu.edu.cn",
+        "location": "杭州",
+        "spider_type": "api_post",
+        "page_size": 10,
+        "max_pages_per_section": 50,
+        "detail_concurrency": 4,
+        "sections": [
+            {
+                "section": "zpxx",
+                "label": "招聘信息",
+                "list_url": "/career/zpxx/search/zpxx",
+                "view_url": "/career/zpxx/view/zpxx/{item_id}",
+                "referer": "/career/zpxx/zpxx",
+                "job_type": "全职",
+            },
+            {
+                "section": "sxzpxx",
+                "label": "实习信息",
+                "list_url": "/career/zpxx/search/sxzpxx",
+                "view_url": "/career/zpxx/view/sxzpxx/{item_id}",
+                "referer": "/career/zpxx/sxzpxx",
+                "job_type": "实习",
+            },
+        ],
+        "headers": {
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "X-Requested-With": "XMLHttpRequest",
+        },
+        "field_mapping": {
+            "title": "zpzt",
+            "company": "dwmc",
+            "location": ["szxmc", "szsmc"],
+            "industry": "hyyjmc",
+            "company_type": "xzyjmc",
+            "company_size": "rsgmmc",
+            "publish_date": "fbrq",
+            "deadline": "zpjzrq",
+            "recruit_count": "xqrs",
+            "contact_email": "jltdyx",
+            "views": "djs",
+        },
+    },
+    "cueb": {
+        "name": "cueb_jobs",
+        "university": "首都经济贸易大学",
+        "base_url": "https://jy.cueb.edu.cn",
+        "location": "北京",
+        "spider_type": "api_post",
+        "list_api": "https://jy.cueb.edu.cn/front/zp_query/zpxxQuery.do",
+        "detail_url_pattern": "https://jy.cueb.edu.cn/front/zpxx.jspa?tid={tid}",
+        "page_size": 10,
+        "max_pages": 50,
+        "detail_concurrency": 4,
+        "position_types": [
+            {"label": "全职", "type": "1", "job_type": "全职"},
+            {"label": "实习", "type": "2", "job_type": "实习"},
+        ],
+        "headers": {
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+            "X-Requested-With": "XMLHttpRequest",
+            "Referer": "https://jy.cueb.edu.cn/front/channel.jspa?channelId=764&parentId=625",
+        },
+        "field_mapping": {
+            "title": "title",
+            "company": "dwmc",
+            "location": "dwszddm",
+            "publish_date": "createTime",
+            "views": "click",
+        },
+    },
+    "tencent": {
+        "name": "tencent_jobs",
+        "university": "腾讯",
+        "base_url": "https://careers.tencent.com",
+        "location": "全国",
+        "spider_type": "api_get",
+        "list_api": "https://careers.tencent.com/tencentcareer/api/post/Query",
+        "page_size": 10,
+        "max_pages": 50,
+        "detail_concurrency": 4,
+        "headers": {
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "Referer": "https://careers.tencent.com/search.html",
+        },
+        "field_mapping": {
+            "title": "RecruitPostName",
+            "company": "BGName",
+            "location": "LocationName",
+            "category": "CategoryName",
+            "description": "Responsibility",
+            "publish_date": "LastUpdateTime",
+            "experience": "RequireWorkYearsName",
+            "apply_url": "PostURL",
+        },
+    },
 }
 
 
@@ -312,11 +415,13 @@ def get_lite_http_sources():
         if spider_type == "api_post":
             sections = config.get("sections")
             if sections:
+                # 优先使用 detail_url，如果没有则使用 view_url
+                detail_url = sections[0].get("detail_url") or sections[0].get("view_url", "")
                 lite_sources[key] = {
                     "name": config["university"],
                     "base_url": config["base_url"],
                     "list_url": sections[0]["list_url"],
-                    "detail_url": sections[0]["detail_url"],
+                    "detail_url": detail_url,
                     "field_mapping": {k: (v[0] if isinstance(v, list) else v)
                                       for k, v in config.get("field_mapping", {}).items()},
                 }
@@ -324,11 +429,14 @@ def get_lite_http_sources():
                 fm = config.get("field_mapping", {})
                 if fm == "same_as_cufe":
                     fm = SPIDER_CONFIGS["cufe"]["field_mapping"]
+                # 支持 list_api_path 或 list_api
+                list_url = config.get("list_api_path") or config.get("list_api", "")
+                detail_url = config.get("detail_api_path") or config.get("detail_url_pattern", "")
                 lite_sources[key] = {
                     "name": config["university"],
                     "base_url": config["base_url"],
-                    "list_url": config.get("list_api_path", ""),
-                    "detail_url": config.get("detail_api_path", ""),
+                    "list_url": list_url,
+                    "detail_url": detail_url,
                     "field_mapping": {k: (v[0] if isinstance(v, list) else v)
                                       for k, v in fm.items()},
                 }
@@ -336,11 +444,16 @@ def get_lite_http_sources():
         elif spider_type == "api_get":
             list_api = config.get("list_api", "")
             detail_api = config.get("detail_api", "")
+            # 对于腾讯这类不需要详情API的源
+            if detail_api:
+                detail_url = detail_api.replace(config["base_url"], "") + "?id={id}"
+            else:
+                detail_url = ""
             lite_sources[key] = {
                 "name": config["university"],
                 "base_url": config["base_url"],
-                "list_url": list_api.replace(config["base_url"], "") + "?type={type}&page={page}&limit={limit}",
-                "detail_url": detail_api.replace(config["base_url"], "") + "?id={id}",
+                "list_url": list_api,
+                "detail_url": detail_url,
                 "field_mapping": {k: (v[0] if isinstance(v, list) else v)
                                   for k, v in config.get("field_mapping", {}).items()},
             }

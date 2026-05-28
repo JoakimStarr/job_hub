@@ -10,3 +10,44 @@
 [2026-05-24T08:52:52.365Z] [ERROR] Failed to send test email to fail@test.com: {
   "error": "Network error"
 }
+[2026-05-24T11:23:16.058Z] [ERROR] Python PDF 解析错误 {
+  "error": {
+    "error": "PDF 解析依赖未安装。请运行：\nsudo apt-get install tesseract-ocr tesseract-ocr-chi-sim poppler-utils\npip3 install pdf2image pytesseract pypdfium2"
+  }
+}
+[2026-05-24T11:23:16.059Z] [ERROR] API Error {
+  "path": "/api/resume/parse",
+  "duration": "104ms"
+} 
+  Error: PDF 解析依赖未安装。请运行：
+sudo apt-get install tesseract-ocr tesseract-ocr-chi-sim poppler-utils
+pip3 install pdf2image pytesseract pypdfium2 
+  Stack: Error: PDF 解析依赖未安装。请运行：
+sudo apt-get install tesseract-ocr tesseract-ocr-chi-sim poppler-utils
+pip3 install pdf2image pytesseract pypdfium2
+    at extractTextFromPdf (webpack-internal:///(rsc)/./src/app/api/resume/parse/route.ts:70:23)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async extractTextFromFile (webpack-internal:///(rsc)/./src/app/api/resume/parse/route.ts:129:24)
+    at async POST.requireAuth (webpack-internal:///(rsc)/./src/app/api/resume/parse/route.ts:183:34)
+    at async eval (webpack-internal:///(rsc)/./src/lib/api-response.ts:140:30)
+    at async AppRouteRouteModule.do (/home/joakim/Project/job_hub/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:5:38696)
+    at async AppRouteRouteModule.handle (/home/joakim/Project/job_hub/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:5:45978)
+    at async responseGenerator (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fresume%2Fparse%2Froute&page=%2Fapi%2Fresume%2Fparse%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fresume%2Fparse%2Froute.ts&appDir=%2Fhome%2Fjoakim%2FProject%2Fjob_hub%2Fsrc%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fjoakim%2FProject%2Fjob_hub&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:203:38)
+    at async AppRouteRouteModule.handleResponse (/home/joakim/Project/job_hub/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:1:195304)
+    at async handleResponse (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fresume%2Fparse%2Froute&page=%2Fapi%2Fresume%2Fparse%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fresume%2Fparse%2Froute.ts&appDir=%2Fhome%2Fjoakim%2FProject%2Fjob_hub%2Fsrc%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fjoakim%2FProject%2Fjob_hub&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:265:32)
+    at async handler (webpack-internal:///(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fapi%2Fresume%2Fparse%2Froute&page=%2Fapi%2Fresume%2Fparse%2Froute&appPaths=&pagePath=private-next-app-dir%2Fapi%2Fresume%2Fparse%2Froute.ts&appDir=%2Fhome%2Fjoakim%2FProject%2Fjob_hub%2Fsrc%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2Fhome%2Fjoakim%2FProject%2Fjob_hub&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=standalone&preferredRegion=&middlewareConfig=e30%3D&isGlobalNotFoundEnabled=!:317:13)
+    at async DevServer.renderToResponseWithComponentsImpl (/home/joakim/Project/job_hub/node_modules/next/dist/server/base-server.js:1430:9)
+    at async DevServer.renderPageComponent (/home/joakim/Project/job_hub/node_modules/next/dist/server/base-server.js:1482:24)
+    at async DevServer.renderToResponseImpl (/home/joakim/Project/job_hub/node_modules/next/dist/server/base-server.js:1522:32)
+    at async DevServer.pipeImpl (/home/joakim/Project/job_hub/node_modules/next/dist/server/base-server.js:1026:25)
+    at async NextNodeServer.handleCatchallRenderRequest (/home/joakim/Project/job_hub/node_modules/next/dist/server/next-server.js:394:17)
+    at async DevServer.handleRequestImpl (/home/joakim/Project/job_hub/node_modules/next/dist/server/base-server.js:917:17)
+    at async /home/joakim/Project/job_hub/node_modules/next/dist/server/dev/next-dev-server.js:400:20
+    at async Span.traceAsyncFn (/home/joakim/Project/job_hub/node_modules/next/dist/trace/trace.js:157:20)
+    at async DevServer.handleRequest (/home/joakim/Project/job_hub/node_modules/next/dist/server/dev/next-dev-server.js:396:24)
+    at async invokeRender (/home/joakim/Project/job_hub/node_modules/next/dist/server/lib/router-server.js:240:21)
+    at async handleRequest (/home/joakim/Project/job_hub/node_modules/next/dist/server/lib/router-server.js:437:24)
+    at async requestHandlerImpl (/home/joakim/Project/job_hub/node_modules/next/dist/server/lib/router-server.js:485:13)
+    at async Server.requestListener (/home/joakim/Project/job_hub/node_modules/next/dist/server/lib/start-server.js:226:13)
+[2026-05-24T11:40:50.064Z] [ERROR] 解析LLM响应失败: Unexpected end of JSON input
+[2026-05-24T11:40:50.064Z] [ERROR] 原始响应: 
