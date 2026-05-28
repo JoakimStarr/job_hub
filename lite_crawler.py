@@ -2285,16 +2285,48 @@ def crawl_tencent(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                         publish_date = ""
                         last_update = post.get("LastUpdateTime", "")
                         if last_update:
-                            # 处理 ISO 格式时间
-                            publish_date = last_update[:10] if len(last_update) >= 10 else last_update
+                            # 处理 "2026年05月28日" 格式
+                            import re
+                            date_match = re.search(r'(\d{4})年(\d{2})月(\d{2})日', last_update)
+                            if date_match:
+                                publish_date = f"{date_match.group(1)}-{date_match.group(2)}-{date_match.group(3)}"
+                            else:
+                                publish_date = last_update[:10] if len(last_update) >= 10 else last_update
 
                         # 构造描述
                         description_parts = []
+
+                        # 岗位职责
                         responsibility = post.get("Responsibility", "")
                         if responsibility:
                             description_parts.append(f"【岗位职责】\n{responsibility}")
 
+                        # 岗位要求（包含学历要求）
+                        requirement = post.get("Requirement", "")
+                        if requirement:
+                            description_parts.append(f"【岗位要求】\n{requirement}")
+
+                        # 亮点/加分项
+                        important_item = post.get("ImportantItem", "")
+                        if important_item:
+                            description_parts.append(f"【加分项】\n{important_item}")
+
                         description = "\n\n".join(description_parts)
+
+                        # 从 Requirement 中提取学历要求
+                        education = ""
+                        if requirement:
+                            edu_patterns = [
+                                r'([\d一二三四五]+年|[\d一二三四五]+\s*年)?及以上?学历[：:]?\s*(本科|硕士|博士|大专|中专|高中|不限)',
+                                r'学历[要求]*[：:]?\s*(本科|硕士|博士|大专|中专|高中|不限)',
+                                r'(本科|硕士|博士|大专|中专|高中|不限)及以上学历',
+                            ]
+                            for pattern in edu_patterns:
+                                edu_match = re.search(pattern, requirement)
+                                if edu_match:
+                                    # 获取最后一个分组（学历）
+                                    education = edu_match.group(edu_match.lastindex)
+                                    break
 
                         job = {
                             "title": post.get("RecruitPostName", ""),
@@ -2304,6 +2336,7 @@ def crawl_tencent(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             "description": truncate_text(description),
                             "publish_date": publish_date,
                             "experience": post.get("RequireWorkYearsName", ""),
+                            "education": education,
                             "job_type": "全职",  # 腾讯社招默认全职
                             "source": source,
                             "university": source_name,
