@@ -177,3 +177,125 @@
 2026-05-28 20:08:59 | [32mINFO[0m | lite_crawler | end_session:398 | ======================================================================
 2026-05-28 20:08:59 | [32mINFO[0m | lite_crawler | trigger_job_alerts:3080 | 正在检查职位提醒订阅...
 2026-05-28 20:08:59 | [33mWARNING[0m | lite_crawler | trigger_job_alerts:3154 | 无法连接到职位提醒API，请确保Web服务正在运行 (http://localhost:3001/api/alerts/trigger)
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | start_session:363 | ======================================================================
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | start_session:364 | 轻量化单线程爬虫启动
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | start_session:365 | 启动时间: 2026-05-28 20:41:35
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | start_session:366 | Python版本: 3.13.13
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | start_session:367 | 工作目录: /home/joakim/Project/job_hub
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | start_session:368 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | start_session:369 | ======================================================================
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | main:3373 | 数据源: zjgsu
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | main:3375 | 每个源最多: 3 条
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | main:3376 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | main:3377 | ======================================================================
+
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | crawl_source:3284 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | log_source_start:411 | ----------------------------------------------------------------------
+2026-05-28 20:41:35 | [32mINFO[0m | lite_crawler | log_source_start:412 | ▶ 开始爬取 [浙江工商大学] (source: zjgsu)
+2026-05-28 20:41:36 | [32mINFO[0m | lite_crawler | crawl_zjgsu:1867 | ▶ 爬取板块: 招聘信息
+2026-05-28 20:41:36 | [32mINFO[0m | lite_crawler | crawl_zjgsu:1894 | [招聘信息] 第 1 页: 获取到 10 条列表项
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | crawl_zjgsu:1872 | 达到最大数量限制 (3)，停止爬取
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | log_source_end:419 | ✓ [浙江工商大学] 完成: 3 条 | 获取:3 | 耗时:3.4s
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | main:3398 | 
+======================================================================
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | main:3399 | 爬取完成 | 总耗时 3.4s
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | main:3400 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | main:3401 | ======================================================================
+
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:378 | ======================================================================
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:379 | 爬取会话结束
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:380 | 总耗时: 3.44秒
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:381 | 总岗位数: 3
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:382 | 成功插入: 3
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:383 | 重复跳过: 0
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:384 | 错误次数: 0
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:385 | 重试次数: 0
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:388 | ----------------------------------------------------------------------
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:389 | 各数据源统计:
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:391 |   [     zjgsu] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | end_session:398 | ======================================================================
+2026-05-28 20:41:39 | [32mINFO[0m | lite_crawler | trigger_job_alerts:3188 | 正在检查职位提醒订阅...
+2026-05-28 20:41:39 | [33mWARNING[0m | lite_crawler | trigger_job_alerts:3262 | 无法连接到职位提醒API，请确保Web服务正在运行 (http://localhost:3001/api/alerts/trigger)
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | start_session:363 | ======================================================================
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | start_session:364 | 轻量化单线程爬虫启动
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | start_session:365 | 启动时间: 2026-05-28 20:41:44
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | start_session:366 | Python版本: 3.13.13
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | start_session:367 | 工作目录: /home/joakim/Project/job_hub
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | start_session:368 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | start_session:369 | ======================================================================
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | main:3373 | 数据源: cueb
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | main:3375 | 每个源最多: 3 条
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | main:3376 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | main:3377 | ======================================================================
+
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | crawl_source:3284 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | log_source_start:411 | ----------------------------------------------------------------------
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | log_source_start:412 | ▶ 开始爬取 [首都经济贸易大学] (source: cueb)
+2026-05-28 20:41:44 | [32mINFO[0m | lite_crawler | crawl_cueb:2064 | ▶ 爬取类型: 全职岗位
+2026-05-28 20:41:45 | [32mINFO[0m | lite_crawler | crawl_cueb:2097 | [全职岗位] 第 1 页: 获取到 10 条列表项
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | crawl_cueb:2069 | 达到最大数量限制 (3)，停止爬取
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | log_source_end:419 | ✓ [首都经济贸易大学] 完成: 3 条 | 获取:3 | 耗时:5.6s
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | main:3398 | 
+======================================================================
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | main:3399 | 爬取完成 | 总耗时 5.6s
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | main:3400 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | main:3401 | ======================================================================
+
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:378 | ======================================================================
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:379 | 爬取会话结束
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:380 | 总耗时: 5.65秒
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:381 | 总岗位数: 3
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:382 | 成功插入: 3
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:383 | 重复跳过: 0
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:384 | 错误次数: 0
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:385 | 重试次数: 0
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:388 | ----------------------------------------------------------------------
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:389 | 各数据源统计:
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:391 |   [      cueb] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | end_session:398 | ======================================================================
+2026-05-28 20:41:49 | [32mINFO[0m | lite_crawler | trigger_job_alerts:3188 | 正在检查职位提醒订阅...
+2026-05-28 20:41:49 | [33mWARNING[0m | lite_crawler | trigger_job_alerts:3262 | 无法连接到职位提醒API，请确保Web服务正在运行 (http://localhost:3001/api/alerts/trigger)
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | set_level:351 | 日志级别设置为: INFO
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | init_database:641 | ✓ 数据库初始化完成（与主爬虫表结构一致）
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | start_session:363 | ======================================================================
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | start_session:364 | 轻量化单线程爬虫启动
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | start_session:365 | 启动时间: 2026-05-28 20:41:54
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | start_session:366 | Python版本: 3.13.13
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | start_session:367 | 工作目录: /home/joakim/Project/job_hub
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | start_session:368 | 数据库路径: /home/joakim/Project/job_hub/data/jobs.db
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | start_session:369 | ======================================================================
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | main:3373 | 数据源: tencent
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | main:3375 | 每个源最多: 3 条
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | main:3376 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | main:3377 | ======================================================================
+
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | crawl_source:3284 | 📅 时间筛选: 只入库最近 2 个月的数据
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | log_source_start:411 | ----------------------------------------------------------------------
+2026-05-28 20:41:54 | [32mINFO[0m | lite_crawler | log_source_start:412 | ▶ 开始爬取 [腾讯] (source: tencent)
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | crawl_tencent:2261 | 第 1 页: 获取到 10 条列表项
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | crawl_tencent:2232 | 达到最大数量限制 (3)，停止爬取
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | log_source_end:419 | ✓ [腾讯] 完成: 3 条 | 获取:3 | 耗时:0.4s
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | main:3398 | 
+======================================================================
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | main:3399 | 爬取完成 | 总耗时 0.4s
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | main:3400 | 成功入库: 3 条 (已过滤过期数据)
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | main:3401 | ======================================================================
+
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:378 | ======================================================================
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:379 | 爬取会话结束
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:380 | 总耗时: 0.45秒
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:381 | 总岗位数: 3
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:382 | 成功插入: 3
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:383 | 重复跳过: 0
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:384 | 错误次数: 0
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:385 | 重试次数: 0
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:388 | ----------------------------------------------------------------------
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:389 | 各数据源统计:
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:391 |   [   tencent] 获取:   3 | 成功:   3 | 重复:   0 | 错误:   0
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | end_session:398 | ======================================================================
+2026-05-28 20:41:55 | [32mINFO[0m | lite_crawler | trigger_job_alerts:3188 | 正在检查职位提醒订阅...
+2026-05-28 20:41:55 | [33mWARNING[0m | lite_crawler | trigger_job_alerts:3262 | 无法连接到职位提醒API，请确保Web服务正在运行 (http://localhost:3001/api/alerts/trigger)

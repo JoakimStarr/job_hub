@@ -1622,6 +1622,179 @@ def crawl_swufe(source_config: Dict, max_items: int = 0, date_filter_months: int
     crawl_logger.log_source_end(source, source_name, count)
 
 
+# ==================== 通用详情页解析工具函数 ====================
+
+def _extract_text_from_html(html_content: str, selectors: list, default: str = "") -> str:
+    """从 HTML 内容中使用多个选择器提取文本
+
+    Args:
+        html_content: HTML 内容
+        selectors: CSS 选择器列表，按优先级尝试
+        default: 默认值
+
+    Returns:
+        提取的文本或默认值
+    """
+    from bs4 import BeautifulSoup
+    try:
+        soup = BeautifulSoup(html_content, 'html.parser')
+        for selector in selectors:
+            elem = soup.select_one(selector)
+            if elem:
+                text = elem.get_text(strip=True)
+                if text:
+                    return text
+        return default
+    except Exception:
+        return default
+
+
+def _extract_description_from_html(html_content: str, content_selectors: list = None) -> str:
+    """从 HTML 中提取岗位描述
+
+    Args:
+        html_content: HTML 内容
+        content_selectors: 内容区域选择器列表
+
+    Returns:
+        提取的描述文本
+    """
+    from bs4 import BeautifulSoup
+    if content_selectors is None:
+        content_selectors = ['div.content', 'div#content', 'div.details-content', 'div.detail-content', 'article']
+
+    try:
+        soup = BeautifulSoup(html_content, 'html.parser')
+        description_parts = []
+
+        # 尝试找到内容区域
+        content_div = None
+        for selector in content_selectors:
+            content_div = soup.select_one(selector)
+            if content_div:
+                break
+
+        if content_div:
+            # 提取段落和列表项
+            for elem in content_div.find_all(['p', 'div', 'li', 'span', 'section']):
+                text = elem.get_text(strip=True)
+                # 过滤短文本和无关内容
+                if text and len(text) > 5 and not any(skip in text for skip in ['发布时间', '浏览量', '返回列表']):
+                    description_parts.append(text)
+
+        return '\n'.join(description_parts) if description_parts else ""
+    except Exception:
+        return ""
+
+
+def _extract_salary_from_text(text: str) -> str:
+    """从文本中提取薪资信息
+
+    Args:
+        text: 输入文本
+
+    Returns:
+        提取的薪资或"面议"
+    """
+    salary_patterns = [
+        r'(\d+\s*[Kk千]\s*[-~～]\s*\d+\s*[Kk千])',
+        r'(\d+\s*万\s*[-~～]\s*\d+\s*万)',
+        r'(\d{3,4}\s*[-~～]\s*\d{3,4}\s*元?\s*/\s*(月|年|天))',
+        r'(\d+\s*[-~～]\s*\d+\s*元?\s*/\s*(月|年|天))',
+        r'(\d+[\d\-\.]*\s*[元kK/月]*)',
+    ]
+
+    for pattern in salary_patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(1)
+    return "面议"
+
+
+def _extract_education_from_text(text: str) -> str:
+    """从文本中提取学历要求
+
+    Args:
+        text: 输入文本
+
+    Returns:
+        提取的学历要求
+    """
+    edu_patterns = [
+        r'学历[要求]*[：:]\s*(本科|硕士|博士|大专|中专|高中|不限)',
+        r'学历[：:]\s*(本科|硕士|博士|大专|中专|高中|不限)',
+        r'要求[：:]\s*(本科|硕士|博士|大专|中专|高中|不限)',
+    ]
+
+    for pattern in edu_patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(1)
+    return ""
+
+
+def _extract_job_type_from_text(text: str, default: str = "全职") -> str:
+    """从文本中提取工作类型
+
+    Args:
+        text: 输入文本
+        default: 默认值
+
+    Returns:
+        提取的工作类型
+    """
+    type_patterns = [
+        r'工作类型[：:]\s*(全职|兼职|实习)',
+        r'工作性质[：:]\s*(全职|兼职|实习)',
+        r'职位类型[：:]\s*(全职|兼职|实习)',
+    ]
+
+    for pattern in type_patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(1)
+    return default
+
+
+def _parse_detail_page(html_content: str, item_data: Dict, source_config: Dict, job_type: str = "全职") -> Dict:
+    """通用详情页解析函数
+
+    Args:
+        html_content: HTML 内容
+        item_data: 列表项数据
+        source_config: 源配置
+        job_type: 工作类型
+
+    Returns:
+        解析后的岗位数据
+    """
+    # 提取标题
+    title_selectors = ['h1', 'h2.title', '.job-title', '.position-title', 'title']
+    title = _extract_text_from_html(html_content, title_selectors, item_data.get('title', ''))
+
+    # 提取描述
+    description = _extract_description_from_html(html_content)
+
+    # 提取薪资
+    salary = _extract_salary_from_text(html_content)
+
+    # 提取学历
+    education = _extract_education_from_text(html_content)
+
+    # 提取工作类型
+    extracted_job_type = _extract_job_type_from_text(html_content, job_type)
+
+    return {
+        "title": title,
+        "description": description,
+        "salary": salary,
+        "education": education,
+        "job_type": extracted_job_type,
+    }
+
+
+# ==================== ZJGSU 爬虫 ====================
+
 def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
     """爬取 ZJGSU - 浙江工商大学（基于URL去重的增量爬取）
 
@@ -1632,8 +1805,6 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
     - 支持招聘信息(zpxx)和实习信息(sxzpxx)两个板块
     - 需要访问详情页获取完整岗位信息
     """
-    from bs4 import BeautifulSoup
-
     source = "zjgsu"
     source_name = source_config["name"]
     base_url = source_config["base_url"]
@@ -1751,11 +1922,13 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             continue
 
                         try:
-                            soup = BeautifulSoup(detail_response.text, 'html.parser')
-
-                            # 提取标题
-                            title_elem = soup.find('h1')
-                            title = title_elem.get_text(strip=True) if title_elem else item.get('zpzt', '')
+                            # 使用通用解析函数
+                            parsed = _parse_detail_page(
+                                detail_response.text,
+                                {"title": item.get('zpzt', '')},
+                                source_config,
+                                section["job_type"]
+                            )
 
                             # 提取基本信息
                             company = item.get('dwmc', '')
@@ -1769,51 +1942,17 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             contact_email = item.get('jltdyx', '')
                             views = item.get('djs', 0)
 
-                            # 提取详细描述
-                            description_parts = []
-
-                            # 查找招聘简章/岗位职责部分
-                            content_div = soup.find('div', class_='content') or soup.find('div', {'id': 'content'})
-                            if content_div:
-                                # 提取所有文本内容
-                                for elem in content_div.find_all(['p', 'div', 'li']):
-                                    text = elem.get_text(strip=True)
-                                    if text and len(text) > 5:
-                                        description_parts.append(text)
-
-                            description = '\n'.join(description_parts) if description_parts else item.get('dwjs', '')
-
-                            # 提取薪资信息
-                            salary = "面议"
-                            salary_elem = soup.find(text=re.compile(r'\d+.*元/月|\d+.*k|\d+.*K'))
-                            if salary_elem:
-                                salary_match = re.search(r'(\d+[\d\-\.]*\s*[元kK/月]*)', salary_elem)
-                                if salary_match:
-                                    salary = salary_match.group(1)
-
-                            # 提取学历要求
-                            education = ""
-                            edu_match = re.search(r'学历要求[：:]\s*(\S+)', detail_response.text)
-                            if edu_match:
-                                education = edu_match.group(1)
-
-                            # 提取工作类型
-                            job_type = section["job_type"]
-                            job_type_match = re.search(r'工作类型[：:]\s*(\S+)', detail_response.text)
-                            if job_type_match:
-                                job_type = job_type_match.group(1)
-
                             job = {
-                                "title": title,
+                                "title": parsed["title"],
                                 "company": company,
                                 "location": location,
-                                "salary": salary,
-                                "education": education,
+                                "salary": parsed["salary"],
+                                "education": parsed["education"],
                                 "industry": industry,
-                                "description": truncate_text(description),
+                                "description": truncate_text(parsed["description"]),
                                 "publish_date": publish_date,
                                 "deadline": deadline,
-                                "job_type": job_type,
+                                "job_type": parsed["job_type"],
                                 "source": source,
                                 "university": source_name,
                                 "source_url": view_url,
@@ -1873,8 +2012,6 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
     - 支持全职和实习两种岗位类型
     - 需要访问详情页获取完整岗位信息
     """
-    from bs4 import BeautifulSoup
-
     source = "cueb"
     source_name = source_config["name"]
     base_url = source_config["base_url"]
@@ -1988,10 +2125,15 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             continue
 
                         try:
-                            soup = BeautifulSoup(detail_response.text, 'html.parser')
+                            # 使用通用解析函数
+                            parsed = _parse_detail_page(
+                                detail_response.text,
+                                {"title": item.get('title', '')},
+                                source_config,
+                                pos_type["job_type"]
+                            )
 
-                            # 提取标题
-                            title = item.get('title', '')
+                            # 提取基本信息
                             company = item.get('dwmc', '')
                             location = item.get('dwszddm', '')
                             views = item.get('click', 0)
@@ -2004,49 +2146,15 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             else:
                                 publish_date = ''
 
-                            # 提取详细描述
-                            description_parts = []
-
-                            # 查找主要内容区域
-                            content_div = soup.find('div', class_='details-content') or soup.find('div', {'id': 'content'})
-                            if content_div:
-                                # 提取所有文本内容
-                                for elem in content_div.find_all(['p', 'div', 'li', 'span']):
-                                    text = elem.get_text(strip=True)
-                                    if text and len(text) > 3:
-                                        description_parts.append(text)
-
-                            description = '\n'.join(description_parts) if description_parts else ''
-
-                            # 提取薪资信息
-                            salary = "面议"
-                            salary_patterns = [
-                                r'(\d+\s*[Kk千]\s*[-~～]\s*\d+\s*[Kk千])',
-                                r'(\d+\s*万\s*[-~～]\s*\d+\s*万)',
-                                r'(\d{3,4}\s*[-~～]\s*\d{3,4}\s*元?\s*/\s*(月|年|天))',
-                                r'(\d+\s*[-~～]\s*\d+\s*元?\s*/\s*(月|年|天))',
-                            ]
-                            for pattern in salary_patterns:
-                                salary_match = re.search(pattern, detail_response.text)
-                                if salary_match:
-                                    salary = salary_match.group()
-                                    break
-
-                            # 提取学历要求
-                            education = ""
-                            edu_match = re.search(r'学历[要求]*[：:]\s*(本科|硕士|博士|大专|不限)', detail_response.text)
-                            if edu_match:
-                                education = edu_match.group(1)
-
                             job = {
-                                "title": title,
+                                "title": parsed["title"],
                                 "company": company,
                                 "location": location,
-                                "salary": salary,
-                                "education": education,
-                                "description": truncate_text(description),
+                                "salary": parsed["salary"],
+                                "education": parsed["education"],
+                                "description": truncate_text(parsed["description"]),
                                 "publish_date": publish_date,
-                                "job_type": pos_type["job_type"],
+                                "job_type": parsed["job_type"],
                                 "source": source,
                                 "university": source_name,
                                 "source_url": view_url,
