@@ -2316,17 +2316,9 @@ def crawl_tencent(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                         # 从 Requirement 中提取学历要求
                         education = ""
                         if requirement:
-                            edu_patterns = [
-                                r'([\d一二三四五]+年|[\d一二三四五]+\s*年)?及以上?学历[：:]?\s*(本科|硕士|博士|大专|中专|高中|不限)',
-                                r'学历[要求]*[：:]?\s*(本科|硕士|博士|大专|中专|高中|不限)',
-                                r'(本科|硕士|博士|大专|中专|高中|不限)及以上学历',
-                            ]
-                            for pattern in edu_patterns:
-                                edu_match = re.search(pattern, requirement)
-                                if edu_match:
-                                    # 获取最后一个分组（学历）
-                                    education = edu_match.group(edu_match.lastindex)
-                                    break
+                            edu_match = re.search(r'(本科|硕士|博士|大专|中专|高中|不限)', requirement)
+                            if edu_match:
+                                education = edu_match.group(1)
 
                         job = {
                             "title": post.get("RecruitPostName", ""),
