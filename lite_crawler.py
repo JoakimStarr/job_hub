@@ -1793,6 +1793,193 @@ def _parse_detail_page(html_content: str, item_data: Dict, source_config: Dict, 
     }
 
 
+def _parse_zjgsu_detail_page(html_content: str, item_data: Dict, job_type: str = "全职") -> Dict:
+    """ZJGSU 详情页专用解析函数
+
+    ZJGSU 详情页结构：
+    - div.newDetails.editorConnect.ck-content - 完整描述
+    - div.body > div.info - 基本信息（薪资、地点、学历、类型）
+    - div.content > pre.text - 岗位职责和任职要求
+    """
+    from bs4 import BeautifulSoup
+
+    try:
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        # 提取标题
+        title = ""
+        head_div = soup.select_one('div.head .table-item.name a')
+        if head_div:
+            title = head_div.get('title', '') or head_div.get_text(strip=True)
+        if not title:
+            title = item_data.get('zpzt', '')
+
+        # 提取描述（从 ck-content 编辑器区域）
+        description = ""
+        ck_content = soup.select_one('div.newDetails.editorConnect.ck-content')
+        if ck_content:
+            description = ck_content.get_text(strip=True)
+
+        # 提取基本信息
+        info_items = soup.select('div.infoText .item')
+        location = ""
+        education = ""
+        extracted_job_type = job_type
+        salary = "面议"
+
+        for item in info_items:
+            text = item.get_text(strip=True)
+            if '工作地点' in text:
+                location = text.replace('工作地点：', '').replace('工作地点:', '').strip()
+            elif '学历要求' in text:
+                edu_text = text.replace('学历要求：', '').replace('学历要求:', '').strip()
+                # 可能是 "硕士,本科" 格式，取第一个
+                if ',' in edu_text or '，' in edu_text:
+                    education = edu_text.split(',')[0].split('、')[0].strip()
+                else:
+                    education = edu_text
+            elif '工作类型' in text:
+                type_match = re.search(r'(全职|兼职|实习)', text)
+                if type_match:
+                    extracted_job_type = type_match.group(1)
+
+        # 提取薪资（从 .table-item.name span 中）
+        salary_span = soup.select_one('div.table-item.name span')
+        if salary_span:
+            salary_text = salary_span.get_text(strip=True)
+            if salary_text and re.search(r'\d', salary_text):
+                salary = salary_text
+
+        # 提取岗位职责和任职要求（从 pre.text）
+        requirement_parts = []
+        pre_text = soup.select_one('div.content pre.text')
+        if pre_text:
+            requirement_parts.append(pre_text.get_text(strip=True))
+
+        # 如果没有找到 pre.text，尝试从 newDetails 提取
+        if not requirement_parts and description:
+            requirement_parts.append(description)
+
+        requirement = '\n'.join(requirement_parts)
+
+        # 提取联系方式
+        contact_info = []
+        contact_patterns = [
+            (r'联系人[：:]\s*(\S+)', '联系人'),
+            (r'联系电话[：:]\s*([\d\-]+)', '联系电话'),
+            (r'联系邮箱[：:]\s*([\w\.-]+@[\w\.-]+\.\w+)', '联系邮箱'),
+            (r'联系邮件[：:]\s*([\w\.-]+@[\w\.-]+\.\w+)', '联系邮箱'),
+            (r'[\w\.-]+@[\w\.-]+\.\w+', '联系邮箱'),
+            (r'(?:电话|Tel)[：:]?\s*(\d[-\d]{7,})', '联系电话'),
+        ]
+
+        for pattern, label in contact_patterns:
+            match = re.search(pattern, html_content)
+            if match:
+                contact_info.append(f"{label}：{match.group(1)}")
+
+        return {
+            "title": title,
+            "description": description,
+            "requirement": requirement,
+            "location": location,
+            "salary": salary,
+            "education": education,
+            "job_type": extracted_job_type,
+            "contact_info": contact_info,
+        }
+    except Exception as e:
+        logger.debug(f"ZJGSU详情页解析异常: {e}")
+        return {
+            "title": item_data.get('zpzt', ''),
+            "description": "",
+            "requirement": "",
+            "location": "",
+            "salary": "面议",
+            "education": "",
+            "job_type": job_type,
+            "contact_info": [],
+        }
+
+
+def _parse_cueb_detail_page(html_content: str, item_data: Dict, job_type: str = "全职") -> Dict:
+    """CUEB 详情页专用解析函数
+
+    CUEB 详情页结构：
+    - div.corp-detail-text - 岗位描述
+    - div.corp-detail-box - 要求和联系方式
+    """
+    from bs4 import BeautifulSoup
+
+    try:
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        # 提取标题
+        title = item_data.get('title', '')
+        title_elem = soup.select_one('h1, h2.title, .title')
+        if title_elem:
+            title = title_elem.get_text(strip=True) or title
+
+        # 提取描述（从 corp-detail-text）
+        description = ""
+        detail_text = soup.select_one('div.corp-detail-text')
+        if detail_text:
+            description = detail_text.get_text(strip=True)
+
+        # 提取要求和联系方式（从 corp-detail-box）
+        requirement = ""
+        contact_info = []
+        education = ""
+
+        detail_box = soup.select_one('div.corp-detail-box')
+        if detail_box:
+            box_text = detail_box.get_text('\n', strip=True)
+            requirement = box_text
+
+            # 从详情框中提取学历
+            edu_match = re.search(r'(本科|硕士|博士|大专|中专|高中|不限)', box_text)
+            if edu_match:
+                education = edu_match.group(1)
+
+            # 提取联系方式
+            contact_patterns = [
+                (r'联系人[：:]\s*(\S+)', '联系人'),
+                (r'联系电话[：:]\s*([\d\-]+)', '联系电话'),
+                (r'联系邮箱[：:]\s*([\w\.-]+@[\w\.-]+\.\w+)', '联系邮箱'),
+                (r'[\w\.-]+@[\w\.-]+\.\w+', '联系邮箱'),
+                (r'(?:电话|Tel)[：:]?\s*(\d[-\d]{7,})', '联系电话'),
+            ]
+
+            for pattern, label in contact_patterns:
+                match = re.search(pattern, html_content)
+                if match:
+                    contact_info.append(f"{label}：{match.group(1)}")
+
+        # 提取薪资
+        salary = _extract_salary_from_text(html_content)
+
+        return {
+            "title": title,
+            "description": description,
+            "requirement": requirement,
+            "salary": salary,
+            "education": education,
+            "job_type": job_type,
+            "contact_info": contact_info,
+        }
+    except Exception as e:
+        logger.debug(f"CUEB详情页解析异常: {e}")
+        return {
+            "title": item_data.get('title', ''),
+            "description": "",
+            "requirement": "",
+            "salary": "面议",
+            "education": "",
+            "job_type": job_type,
+            "contact_info": [],
+        }
+
+
 # ==================== ZJGSU 爬虫 ====================
 
 def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
@@ -1922,17 +2109,16 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             continue
 
                         try:
-                            # 使用通用解析函数
-                            parsed = _parse_detail_page(
+                            # 使用 ZJGSU 专用解析函数
+                            parsed = _parse_zjgsu_detail_page(
                                 detail_response.text,
-                                {"title": item.get('zpzt', '')},
-                                source_config,
+                                item,
                                 section["job_type"]
                             )
 
                             # 提取基本信息
                             company = item.get('dwmc', '')
-                            location = item.get('szxmc', '') or item.get('szsmc', '')
+                            location = parsed["location"] or item.get('szxmc', '') or item.get('szsmc', '')
                             industry = item.get('hyyjmc', '')
                             company_type = item.get('xzyjmc', '')
                             company_size = item.get('rsgmmc', '')
@@ -1942,24 +2128,10 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             contact_email = item.get('jltdyx', '')
                             views = item.get('djs', 0)
 
-                            job = {
-                                "title": parsed["title"],
-                                "company": company,
-                                "location": location,
-                                "salary": parsed["salary"],
-                                "education": parsed["education"],
-                                "industry": industry,
-                                "description": truncate_text(parsed["description"]),
-                                "publish_date": publish_date,
-                                "deadline": deadline,
-                                "job_type": parsed["job_type"],
-                                "source": source,
-                                "university": source_name,
-                                "source_url": view_url,
-                                "apply_url": view_url,
-                            }
+                            # 构造完整描述
+                            description_parts = []
 
-                            # 添加额外信息到描述
+                            # 添加单位信息
                             extra_info = []
                             if company_type:
                                 extra_info.append(f"单位性质: {company_type}")
@@ -1973,7 +2145,38 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                                 extra_info.append(f"浏览量: {views}")
 
                             if extra_info:
-                                job["description"] = "【单位信息】\n" + "\n".join(extra_info) + "\n\n【岗位详情】\n" + job["description"]
+                                description_parts.append("【单位信息】\n" + "\n".join(extra_info))
+
+                            # 添加岗位要求（从 pre.text）
+                            if parsed["requirement"]:
+                                description_parts.append("【岗位要求】\n" + parsed["requirement"])
+
+                            # 添加描述内容
+                            if parsed["description"]:
+                                description_parts.append(parsed["description"])
+
+                            # 添加联系方式
+                            if parsed.get("contact_info"):
+                                description_parts.append("【联系方式】\n" + "\n".join(parsed["contact_info"]))
+
+                            full_description = "\n\n".join(description_parts)
+
+                            job = {
+                                "title": parsed["title"],
+                                "company": company,
+                                "location": location,
+                                "salary": parsed["salary"],
+                                "education": parsed["education"],
+                                "industry": industry,
+                                "description": truncate_text(full_description),
+                                "publish_date": publish_date,
+                                "deadline": deadline,
+                                "job_type": parsed["job_type"],
+                                "source": source,
+                                "university": source_name,
+                                "source_url": view_url,
+                                "apply_url": view_url,
+                            }
 
                             yield job
                             count += 1
@@ -2125,11 +2328,10 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             continue
 
                         try:
-                            # 使用通用解析函数
-                            parsed = _parse_detail_page(
+                            # 使用 CUEB 专用解析函数
+                            parsed = _parse_cueb_detail_page(
                                 detail_response.text,
-                                {"title": item.get('title', '')},
-                                source_config,
+                                item,
                                 pos_type["job_type"]
                             )
 
@@ -2146,13 +2348,38 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             else:
                                 publish_date = ''
 
+                            # 构造完整描述
+                            description_parts = []
+
+                            # 添加信息
+                            extra_info = []
+                            if views:
+                                extra_info.append(f"浏览量: {views}")
+
+                            if extra_info:
+                                description_parts.append("【信息】\n" + "\n".join(extra_info))
+
+                            # 添加岗位要求
+                            if parsed["requirement"]:
+                                description_parts.append("【岗位要求】\n" + parsed["requirement"])
+
+                            # 添加描述内容
+                            if parsed["description"]:
+                                description_parts.append(parsed["description"])
+
+                            # 添加联系方式
+                            if parsed.get("contact_info"):
+                                description_parts.append("【联系方式】\n" + "\n".join(parsed["contact_info"]))
+
+                            full_description = "\n\n".join(description_parts)
+
                             job = {
                                 "title": parsed["title"],
                                 "company": company,
                                 "location": location,
                                 "salary": parsed["salary"],
                                 "education": parsed["education"],
-                                "description": truncate_text(parsed["description"]),
+                                "description": truncate_text(full_description),
                                 "publish_date": publish_date,
                                 "job_type": parsed["job_type"],
                                 "source": source,
@@ -2160,14 +2387,6 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                                 "source_url": view_url,
                                 "apply_url": view_url,
                             }
-
-                            # 添加额外信息
-                            extra_info = []
-                            if views:
-                                extra_info.append(f"浏览量: {views}")
-
-                            if extra_info:
-                                job["description"] = "【信息】\n" + "\n".join(extra_info) + "\n\n【详情】\n" + job["description"]
 
                             yield job
                             count += 1
