@@ -2293,21 +2293,45 @@ def crawl_tencent(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             else:
                                 publish_date = last_update[:10] if len(last_update) >= 10 else last_update
 
+                        # 调用详情 API 获取完整信息（包括 Requirement）
+                        detail_api = "https://careers.tencent.com/tencentcareer/api/post/ByPostId"
+                        post_id = post.get("PostId", "") or post.get("RecruitPostId", "")
+
+                        responsibility = post.get("Responsibility", "")
+                        requirement = post.get("Requirement", "")
+                        important_item = post.get("ImportantItem", "")
+
+                        # 如果列表 API 没有返回 Requirement 或为空，调用详情 API
+                        if not requirement and post_id:
+                            detail_params = {
+                                "timestamp": str(int(time.time() * 1000)),
+                                "postId": str(post_id),
+                                "language": "zh-cn"
+                            }
+                            detail_resp = fetch_with_retry(detail_api, method="GET", headers=headers, params=detail_params)
+                            if detail_resp:
+                                try:
+                                    detail_data = detail_resp.json()
+                                    if detail_data.get("Code") == 200 and detail_data.get("Data"):
+                                        detail_post = detail_data["Data"]
+                                        responsibility = detail_post.get("Responsibility", "") or responsibility
+                                        requirement = detail_post.get("Requirement", "")
+                                        important_item = detail_post.get("ImportantItem", "") or important_item
+                                except Exception as e:
+                                    logger.debug(f"详情API解析失败: {e}")
+
                         # 构造描述
                         description_parts = []
 
                         # 岗位职责
-                        responsibility = post.get("Responsibility", "")
                         if responsibility:
                             description_parts.append(f"【岗位职责】\n{responsibility}")
 
                         # 岗位要求（包含学历要求）
-                        requirement = post.get("Requirement", "")
                         if requirement:
                             description_parts.append(f"【岗位要求】\n{requirement}")
 
                         # 亮点/加分项
-                        important_item = post.get("ImportantItem", "")
                         if important_item:
                             description_parts.append(f"【加分项】\n{important_item}")
 
