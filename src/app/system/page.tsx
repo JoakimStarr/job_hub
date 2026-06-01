@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { AppShell } from '@/components/app-shell';
-import { Badge, Button, EmptyState, Input, JobCard, MetricCard, SectionCard, Select, Skeleton, TabNav } from '@/components/ui';
+import { Badge, Button, EmptyState, Input, JobCard, MetricCard, SectionCard, Select, Skeleton, TabNav, Textarea } from '@/components/ui';
 import { SubscriptionAnalysisPanel } from '@/components/SubscriptionAnalysisPanel';
 import { API } from '@/lib/api';
 import { useFetch } from '@/hooks/useFetch';
@@ -120,8 +120,8 @@ export default function SystemPage() {
     { key: 'diagnostics', label: '诊断日志' },
   ];
 
-  async function handleSaveConfig() {
-    const parsed = safeJsonParse(configText);
+  async function handleSaveConfigWithText(text: string) {
+    const parsed = safeJsonParse(text);
     if (!parsed) {
       setFeedback({ tone: 'error', text: '配置 JSON 格式不正确' });
       return;
@@ -191,14 +191,18 @@ export default function SystemPage() {
         {activeTab === 'config' && (
           loading ? <Skeleton type="card" /> : (
             <div id="panel-config" role="tabpanel" aria-labelledby="tab-config" style={{ marginTop: 10 }}>
-              <div className="grid-2" style={{ gap: 24 }}>
+              <form className="grid-2" style={{ gap: 24 }} onSubmit={(e) => {
+                e.preventDefault();
+                const fd = new FormData(e.currentTarget);
+                const text = (fd.get('config') as string) || '';
+                void handleSaveConfigWithText(text);
+              }}>
                 <label>
                   <div style={{ marginBottom: 8, fontWeight: 700 }}>配置 JSON</div>
-                  <textarea
-                    className="textarea"
+                  <Textarea
+                    name="config"
                     rows={18}
-                    value={configText}
-                    onChange={(event) => setConfigText(event.target.value)}
+                    defaultValue={configText}
                     style={{ fontFamily: 'monospace', fontSize: 13 }}
                   />
                 </label>
@@ -208,8 +212,8 @@ export default function SystemPage() {
                     <div style={{ display: 'grid', gap: 12 }}>
                       <Button
                         variant="primary"
+                        type="submit"
                         disabled={savingConfig}
-                        onClick={() => { void handleSaveConfig(); }}
                       >
                         {savingConfig ? '保存中...' : '保存配置'}
                       </Button>
@@ -240,7 +244,7 @@ export default function SystemPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
           )
         )}

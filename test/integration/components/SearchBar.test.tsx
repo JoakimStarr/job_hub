@@ -8,7 +8,6 @@ describe('SearchBar 组件', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.useFakeTimers()
   })
 
   describe('基础渲染', () => {
@@ -29,44 +28,21 @@ describe('SearchBar 组件', () => {
   })
 
   describe('搜索输入功能', () => {
-    it('输入文本时应该触发防抖搜索', () => {
-      render(<SearchBar onSearch={mockOnSearch} debounceMs={300} />)
+    it('输入文本时不应该触发搜索', () => {
+      render(<SearchBar onSearch={mockOnSearch} />)
 
       const input = screen.getByLabelText(/搜索关键词/)
       fireEvent.change(input, { target: { value: '数据分析师' } })
 
       expect(mockOnSearch).not.toHaveBeenCalled()
-
-      vi.advanceTimersByTime(300)
-
-      expect(mockOnSearch).toHaveBeenCalledWith('数据分析师')
-      expect(mockOnSearch).toHaveBeenCalledTimes(1)
     })
 
-    it('连续快速输入应该只触发最后一次搜索', () => {
-      render(<SearchBar onSearch={mockOnSearch} debounceMs={300} />)
-
-      const input = screen.getByLabelText(/搜索关键词/)
-      
-      fireEvent.change(input, { target: { value: '数' } })
-      fireEvent.change(input, { target: { value: '数据' } })
-      fireEvent.change(input, { target: { value: '数据分' } })
-      fireEvent.change(input, { target: { value: '数据分析' } })
-
-      vi.advanceTimersByTime(299)
-      expect(mockOnSearch).not.toHaveBeenCalled()
-
-      vi.advanceTimersByTime(1)
-      expect(mockOnSearch).toHaveBeenCalledTimes(1)
-      expect(mockOnSearch).toHaveBeenCalledWith('数据分析')
-    })
-
-    it('提交表单应该立即触发搜索（不等待防抖）', () => {
-      render(<SearchBar onSearch={mockOnSearch} debounceMs={1000} />)
+    it('提交表单应该触发搜索', () => {
+      render(<SearchBar onSearch={mockOnSearch} />)
 
       const input = screen.getByLabelText(/搜索关键词/)
       fireEvent.change(input, { target: { value: 'Python开发' } })
-      
+
       const form = input.closest('form')
       if (form) fireEvent.submit(form)
 
@@ -75,11 +51,11 @@ describe('SearchBar 组件', () => {
     })
 
     it('按回车键应该通过表单提交触发搜索', () => {
-      render(<SearchBar onSearch={mockOnSearch} debounceMs={1000} />)
+      render(<SearchBar onSearch={mockOnSearch} />)
 
       const input = screen.getByLabelText(/搜索关键词/)
       fireEvent.change(input, { target: { value: '机器学习' } })
-      
+
       const form = input.closest('form')
       if (form) fireEvent.submit(form)
 
@@ -89,13 +65,8 @@ describe('SearchBar 组件', () => {
   })
 
   describe('清空功能', () => {
-    it('有输入内容时应该显示清空按钮', () => {
+    it('清空按钮应该始终可见', () => {
       render(<SearchBar onSearch={mockOnSearch} />)
-
-      const input = screen.getByLabelText(/搜索关键词/)
-      expect(screen.queryByLabelText(/清空搜索/)).not.toBeInTheDocument()
-
-      fireEvent.change(input, { target: { value: '测试' } })
 
       expect(screen.getByLabelText(/清空搜索/)).toBeInTheDocument()
     })
@@ -103,24 +74,13 @@ describe('SearchBar 组件', () => {
     it('点击清空按钮应该清空输入并触发空搜索', () => {
       render(<SearchBar onSearch={mockOnSearch} />)
 
-      const input = screen.getByLabelText(/搜索关键词/)
+      const input = screen.getByLabelText(/搜索关键词/) as HTMLInputElement
       fireEvent.change(input, { target: { value: '测试内容' } })
-      
+
       fireEvent.click(screen.getByLabelText(/清空搜索/))
 
-      expect(input).toHaveValue('')
+      expect(input.value).toBe('')
       expect(mockOnSearch).toHaveBeenCalledWith('')
-    })
-
-    it('清空后不应该再显示清空按钮', () => {
-      render(<SearchBar onSearch={mockOnSearch} />)
-
-      const input = screen.getByLabelText(/搜索关键词/)
-      fireEvent.change(input, { target: { value: '测试' } })
-      expect(screen.getByLabelText(/清空搜索/)).toBeInTheDocument()
-
-      fireEvent.click(screen.getByLabelText(/清空搜索/))
-      expect(screen.queryByLabelText(/清空搜索/)).not.toBeInTheDocument()
     })
   })
 
@@ -139,8 +99,8 @@ describe('SearchBar 组件', () => {
 
     it('点击筛选器按钮应该切换展开/收起状态', () => {
       render(
-        <SearchBar 
-          onSearch={mockOnSearch} 
+        <SearchBar
+          onSearch={mockOnSearch}
           showFilters={true}
           filterContent={<div data-testid="filter-content">筛选选项</div>}
         />
@@ -158,8 +118,8 @@ describe('SearchBar 组件', () => {
 
     it('再次点击筛选器按钮应该收起筛选面板', () => {
       render(
-        <SearchBar 
-          onSearch={mockOnSearch} 
+        <SearchBar
+          onSearch={mockOnSearch}
           showFilters={true}
           filterContent={<div data-testid="filter-content">筛选选项</div>}
         />
@@ -197,16 +157,13 @@ describe('SearchBar 组件', () => {
     it('清空按钮应该有正确的aria-label', () => {
       render(<SearchBar onSearch={mockOnSearch} />)
 
-      const input = screen.getByLabelText(/搜索关键词/)
-      fireEvent.change(input, { target: { value: 'test' } })
-      
       expect(screen.getByLabelText(/清空搜索/)).toBeInTheDocument()
     })
 
     it('筛选器按钮应该有正确的aria-expanded属性', () => {
       render(
-        <SearchBar 
-          onSearch={mockOnSearch} 
+        <SearchBar
+          onSearch={mockOnSearch}
           showFilters={true}
           filterContent={<div>筛选</div>}
         />
@@ -219,8 +176,8 @@ describe('SearchBar 组件', () => {
 
     it('筛选面板应该有正确的role和aria-label', () => {
       render(
-        <SearchBar 
-          onSearch={mockOnSearch} 
+        <SearchBar
+          onSearch={mockOnSearch}
           showFilters={true}
           filterContent={<div data-testid="filters">筛选选项</div>}
         />
@@ -240,8 +197,8 @@ describe('SearchBar 组件', () => {
 
     it('展开筛选器的快照应该匹配', () => {
       const { container } = render(
-        <SearchBar 
-          onSearch={mockOnSearch} 
+        <SearchBar
+          onSearch={mockOnSearch}
           showFilters={true}
           filterContent={
             <div className="filters">

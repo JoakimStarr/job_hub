@@ -11,7 +11,6 @@ interface PaginationProps {
 }
 
 export const Pagination = memo(function Pagination({ current, total, onChange }: PaginationProps) {
-  const [inputValue, setInputValue] = useState('');
   const [inputVisible, setInputVisible] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,15 +41,6 @@ export const Pagination = memo(function Pagination({ current, total, onChange }:
     router.push(`?${params.toString()}`, { scroll: false });
   }, [onChange, router, searchParams]);
 
-  const handleJump = useCallback(() => {
-    const page = parseInt(inputValue, 10);
-    if (!isNaN(page) && page >= 1 && page <= total) {
-      handleChange(page);
-    }
-    setInputValue('');
-    setInputVisible(false);
-  }, [inputValue, total, handleChange]);
-
   return (
     <nav className="pagination-wrapper" aria-label="分页导航">
       <Button
@@ -65,7 +55,7 @@ export const Pagination = memo(function Pagination({ current, total, onChange }:
       {!inputVisible ? (
         <button
           className="pagination-page-display"
-          onClick={() => { setInputValue(String(current)); setInputVisible(true); }}
+          onClick={() => setInputVisible(true)}
           aria-label={`当前第 ${current} 页，共 ${total} 页`}
           aria-current="page"
         >
@@ -74,48 +64,42 @@ export const Pagination = memo(function Pagination({ current, total, onChange }:
       ) : (
         <div className="pagination-input-group">
           <span>跳转到</span>
-          <input
-            type="number"
-            min={1}
-            max={total}
-            value={inputValue}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === '' || /^\d+$/.test(value)) {
-                const numVal = parseInt(value, 10);
-                if (!isNaN(numVal) && numVal >= 1 && numVal <= total) {
-                  setInputValue(value);
-                } else if (value === '') {
-                  setInputValue('');
-                }
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleJump();
-              if (e.key === 'Escape') {
-                setInputVisible(false);
-                setInputValue('');
-              }
-            }}
-            className="pagination-page-input"
-            aria-label={`输入目标页码，范围 1 到 ${total}`}
-            autoFocus
-          />
-          <span>/ {total} 页</span>
-          <Button
-            variant="primary"
-            onClick={handleJump}
-            aria-label={`跳转到第 ${inputValue || current} 页`}
-          >
-            跳转
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => { setInputVisible(false); setInputValue(''); }}
-            aria-label="取消跳转"
-          >
-            取消
-          </Button>
+          <form style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }} onSubmit={(e) => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            const page = parseInt((fd.get('page') as string) || '', 10);
+            if (!isNaN(page) && page >= 1 && page <= total) {
+              handleChange(page);
+            }
+            setInputVisible(false);
+          }}>
+            <input
+              type="number"
+              name="page"
+              min={1}
+              max={total}
+              defaultValue={current}
+              className="pagination-page-input"
+              aria-label={`输入目标页码，范围 1 到 ${total}`}
+              autoFocus
+            />
+            <span>/ {total} 页</span>
+            <Button
+              type="submit"
+              variant="primary"
+              aria-label={`跳转到指定页`}
+            >
+              跳转
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => setInputVisible(false)}
+              aria-label="取消跳转"
+            >
+              取消
+            </Button>
+          </form>
         </div>
       )}
 

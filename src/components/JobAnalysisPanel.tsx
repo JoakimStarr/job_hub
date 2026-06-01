@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { API } from '@/lib/api';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
+import { Textarea } from '@/components/ui';
 import { useAppStore } from '@/store';
 import type { JobItem } from '@/types';
 
@@ -89,7 +90,6 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -187,19 +187,18 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
     setExpanded(true);
   }, []);
 
-  const handleSend = useCallback(async () => {
-    if (!chatInput.trim() || chatLoading || !activeSessionId || !activeAnalysis || isGuest) {
+  const handleSendWithMessage = useCallback(async (message: string) => {
+    if (!message.trim() || chatLoading || !activeSessionId || !activeAnalysis || isGuest) {
       return;
     }
 
-    // Cancel any existing request
     abortControllerRef.current?.abort();
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    const userMessage: ChatMessage = { role: 'user', content: chatInput.trim() };
+    const msg = message.trim();
+    const userMessage: ChatMessage = { role: 'user', content: msg };
     setMessages((current) => [...current, userMessage]);
-    setChatInput('');
     setChatLoading(true);
     setStreamingContent('');
 
@@ -213,7 +212,7 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
-          message: userMessage.content,
+          message: msg,
           session_id: activeSessionId,
           stream: true,
         }),
@@ -279,7 +278,6 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
         }
       }
 
-      // Ensure final content is always set
       if (pendingStreamContentRef.current) {
         setStreamingContent(pendingStreamContentRef.current);
         pendingStreamContentRef.current = '';
@@ -300,12 +298,15 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
         abortControllerRef.current = null;
       }
     }
-  }, [activeAnalysis, activeSessionId, chatInput, chatLoading, isGuest, job.id, loadHistory]);
+  }, [activeAnalysis, activeSessionId, chatLoading, isGuest, job.id, loadHistory]);
 
   const handleChatKeyDown = (event: ReactKeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
       event.preventDefault();
-      void handleSend();
+      const form = event.currentTarget.closest('form');
+      if (form) {
+        form.requestSubmit();
+      }
     }
   };
 
@@ -505,25 +506,31 @@ export default function JobAnalysisPanel({ job }: { job: JobItem }) {
             ) : null}
             <div ref={messagesEndRef} />
           </div>
-          <div style={{ display: 'flex', gap: 8, flexDirection: 'column' }}>
-            <textarea
-              value={chatInput}
-              onChange={(event) => setChatInput(event.target.value)}
+          <form style={{ display: 'flex', gap: 8, flexDirection: 'column' }} onSubmit={(e) => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            const msg = (fd.get('chatInput') as string) || '';
+            if (!msg.trim() || chatLoading || isGuest) return;
+            void handleSendWithMessage(msg);
+            e.currentTarget.reset();
+          }}>
+            <Textarea
+              name="chatInput"
+              defaultValue=""
               onKeyDown={handleChatKeyDown}
               placeholder="例如：这个岗位最看重哪些经历？"
               disabled={chatLoading}
-              className="textarea"
               rows={4}
             />
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <button type="button" className="btn btn-primary" onClick={() => { void handleSend(); }} disabled={!chatInput.trim() || chatLoading || isGuest}>
+              <button type="submit" className="btn btn-primary" disabled={chatLoading || isGuest}>
                 {chatLoading ? '发送中...' : '发送'}
               </button>
               <button type="button" className="btn btn-secondary" onClick={() => setShowChat(false)}>
                 收起追问
               </button>
             </div>
-          </div>
+          </form>
         </div>
       ) : null}
     </div>

@@ -5,6 +5,7 @@ import type { ResumeProfile, ParseResult } from '@/lib/resume-types';
 import { API } from '@/lib/api';
 import { getFriendlyErrorMessage } from '@/lib/error-messages';
 import { ResumeParseSummary, type ResumeParseSummaryMeta } from '@/components/ResumeParseSummary';
+import { Textarea } from '@/components/ui';
 import dynamic from 'next/dynamic';
 import styles from './resume-uploader.module.css';
 
@@ -30,7 +31,6 @@ export default function ResumeUploader({
   const [isParsing, setIsParsing] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [parseProgress, setParseProgress] = useState(0);
-  const [resumeText, setResumeText] = useState('');
   const [parseSummary, setParseSummary] = useState<ResumeParseSummaryMeta | null>(null);
   const [parseMessage, setParseMessage] = useState('');
   const [showEditor, setShowEditor] = useState(false);
@@ -146,7 +146,6 @@ export default function ResumeUploader({
       const result: ParseResult = await API.parseResumeFile(file);
       setUploadProgress(100);
       
-      setResumeText(result.profile.resumeText || '');
       setParseProgress(30);
       setParseMessage('正在解析简历内容…');
 
@@ -184,8 +183,8 @@ export default function ResumeUploader({
     }
   };
 
-  const handleTextSubmit = async () => {
-    if (!resumeText.trim()) {
+  const handleTextSubmitWithText = async (text: string) => {
+    if (!text.trim()) {
       const errorMessage = '请输入简历内容';
       setParseMessage(errorMessage);
       setParseSummary(null);
@@ -201,7 +200,7 @@ export default function ResumeUploader({
     try {
       setParseProgress(30);
 
-      const result: ParseResult = await API.parseResumeText(resumeText);
+      const result: ParseResult = await API.parseResumeText(text);
 
       setParseProgress(70);
       setParseMessage('正在构建用户画像…');
@@ -420,22 +419,30 @@ export default function ResumeUploader({
           <div className={styles.dividerLine} />
         </div>
 
-        <textarea
-          value={resumeText}
-          onChange={(e) => setResumeText(e.target.value)}
-          placeholder="请粘贴简历文本内容..."
-          className={styles.resumeTextarea}
-          disabled={isParsing}
-          aria-label="简历文本输入"
-        />
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          const fd = new FormData(e.currentTarget);
+          const text = (fd.get('resumeText') as string) || '';
+          if (!text.trim() || isParsing) return;
+          void handleTextSubmitWithText(text);
+        }}>
+          <Textarea
+            name="resumeText"
+            defaultValue=""
+            placeholder="请粘贴简历文本内容..."
+            className={styles.resumeTextarea}
+            disabled={isParsing}
+            aria-label="简历文本输入"
+          />
 
-        <button
-          onClick={handleTextSubmit}
-          disabled={isParsing || !resumeText.trim()}
-          className={styles.submitBtn}
-        >
-          {isParsing ? '解析中...' : '开始解析'}
-        </button>
+          <button
+            type="submit"
+            disabled={isParsing}
+            className={styles.submitBtn}
+          >
+            {isParsing ? '解析中...' : '开始解析'}
+          </button>
+        </form>
       </div>
 
       {showEditor && currentProfile && (

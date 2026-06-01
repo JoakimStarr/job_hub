@@ -21,8 +21,6 @@ export function LoginClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = safeRedirect(searchParams.get('redirect'));
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -107,7 +105,7 @@ export function LoginClient() {
                   headers: {
                     'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({ username, password }),
+                  body: JSON.stringify({ username: (new FormData(event.currentTarget).get('username') as string) || '', password: (new FormData(event.currentTarget).get('password') as string) || '' }),
                 });
 
                 const data = await response.json();
@@ -142,8 +140,8 @@ export function LoginClient() {
             <label>
               <div style={{ marginBottom: 8, fontWeight: 700 }}>用户名</div>
               <Input 
-                value={username} 
-                onChange={(event) => setUsername(event.target.value)} 
+                name="username"
+                defaultValue="" 
                 placeholder="请输入用户名" 
                 required 
                 autoComplete="username"
@@ -152,8 +150,8 @@ export function LoginClient() {
             <label>
               <div style={{ marginBottom: 8, fontWeight: 700 }}>密码</div>
               <Input 
-                value={password} 
-                onChange={(event) => setPassword(event.target.value)} 
+                name="password"
+                defaultValue="" 
                 type="password" 
                 placeholder="请输入密码" 
                 required 

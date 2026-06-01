@@ -289,7 +289,13 @@ export default function LogsPage() {
       {/* 筛选器 */}
       <div style={{ marginBottom: 24 }}>
         <SectionCard title="筛选条件">
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' }}>
+        <form style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' }} onSubmit={(e) => {
+          e.preventDefault();
+          const fd = new FormData(e.currentTarget);
+          setUsernameFilter((fd.get('usernameFilter') as string) || '');
+          setIpFilter((fd.get('ipFilter') as string) || '');
+          setPage(1);
+        }}>
           <label>
             <div style={{ marginBottom: 6, fontWeight: 600, fontSize: 13 }}>时间范围</div>
             <Select value={timeRange} onChange={(e) => { setTimeRange(e.target.value as TimeRange); setPage(1); }}>
@@ -327,8 +333,8 @@ export default function LogsPage() {
           <label>
             <div style={{ marginBottom: 6, fontWeight: 600, fontSize: 13 }}>用户搜索</div>
             <Input 
-              value={usernameFilter} 
-              onChange={(e) => setUsernameFilter(e.target.value)}
+              name="usernameFilter"
+              defaultValue={usernameFilter}
               placeholder="用户ID或用户名"
             />
           </label>
@@ -336,13 +342,13 @@ export default function LogsPage() {
           <label>
             <div style={{ marginBottom: 6, fontWeight: 600, fontSize: 13 }}>IP 过滤</div>
             <Input 
-              value={ipFilter} 
-              onChange={(e) => setIpFilter(e.target.value)}
+              name="ipFilter"
+              defaultValue={ipFilter}
               placeholder="IP 地址"
             />
           </label>
 
-          <Button variant="primary" onClick={() => void fetchLogs()}>
+          <Button type="submit" variant="primary">
             搜索
           </Button>
 
@@ -354,7 +360,7 @@ export default function LogsPage() {
               打印报表
             </Button>
           </div>
-        </div>
+        </form>
       </SectionCard>
       </div>
 

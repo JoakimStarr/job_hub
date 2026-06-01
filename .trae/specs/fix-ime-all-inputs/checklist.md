@@ -1,0 +1,20 @@
+- [ ] ProfileEditor.tsx: 所有 32 处受控输入框已改为 defaultValue + name，表单用 form+FormData 提交
+- [ ] ProfileEditor.tsx: 保存按钮为 type="submit"，handleSave 从 FormData 取值构造 profile 对象
+- [ ] ProfileEditor.tsx: 已删除不再需要的受控 state 和 updateField 等函数
+- [ ] login-client.tsx: 用户名/密码改为 defaultValue，form onSubmit 处理登录
+- [ ] CreateUserModal.tsx: 用户名/密码/角色/权限改为 defaultValue/defaultChecked，form onSubmit 处理提交
+- [ ] EditUserModal.tsx: 用户名/角色/权限改为 defaultValue/defaultChecked，key={user.id} 确保编辑时正确初始化
+- [ ] ChangePasswordModal.tsx: 新密码/确认密码改为 defaultValue，form onSubmit 处理提交
+- [ ] ChangePasswordForm.tsx: 当前密码/新密码/确认密码改为 defaultValue，form onSubmit 处理提交
+- [ ] SearchBar.tsx: 搜索框改为 defaultValue，Enter 触发搜索
+- [ ] favorites/page.tsx: 搜索框改为 defaultValue，Enter 触发搜索
+- [ ] AIChatPanel.tsx: 聊天输入框改为 defaultValue，Enter 发送消息，提交后 form.reset()
+- [ ] JobAnalysisPanel.tsx: 追问输入框改为 Textarea+defaultValue，Enter 发送消息
+- [ ] ResumeUploader.tsx: 简历粘贴框改为 Textarea+defaultValue，提交按钮 type="submit"
+- [ ] system/page.tsx: 配置编辑器改为 Textarea+defaultValue，保存按钮 type="submit"
+- [ ] Pagination.tsx: 页码跳转改为 defaultValue，Enter 跳转
+- [ ] admin/logs/page.tsx: 用户搜索和 IP 过滤改为 defaultValue，Enter 触发筛选
+- [ ] 筛选器 select/checkbox（admin/logs、UserManagement、AuthLogViewer、jobs、crawler）保留受控模式
+- [ ] 全站 npx tsc --noEmit 无类型错误
+- [ ] 中文输入法在所有已修改输入框中正常工作（拼音不混入）
+- [ ] 版本号已更新，代码已提交到 git

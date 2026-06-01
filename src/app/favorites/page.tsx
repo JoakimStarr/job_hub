@@ -26,10 +26,6 @@ export default function FavoritesPage() {
     () => API.getFavorites({ page, page_size: 10, keyword: query }),
   );
 
-  const handleSearch = useCallback(() => {
-    setPage(1);
-  }, []);
-
   const handleClear = useCallback(() => {
     setQuery('');
     setPage(1);
@@ -102,21 +98,25 @@ export default function FavoritesPage() {
       </div>
 
       <SectionCard title="收藏筛选" description="按关键词快速定位收藏的岗位">
-        <div className="grid-2">
+        <form className="grid-2" onSubmit={(e) => {
+          e.preventDefault();
+          const fd = new FormData(e.currentTarget);
+          setQuery((fd.get('query') as string) || '');
+          setPage(1);
+        }}>
           <label>
             <div style={{ marginBottom: 8, fontWeight: 700 }}>搜索关键词</div>
             <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              name="query"
+              defaultValue={query}
               placeholder="搜索收藏岗位"
-              onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
             />
           </label>
           <div style={{ display: 'flex', alignItems: 'end', gap: 10 }}>
-            <StarButton active size="md" onClick={handleSearch} />
-            <Button variant="secondary" onClick={handleClear}>清除</Button>
+            <StarButton active size="md" type="submit" />
+            <Button type="button" variant="secondary" onClick={handleClear}>清除</Button>
           </div>
-        </div>
+        </form>
       </SectionCard>
 
       <SectionCard title="收藏列表" description="管理已收藏的岗位">

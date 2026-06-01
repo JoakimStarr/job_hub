@@ -18,13 +18,6 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
   const toast = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
   
-  const [formData, setFormData] = useState<EditUserFormData>({
-    username: user.username,
-    role: user.role,
-    permissions: user.permissions || [],
-    isActive: user.isActive ?? true,
-  });
-  
   const [loading, setLoading] = useState(false);
   const [togglingStatus, setTogglingStatus] = useState(false);
 
@@ -64,19 +57,14 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
     };
   }, []);
 
-  function togglePermission(perm: string) {
-    setFormData(prev => ({
-      ...prev,
-      permissions: prev.permissions.includes(perm)
-        ? prev.permissions.filter(p => p !== perm)
-        : [...prev.permissions, perm],
-    }));
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
-    if (!formData.username.trim()) {
+    const fd = new FormData(e.currentTarget as HTMLFormElement);
+    const username = (fd.get('username') as string) || '';
+    const role = (fd.get('role') as string) || 'viewer';
+    const permissions = fd.getAll('permissions') as string[];
+
+    if (!username.trim()) {
       toast.error('用户名不能为空');
       return;
     }
@@ -87,12 +75,13 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
         method: 'PUT',
         body: JSON.stringify({
           userId: user.id,
-          ...formData,
+          username,
+          role,
+          permissions,
         }),
       });
 
       if (!response.ok) await handleApiError(response);
-
       onUpdated();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '更新用户失败');
@@ -104,8 +93,8 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
   async function handleToggleStatus() {
     setTogglingStatus(true);
     try {
-      const newStatus = !formData.isActive;
-      
+      const newStatus = !user.isActive;
+
       const response = await fetchWithAuth('/api/auth/users', {
         method: 'PUT',
         body: JSON.stringify({
@@ -116,8 +105,8 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
 
       if (!response.ok) await handleApiError(response);
 
-      setFormData(prev => ({ ...prev, isActive: newStatus }));
       toast.success(`账户已${newStatus ? '启用' : '禁用'}`);
+      onUpdated();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '切换状态失败');
     } finally {
@@ -193,8 +182,8 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
           <label className={styles.field}>
             <span className={styles.label}>用户名 *</span>
             <Input
-              value={formData.username}
-              onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+              name="username"
+              defaultValue={user.username}
               required
               autoComplete="username"
             />
@@ -204,11 +193,8 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
           <label className={styles.field}>
             <span className={styles.label}>角色 *</span>
             <Select
-              value={formData.role}
-              onChange={(e) => setFormData(prev => ({
-                ...prev,
-                role: e.target.value as UserRole,
-              }))}
+              name="role"
+              defaultValue={user.role}
             >
               <option value="viewer">查看者 - 只读访问</option>
               <option value="operator">操作员 - 可执行操作</option>
@@ -219,15 +205,16 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
           {/* 权限多选 */}
           <label className={styles.field}>
             <span className={styles.label}>
-              权限 ({formData.permissions.length} 项已选)
+              权限 ({user.permissions?.length || 0} 项已选)
             </span>
             <div className={styles.permissionsGrid}>
               {Object.entries(PERMISSION_LABELS).map(([key, label]) => (
                 <label key={key} className={styles.permissionItem}>
                   <input
                     type="checkbox"
-                    checked={formData.permissions.includes(key)}
-                    onChange={() => togglePermission(key)}
+                    name="permissions"
+                    value={key}
+                    defaultChecked={user.permissions?.includes(key)}
                   />
                   <span>{label}</span>
                 </label>
@@ -241,16 +228,16 @@ export default function EditUserModal({ user, onClose, onUpdated, onChangePasswo
             
             <div className={styles.statusRow}>
               <span>当前状态:</span>
-              <Badge tone={formData.isActive ? 'emerald' : 'rose'}>
-                {formData.isActive ? '正常' : '已禁用'}
+              <Badge tone={user.isActive ? 'emerald' : 'rose'}>
+                {user.isActive ? '正常' : '已禁用'}
               </Badge>
               
               <Button
-                variant={formData.isActive ? 'danger' : 'primary'}
+                variant={user.isActive ? 'danger' : 'primary'}
                 disabled={togglingStatus}
                 onClick={handleToggleStatus}
               >
-                {togglingStatus ? '处理中...' : (formData.isActive ? '禁用账户' : '启用账户')}
+                {togglingStatus ? '处理中...' : (user.isActive ? '禁用账户' : '启用账户')}
               </Button>
             </div>
 

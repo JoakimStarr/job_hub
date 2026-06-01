@@ -47,7 +47,6 @@ export default function AIChatPanel({
   isMockData = false,  // 新增参数
 }: AIChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
-  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
   const [currentSessionId, setCurrentSessionId] = useState(externalSessionId || '');
@@ -70,17 +69,15 @@ export default function AIChatPanel({
     };
   }, []);
 
-  const handleSend = useCallback(async () => {
-    if (!input.trim() || loading || disabled) return;
+  const handleSendWithMessage = useCallback(async (message: string) => {
+    if (!message.trim() || loading || disabled) return;
 
-    // Cancel any existing request
     abortControllerRef.current?.abort();
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    const userMessage: ChatMessage = { role: 'user', content: input.trim() };
+    const userMessage: ChatMessage = { role: 'user', content: message.trim() };
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
     setLoading(true);
     setStreamingContent('');
 
@@ -171,12 +168,11 @@ export default function AIChatPanel({
         abortControllerRef.current = null;
       }
     }
-  }, [input, loading, disabled, jobId, currentSessionId, onSessionIdChange, onMessageSent]);
+  }, [loading, disabled, jobId, currentSessionId, onSessionIdChange, onMessageSent]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+    if (e.key === 'Enter' && !e.shiftKey && e.nativeEvent.isComposing) {
       e.preventDefault();
-      handleSend();
     }
   };
 
@@ -273,11 +269,7 @@ export default function AIChatPanel({
                 <button
                   key={index}
                   onClick={() => {
-                    setInput(question);
-                    setTimeout(() => {
-                      const event = new KeyboardEvent('keydown', { key: 'Enter' });
-                      document.querySelector('input[placeholder*="输入"]')?.dispatchEvent(event);
-                    }, 100);
+                    void handleSendWithMessage(question);
                   }}
                   style={{
                     padding: '12px 16px',
@@ -367,16 +359,23 @@ export default function AIChatPanel({
         <div ref={messagesEndRef} />
       </div>
 
-      <div style={{
+      <form style={{
         padding: '12px 16px',
         borderTop: '1px solid #e5e7eb',
         background: '#fff',
         display: 'flex',
         gap: 8,
+      }} onSubmit={(e) => {
+        e.preventDefault();
+        const fd = new FormData(e.currentTarget);
+        const msg = (fd.get('message') as string) || '';
+        if (!msg.trim() || loading || disabled) return;
+        void handleSendWithMessage(msg);
+        e.currentTarget.reset();
       }}>
         <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          name="message"
+          defaultValue=""
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
@@ -384,12 +383,12 @@ export default function AIChatPanel({
         />
         <Button
           variant="primary"
-          onClick={handleSend}
-          disabled={!input.trim() || loading || disabled}
+          type="submit"
+          disabled={loading || disabled}
         >
           {loading ? '思考中...' : '发送'}
         </Button>
-      </div>
+      </form>
     </div>
   );
 }

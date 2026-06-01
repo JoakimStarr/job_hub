@@ -6,7 +6,6 @@ import { Input, Button } from './ui';
 interface SearchBarProps {
   onSearch: (query: string) => void;
   placeholder?: string;
-  debounceMs?: number;
   showFilters?: boolean;
   filterContent?: React.ReactNode;
 }
@@ -37,27 +36,16 @@ function saveSearchHistory(keyword: string): void {
 export const SearchBar = memo(function SearchBar({
   onSearch,
   placeholder = '搜索岗位...',
-  debounceMs = 150,
   showFilters = false,
   filterContent,
 }: SearchBarProps) {
-  const [query, setQuery] = useState('');
   const [filtersExpanded, setFiltersExpanded] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setHistory(getSearchHistory());
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
   }, []);
 
   useEffect(() => {
@@ -70,51 +58,25 @@ export const SearchBar = memo(function SearchBar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setQuery(value);
-
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-
-      debounceTimerRef.current = setTimeout(() => {
-        onSearch(value);
-      }, debounceMs);
-    },
-    [onSearch, debounceMs]
-  );
-
   const handleFocus = useCallback(() => {
-    if (!query) {
-      setHistory(getSearchHistory());
-      setShowSuggestions(true);
-    }
-  }, [query]);
+    setHistory(getSearchHistory());
+    setShowSuggestions(true);
+  }, []);
 
   const handleSuggestionClick = useCallback((keyword: string) => {
-    setQuery(keyword);
+    const input = document.querySelector<HTMLInputElement>('.search-input');
+    if (input) input.value = keyword;
     setShowSuggestions(false);
     saveSearchHistory(keyword);
     setHistory(getSearchHistory());
     onSearch(keyword);
   }, [onSearch]);
 
-  const handleClear = useCallback(() => {
-    setQuery('');
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-    onSearch('');
-  }, [onSearch]);
-
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
+      const fd = new FormData(e.currentTarget);
+      const query = (fd.get('query') as string) || '';
       setShowSuggestions(false);
       if (query.trim()) {
         saveSearchHistory(query);
@@ -122,7 +84,7 @@ export const SearchBar = memo(function SearchBar({
       }
       onSearch(query);
     },
-    [onSearch, query]
+    [onSearch]
   );
 
   const toggleFilters = useCallback(() => {
@@ -135,25 +97,27 @@ export const SearchBar = memo(function SearchBar({
         <div className="search-input-group">
           <Input
             type="text"
-            value={query}
-            onChange={handleInputChange}
+            name="query"
+            defaultValue=""
             onFocus={handleFocus}
             placeholder={placeholder}
             className="search-input"
             aria-label="搜索关键词"
             autoComplete="off"
           />
-          {query && (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleClear}
-              className="search-clear-btn"
-              aria-label="清空搜索"
-            >
-              ✕
-            </Button>
-          )}
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => {
+              const input = document.querySelector<HTMLInputElement>('.search-input');
+              if (input) input.value = '';
+              onSearch('');
+            }}
+            className="search-clear-btn"
+            aria-label="清空搜索"
+          >
+            ✕
+          </Button>
           <Button type="submit" variant="primary" className="search-submit-btn">
             搜索
           </Button>

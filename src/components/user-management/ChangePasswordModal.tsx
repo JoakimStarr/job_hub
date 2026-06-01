@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button, Input } from '@/components/ui';
 import { useToast } from '@/components/Toast';
-import type { UserInfo, PasswordFormData } from './types';
-import { fetchWithAuth, handleApiError, checkPasswordStrength } from './utils';
+import type { UserInfo } from './types';
+import { fetchWithAuth, handleApiError } from './utils';
 
 interface ChangePasswordModalProps {
   user: UserInfo;
@@ -16,17 +16,9 @@ export default function ChangePasswordModal({ user, onClose, onChanged }: Change
   const toast = useToast();
   const modalRef = useRef<HTMLDivElement>(null);
   
-  const [formData, setFormData] = useState<PasswordFormData>({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
-  
   const [loading, setLoading] = useState(false);
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(checkPasswordStrength(''));
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -64,36 +56,25 @@ export default function ChangePasswordModal({ user, onClose, onChanged }: Change
     };
   }, []);
 
-  function handleNewPasswordChange(value: string) {
-    setFormData(prev => ({ ...prev, newPassword: value }));
-    setPasswordStrength(checkPasswordStrength(value));
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
-    if (!formData.currentPassword) {
-      toast.error('请输入当前密码');
-      return;
-    }
-    
-    if (!formData.newPassword) {
+    const fd = new FormData(e.currentTarget as HTMLFormElement);
+    const newPassword = (fd.get('newPassword') as string) || '';
+    const confirmPassword = (fd.get('confirmPassword') as string) || '';
+
+    if (!newPassword) {
       toast.error('请输入新密码');
       return;
     }
-    
-    if (formData.newPassword.length < 6) {
+
+    if (newPassword.length < 6) {
       toast.error('新密码长度至少 6 个字符');
       return;
     }
-    
-    if (formData.newPassword !== formData.confirmPassword) {
+
+    if (newPassword !== confirmPassword) {
       toast.error('两次输入的密码不一致');
       return;
-    }
-
-    if (passwordStrength.score <= 2) {
-      toast.warning('建议使用更强的密码');
     }
 
     setLoading(true);
@@ -102,12 +83,11 @@ export default function ChangePasswordModal({ user, onClose, onChanged }: Change
         method: 'PUT',
         body: JSON.stringify({
           userId: user.id,
-          password: formData.newPassword,
+          password: newPassword,
         }),
       });
 
       if (!response.ok) await handleApiError(response);
-
       onChanged();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : '修改密码失败');
@@ -143,8 +123,8 @@ export default function ChangePasswordModal({ user, onClose, onChanged }: Change
             <div className={styles.inputWrapper}>
               <Input
                 type={showNewPassword ? 'text' : 'password'}
-                value={formData.newPassword}
-                onChange={(e) => handleNewPasswordChange(e.target.value)}
+                name="newPassword"
+                defaultValue=""
                 placeholder="至少6个字符"
                 required
                 minLength={6}
@@ -160,52 +140,6 @@ export default function ChangePasswordModal({ user, onClose, onChanged }: Change
                 {showNewPassword ? '🙈' : '👁️'}
               </Button>
             </div>
-            
-            {/* 密码强度指示器 */}
-            {formData.newPassword && (
-              <div className={styles.strengthIndicator}>
-                <div className={styles.strengthBar}>
-                  {[1, 2, 3, 4, 5].map((level) => (
-                    <div
-                      key={level}
-                      className={`${styles.strengthSegment} ${
-                        level <= passwordStrength.score ? styles.filled : ''
-                      }`}
-                      style={{
-                        backgroundColor:
-                          level <= passwordStrength.score
-                            ? passwordStrength.color
-                            : 'var(--panel-border)',
-                      }}
-                    />
-                  ))}
-                </div>
-                <span
-                  className={styles.strengthLabel}
-                  style={{ color: passwordStrength.color }}
-                >
-                  密码强度: {passwordStrength.label}
-                </span>
-                
-                <div className={styles.strengthChecks}>
-                  <div className={!passwordStrength.checks.length ? styles.failed : ''}>
-                    ✓ 至少8个字符
-                  </div>
-                  <div className={!passwordStrength.checks.lowercase ? styles.failed : ''}>
-                    ✓ 包含小写字母
-                  </div>
-                  <div className={!passwordStrength.checks.uppercase ? styles.failed : ''}>
-                    ✓ 包含大写字母
-                  </div>
-                  <div className={!passwordStrength.checks.numbers ? styles.failed : ''}>
-                    ✓ 包含数字
-                  </div>
-                  <div className={!passwordStrength.checks.special ? styles.failed : ''}>
-                    ✓ 包含特殊字符
-                  </div>
-                </div>
-              </div>
-            )}
           </label>
 
           {/* 确认密码 */}
@@ -214,10 +148,8 @@ export default function ChangePasswordModal({ user, onClose, onChanged }: Change
             <div className={styles.inputWrapper}>
               <Input
                 type={showConfirmPassword ? 'text' : 'password'}
-                value={formData.confirmPassword}
-                onChange={(e) =>
-                  setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))
-                }
+                name="confirmPassword"
+                defaultValue=""
                 placeholder="再次输入新密码"
                 required
                 autoComplete="new-password"
@@ -231,14 +163,6 @@ export default function ChangePasswordModal({ user, onClose, onChanged }: Change
                 {showConfirmPassword ? '🙈' : '👁️'}
               </Button>
             </div>
-            
-            {formData.confirmPassword && formData.newPassword !== formData.confirmPassword && (
-              <span className={styles.mismatch}>两次输入的密码不一致</span>
-            )}
-            
-            {formData.confirmPassword && formData.newPassword === formData.confirmPassword && (
-              <span className={styles.match}>✓ 密码匹配</span>
-            )}
           </label>
 
           {/* 密码规则提示 */}
@@ -264,12 +188,7 @@ export default function ChangePasswordModal({ user, onClose, onChanged }: Change
             <Button
               type="submit"
               variant="primary"
-              disabled={
-                loading ||
-                !formData.newPassword ||
-                !formData.confirmPassword ||
-                formData.newPassword !== formData.confirmPassword
-              }
+              disabled={loading}
             >
               {loading ? '修改中...' : '确认修改密码'}
             </Button>
