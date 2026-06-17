@@ -326,6 +326,23 @@ SPIDER_CONFIGS = {
             "views": "click",
         },
     },
+    "zufe": {
+        "name": "zufe_jobs",
+        "university": "浙江财经大学",
+        "base_url": "https://zccareer.zufe.edu.cn",
+        "location": "杭州",
+        "spider_type": "html",
+        "page_size": 20,
+        "max_pages": 50,
+        "detail_concurrency": 1,
+        "date_filter_months": 2,
+        "campus_list_url": "https://zccareer.zufe.edu.cn/campus/index/do1/zccareer.zufe.edu.cn/domain/zufe/city",
+        "job_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/101/d_category%5B2%5D/102",
+        "headers": {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        },
+    },
 }
 
 
@@ -404,6 +421,14 @@ def get_lite_http_sources():
             "industry": "industry",
             "publish_date": "publish_date",
         },
+    }
+
+    lite_sources["zufe"] = {
+        "name": "浙江财经大学",
+        "base_url": "https://zccareer.zufe.edu.cn",
+        "campus_list_url": "https://zccareer.zufe.edu.cn/campus/index/do1/zccareer.zufe.edu.cn/domain/zufe/city",
+        "job_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/101/d_category%5B2%5D/102",
+        "field_mapping": {},
     }
 
     return lite_sources
@@ -2770,6 +2795,376 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
     crawl_logger.log_source_end(source, source_name, count)
 
 
+def _decode_zufe_embedded(html: str) -> str:
+    """解码浙江财经大学页面中嵌入的压缩内容（unzip+Base64）
+
+    才立方就业平台将列表和详情内容通过 pako 压缩 + Base64 编码嵌入页面 HTML，
+    前端通过 JS 解码后替换 DOM 节点。此函数模拟该解码过程。
+
+    Args:
+        html: 页面原始 HTML
+
+    Returns:
+        解码后的 HTML 内容，若无嵌入内容则返回空字符串
+    """
+    import base64 as _b64
+    import zlib as _zlib
+
+    match = re.search(
+        r'\.replaceWith\(Base64\.decode\(unzip\("([^"]+)"\)\.substr\((\d+)\)\)\.substr\((\d+)\)',
+        html
+    )
+    if not match:
+        return ""
+
+    encoded = match.group(1)
+    offset1 = int(match.group(2))
+    offset2 = int(match.group(3))
+
+    try:
+        decoded = _b64.b64decode(encoded)
+        decompressed = _zlib.decompress(decoded, 15)
+        text = decompressed.decode('utf-8', errors='replace')
+
+        b64_text = text[offset1:].strip()
+        b64_text = ''.join(b64_text.split())
+        padding = 4 - len(b64_text) % 4
+        if padding < 4:
+            b64_text += '=' * padding
+
+        content_bytes = _b64.b64decode(b64_text)
+        content = content_bytes.decode('utf-8', errors='replace')
+        content = content[offset2:]
+        return content
+    except Exception as e:
+        logger.debug(f"解码ZUFE嵌入内容失败: {e}")
+        return ""
+
+
+def _extract_email_from_text(text: str) -> str:
+    """从文本中提取邮箱"""
+    match = re.search(r'[\w.+-]+@[\w-]+\.[\w.-]+', text)
+    return match.group(0) if match else ""
+
+
+def _extract_phone_from_text(text: str) -> str:
+    """从文本中提取电话号码"""
+    patterns = [
+        r'(?:联系电话|电话|联系方式|咨询)[：:\s]*(\d{3,4}[-\s]?\d{7,8})',
+        r'(\d{3,4}[-\s]?\d{7,8})',
+        r'(?:1[3-9]\d{9})',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(1) if match.lastindex else match.group(0)
+    return ""
+
+
+def crawl_zufe(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
+    """爬取 ZUFE - 浙江财经大学（基于URL去重的增量爬取）
+
+    浙江财经大学就业网站使用"才立方"平台，页面内容通过 pako 压缩 + Base64 编码
+    嵌入 HTML 中，前端 JS 解码后渲染。本爬虫模拟该解码过程直接提取数据。
+
+    两个板块：
+    1. 校园招聘（campus）: 招聘公告列表 + 详情页
+    2. 实习岗位（job）: 岗位列表 + 详情页，列表页包含薪资/地点/学历等元数据
+
+    增量策略：
+    - 通过 URL 去重判断是否需要继续
+    - 每页检查所有 URL 是否已存在，全部存在则停止爬取
+    - 最多爬取 MAX_PAGES 页
+    - 检查发布时间，过期数据停止爬取
+    """
+    from bs4 import BeautifulSoup
+    from datetime import datetime, timedelta
+
+    source = "zufe"
+    source_name = source_config["name"]
+    base_url = source_config["base_url"]
+
+    crawl_logger.log_source_start(source, source_name)
+
+    count = 0
+    cutoff_date = datetime.now() - timedelta(days=date_filter_months * 30)
+
+    list_configs = [
+        {
+            "url_template": source_config.get("campus_list_url", ""),
+            "page_suffix": "?page={page}",
+            "job_type": "全职",
+            "label": "校园招聘",
+            "mode": "campus",
+        },
+        {
+            "url_template": source_config.get("job_list_url", ""),
+            "page_suffix": "/page/{page}",
+            "job_type": "实习",
+            "label": "实习岗位",
+            "mode": "job",
+        },
+    ]
+
+    try:
+        for list_config in list_configs:
+            if max_items > 0 and count >= max_items:
+                break
+
+            base_list_url = list_config["url_template"]
+            if not base_list_url:
+                continue
+
+            logger.info(f"▶ 爬取板块: {list_config['label']}")
+            page = 1
+
+            while page <= MAX_PAGES:
+                if max_items > 0 and count >= max_items:
+                    logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
+                    break
+
+                if page == 1:
+                    list_url = base_list_url
+                else:
+                    list_url = base_list_url.rstrip('/') + list_config["page_suffix"].format(page=page)
+
+                response = fetch_with_retry(list_url)
+                if not response:
+                    logger.warning(f"[{list_config['label']}] 第 {page} 页列表获取失败，停止爬取")
+                    break
+
+                try:
+                    # 解码嵌入的列表内容
+                    embedded_html = _decode_zufe_embedded(response.text)
+                    if not embedded_html:
+                        logger.debug(f"[{list_config['label']}] 第 {page} 页无嵌入内容，爬取结束")
+                        break
+
+                    soup = BeautifulSoup(embedded_html, 'html.parser')
+
+                    if list_config["mode"] == "campus":
+                        items = soup.select('ul.infoList')
+                    else:
+                        items = soup.select('div.job-box ul.list > li')
+
+                    if not items:
+                        logger.debug(f"[{list_config['label']}] 第 {page} 页无数据，爬取结束")
+                        break
+
+                    logger.info(f"[{list_config['label']}] 第 {page} 页: 获取到 {len(items)} 条列表项")
+
+                    # URL 去重检查
+                    if not OVERWRITE_MODE:
+                        page_urls = []
+                        if list_config["mode"] == "campus":
+                            for item in items:
+                                a = item.select_one('li.span7 a')
+                                if not a:
+                                    a = item.find('a', href=True)
+                                if a and a.get('href'):
+                                    page_urls.append(urljoin(base_url, a['href']))
+                        else:
+                            for item in items:
+                                a = item.select_one('div.name a')
+                                if a and a.get('href'):
+                                    page_urls.append(urljoin(base_url, a['href']))
+
+                        existing_count = sum(1 for url in page_urls if url_exists(url))
+                        if existing_count == len(page_urls) and len(page_urls) > 0:
+                            logger.info(f"[{list_config['label']}] 第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                            break
+
+                    should_stop = False
+
+                    for item in items:
+                        if max_items > 0 and count >= max_items:
+                            break
+
+                        # 提取列表项信息
+                        if list_config["mode"] == "campus":
+                            a_tag = item.select_one('li.span7 a')
+                            if not a_tag:
+                                a_tag = item.find('a', href=True)
+                            date_tag = item.select_one('li.span4')
+                            if not a_tag or not a_tag.get('href'):
+                                continue
+                            title = a_tag.get_text(strip=True)
+                            detail_path = a_tag['href']
+                            publish_date_str = ""
+                            if date_tag:
+                                date_match = re.search(r'(\d{4}-\d{2}-\d{2})', date_tag.get_text())
+                                if date_match:
+                                    publish_date_str = date_match.group(1)
+                            company = ""
+                            salary = "面议"
+                            location = ""
+                            education = ""
+                        else:
+                            # job 模式
+                            name_div = item.select_one('div.name')
+                            company_div = item.select_one('div.company')
+                            salary_div = item.select_one('div.salary')
+
+                            if not name_div:
+                                continue
+                            a_tag = name_div.find('a', href=True)
+                            if not a_tag or not a_tag.get('href'):
+                                continue
+                            title = a_tag.get('title', '') or a_tag.get_text(strip=True)
+                            detail_path = a_tag['href']
+
+                            # 发布时间
+                            span = name_div.find('span')
+                            publish_date_str = ""
+                            if span:
+                                date_match = re.search(r'(\d{4}-\d{2}-\d{2})', span.get_text())
+                                if date_match:
+                                    publish_date_str = date_match.group(1)
+
+                            # 公司
+                            company = ""
+                            if company_div:
+                                company_a = company_div.find('a')
+                                if company_a:
+                                    company = company_a.get_text(strip=True)
+
+                            # 薪资、地点、学历
+                            salary_text = "面议"
+                            location = ""
+                            education = ""
+                            if salary_div:
+                                p_salary = salary_div.find('p')
+                                if p_salary:
+                                    salary_text = p_salary.get_text(strip=True)
+                                lis = salary_div.select('ul li')
+                                if len(lis) >= 1:
+                                    location = lis[0].get_text(strip=True)
+                                if len(lis) >= 2:
+                                    edu_text = lis[1].get_text(strip=True)
+                                    if edu_text != '不限':
+                                        education = edu_text
+                                # lis[2] 是工作经验
+                            salary = salary_text
+
+                        # 日期过滤
+                        if publish_date_str:
+                            try:
+                                pub_date = datetime.strptime(publish_date_str, '%Y-%m-%d')
+                                if pub_date < cutoff_date:
+                                    logger.info(f"遇到过期数据 ({publish_date_str})，停止爬取")
+                                    should_stop = True
+                                    break
+                            except ValueError:
+                                pass
+
+                        detail_url = urljoin(base_url, detail_path)
+
+                        if not OVERWRITE_MODE and url_exists(detail_url):
+                            continue
+
+                        # 访问详情页
+                        detail_response = fetch_with_retry(detail_url)
+                        if not detail_response:
+                            continue
+
+                        try:
+                            # 提取详情页元数据
+                            detail_soup = BeautifulSoup(detail_response.text, 'html.parser')
+
+                            # 从详情页提取更多信息
+                            description = ""
+                            contact_email = ""
+                            contact_phone = ""
+
+                            # 解码嵌入的详情内容
+                            embedded_detail = _decode_zufe_embedded(detail_response.text)
+                            if embedded_detail:
+                                detail_content_soup = BeautifulSoup(embedded_detail, 'html.parser')
+                                description = detail_content_soup.get_text(strip=True)
+
+                            # 如果是 campus 模式，从详情页提取公司名
+                            if list_config["mode"] == "campus" and not company:
+                                company_a = detail_soup.select_one('a.name')
+                                if company_a:
+                                    company = company_a.get_text(strip=True)
+
+                            # 从详情页提取联系方式
+                            full_text = detail_soup.get_text()
+                            if not description:
+                                # 如果嵌入内容解码失败，尝试从页面其他区域提取
+                                info_div = detail_soup.select_one('div.info')
+                                if info_div:
+                                    description = info_div.get_text(strip=True)
+
+                            # 从描述文本中提取邮箱和电话
+                            search_text = description or full_text
+                            contact_email = _extract_email_from_text(search_text)
+                            contact_phone = _extract_phone_from_text(search_text)
+
+                            # 从详情页提取学历（如果列表页没有）
+                            if not education:
+                                education = _extract_education_from_text(search_text)
+
+                            # 构建描述
+                            description_parts = []
+                            if description:
+                                # 清理描述文本
+                                cleaned_desc = re.sub(r'\s+', ' ', description).strip()
+                                description_parts.append(cleaned_desc[:2000])
+
+                            if contact_email:
+                                description_parts.append(f"联系邮箱: {contact_email}")
+                            if contact_phone:
+                                description_parts.append(f"联系电话: {contact_phone}")
+
+                            full_description = '\n'.join(description_parts)
+
+                            job = {
+                                "title": title,
+                                "company": company,
+                                "location": location or source_config.get("location", "杭州"),
+                                "salary": salary,
+                                "education": education,
+                                "description": truncate_text(full_description),
+                                "publish_date": publish_date_str,
+                                "job_type": list_config["job_type"],
+                                "source": source,
+                                "university": source_name,
+                                "source_url": detail_url,
+                                "apply_url": detail_url,
+                            }
+
+                            yield job
+                            count += 1
+
+                            if count % 10 == 0:
+                                logger.info(f"  已完成: {count} 条")
+
+                            time.sleep(DETAIL_DELAY)
+
+                        except Exception as e:
+                            crawl_logger.log_error(source, e, f"解析详情页: {detail_url}")
+                            continue
+
+                    if should_stop:
+                        break
+
+                    page += 1
+
+                except Exception as e:
+                    crawl_logger.log_error(source, e, f"解析列表页: {page}")
+                    break
+
+    except KeyboardInterrupt:
+        logger.warning("用户中断爬取")
+    except Exception as e:
+        crawl_logger.log_error(source, e, "爬取过程异常")
+    finally:
+        save_crawl_state(source, 0, count, extra='{}')
+
+    crawl_logger.log_source_end(source, source_name, count)
+
+
 _running = True
 
 
@@ -3729,6 +4124,8 @@ def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -
         job_iterator = crawl_zjgsu(source_config, max_items)
     elif source == "cueb":
         job_iterator = crawl_cueb(source_config, max_items)
+    elif source == "zufe":
+        job_iterator = crawl_zufe(source_config, max_items, date_filter_months)
     else:
         return 0
     
