@@ -337,7 +337,8 @@ SPIDER_CONFIGS = {
         "detail_concurrency": 1,
         "date_filter_months": 2,
         "campus_list_url": "https://zccareer.zufe.edu.cn/campus/index/do1/zccareer.zufe.edu.cn/domain/zufe/city",
-        "job_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/101/d_category%5B2%5D/102",
+        "job_fulltime_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/100",
+        "job_intern_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/101/d_category%5B2%5D/102",
         "headers": {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
@@ -427,7 +428,8 @@ def get_lite_http_sources():
         "name": "浙江财经大学",
         "base_url": "https://zccareer.zufe.edu.cn",
         "campus_list_url": "https://zccareer.zufe.edu.cn/campus/index/do1/zccareer.zufe.edu.cn/domain/zufe/city",
-        "job_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/101/d_category%5B2%5D/102",
+        "job_fulltime_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/100",
+        "job_intern_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/101/d_category%5B2%5D/102",
         "field_mapping": {},
     }
 
@@ -2801,6 +2803,10 @@ def _decode_zufe_embedded(html: str) -> str:
     才立方就业平台将列表和详情内容通过 pako 压缩 + Base64 编码嵌入页面 HTML，
     前端通过 JS 解码后替换 DOM 节点。此函数模拟该解码过程。
 
+    支持两种嵌入格式：
+    1. 列表页: .replaceWith(Base64.decode(unzip("...").substr(N)).substr(N))
+    2. 详情页: .html(Base64.decode(unzip("...")))
+
     Args:
         html: 页面原始 HTML
 
@@ -2810,23 +2816,46 @@ def _decode_zufe_embedded(html: str) -> str:
     import base64 as _b64
     import zlib as _zlib
 
+    # 格式1: replaceWith + substr 或 .html + substr
     match = re.search(
-        r'\.replaceWith\(Base64\.decode\(unzip\("([^"]+)"\)\.substr\((\d+)\)\)\.substr\((\d+)\)',
+        r'(?:replaceWith|html)\(Base64\.decode\(unzip\("([^"]+)"\)\.substr\((\d+)\)\)\.substr\((\d+)\)',
         html
     )
-    if not match:
-        return ""
+    offset1 = 0
+    offset2 = 0
+    need_find_b64_start = False
 
-    encoded = match.group(1)
-    offset1 = int(match.group(2))
-    offset2 = int(match.group(3))
+    if match:
+        encoded = match.group(1)
+        offset1 = int(match.group(2))
+        offset2 = int(match.group(3))
+    else:
+        # 格式2: Base64.decode(unzip("...")) - 无 substr
+        match = re.search(r'Base64\.decode\(unzip\("([^"]+)"\)\)', html)
+        if not match:
+            return ""
+        encoded = match.group(1)
+        # 格式2 没有 substr 偏移，但解压后仍是 Base64 内容
+        # 需要找到 Base64 内容的起始位置（跳过前缀填充）
+        need_find_b64_start = True
 
     try:
         decoded = _b64.b64decode(encoded)
         decompressed = _zlib.decompress(decoded, 15)
         text = decompressed.decode('utf-8', errors='replace')
 
-        b64_text = text[offset1:].strip()
+        if need_find_b64_start:
+            # 格式2: 解压后是 Base64 内容，前面有填充字符
+            # 找到第一个 Base64 字符的位置
+            b64_start = 0
+            for i, ch in enumerate(text):
+                if ch in 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/':
+                    b64_start = i
+                    break
+            b64_text = text[b64_start:].strip()
+        else:
+            b64_text = text[offset1:].strip()
+
         b64_text = ''.join(b64_text.split())
         padding = 4 - len(b64_text) % 4
         if padding < 4:
@@ -2834,7 +2863,15 @@ def _decode_zufe_embedded(html: str) -> str:
 
         content_bytes = _b64.b64decode(b64_text)
         content = content_bytes.decode('utf-8', errors='replace')
-        content = content[offset2:]
+
+        if need_find_b64_start:
+            # 格式2: 解码后的内容前面也有填充，找到 < 开始的位置
+            html_start = content.find('<')
+            if html_start > 0:
+                content = content[html_start:]
+        else:
+            content = content[offset2:]
+
         return content
     except Exception as e:
         logger.debug(f"解码ZUFE嵌入内容失败: {e}")
@@ -2898,7 +2935,14 @@ def crawl_zufe(source_config: Dict, max_items: int = 0, date_filter_months: int 
             "mode": "campus",
         },
         {
-            "url_template": source_config.get("job_list_url", ""),
+            "url_template": source_config.get("job_fulltime_list_url", ""),
+            "page_suffix": "/page/{page}",
+            "job_type": "全职",
+            "label": "全职岗位",
+            "mode": "job",
+        },
+        {
+            "url_template": source_config.get("job_intern_list_url", ""),
             "page_suffix": "/page/{page}",
             "job_type": "实习",
             "label": "实习岗位",
@@ -2980,6 +3024,8 @@ def crawl_zufe(source_config: Dict, max_items: int = 0, date_filter_months: int 
                         if max_items > 0 and count >= max_items:
                             break
 
+                        list_config_override_job_type = None
+
                         # 提取列表项信息
                         if list_config["mode"] == "campus":
                             a_tag = item.select_one('li.span7 a')
@@ -3037,13 +3083,18 @@ def crawl_zufe(source_config: Dict, max_items: int = 0, date_filter_months: int 
                                 if p_salary:
                                     salary_text = p_salary.get_text(strip=True)
                                 lis = salary_div.select('ul li')
+                                # lis[0]=地点, lis[1]=工作类型(全职/实习), lis[2]=学历
                                 if len(lis) >= 1:
                                     location = lis[0].get_text(strip=True)
                                 if len(lis) >= 2:
-                                    edu_text = lis[1].get_text(strip=True)
-                                    if edu_text != '不限':
+                                    type_text = lis[1].get_text(strip=True)
+                                    if type_text in ('全职', '实习'):
+                                        # lis[1] 是工作类型，覆盖列表配置的默认值
+                                        list_config_override_job_type = type_text
+                                if len(lis) >= 3:
+                                    edu_text = lis[2].get_text(strip=True)
+                                    if edu_text not in ('不限', ''):
                                         education = edu_text
-                                # lis[2] 是工作经验
                             salary = salary_text
 
                         # 日期过滤
@@ -3127,7 +3178,7 @@ def crawl_zufe(source_config: Dict, max_items: int = 0, date_filter_months: int 
                                 "education": education,
                                 "description": truncate_text(full_description),
                                 "publish_date": publish_date_str,
-                                "job_type": list_config["job_type"],
+                                "job_type": list_config_override_job_type or list_config["job_type"],
                                 "source": source,
                                 "university": source_name,
                                 "source_url": detail_url,
