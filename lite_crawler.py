@@ -5,7 +5,8 @@
 
 特性:
 - 单线程执行，无并发
-- 只支持 HTTP 爬虫（sufe, zuel, cufe, dufe, swufe）
+- 支持 HTTP 爬虫（sufe, zuel, cufe, dufe, swufe, zjgsu, cueb, tencent）
+- 完全独立运行，不依赖 src/spiders/ 或 scripts/ 目录
 - 逐条写入数据库，不缓存数据
 - 失败重试 5 次（指数退避）
 - 完善的日志管理系统
@@ -62,9 +63,6 @@ load_env()
 
 import requests
 
-sys.path.insert(0, str(Path(__file__).parent / "src" / "spiders"))
-from spider_configs import get_lite_http_sources
-
 DB_PATH = Path(__file__).parent / "data" / "jobs.db"
 LOG_DIR = Path(__file__).parent / "logs"
 MAX_RETRIES = 5
@@ -81,7 +79,155 @@ DETAIL_DELAY = 0.5
 MAX_PAGES = 20
 OVERWRITE_MODE = False
 
-HTTP_SOURCES = get_lite_http_sources()
+HTTP_SOURCES = {
+    "sufe": {
+        "name": "上海财经大学",
+        "base_url": "https://career.sufe.edu.cn",
+        "list_url": "/career//zpxx/search/zpxx",
+        "detail_url": "/career//zpxx/data/zpxx/{item_id}",
+        "field_mapping": {
+            "title": "zwmc",
+            "company": "dwmc",
+            "location": "gzszxmc",
+            "salary": "yxmc",
+            "publish_date": "fbrq",
+            "deadline": "zpjzrq",
+            "industry": "hyyjmc",
+            "education": "xlyqmc",
+            "requirements": "zyyqmc",
+            "description": "zwms",
+            "job_type": "gzlxmc",
+            "recruit_count": "xqrs",
+        },
+    },
+    "zuel": {
+        "name": "中南财经政法大学",
+        "base_url": "https://jyzx.zuel.edu.cn",
+        "list_url": "/api/publicly/recruit/list",
+        "detail_url": "/api/publicly/recruit/get?id={id}",
+        "field_mapping": {
+            "title": "jobName",
+            "company": "companyName",
+            "location": "area",
+            "salary": "salary",
+            "publish_date": "createTime",
+            "education": "education",
+            "requirements": "zpdxjtj",
+            "industry": "nature",
+            "description": "zpgw",
+            "contact": "recruitContact",
+        },
+    },
+    "cufe": {
+        "name": "中央财经大学",
+        "base_url": "http://scc.cufe.edu.cn",
+        "list_url": "/f/recruitmentinfo/ajax_frontRecruitinfo",
+        "detail_url": "/f/recruitmentinfo/ajax_show",
+        "field_mapping": {
+            "title": "title",
+            "company": "corporationinfo.name",
+            "location": "recruitmentPositionList[0].cityName",
+            "publish_date": "startTime",
+            "deadline": "endTime",
+            "education": "recruitmentPositionList[0].studentType",
+            "requirements": "recruitmentPositionList[0].majorName",
+            "industry": "corporationinfo.corporationNatureValue",
+            "description": "positionDescription",
+            "job_type": "positionTypeValue",
+            "apply_url": "onlineApplicationUrl",
+            "contact": "resumeReceiveEmail",
+            "tags": "labelValue",
+        },
+    },
+    "dufe": {
+        "name": "东北财经大学",
+        "base_url": "https://career.dufe.edu.cn",
+        "list_url": "/f/recruitmentinfo/ajax_frontRecruitinfo",
+        "detail_url": "/f/recruitmentinfo/ajax_show",
+        "field_mapping": {
+            "title": "title",
+            "company": "corporationinfo.name",
+            "location": "recruitmentPositionList[0].cityName",
+            "publish_date": "startTime",
+            "deadline": "endTime",
+            "education": "recruitmentPositionList[0].studentType",
+            "requirements": "recruitmentPositionList[0].majorName",
+            "industry": "corporationinfo.corporationNatureValue",
+            "description": "positionDescription",
+            "job_type": "positionTypeValue",
+            "apply_url": "onlineApplicationUrl",
+            "contact": "resumeReceiveEmail",
+            "tags": "labelValue",
+        },
+    },
+    "swufe": {
+        "name": "西南财经大学",
+        "base_url": "https://job3.swufe.edu.cn",
+        "list_url_pattern": "https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm",
+        "field_mapping": {
+            "title": "position_name",
+            "company": "company",
+            "location": "location",
+            "salary": "salary",
+            "education": "education",
+            "description": "description",
+            "requirements": "requirements",
+            "contact": "contact",
+            "industry": "industry",
+            "publish_date": "publish_date",
+        },
+    },
+    "zjgsu": {
+        "name": "浙江工商大学",
+        "base_url": "https://jyw.zjgsu.edu.cn",
+        "list_url": "/career/zpxx/search/zpxx",
+        "detail_url": "/career/zpxx/view/zpxx/{item_id}",
+        "field_mapping": {
+            "title": "zpzt",
+            "company": "dwmc",
+            "location": "szxmc",
+            "industry": "hyyjmc",
+            "company_type": "xzyjmc",
+            "company_size": "rsgmmc",
+            "publish_date": "fbrq",
+            "deadline": "zpjzrq",
+            "recruit_count": "xqrs",
+            "contact_email": "jltdyx",
+            "views": "djs",
+        },
+    },
+    "cueb": {
+        "name": "首都经济贸易大学",
+        "base_url": "https://jy.cueb.edu.cn",
+        "list_url": "/front/zp_query/zpxxQuery.do",
+        "detail_url": "/front/zpxx.jspa?tid={tid}",
+        "list_api": "https://jy.cueb.edu.cn/front/zp_query/zpxxQuery.do",
+        "field_mapping": {
+            "title": "title",
+            "company": "dwmc",
+            "location": "dwszddm",
+            "publish_date": "createTime",
+            "views": "click",
+        },
+    },
+    "tencent": {
+        "name": "腾讯",
+        "base_url": "https://careers.tencent.com",
+        "list_url": "https://careers.tencent.com/tencentcareer/api/post/Query",
+        "detail_url": "",
+        "list_api": "https://careers.tencent.com/tencentcareer/api/post/Query",
+        "field_mapping": {
+            "title": "RecruitPostName",
+            "company": "BGName",
+            "location": "LocationName",
+            "category": "CategoryName",
+            "description": "Responsibility",
+            "publish_date": "LastUpdateTime",
+            "experience": "RequireWorkYearsName",
+            "apply_url": "PostURL",
+        },
+    },
+}
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -1276,6 +1422,214 @@ class PlatformCrawler(BaseCrawler):
         }
 
 
+def _parse_swufe_detail(html: str, url: str, source: str, university: str,
+                        location_default: str = "成都") -> Optional[Dict]:
+    """解析SWUFE详情页HTML为岗位字典（内联版本，不依赖shared_parsers）"""
+    try:
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(html, "html.parser")
+
+        no_page = soup.find("div", class_="no_page_group")
+        if no_page:
+            return None
+
+        new_se_main = soup.find('div', class_='new-se-main')
+        main_div = soup.find('div', class_='main')
+        jobsshow = soup.find('div', class_='jobsshow')
+
+        position_name = ""
+        if new_se_main:
+            jobname_elem = new_se_main.find('div', class_='jobname')
+            if jobname_elem:
+                j_n_txt = jobname_elem.find('div', class_='j-n-txt')
+                position_name = j_n_txt.get_text(strip=True) if j_n_txt else ""
+
+        if not position_name:
+            return None
+
+        publish_date_str = ""
+        if new_se_main:
+            job_date = new_se_main.find('div', class_='job_date')
+            if job_date:
+                date_span = job_date.find('span', class_='cutom_font')
+                if date_span:
+                    publish_date_str = date_span.get_text(strip=True)[:10]
+
+        publish_date = normalize_date(publish_date_str) if publish_date_str else ""
+
+        salary = "面议"
+        education = ""
+        location = ""
+
+        search_container = new_se_main or soup
+        job_msg = search_container.find('div', class_='job_msg')
+        if job_msg:
+            for span in job_msg.find_all('span'):
+                span_text = span.get_text(strip=True)
+                if '薪酬：' in span_text:
+                    salary_txt = span_text.replace('薪酬：', '')
+                    if salary_txt:
+                        salary = salary_txt
+                elif '学历：' in span_text:
+                    edu_txt = span_text.replace('学历：', '')
+                    if edu_txt:
+                        education = edu_txt
+                elif '工作地：' in span_text:
+                    loc_txt = span_text.replace('工作地：', '')
+                    if loc_txt:
+                        location = loc_txt
+
+        company = ""
+        industry = ""
+
+        if new_se_main:
+            job_com = new_se_main.find('div', class_='job-com')
+            if job_com:
+                com_name = job_com.find('div', class_='com-name')
+                if com_name:
+                    company = com_name.get_text(strip=True)
+                com_class = job_com.find('div', class_='com-class')
+                if com_class:
+                    industry = com_class.get_text(strip=True)
+
+        if not company and main_div:
+            com_name_alt = main_div.find('div', class_='com-name')
+            if com_name_alt:
+                company = com_name_alt.get_text(strip=True)
+
+        if company:
+            company = company.lstrip(">").strip()
+            suffixes = ["招聘简章", "校园招聘", "社会招聘", "实习生招聘", "2026届", "2025届",
+                        "2024届", "2026年", "2025年", "2024年", "招聘公告", "招聘启事",
+                        "校招", "秋招", "春招", "宣讲会", "招聘信息"]
+            for suffix in sorted(suffixes, key=len, reverse=True):
+                if company.endswith(suffix):
+                    company = company[:-len(suffix)].strip()
+                    break
+            company = re.sub(r'[\s\-—_]*(20\d{2})[\s\-—_]*(届|年|秋|春)[\s\-—_]*$', '', company).strip()
+        else:
+            company = "未知公司"
+
+        title = position_name or company
+
+        description_parts = []
+        requirements = ""
+
+        describe_container = main_div or jobsshow or soup
+        describe_divs = describe_container.find_all('div', class_='describe')
+
+        for desc_div in describe_divs:
+            tit = desc_div.find('div', class_='tit')
+            if tit:
+                tit_text = tit.get_text(strip=True)
+                txt = desc_div.find('div', class_='txt')
+                req = desc_div.find('div', class_='req')
+
+                if '职位描述' in tit_text and txt:
+                    description_parts.append(f"【职位描述】{txt.get_text(strip=True)}")
+                elif '投递' in tit_text or '要求' in tit_text:
+                    req_text = ""
+                    if req:
+                        req_text = req.get_text(strip=True)
+                    elif txt:
+                        req_text = txt.get_text(strip=True)
+                    if not req_text:
+                        req_text = desc_div.get_text(strip=True).replace(tit_text, '').strip()
+                    if req_text:
+                        requirements = req_text
+
+        if not description_parts:
+            desc_el = describe_container.select_one("div.describe div.txt")
+            if desc_el:
+                description_parts.append(desc_el.get_text(strip=True))
+
+        contact_parts = []
+        page_text = soup.get_text()
+        email_match = re.search(r'[\w.-]+@[\w.-]+\.\w+', page_text)
+        if email_match:
+            contact_parts.append(f"邮箱: {email_match.group()}")
+        phone_match = re.search(r'1[3-9]\d{9}', page_text)
+        if phone_match:
+            contact_parts.append(f"电话: {phone_match.group()}")
+        contact = " | ".join(contact_parts)
+
+        tags = []
+        for tag_el in soup.select("div.lab div.li"):
+            tag_text = tag_el.get_text(strip=True)
+            if tag_text:
+                tags.append(tag_text)
+        tags_str = ",".join(tags) if tags else ""
+
+        description = "\n\n".join(description_parts)
+
+        return {
+            "title": title,
+            "company": company,
+            "location": location or location_default,
+            "description": truncate_text(description) or title,
+            "salary": salary,
+            "requirements": requirements,
+            "industry": industry,
+            "education": education,
+            "experience": "",
+            "contact": contact,
+            "publish_date": publish_date,
+            "tags": tags_str,
+            "source": source,
+            "university": university,
+            "source_url": url,
+            "apply_url": url,
+        }
+    except Exception as e:
+        logger.debug(f"SWUFE详情页解析异常: {e}")
+        return None
+
+
+def _parse_swufe_list_date(item, cutoff_date=None):
+    """从SWUFE列表页项中解析发布时间并判断是否过期（内联版本）"""
+    from datetime import datetime as dt_datetime, timedelta
+
+    publish_date_str = ""
+    is_expired = False
+
+    job_row = item.find_parent('div', class_='yli')
+    if not job_row:
+        return publish_date_str, is_expired
+
+    detail_div = job_row.find('div', class_='detail')
+    if not detail_div:
+        return publish_date_str, is_expired
+
+    for span in detail_div.find_all('span'):
+        txt2 = span.find('div', class_='txt2')
+        if txt2 and '发布时间' in txt2.get_text():
+            publish_text = span.get_text(strip=True).replace('发布时间：', '')
+
+            if '小时前' in publish_text or '天前' in publish_text or '分钟前' in publish_text:
+                is_expired = False
+                num_match = re.search(r'(\d+)', publish_text)
+                if num_match:
+                    days_ago = int(num_match.group(1))
+                    if '小时前' in publish_text or '分钟前' in publish_text:
+                        days_ago = 0
+                    publish_date = dt_datetime.now() - timedelta(days=days_ago)
+                    publish_date_str = publish_date.strftime('%Y-%m-%d')
+            else:
+                date_match = re.search(r'(\d{4}-\d{2}-\d{2})', publish_text)
+                if date_match:
+                    publish_date_str = date_match.group(1)
+                    if cutoff_date:
+                        try:
+                            publish_date = dt_datetime.strptime(publish_date_str, '%Y-%m-%d')
+                            if publish_date < cutoff_date:
+                                is_expired = True
+                        except ValueError:
+                            pass
+            break
+
+    return publish_date_str, is_expired
+
+
 class SwufeCrawler(BaseCrawler):
     def __init__(self, source_config: Dict, max_items: int = 0, date_filter_months: int = 2):
         super().__init__(source_config, max_items)
@@ -1340,16 +1694,15 @@ class SwufeCrawler(BaseCrawler):
             return False
 
     def fetch_detail(self, item_url: str, item: Dict, section: Dict) -> Optional[Dict]:
-        from src.spiders.shared_parsers import parse_swufe_detail, parse_swufe_list_date
         html_item = item.get("_html_item")
         if html_item:
-            publish_date_str, is_expired = parse_swufe_list_date(html_item, self.cutoff_date)
+            publish_date_str, is_expired = _parse_swufe_list_date(html_item, self.cutoff_date)
             if is_expired:
                 return None
         detail_response = fetch_with_retry(item_url)
         if not detail_response:
             return None
-        job = parse_swufe_detail(
+        job = _parse_swufe_detail(
             detail_response.text,
             item_url,
             self.source,
@@ -1478,9 +1831,7 @@ class CuebCrawler(BaseCrawler):
     def __init__(self, source_config: Dict, max_items: int = 0):
         super().__init__(source_config, max_items)
         self.source = "cueb"
-        from spider_configs import get_spider_config
-        full_config = get_spider_config(self.source)
-        self.list_api = full_config.get("list_api", "")
+        self.list_api = self.source_config.get("list_api", "")
 
     def _build_headers(self) -> Dict:
         return {
@@ -1572,9 +1923,7 @@ class TencentCrawler(BaseCrawler):
     def __init__(self, source_config: Dict, max_items: int = 0):
         super().__init__(source_config, max_items)
         self.source = "tencent"
-        from spider_configs import get_spider_config
-        full_config = get_spider_config(self.source)
-        self.list_api = full_config.get("list_api", "")
+        self.list_api = self.source_config.get("list_api", "")
 
     def _build_headers(self) -> Dict:
         return {
