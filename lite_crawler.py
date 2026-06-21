@@ -515,6 +515,12 @@ HTTP_SOURCES["mohrss"] = {
     "list_url": "http://www.job.mohrss.gov.cn/cjobs/jobinfolist/listJobinfolist",
     "detail_url_pattern": "http://www.job.mohrss.gov.cn/cjobs/jobinfolist/cb21/showgw?id={id}",
 }
+HTTP_SOURCES["yingjiesheng"] = {
+    "name": "应届生求职网",
+    "base_url": "https://www.yingjiesheng.com",
+    "source_id": "yingjiesheng",
+    "location": "全国",
+}
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
@@ -4303,6 +4309,269 @@ def crawl_yunjiuye(source_config: Dict, max_items: int = 0, date_filter_months: 
     crawl_logger.log_source_end(source, source_name, count)
 
 
+# ==================== 应届生求职网爬虫 ====================
+
+# 应届生求职网分类页面城市映射
+_YJS_CITY_PAGES = [
+    {"name": "不限", "path": "/major/buxian/", "location": "全国"},
+    {"name": "上海", "path": "/major/buxian/shanghai/", "location": "上海"},
+    {"name": "北京", "path": "/major/buxian/beijing/", "location": "北京"},
+    {"name": "广州", "path": "/major/buxian/guangzhou/", "location": "广州"},
+    {"name": "深圳", "path": "/major/buxian/shenzhen/", "location": "深圳"},
+    {"name": "武汉", "path": "/major/buxian/wuhan/", "location": "武汉"},
+    {"name": "南京", "path": "/major/buxian/nanjing/", "location": "南京"},
+    {"name": "天津", "path": "/major/buxian/tianjin/", "location": "天津"},
+    {"name": "成都", "path": "/major/buxian/chengdu/", "location": "成都"},
+]
+
+
+def _parse_yjs_job_title(raw_title: str):
+    """解析应届生求职网职位标题
+
+    标题格式: [城市]公司名 职位名
+    例如: [上海]中糧家佳康食品有限公司 营销二部中区-销售管培生（上海）
+    也可能: [北京上海广东南京其它]乐读 专职教师岗
+    或:     [佛山-南海区]佛山市华之屋恒香食品有限公司 文员
+    或:     []中糧家佳康食品有限公司 营销管培生（安徽）
+    """
+    company = ""
+    title = ""
+    location_from_title = ""
+
+    # 提取方括号中的城市
+    bracket_match = re.match(r'\[([^\]]*)\]\s*', raw_title)
+    if bracket_match:
+        location_from_title = bracket_match.group(1).strip()
+        rest = raw_title[bracket_match.end():]
+    else:
+        rest = raw_title
+
+    # 分离公司名和职位名：公司名和职位名之间通常用空格分隔
+    # 公司名通常不包含"-"开头，但职位名可能包含
+    # 策略：找到第一个空格，空格前为公司名，空格后为职位名
+    parts = rest.split(None, 1)
+    if len(parts) >= 2:
+        company = parts[0].strip()
+        title = parts[1].strip()
+    elif len(parts) == 1:
+        # 只有公司名没有职位名的情况
+        company = parts[0].strip()
+
+    return company, title, location_from_title
+
+
+def crawl_yingjiesheng(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
+    """爬取应届生求职网（基于URL去重的增量爬取）
+
+    应届生求职网（yingjiesheng.com）是中国领先的大学生求职网站，
+    属于51job旗下，提供校园招聘和实习信息。
+
+    数据获取方式：
+    - 列表页: https://www.yingjiesheng.com/major/buxian/{city}/
+      页面为GBK编码的PHP服务端渲染HTML
+    - 列表结构: <tr class="jobli"> 含4个td: 标题(含链接)、地点、来源、日期
+    - 标题格式: [城市]公司名 职位名
+    - 分页: list_2.html, list_3.html, ...
+    - 详情页被阿里云WAF保护，无法直接获取
+
+    增量策略：
+    - 通过 URL 去重判断是否需要继续
+    - 每页检查所有 URL 是否已存在，全部存在则停止爬取
+    - 最多爬取 MAX_PAGES 页
+    - 检查发布时间，过期数据停止爬取
+    """
+    from bs4 import BeautifulSoup
+    from datetime import datetime, timedelta
+
+    source = "yingjiesheng"
+    source_name = source_config.get("name", "应届生求职网")
+    base_url = source_config.get("base_url", "https://www.yingjiesheng.com")
+
+    crawl_logger.log_source_start(source, source_name)
+
+    count = 0
+    cutoff_date = datetime.now() - timedelta(days=date_filter_months * 30)
+    seen_urls = set()  # 避免同一URL在不同城市页面重复
+
+    try:
+        for city_info in _YJS_CITY_PAGES:
+            if max_items > 0 and count >= max_items:
+                logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
+                break
+
+            city_name = city_info["name"]
+            city_path = city_info["path"]
+            default_location = city_info["location"]
+
+            page = 1
+            city_count = 0
+
+            while page <= MAX_PAGES:
+                if max_items > 0 and count >= max_items:
+                    break
+
+                # 构造分页URL
+                if page == 1:
+                    page_url = f"{base_url}{city_path}"
+                else:
+                    page_url = f"{base_url}{city_path}list_{page}.html"
+
+                logger.info(f"▶ 爬取{city_name}第 {page} 页: {page_url}")
+
+                response = fetch_with_retry(page_url)
+                if not response:
+                    logger.warning(f"{city_name}第 {page} 页获取失败，跳过")
+                    break
+
+                try:
+                    # 应届生求职网使用GBK编码
+                    response.encoding = 'gbk'
+                    soup = BeautifulSoup(response.text, 'html.parser')
+
+                    # 查找职位列表行
+                    rows = soup.find_all('tr', class_='jobli')
+                    if not rows:
+                        logger.debug(f"{city_name}第 {page} 页无职位数据，爬取结束")
+                        break
+
+                    logger.info(f"{city_name}第 {page} 页: 获取到 {len(rows)} 条岗位")
+
+                    # URL去重检查
+                    if not OVERWRITE_MODE:
+                        page_urls = []
+                        for row in rows:
+                            link = row.find('a', href=True)
+                            if link:
+                                href = link['href']
+                                if href.startswith('/'):
+                                    href = f"{base_url}{href}"
+                                page_urls.append(href)
+
+                        existing_count = sum(1 for u in page_urls if url_exists(u) or u in seen_urls)
+
+                        if existing_count == len(page_urls) and len(page_urls) > 0:
+                            logger.info(
+                                f"{city_name}第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，"
+                                f"切换下一城市"
+                            )
+                            break
+
+                    should_stop = False
+
+                    for row in rows:
+                        if max_items > 0 and count >= max_items:
+                            break
+
+                        link = row.find('a', href=True)
+                        if not link:
+                            continue
+
+                        href = link['href']
+                        if href.startswith('/'):
+                            href = f"{base_url}{href}"
+
+                        # 跳过已见URL
+                        if href in seen_urls:
+                            continue
+
+                        if not OVERWRITE_MODE and url_exists(href):
+                            seen_urls.add(href)
+                            continue
+
+                        seen_urls.add(href)
+
+                        # 解析行数据
+                        tds = row.find_all('td')
+                        raw_title = tds[0].get_text(strip=True) if len(tds) > 0 else ""
+                        location = tds[1].get_text(strip=True) if len(tds) > 1 else ""
+                        job_source = tds[2].get_text(strip=True) if len(tds) > 2 else ""
+                        date_str = tds[3].get_text(strip=True) if len(tds) > 3 else ""
+
+                        # 解析标题：[城市]公司名 职位名
+                        company, title, location_from_title = _parse_yjs_job_title(raw_title)
+
+                        if not title:
+                            title = raw_title  # 解析失败时使用原始标题
+
+                        # 发布日期
+                        publish_date = ""
+                        if date_str:
+                            date_match = re.search(r'(\d{4}-\d{2}-\d{2})', date_str)
+                            if date_match:
+                                publish_date = date_match.group(1)
+
+                        # 日期过滤
+                        if publish_date:
+                            try:
+                                pub_date = datetime.strptime(publish_date, '%Y-%m-%d')
+                                if pub_date < cutoff_date:
+                                    logger.debug(f"遇到过期数据 ({publish_date}): {title[:30]}")
+                                    should_stop = True
+                                    break
+                            except ValueError:
+                                pass
+
+                        # 确定地点
+                        final_location = location or location_from_title or default_location
+                        # 清理地点中的省略号
+                        final_location = re.sub(r',\.\.\.+$', '', final_location)
+
+                        # 构造描述
+                        description_parts = []
+                        if company:
+                            description_parts.append(f"公司: {company}")
+                        if job_source:
+                            description_parts.append(f"来源: {job_source}")
+                        if location_from_title:
+                            description_parts.append(f"工作地点: {location_from_title}")
+
+                        full_description = '\n'.join(description_parts)
+
+                        job = {
+                            "title": title,
+                            "company": company,
+                            "location": final_location,
+                            "salary": "面议",
+                            "education": "",
+                            "description": truncate_text(full_description),
+                            "publish_date": publish_date,
+                            "job_type": "校招",
+                            "source": source,
+                            "university": source_name,
+                            "source_url": href,
+                            "apply_url": href,
+                        }
+
+                        yield job
+                        count += 1
+                        city_count += 1
+
+                        if count % 10 == 0:
+                            logger.info(f"  已完成: {count} 条")
+
+                        time.sleep(DETAIL_DELAY)
+
+                    if should_stop:
+                        break
+
+                    page += 1
+
+                except Exception as e:
+                    crawl_logger.log_error(source, e, f"解析{city_name}列表页: {page}")
+                    break
+
+            logger.info(f"{city_name}完成: {city_count} 条")
+
+    except KeyboardInterrupt:
+        logger.warning("用户中断爬取")
+    except Exception as e:
+        crawl_logger.log_error(source, e, "爬取过程异常")
+    finally:
+        save_crawl_state(source, 0, count, extra='{}')
+
+    crawl_logger.log_source_end(source, source_name, count)
+
+
 _running = True
 
 
@@ -5272,6 +5541,8 @@ def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -
         job_iterator = crawl_yunjiuye(source_config, max_items, date_filter_months)
     elif source == "mohrss":
         job_iterator = crawl_mohrss(source_config, max_items, date_filter_months)
+    elif source == "yingjiesheng":
+        job_iterator = crawl_yingjiesheng(source_config, max_items, date_filter_months)
     else:
         return 0
     
