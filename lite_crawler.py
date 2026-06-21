@@ -507,6 +507,14 @@ HTTP_SOURCES["nau"] = {
     "list_api": "https://www.91job.org.cn/web/wsjysc/lbxq/getZpgwPageList",
     "referer": "https://nau.91job.org.cn/",
 }
+HTTP_SOURCES["mohrss"] = {
+    "name": "中国公共招聘网",
+    "base_url": "http://www.job.mohrss.gov.cn",
+    "source_id": "mohrss",
+    "location": "全国",
+    "list_url": "http://www.job.mohrss.gov.cn/cjobs/jobinfolist/listJobinfolist",
+    "detail_url_pattern": "http://www.job.mohrss.gov.cn/cjobs/jobinfolist/cb21/showgw?id={id}",
+}
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
@@ -3454,6 +3462,278 @@ def crawl_91job(source_config: Dict, max_items: int = 0, date_filter_months: int
     crawl_logger.log_source_end(source, source_name, count)
 
 
+# ==================== MOHRSS 爬虫 ====================
+
+# 学历代码映射表
+_MOHRSS_EDUCATION_MAP = {
+    "1": "初中及以下",
+    "2": "高中/中专/技校",
+    "3": "大专",
+    "4": "本科",
+    "5": "硕士",
+    "6": "博士",
+    "7": "其他",
+    "9": "不限",
+    "90": "不限",
+}
+
+# 工作类型代码映射表
+_MOHRSS_JOB_TYPE_MAP = {
+    "1": "全职",
+    "2": "兼职",
+    "3": "实习",
+    "4": "全职",
+}
+
+
+def crawl_mohrss(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
+    """爬取 MOHRSS - 中国公共招聘网（基于URL去重的增量爬取）
+
+    中国公共招聘网（job.mohrss.gov.cn）是人社部主办的国家级官方招聘平台。
+    岗位列表页通过服务端渲染HTML，岗位数据以HTML编码的JSON格式嵌入在
+    id="findjoblist" 的隐藏input中，前端JS解析后渲染。
+
+    数据获取方式：
+    - 列表页: GET /cjobs/jobinfolist/listJobinfolist?pageNo=N
+    - 数据提取: 从隐藏input#findjoblist中解析HTML-encoded JSON
+    - 详情页: /cjobs/jobinfolist/cb21/showgw?id={acb200}（列表页已含完整信息，按需访问）
+
+    列表页JSON字段映射：
+    - aca112: 岗位名称
+    - aab004: 单位名称
+    - aab302: 地区
+    - acb241: 最低月薪
+    - acb242: 最高月薪
+    - acb22a: 岗位描述
+    - aae004: 联系人
+    - aae005: 联系电话
+    - aae006: 单位地址
+    - acb228: 学历要求代码
+    - acb239: 工作类型代码
+    - acb200: 岗位ID
+    - aab001: 单位ID
+    - org_: 发布机构
+    - s_uptime: 更新时间
+    - aca111_: 岗位类别
+
+    增量策略：
+    - 通过 URL 去重判断是否需要继续
+    - 每页检查所有 URL 是否已存在，全部存在则停止爬取
+    - 最多爬取 MAX_PAGES 页
+    """
+    import json as _json
+    from html import unescape as _html_unescape
+    from datetime import datetime, timedelta
+
+    source = "mohrss"
+    source_name = source_config["name"]
+    base_url = source_config["base_url"]
+    list_url = source_config.get("list_url", "http://www.job.mohrss.gov.cn/cjobs/jobinfolist/listJobinfolist")
+    detail_url_pattern = source_config.get(
+        "detail_url_pattern",
+        "http://www.job.mohrss.gov.cn/cjobs/jobinfolist/cb21/showgw?id={id}"
+    )
+
+    crawl_logger.log_source_start(source, source_name)
+
+    count = 0
+    cutoff_date = datetime.now() - timedelta(days=date_filter_months * 30)
+
+    try:
+        page = 1
+
+        while page <= MAX_PAGES:
+            if max_items > 0 and count >= max_items:
+                logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
+                break
+
+            # 构造分页URL
+            page_url = f"{list_url}?pageNo={page}"
+            logger.info(f"▶ 爬取第 {page} 页: {page_url}")
+
+            response = fetch_with_retry(page_url)
+            if not response:
+                logger.warning(f"第 {page} 页列表获取失败，停止爬取")
+                break
+
+            try:
+                # 从HTML中提取隐藏input#findjoblist的值
+                from bs4 import BeautifulSoup
+                soup = BeautifulSoup(response.text, 'html.parser')
+
+                findjoblist_input = soup.find('input', id='findjoblist')
+                if not findjoblist_input or not findjoblist_input.get('value'):
+                    logger.debug(f"第 {page} 页无岗位数据（findjoblist为空），爬取结束")
+                    break
+
+                # 解码HTML实体并解析JSON
+                raw_value = findjoblist_input['value']
+                decoded_json = _html_unescape(raw_value)
+
+                try:
+                    items = _json.loads(decoded_json)
+                except _json.JSONDecodeError as e:
+                    logger.warning(f"第 {page} 页JSON解析失败: {e}")
+                    break
+
+                if not items or not isinstance(items, list):
+                    logger.debug(f"第 {page} 页无数据，爬取结束")
+                    break
+
+                logger.info(f"第 {page} 页: 获取到 {len(items)} 条岗位")
+
+                # URL去重检查
+                if not OVERWRITE_MODE:
+                    page_urls = [
+                        detail_url_pattern.format(id=item.get('acb200', ''))
+                        for item in items if item.get('acb200')
+                    ]
+                    existing_count = sum(1 for url in page_urls if url_exists(url))
+                    if existing_count == len(page_urls) and len(page_urls) > 0:
+                        logger.info(
+                            f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取"
+                        )
+                        break
+
+                should_stop = False
+
+                for item in items:
+                    if max_items > 0 and count >= max_items:
+                        break
+
+                    job_id = item.get('acb200')
+                    if not job_id:
+                        continue
+
+                    # 构造详情页URL
+                    detail_url = detail_url_pattern.format(id=job_id)
+
+                    if not OVERWRITE_MODE and url_exists(detail_url):
+                        continue
+
+                    # 从列表页数据直接提取所有信息
+                    title = item.get('aca112', '').strip()
+                    company = item.get('aab004', '').strip()
+                    location = item.get('aab302', '').strip()
+                    description = item.get('acb22a', '').strip()
+                    contact_person = item.get('aae004', '').strip()
+                    contact_phone = item.get('aae005', '').strip()
+                    address = item.get('aae006', '').strip()
+                    org = item.get('org_', '').strip()
+                    category = item.get('aca111_', '').strip()
+
+                    # 薪资
+                    salary_min = item.get('acb241', 0)
+                    salary_max = item.get('acb242', 0)
+                    if salary_min and salary_max:
+                        salary = f"{salary_min}-{salary_max}元/月"
+                    elif salary_min:
+                        salary = f"{salary_min}元以上/月"
+                    else:
+                        salary = "面议"
+
+                    # 学历
+                    edu_code = str(item.get('acb228', ''))
+                    education = _MOHRSS_EDUCATION_MAP.get(edu_code, '')
+
+                    # 工作类型
+                    type_code = str(item.get('acb239', ''))
+                    job_type = _MOHRSS_JOB_TYPE_MAP.get(type_code, "全职")
+
+                    # 发布时间
+                    publish_date = ''
+                    update_time = item.get('s_uptime', '')
+                    if update_time:
+                        # s_uptime 可能是时间戳(ms)或日期字符串
+                        try:
+                            if isinstance(update_time, (int, float)) and update_time > 0:
+                                pub_dt = datetime.fromtimestamp(update_time / 1000)
+                                publish_date = pub_dt.strftime('%Y-%m-%d')
+                            elif isinstance(update_time, str) and update_time.strip():
+                                # 尝试解析日期字符串
+                                date_match = re.search(r'(\d{4}[-/]\d{2}[-/]\d{2})', update_time)
+                                if date_match:
+                                    publish_date = date_match.group(1).replace('/', '-')
+                        except (ValueError, OSError):
+                            pass
+
+                    # 日期过滤
+                    if publish_date:
+                        try:
+                            pub_date = datetime.strptime(publish_date, '%Y-%m-%d')
+                            if pub_date < cutoff_date:
+                                logger.info(f"遇到过期数据 ({publish_date})，停止爬取")
+                                should_stop = True
+                                break
+                        except ValueError:
+                            pass
+
+                    # 构造描述
+                    description_parts = []
+                    if description:
+                        cleaned_desc = re.sub(r'\s+', ' ', description).strip()
+                        description_parts.append(cleaned_desc[:2000])
+
+                    # 联系方式
+                    contact_parts = []
+                    if contact_person:
+                        contact_parts.append(f"联系人: {contact_person}")
+                    if contact_phone:
+                        contact_parts.append(f"联系电话: {contact_phone}")
+                    if address:
+                        contact_parts.append(f"单位地址: {address}")
+                    if org:
+                        contact_parts.append(f"发布机构: {org}")
+                    if category:
+                        contact_parts.append(f"岗位类别: {category}")
+
+                    if contact_parts:
+                        description_parts.append("【联系方式】\n" + "\n".join(contact_parts))
+
+                    full_description = '\n\n'.join(description_parts)
+
+                    job = {
+                        "title": title,
+                        "company": company,
+                        "location": location or source_config.get("location", "全国"),
+                        "salary": salary,
+                        "education": education,
+                        "description": truncate_text(full_description),
+                        "publish_date": publish_date,
+                        "job_type": job_type,
+                        "source": source,
+                        "university": source_name,
+                        "source_url": detail_url,
+                        "apply_url": detail_url,
+                    }
+
+                    yield job
+                    count += 1
+
+                    if count % 10 == 0:
+                        logger.info(f"  已完成: {count} 条")
+
+                    time.sleep(DETAIL_DELAY)
+
+                if should_stop:
+                    break
+
+                page += 1
+
+            except Exception as e:
+                crawl_logger.log_error(source, e, f"解析列表页: {page}")
+                break
+
+    except KeyboardInterrupt:
+        logger.warning("用户中断爬取")
+    except Exception as e:
+        crawl_logger.log_error(source, e, "爬取过程异常")
+    finally:
+        save_crawl_state(source, 0, count, extra='{}')
+
+    crawl_logger.log_source_end(source, source_name, count)
+
+
 def crawl_bytedance(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
     """爬取字节跳动招聘（基于URL去重的增量爬取）
 
@@ -3581,7 +3861,7 @@ def crawl_bytedance(source_config: Dict, max_items: int = 0, date_filter_months:
 
                 try:
                     data = response.json()
-                except (ValueError, json.JSONDecodeError) as e:
+                except (ValueError, _json.JSONDecodeError) as e:
                     logger.warning(f"[{label}] offset={offset} JSON 解析失败: {e}")
                     break
 
@@ -3809,10 +4089,21 @@ def crawl_yunjiuye(source_config: Dict, max_items: int = 0, date_filter_months: 
             if total_resp:
                 try:
                     total_data = total_resp.json()
-                    total_count = total_data.get("data", 0)
+                    # 总数API可能直接返回整数，也可能返回 {"data": N}
+                    if isinstance(total_data, int):
+                        total_count = total_data
+                    elif isinstance(total_data, dict):
+                        total_count = total_data.get("data", 0)
+                        if not isinstance(total_count, int):
+                            total_count = 0
                     logger.info(f"[{label}] 总数: {total_count}")
-                except (ValueError, json.JSONDecodeError):
-                    logger.warning(f"[{label}] 获取总数失败")
+                except (ValueError, _json.JSONDecodeError):
+                    # 总数API可能返回纯数字文本
+                    try:
+                        total_count = int(total_resp.text.strip())
+                        logger.info(f"[{label}] 总数: {total_count}")
+                    except (ValueError, TypeError):
+                        logger.warning(f"[{label}] 获取总数失败")
 
             logger.info(f"▶ 爬取板块: {label}")
 
@@ -3832,7 +4123,7 @@ def crawl_yunjiuye(source_config: Dict, max_items: int = 0, date_filter_months: 
 
                 try:
                     result = response.json()
-                except (ValueError, json.JSONDecodeError) as e:
+                except (ValueError, _json.JSONDecodeError) as e:
                     logger.warning(f"[{label}] 第 {page} 页 JSON 解析失败: {e}")
                     break
 
@@ -4979,6 +5270,8 @@ def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -
         job_iterator = crawl_91job(source_config, max_items, date_filter_months)
     elif source in ("tjufe", "gdufe", "jxufe"):
         job_iterator = crawl_yunjiuye(source_config, max_items, date_filter_months)
+    elif source == "mohrss":
+        job_iterator = crawl_mohrss(source_config, max_items, date_filter_months)
     else:
         return 0
     
