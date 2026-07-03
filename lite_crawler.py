@@ -521,6 +521,54 @@ HTTP_SOURCES["yingjiesheng"] = {
     "source_id": "yingjiesheng",
     "location": "全国",
 }
+# 北京工商大学 - CUFE平台，复用crawl_platform
+HTTP_SOURCES["btbu"] = {
+    "name": "北京工商大学",
+    "base_url": "https://gsbys.btbu.edu.cn",
+    "list_url": "/f/recruitmentinfo/ajax_frontRecruitinfo",
+    "detail_url": "/f/recruitmentinfo/ajax_show",
+    "location": "北京",
+    "field_mapping": {
+        "title": "title",
+        "company": "corporationinfo.name",
+        "location": "recruitmentPositionList[0].cityName",
+        "publish_date": "startTime",
+        "deadline": "endTime",
+        "education": "recruitmentPositionList[0].studentType",
+        "requirements": "recruitmentPositionList[0].majorName",
+        "industry": "corporationinfo.corporationNatureValue",
+        "description": "positionDescription",
+        "job_type": "positionTypeValue",
+        "apply_url": "onlineApplicationUrl",
+        "contact": "resumeReceiveEmail",
+        "tags": "labelValue",
+    },
+}
+# 腾讯招聘 - GET API
+HTTP_SOURCES["tencent"] = {
+    "name": "腾讯",
+    "base_url": "https://careers.tencent.com",
+    "source_id": "tencent",
+    "location": "全国",
+    "list_api": "https://careers.tencent.com/tencentcareer/api/post/Query",
+    "page_size": 10,
+    "headers": {
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "Referer": "https://careers.tencent.com/search.html",
+    },
+}
+# 南京财经大学 - 91job平台，复用crawl_91job
+HTTP_SOURCES["nufe"] = {
+    "name": "南京财经大学",
+    "base_url": "https://www.91job.org.cn",
+    "source_id": "nufe",
+    "location": "南京",
+    "xxdm": "10307",
+    "lmid": "C42AEC7BB04636C5E0559D15282125C4",
+    "list_api": "https://www.91job.org.cn/web/wsjysc/lbxq/getZpgwPageList",
+    "referer": "https://nufe.91job.org.cn/",
+}
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
@@ -3492,6 +3540,131 @@ _MOHRSS_JOB_TYPE_MAP = {
 }
 
 
+def crawl_tencent(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
+    """爬取腾讯招聘 - GET API（基于URL去重的增量爬取）
+
+    腾讯招聘使用公开REST API，GET请求，无需认证。
+    列表API返回完整岗位信息，无需请求详情页。
+
+    增量策略：
+    - 通过 URL 去重判断是否需要继续
+    - 每页检查所有 URL 是否已存在，全部存在则停止爬取
+    - 最多爬取 MAX_PAGES 页
+    """
+    from datetime import datetime, timedelta
+    import time as _time
+
+    source = source_config.get("source_id", "tencent")
+    source_name = source_config["name"]
+    list_api = source_config.get("list_api", "")
+    page_size = source_config.get("page_size", 10)
+    extra_headers = source_config.get("headers", {})
+
+    crawl_logger.log_source_start(source, source_name)
+
+    count = 0
+    cutoff_date = datetime.now() - timedelta(days=date_filter_months * 30)
+
+    logger.info(f"▶ 开始爬取 {source_name}")
+
+    page = 1
+    while page <= MAX_PAGES:
+        if max_items > 0 and count >= max_items:
+            logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
+            break
+
+        params = {
+            "pageIndex": page,
+            "pageSize": page_size,
+            "language": "zh-cn",
+            "area": "cn",
+            "timestamp": int(_time.time() * 1000),
+        }
+
+        response = fetch_with_retry(
+            list_api, method="GET", params=params, headers=extra_headers
+        )
+
+        if not response:
+            logger.warning(f"第 {page} 页列表获取失败，停止爬取")
+            break
+
+        try:
+            result = response.json()
+            if result.get("Code") != 200:
+                logger.warning(f"API返回异常 Code={result.get('Code')}，停止爬取")
+                break
+
+            data = result.get("Data", {})
+            posts = data.get("Posts", [])
+            total = data.get("Count", 0)
+
+            if not posts:
+                logger.debug(f"第 {page} 页无数据，爬取结束")
+                break
+
+            logger.info(f"第 {page} 页: 获取到 {len(posts)} 条 (总计 {total})")
+
+            # 检查当前页所有 URL 是否都已存在
+            if not OVERWRITE_MODE:
+                page_urls = [p.get("PostURL", "") for p in posts if p.get("PostURL")]
+                existing_count = sum(1 for url in page_urls if url_exists(url))
+                if existing_count == len(page_urls) and len(page_urls) > 0:
+                    logger.info(f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取")
+                    break
+
+            for post in posts:
+                if max_items > 0 and count >= max_items:
+                    break
+
+                post_url = post.get("PostURL", "")
+                if not post_url:
+                    continue
+
+                if not OVERWRITE_MODE and url_exists(post_url):
+                    continue
+
+                # 解析发布时间
+                publish_date_str = ""
+                last_update = post.get("LastUpdateTime", "")
+                if last_update:
+                    try:
+                        dt = datetime.fromisoformat(last_update)
+                        publish_date_str = dt.strftime("%Y-%m-%d")
+                        if dt < cutoff_date:
+                            logger.debug(f"跳过过期数据: {publish_date_str}")
+                            continue
+                    except (ValueError, TypeError):
+                        publish_date_str = last_update[:10] if len(last_update) >= 10 else ""
+
+                job = {
+                    "title": post.get("RecruitPostName", ""),
+                    "company": post.get("BGName", "腾讯"),
+                    "location": post.get("LocationName", ""),
+                    "category": post.get("CategoryName", ""),
+                    "description": post.get("Responsibility", ""),
+                    "experience": post.get("RequireWorkYearsName", ""),
+                    "publish_date": publish_date_str,
+                    "source": source,
+                    "university": source_name,
+                    "source_url": post_url,
+                    "apply_url": post_url,
+                }
+
+                yield job
+                count += 1
+                logger.debug(f"  [{count}] {job['title']} - {job['company']}")
+
+            page += 1
+            time.sleep(DETAIL_DELAY)
+
+        except Exception as e:
+            crawl_logger.log_error(source, e, f"列表页 {page} 解析异常")
+            break
+
+    crawl_logger.log_source_end(source, source_name, count)
+
+
 def crawl_mohrss(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
     """爬取 MOHRSS - 中国公共招聘网（基于URL去重的增量爬取）
 
@@ -5523,7 +5696,7 @@ def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -
         job_iterator = crawl_sufe(source_config, max_items)
     elif source == "zuel":
         job_iterator = crawl_zuel(source_config, max_items)
-    elif source in ("cufe", "dufe"):
+    elif source in ("cufe", "dufe", "btbu"):
         job_iterator = crawl_platform(source, source_config, max_items)
     elif source == "swufe":
         job_iterator = crawl_swufe(source_config, max_items, date_filter_months)
@@ -5535,7 +5708,7 @@ def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -
         job_iterator = crawl_zufe(source_config, max_items, date_filter_months)
     elif source == "bytedance":
         job_iterator = crawl_bytedance(source_config, max_items, date_filter_months)
-    elif source == "nau":
+    elif source in ("nau", "nufe"):
         job_iterator = crawl_91job(source_config, max_items, date_filter_months)
     elif source in ("tjufe", "gdufe", "jxufe"):
         job_iterator = crawl_yunjiuye(source_config, max_items, date_filter_months)
@@ -5543,6 +5716,8 @@ def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -
         job_iterator = crawl_mohrss(source_config, max_items, date_filter_months)
     elif source == "yingjiesheng":
         job_iterator = crawl_yingjiesheng(source_config, max_items, date_filter_months)
+    elif source == "tencent":
+        job_iterator = crawl_tencent(source_config, max_items, date_filter_months)
     else:
         return 0
     
