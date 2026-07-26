@@ -372,6 +372,7 @@ def get_lite_http_sources():
                     "base_url": config["base_url"],
                     "list_url": sections[0]["list_url"],
                     "detail_url": detail_url,
+                    "max_description_len": 1500,
                     "field_mapping": {k: (v[0] if isinstance(v, list) else v)
                                       for k, v in config.get("field_mapping", {}).items()},
                 }
@@ -386,6 +387,7 @@ def get_lite_http_sources():
                     "base_url": config["base_url"],
                     "list_url": list_url,
                     "detail_url": detail_url,
+                    "max_description_len": 1500,
                     "field_mapping": {k: (v[0] if isinstance(v, list) else v)
                                       for k, v in fm.items()},
                 }
@@ -402,6 +404,7 @@ def get_lite_http_sources():
                 "base_url": config["base_url"],
                 "list_url": list_api,
                 "detail_url": detail_url,
+                "max_description_len": 1500,
                 "field_mapping": {k: (v[0] if isinstance(v, list) else v)
                                   for k, v in config.get("field_mapping", {}).items()},
             }
@@ -410,6 +413,7 @@ def get_lite_http_sources():
         "name": "西南财经大学",
         "base_url": "https://job3.swufe.edu.cn",
         "list_url_pattern": "https://job3.swufe.edu.cn/jobs/jobs_list/page/{page}.htm",
+        "max_description_len": 1500,
         "field_mapping": {
             "title": "position_name",
             "company": "company",
@@ -430,6 +434,7 @@ def get_lite_http_sources():
         "campus_list_url": "https://zccareer.zufe.edu.cn/campus/index/do1/zccareer.zufe.edu.cn/domain/zufe/city",
         "job_fulltime_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/100",
         "job_intern_list_url": "https://zccareer.zufe.edu.cn/job/search/d_category%5B0%5D/0/d_category%5B1%5D/101/d_category%5B2%5D/102",
+        "max_description_len": 1500,
         "field_mapping": {},
     }
 
@@ -456,6 +461,7 @@ def get_lite_http_sources():
             "base_url": yj_config["base_url"],
             "location": yj_config["location"],
             "spider_type": "yunjiuye",
+            "max_description_len": 1500,
             "field_mapping": {},
         }
 
@@ -487,15 +493,18 @@ HTTP_SOURCES = get_lite_http_sources()
 HTTP_SOURCES["zjgsu"] = {
     "name": "浙江工商大学",
     "base_url": "https://jyw.zjgsu.edu.cn",
+    "max_description_len": 1500,
 }
 HTTP_SOURCES["cueb"] = {
     "name": "首都经济贸易大学",
     "base_url": "https://jy.cueb.edu.cn",
+    "max_description_len": 1500,
 }
 HTTP_SOURCES["bytedance"] = {
     "name": "字节跳动",
     "base_url": "https://jobs.bytedance.com",
     "source_id": "bytedance",
+    "max_description_len": 800,
 }
 HTTP_SOURCES["nau"] = {
     "name": "南京审计大学",
@@ -506,6 +515,7 @@ HTTP_SOURCES["nau"] = {
     "lmid": "C42AEC7BB04636C5E0559D15282125C4",
     "list_api": "https://www.91job.org.cn/web/wsjysc/lbxq/getZpgwPageList",
     "referer": "https://nau.91job.org.cn/",
+    "max_description_len": 1500,
 }
 HTTP_SOURCES["mohrss"] = {
     "name": "中国公共招聘网",
@@ -514,12 +524,14 @@ HTTP_SOURCES["mohrss"] = {
     "location": "全国",
     "list_url": "http://www.job.mohrss.gov.cn/cjobs/jobinfolist/listJobinfolist",
     "detail_url_pattern": "http://www.job.mohrss.gov.cn/cjobs/jobinfolist/cb21/showgw?id={id}",
+    "max_description_len": 800,
 }
 HTTP_SOURCES["yingjiesheng"] = {
     "name": "应届生求职网",
     "base_url": "https://www.yingjiesheng.com",
     "source_id": "yingjiesheng",
     "location": "全国",
+    "max_description_len": 800,
 }
 # 北京工商大学 - CUFE平台，复用crawl_platform
 HTTP_SOURCES["btbu"] = {
@@ -528,6 +540,7 @@ HTTP_SOURCES["btbu"] = {
     "list_url": "/f/recruitmentinfo/ajax_frontRecruitinfo",
     "detail_url": "/f/recruitmentinfo/ajax_show",
     "location": "北京",
+    "max_description_len": 1500,
     "field_mapping": {
         "title": "title",
         "company": "corporationinfo.name",
@@ -555,6 +568,7 @@ HTTP_SOURCES["neepu"] = {
     "page_size": 15,
     "max_pages": 20,
     "menu_id": "36793",
+    "max_description_len": 1500,
 }
 # 腾讯招聘 - GET API
 HTTP_SOURCES["tencent"] = {
@@ -564,6 +578,7 @@ HTTP_SOURCES["tencent"] = {
     "location": "全国",
     "list_api": "https://careers.tencent.com/tencentcareer/api/post/Query",
     "page_size": 10,
+    "max_description_len": 800,
     "headers": {
         "Accept": "application/json, text/plain, */*",
         "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
@@ -580,6 +595,7 @@ HTTP_SOURCES["nufe"] = {
     "lmid": "C42AEC7BB04636C5E0559D15282125C4",
     "list_api": "https://www.91job.org.cn/web/wsjysc/lbxq/getZpgwPageList",
     "referer": "https://nufe.91job.org.cn/",
+    "max_description_len": 1500,
 }
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -1068,6 +1084,9 @@ def init_database():
             education TEXT DEFAULT '',
             experience TEXT DEFAULT '',
             contact TEXT DEFAULT '',
+            contact_email TEXT DEFAULT '',
+            contact_phone TEXT DEFAULT '',
+            contact_person TEXT DEFAULT '',
             source TEXT DEFAULT '',
             university TEXT DEFAULT '',
             source_url TEXT UNIQUE,
@@ -1083,6 +1102,13 @@ def init_database():
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    
+    # 兼容旧库：检测并添加新增的联系方式列
+    existing_columns = {row[1] for row in db.execute("PRAGMA table_info(jobs)").fetchall()}
+    for col in ["contact_email", "contact_phone", "contact_person"]:
+        if col not in existing_columns:
+            db.execute(f"ALTER TABLE jobs ADD COLUMN {col} TEXT DEFAULT ''")
+            logger.info(f"✓ 数据库迁移：添加 jobs.{col} 列")
     
     db.execute("CREATE INDEX IF NOT EXISTS idx_jobs_source ON jobs(source)")
     db.execute("CREATE INDEX IF NOT EXISTS idx_jobs_source_url ON jobs(source_url)")
@@ -1236,7 +1262,8 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
             db.execute("""
                 UPDATE jobs SET
                     title = ?, company = ?, location = ?, salary = ?, education = ?,
-                    requirements = ?, description = ?, contact = ?, publish_date = ?,
+                    requirements = ?, description = ?, contact = ?, contact_email = ?,
+                    contact_phone = ?, contact_person = ?, publish_date = ?,
                     deadline = ?, industry = ?, job_type = ?, experience = ?, tags = ?,
                     source = ?, university = ?, apply_url = ?, updated_at = CURRENT_TIMESTAMP
                 WHERE source_url = ?
@@ -1249,6 +1276,9 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
                 job.get("requirements", ""),
                 job.get("description", ""),
                 job.get("contact", ""),
+                job.get("contact_email", ""),
+                job.get("contact_phone", ""),
+                job.get("contact_person", ""),
                 job.get("publish_date", ""),
                 job.get("deadline", ""),
                 job.get("industry", ""),
@@ -1271,11 +1301,12 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
             return True
         else:
             db.execute("""
-                INSERT INTO jobs 
-                (title, company, location, salary, education, requirements, description, 
-                 contact, publish_date, deadline, industry, job_type, experience, tags,
+                INSERT INTO jobs
+                (title, company, location, salary, education, requirements, description,
+                 contact, contact_email, contact_phone, contact_person, publish_date,
+                 deadline, industry, job_type, experience, tags,
                  source, university, source_url, apply_url)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 job.get("title", ""),
                 job.get("company", ""),
@@ -1285,6 +1316,9 @@ def insert_job(job: Dict, date_filter_months: int = 2) -> bool:
                 job.get("requirements", ""),
                 job.get("description", ""),
                 job.get("contact", ""),
+                job.get("contact_email", ""),
+                job.get("contact_phone", ""),
+                job.get("contact_person", ""),
                 job.get("publish_date", ""),
                 job.get("deadline", ""),
                 job.get("industry", ""),
@@ -1508,7 +1542,7 @@ def crawl_sufe(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                                     "salary": salary,
                                     "education": education,
                                     "requirements": requirements,
-                                    "description": truncate_text(description),
+                                    "description": truncate_text(description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                                     "publish_date": detail_data.get("fbrq", ""),
                                     "deadline": detail_data.get("zpjzrq", ""),
                                     "industry": industry,
@@ -1692,7 +1726,7 @@ def crawl_zuel(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                                 "salary": detail_data.get("salary", "面议"),
                                 "education": detail_data.get("education", ""),
                                 "requirements": requirements,
-                                "description": truncate_text(description),
+                                "description": truncate_text(description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                                 "contact": contact,
                                 "publish_date": normalize_date(detail_data.get("createTime", "")),
                                 "job_type": job_type,
@@ -1905,7 +1939,7 @@ def crawl_platform(source: str, source_config: Dict, max_items: int = 0) -> Iter
                                 "salary": salary,
                                 "education": education,
                                 "requirements": requirements,
-                                "description": truncate_text(description),
+                                "description": truncate_text(description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                                 "contact": contact,
                                 "industry": industry,
                                 "job_type": job_type,
@@ -2186,6 +2220,70 @@ def _extract_description_from_html(html_content: str, content_selectors: list = 
         return ""
 
 
+# 联系方式正则模式（模块级常量，供所有解析函数复用）
+# 格式：(pattern, label, group_index) - group_index=0 表示整个匹配，1 表示第一个捕获组
+CONTACT_PATTERNS = [
+    (r'联系人[：:]\s*(\S+)', 'person', 1),
+    (r'联系电话[：:]\s*([\d\-]+)', 'phone', 1),
+    (r'联系邮箱[：:]\s*([\w.+-]+@[\w-]+\.[\w.-]+)', 'email', 1),
+    (r'联系邮件[：:]\s*([\w.+-]+@[\w-]+\.[\w.-]+)', 'email', 1),
+    (r'[\w.+-]+@[\w-]+\.[\w.-]+', 'email', 0),
+    (r'(?:电话|Tel|联系方式)[：:]?\s*(\d[-\d]{7,})', 'phone', 1),
+    (r'(1[3-9]\d{9})', 'phone', 1),
+    (r'(\d{3,4}[-\s]?\d{7,8})', 'phone', 1),
+]
+
+# 默认截断长度常量
+DEFAULT_MAX_DESCRIPTION_LEN = 500
+UNIVERSITY_MAX_DESCRIPTION_LEN = 1500
+INTERNET_MAX_DESCRIPTION_LEN = 800
+
+
+def _extract_contact_info(html_content: str) -> Dict[str, Any]:
+    """从 HTML 文本中提取联系方式（统一入口，供所有详情页解析函数复用）
+
+    Returns:
+        {
+            "email": "提取的邮箱（首个匹配，无则空字符串）",
+            "phone": "提取的电话/手机（首个匹配，无则空字符串）",
+            "person": "联系人（首个匹配，无则空字符串）",
+            "info_list": ["联系邮箱：xxx", "联系电话：xxx", "联系人：xxx"]  # 用于 description 拼接
+        }
+    """
+    result = {"email": "", "phone": "", "person": "", "info_list": []}
+    if not html_content:
+        return result
+
+    found = {"email": False, "phone": False, "person": False}
+
+    for pattern, label, group_idx in CONTACT_PATTERNS:
+        if found[label]:
+            continue
+        match = re.search(pattern, html_content)
+        if match:
+            # group_idx=0 表示整个匹配；>0 时需确认捕获组存在（match.lastindex 可能为 None）
+            if group_idx == 0:
+                value = match.group(0)
+            elif match.lastindex is not None and group_idx <= match.lastindex:
+                value = match.group(group_idx)
+            else:
+                value = match.group(0)
+            value = value.strip()
+            if value and not result[label]:
+                result[label] = value
+                found[label] = True
+
+    # 构造 info_list（用于 description 拼接）
+    if result["email"]:
+        result["info_list"].append(f"联系邮箱：{result['email']}")
+    if result["phone"]:
+        result["info_list"].append(f"联系电话：{result['phone']}")
+    if result["person"]:
+        result["info_list"].append(f"联系人：{result['person']}")
+
+    return result
+
+
 def _extract_salary_from_text(text: str) -> str:
     """从文本中提取薪资信息
 
@@ -2361,21 +2459,9 @@ def _parse_zjgsu_detail_page(html_content: str, item_data: Dict, job_type: str =
 
         requirement = '\n'.join(requirement_parts)
 
-        # 提取联系方式
-        contact_info = []
-        contact_patterns = [
-            (r'联系人[：:]\s*(\S+)', '联系人'),
-            (r'联系电话[：:]\s*([\d\-]+)', '联系电话'),
-            (r'联系邮箱[：:]\s*([\w\.-]+@[\w\.-]+\.\w+)', '联系邮箱'),
-            (r'联系邮件[：:]\s*([\w\.-]+@[\w\.-]+\.\w+)', '联系邮箱'),
-            (r'[\w\.-]+@[\w\.-]+\.\w+', '联系邮箱'),
-            (r'(?:电话|Tel)[：:]?\s*(\d[-\d]{7,})', '联系电话'),
-        ]
-
-        for pattern, label in contact_patterns:
-            match = re.search(pattern, html_content)
-            if match:
-                contact_info.append(f"{label}：{match.group(1)}")
+        # 提取联系方式（统一调用 _extract_contact_info）
+        contact_data = _extract_contact_info(html_content)
+        contact_info = contact_data["info_list"]
 
         return {
             "title": title,
@@ -2386,6 +2472,9 @@ def _parse_zjgsu_detail_page(html_content: str, item_data: Dict, job_type: str =
             "education": education,
             "job_type": extracted_job_type,
             "contact_info": contact_info,
+            "contact_email": contact_data["email"],
+            "contact_phone": contact_data["phone"],
+            "contact_person": contact_data["person"],
         }
     except Exception as e:
         logger.debug(f"ZJGSU详情页解析异常: {e}")
@@ -2398,6 +2487,9 @@ def _parse_zjgsu_detail_page(html_content: str, item_data: Dict, job_type: str =
             "education": "",
             "job_type": job_type,
             "contact_info": [],
+            "contact_email": "",
+            "contact_phone": "",
+            "contact_person": "",
         }
 
 
@@ -2427,7 +2519,6 @@ def _parse_cueb_detail_page(html_content: str, item_data: Dict, job_type: str = 
 
         # 提取要求和联系方式（从 corp-detail-box）
         requirement = ""
-        contact_info = []
         education = ""
 
         detail_box = soup.select_one('div.corp-detail-box')
@@ -2440,19 +2531,9 @@ def _parse_cueb_detail_page(html_content: str, item_data: Dict, job_type: str = 
             if edu_match:
                 education = edu_match.group(1)
 
-            # 提取联系方式
-            contact_patterns = [
-                (r'联系人[：:]\s*(\S+)', '联系人'),
-                (r'联系电话[：:]\s*([\d\-]+)', '联系电话'),
-                (r'联系邮箱[：:]\s*([\w\.-]+@[\w\.-]+\.\w+)', '联系邮箱'),
-                (r'[\w\.-]+@[\w\.-]+\.\w+', '联系邮箱'),
-                (r'(?:电话|Tel)[：:]?\s*(\d[-\d]{7,})', '联系电话'),
-            ]
-
-            for pattern, label in contact_patterns:
-                match = re.search(pattern, html_content)
-                if match:
-                    contact_info.append(f"{label}：{match.group(1)}")
+        # 提取联系方式（统一调用 _extract_contact_info）
+        contact_data = _extract_contact_info(html_content)
+        contact_info = contact_data["info_list"]
 
         # 提取薪资
         salary = _extract_salary_from_text(html_content)
@@ -2465,6 +2546,9 @@ def _parse_cueb_detail_page(html_content: str, item_data: Dict, job_type: str = 
             "education": education,
             "job_type": job_type,
             "contact_info": contact_info,
+            "contact_email": contact_data["email"],
+            "contact_phone": contact_data["phone"],
+            "contact_person": contact_data["person"],
         }
     except Exception as e:
         logger.debug(f"CUEB详情页解析异常: {e}")
@@ -2476,6 +2560,9 @@ def _parse_cueb_detail_page(html_content: str, item_data: Dict, job_type: str = 
             "education": "",
             "job_type": job_type,
             "contact_info": [],
+            "contact_email": "",
+            "contact_phone": "",
+            "contact_person": "",
         }
 
 
@@ -2503,7 +2590,6 @@ def _parse_neepu_detail_page(html_content: str, item_data: Dict, job_type: str =
 
         # 提取要求和联系方式
         requirement = ""
-        contact_info = []
         education = ""
 
         # 学历从列表 API 的标志位推断
@@ -2525,23 +2611,9 @@ def _parse_neepu_detail_page(html_content: str, item_data: Dict, job_type: str =
         if item_data.get('professionals'):
             requirement = f"专业要求：{item_data['professionals']}"
 
-        # 提取联系方式（参照 CUEB 的 contact_patterns）
-        contact_patterns = [
-            (r'联系人[：:]\s*(\S+)', '联系人'),
-            (r'联系电话[：:]\s*([\d\-]+)', '联系电话'),
-            (r'联系邮箱[：:]\s*([\w\.-]+@[\w\.-]+\.\w+)', '联系邮箱'),
-            (r'[\w\.-]+@[\w\.-]+\.\w+', '联系邮箱'),
-            (r'(?:电话|Tel|联系方式)[：:]?\s*(\d[-\d]{7,})', '联系电话'),
-            (r'(1[3-9]\d{9})', '联系电话'),
-        ]
-
-        for pattern, label in contact_patterns:
-            match = re.search(pattern, html_content)
-            if match:
-                contact_value = match.group(1) if match.lastindex else match.group(0)
-                contact_str = f"{label}：{contact_value}"
-                if contact_str not in contact_info:
-                    contact_info.append(contact_str)
+        # 提取联系方式（统一调用 _extract_contact_info）
+        contact_data = _extract_contact_info(html_content)
+        contact_info = contact_data["info_list"]
 
         # 提取薪资
         salary = _extract_salary_from_text(html_content)
@@ -2554,6 +2626,9 @@ def _parse_neepu_detail_page(html_content: str, item_data: Dict, job_type: str =
             "education": education,
             "job_type": job_type,
             "contact_info": contact_info,
+            "contact_email": contact_data["email"],
+            "contact_phone": contact_data["phone"],
+            "contact_person": contact_data["person"],
         }
     except Exception as e:
         logger.debug(f"NEEPU详情页解析异常: {e}")
@@ -2565,10 +2640,39 @@ def _parse_neepu_detail_page(html_content: str, item_data: Dict, job_type: str =
             "education": "",
             "job_type": job_type,
             "contact_info": [],
+            "contact_email": "",
+            "contact_phone": "",
+            "contact_person": "",
         }
 
 
 # ==================== ZJGSU 爬虫 ====================
+
+def _fetch_detail_and_parse(
+    detail_url: str,
+    item_data: Dict,
+    parser_func,
+    source_config: Dict,
+    headers: Dict = None,
+    job_type: str = "全职",
+) -> Optional[Dict]:
+    """通用详情页抓取+解析 helper（供 crawl_cueb/crawl_neepu/crawl_zjgsu 复用）
+
+    封装：fetch_with_retry → parser_func → time.sleep(DETAIL_DELAY) → 异常处理
+    返回：parser_func 的返回 dict，或 None（失败时）
+    """
+    try:
+        detail_response = fetch_with_retry(detail_url, headers=headers)
+        if not detail_response:
+            return None
+
+        parsed = parser_func(detail_response.text, item_data, job_type)
+        time.sleep(DETAIL_DELAY)
+        return parsed
+    except Exception as e:
+        logger.debug(f"详情页抓取解析失败 {detail_url}: {e}")
+        return None
+
 
 def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
     """爬取 ZJGSU - 浙江工商大学（基于URL去重的增量爬取）
@@ -2691,19 +2795,15 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                         if not OVERWRITE_MODE and url_exists(view_url):
                             continue
 
-                        # 访问详情页获取完整信息
-                        detail_response = fetch_with_retry(view_url)
-                        if not detail_response:
+                        # 访问详情页获取完整信息（fetch+parse+sleep 封装在 _fetch_detail_and_parse 中）
+                        parsed = _fetch_detail_and_parse(
+                            view_url, item, _parse_zjgsu_detail_page, source_config,
+                            job_type=section["job_type"],
+                        )
+                        if not parsed:
                             continue
 
                         try:
-                            # 使用 ZJGSU 专用解析函数
-                            parsed = _parse_zjgsu_detail_page(
-                                detail_response.text,
-                                item,
-                                section["job_type"]
-                            )
-
                             # 提取基本信息
                             company = item.get('dwmc', '')
                             location = parsed["location"] or item.get('szxmc', '') or item.get('szsmc', '')
@@ -2756,7 +2856,7 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                                 "salary": parsed["salary"],
                                 "education": parsed["education"],
                                 "industry": industry,
-                                "description": truncate_text(full_description),
+                                "description": truncate_text(full_description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                                 "publish_date": publish_date,
                                 "deadline": deadline,
                                 "job_type": parsed["job_type"],
@@ -2764,6 +2864,9 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                                 "university": source_name,
                                 "source_url": view_url,
                                 "apply_url": view_url,
+                                "contact_email": parsed.get("contact_email", "") or contact_email,
+                                "contact_phone": parsed.get("contact_phone", ""),
+                                "contact_person": parsed.get("contact_person", ""),
                             }
 
                             yield job
@@ -2771,8 +2874,6 @@ def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                             if count % 20 == 0:
                                 logger.info(f"  已完成: {count} 条")
-
-                            time.sleep(DETAIL_DELAY)
 
                         except Exception as e:
                             crawl_logger.log_error(source, e, f"解析详情页: {view_url}")
@@ -2908,19 +3009,15 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                         if not OVERWRITE_MODE and url_exists(view_url):
                             continue
 
-                        # 访问详情页获取完整信息
-                        detail_response = fetch_with_retry(view_url)
-                        if not detail_response:
+                        # 访问详情页获取完整信息（fetch+parse+sleep 封装在 _fetch_detail_and_parse 中）
+                        parsed = _fetch_detail_and_parse(
+                            view_url, item, _parse_cueb_detail_page, source_config,
+                            job_type=pos_type["job_type"],
+                        )
+                        if not parsed:
                             continue
 
                         try:
-                            # 使用 CUEB 专用解析函数
-                            parsed = _parse_cueb_detail_page(
-                                detail_response.text,
-                                item,
-                                pos_type["job_type"]
-                            )
-
                             # 提取基本信息
                             company = item.get('dwmc', '')
                             location = item.get('dwszddm', '')
@@ -2965,13 +3062,16 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                                 "location": location,
                                 "salary": parsed["salary"],
                                 "education": parsed["education"],
-                                "description": truncate_text(full_description),
+                                "description": truncate_text(full_description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                                 "publish_date": publish_date,
                                 "job_type": parsed["job_type"],
                                 "source": source,
                                 "university": source_name,
                                 "source_url": view_url,
                                 "apply_url": view_url,
+                                "contact_email": parsed.get("contact_email", ""),
+                                "contact_phone": parsed.get("contact_phone", ""),
+                                "contact_person": parsed.get("contact_person", ""),
                             }
 
                             yield job
@@ -2979,8 +3079,6 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                             if count % 20 == 0:
                                 logger.info(f"  已完成: {count} 条")
-
-                            time.sleep(DETAIL_DELAY)
 
                         except Exception as e:
                             crawl_logger.log_error(source, e, f"解析详情页: {view_url}")
@@ -3108,21 +3206,17 @@ def crawl_neepu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                     if not OVERWRITE_MODE and url_exists(view_url):
                         continue
 
-                    # 访问详情页获取完整信息
-                    detail_response = fetch_with_retry(view_url, headers=headers)
-                    if not detail_response:
+                    # 访问详情页获取完整信息（fetch+parse+sleep 封装在 _fetch_detail_and_parse 中）
+                    recruit_type = item.get('recruit_type', '正式招聘')
+                    job_type = '实习' if '实习' in recruit_type else '全职'
+                    parsed = _fetch_detail_and_parse(
+                        view_url, item, _parse_neepu_detail_page, source_config,
+                        headers=headers, job_type=job_type,
+                    )
+                    if not parsed:
                         continue
 
                     try:
-                        # 使用 NEEPU 专用解析函数
-                        recruit_type = item.get('recruit_type', '正式招聘')
-                        job_type = '实习' if '实习' in recruit_type else '全职'
-                        parsed = _parse_neepu_detail_page(
-                            detail_response.text,
-                            item,
-                            job_type
-                        )
-
                         # 提取基本信息
                         company = item.get('company_name', '')
                         location = item.get('work_city', '') or source_config.get('location', '吉林')
@@ -3164,13 +3258,16 @@ def crawl_neepu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                             "location": location,
                             "salary": parsed["salary"],
                             "education": parsed["education"],
-                            "description": truncate_text(full_description),
+                            "description": truncate_text(full_description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                             "publish_date": publish_date,
                             "job_type": parsed["job_type"],
                             "source": source,
                             "university": source_name,
                             "source_url": view_url,
                             "apply_url": view_url,
+                            "contact_email": parsed.get("contact_email", ""),
+                            "contact_phone": parsed.get("contact_phone", ""),
+                            "contact_person": parsed.get("contact_person", ""),
                         }
 
                         yield job
@@ -3178,8 +3275,6 @@ def crawl_neepu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
 
                         if count % 10 == 0:
                             logger.info(f"  已完成: {count} 条")
-
-                        time.sleep(DETAIL_DELAY)
 
                     except Exception as e:
                         crawl_logger.log_error(source, e, f"解析详情页: {view_url}")
@@ -3282,23 +3377,13 @@ def _decode_zufe_embedded(html: str) -> str:
 
 
 def _extract_email_from_text(text: str) -> str:
-    """从文本中提取邮箱"""
-    match = re.search(r'[\w.+-]+@[\w-]+\.[\w.-]+', text)
-    return match.group(0) if match else ""
+    """从文本中提取邮箱（复用 CONTACT_PATTERNS，与详情页解析保持一致）"""
+    return _extract_contact_info(text).get("email", "")
 
 
 def _extract_phone_from_text(text: str) -> str:
-    """从文本中提取电话号码"""
-    patterns = [
-        r'(?:联系电话|电话|联系方式|咨询)[：:\s]*(\d{3,4}[-\s]?\d{7,8})',
-        r'(\d{3,4}[-\s]?\d{7,8})',
-        r'(?:1[3-9]\d{9})',
-    ]
-    for pattern in patterns:
-        match = re.search(pattern, text)
-        if match:
-            return match.group(1) if match.lastindex else match.group(0)
-    return ""
+    """从文本中提取电话号码（复用 CONTACT_PATTERNS，与详情页解析保持一致）"""
+    return _extract_contact_info(text).get("phone", "")
 
 
 def crawl_zufe(source_config: Dict, max_items: int = 0, date_filter_months: int = 2) -> Iterator[Dict]:
@@ -3579,13 +3664,15 @@ def crawl_zufe(source_config: Dict, max_items: int = 0, date_filter_months: int 
                                 "location": location or source_config.get("location", "杭州"),
                                 "salary": salary,
                                 "education": education,
-                                "description": truncate_text(full_description),
+                                "description": truncate_text(full_description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                                 "publish_date": publish_date_str,
                                 "job_type": list_config_override_job_type or list_config["job_type"],
                                 "source": source,
                                 "university": source_name,
                                 "source_url": detail_url,
                                 "apply_url": detail_url,
+                                "contact_email": contact_email,
+                                "contact_phone": contact_phone,
                             }
 
                             yield job
@@ -3785,7 +3872,7 @@ def crawl_91job(source_config: Dict, max_items: int = 0, date_filter_months: int
                         "location": location,
                         "salary": "",
                         "education": education,
-                        "description": truncate_text(full_description),
+                        "description": truncate_text(full_description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                         "publish_date": publish_date,
                         "job_type": "全职",
                         "source": source,
@@ -4177,13 +4264,15 @@ def crawl_mohrss(source_config: Dict, max_items: int = 0, date_filter_months: in
                         "location": location or source_config.get("location", "全国"),
                         "salary": salary,
                         "education": education,
-                        "description": truncate_text(full_description),
+                        "description": truncate_text(full_description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                         "publish_date": publish_date,
                         "job_type": job_type,
                         "source": source,
                         "university": source_name,
                         "source_url": detail_url,
                         "apply_url": detail_url,
+                        "contact_person": contact_person,
+                        "contact_phone": contact_phone,
                     }
 
                     yield job
@@ -4457,7 +4546,7 @@ def crawl_bytedance(source_config: Dict, max_items: int = 0, date_filter_months:
                         "location": city_name,
                         "salary": "面议",
                         "education": "",
-                        "description": truncate_text(description),
+                        "description": truncate_text(description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                         "publish_date": publish_date_str,
                         "job_type": job_type,
                         "source": source,
@@ -4749,7 +4838,7 @@ def crawl_yunjiuye(source_config: Dict, max_items: int = 0, date_filter_months: 
                         "location": location,
                         "salary": "面议",
                         "education": education,
-                        "description": truncate_text(full_description),
+                        "description": truncate_text(full_description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                         "publish_date": publish_date_str,
                         "job_type": job_type,
                         "source": source,
@@ -5006,7 +5095,7 @@ def crawl_yingjiesheng(source_config: Dict, max_items: int = 0, date_filter_mont
                             "location": final_location,
                             "salary": "面议",
                             "education": "",
-                            "description": truncate_text(full_description),
+                            "description": truncate_text(full_description, max_len=source_config.get("max_description_len", DEFAULT_MAX_DESCRIPTION_LEN)),
                             "publish_date": publish_date,
                             "job_type": "校招",
                             "source": source,
