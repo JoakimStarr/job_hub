@@ -1,0 +1,25 @@
+- [x] spec.md 中字段映射建议已根据 Task 1 实际访问 API 的结果回填
+- [x] `HTTP_SOURCES["neepu"]` 配置存在且字段完整（name/base_url/list_api/detail_url_pattern/page_size/max_pages/menu_id/location）
+- [x] `menu_id` 固定为 "36793"（用户明确要求）
+- [x] `max_pages` 为 20（与全局 MAX_PAGES 一致，用户明确要求"最长 20 页每次爬取"）
+- [x] `_parse_neepu_detail_page()` 函数存在且能正确提取 `div.mian-inner` 节点内容
+- [x] `_parse_neepu_detail_page()` 复用 `_extract_email_from_text` 与 `_extract_phone_from_text`（通过 contact_patterns 列表正则提取），未重复实现
+- [x] `_parse_neepu_detail_page()` 异常分支返回安全默认值（title 取 item_data，其他字段为空/"面议"/[]）
+- [x] `crawl_neepu()` 函数实现 GET 分页爬取，`start_page` 从 1 开始
+- [x] `crawl_neepu()` 实现 URL 去重逻辑：每页全部 URL 已存在则停止
+- [x] `crawl_neepu()` 实现 `max_items` 限制：达到上限即停止
+- [x] `crawl_neepu()` 调用 `fetch_with_retry()` 获取详情页，使用 `time.sleep(DETAIL_DELAY)` 控制间隔
+- [x] `crawl_neepu()` 异常处理三段式（KeyboardInterrupt/Exception/finally）与 CUEB 一致
+- [x] `crawl_source()` 中存在 `elif source == "neepu":` 分派分支
+- [x] `lite_crawler.py` 第 8 行注释已更新包含 neepu
+- [x] `python lite_crawler.py --list-sources` 输出中包含 neepu 项
+- [x] `python lite_crawler.py --sources neepu --max-items 3` 成功爬取并入库
+- [x] 入库记录的 description 字段包含详情页 `div.mian-inner` 的实际内容
+- [x] 入库记录的 description 字段包含 `【联系方式】` 段落（联系方式前置到【信息】之后避免被 truncate_text 截断）
+- [x] 入库记录的 source 字段为 "neepu"，university 字段为 "东北电力大学"
+- [x] 入库记录的 source_url 字段为 `https://jy.neepu.edu.cn/detail/online?id={recruitment_id}&menu_id=36793` 格式
+- [x] 其他数据源（sufe/cufe 等）未受影响，仍可正常爬取（--list-sources 列出全部 19 个数据源）
+- [x] `package.json` 的 version 字段已升级（8.49.0 → 8.50.0）
+- [x] `package-lock.json` 的 version 字段与 `package.json` 完全一致（8.50.0）
+- [x] `package-lock.json` 中 `packages."".version` 也已同步更新（8.50.0）
+- [x] Git 提交信息格式为 `v8.50.0 新增东北电力大学(NEEPU)数据源`

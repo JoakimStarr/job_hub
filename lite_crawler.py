@@ -5,7 +5,7 @@
 
 特性:
 - 单线程执行，无并发
-- 只支持 HTTP 爬虫（sufe, zuel, cufe, dufe, swufe）
+- 支持 HTTP 爬虫（sufe, zuel, cufe, dufe, swufe, zjgsu, cueb, btbu, neepu, tencent, bytedance, mohrss, yingjiesheng, nau, nufe, tjufe, gdufe, jxufe）
 - 逐条写入数据库，不缓存数据
 - 失败重试 5 次（指数退避）
 - 完善的日志管理系统
@@ -543,6 +543,18 @@ HTTP_SOURCES["btbu"] = {
         "contact": "resumeReceiveEmail",
         "tags": "labelValue",
     },
+}
+# 东北电力大学 - 列表API+详情页，参照crawl_cueb模式
+HTTP_SOURCES["neepu"] = {
+    "name": "东北电力大学",
+    "base_url": "https://jy.neepu.edu.cn",
+    "source_id": "neepu",
+    "location": "吉林",
+    "list_api": "https://jy.neepu.edu.cn/module/getonlines",
+    "detail_url_pattern": "https://jy.neepu.edu.cn/detail/online?id={recruitment_id}&menu_id=36793",
+    "page_size": 15,
+    "max_pages": 20,
+    "menu_id": "36793",
 }
 # 腾讯招聘 - GET API
 HTTP_SOURCES["tencent"] = {
@@ -2467,6 +2479,95 @@ def _parse_cueb_detail_page(html_content: str, item_data: Dict, job_type: str = 
         }
 
 
+def _parse_neepu_detail_page(html_content: str, item_data: Dict, job_type: str = "全职") -> Dict:
+    """NEEPU 详情页专用解析函数
+
+    详情页结构：
+    - div.mian-inner - 岗位描述主体（注意拼写为 mian-inner，按网站原样）
+      - div.details-head - 标题、日期、点击数
+      - div.details-content - 正文内容
+    """
+    from bs4 import BeautifulSoup
+
+    try:
+        soup = BeautifulSoup(html_content, 'html.parser')
+
+        # 提取标题（优先用列表 API 的 title，详情页 details-head 也含标题）
+        title = item_data.get('title', '')
+
+        # 提取主体描述（div.mian-inner）
+        description = ""
+        mian_inner = soup.select_one('div.mian-inner')
+        if mian_inner:
+            description = mian_inner.get_text('\n', strip=True)
+
+        # 提取要求和联系方式
+        requirement = ""
+        contact_info = []
+        education = ""
+
+        # 学历从列表 API 的标志位推断
+        if item_data.get('is_above_doctor_degree') == '1':
+            education = '博士'
+        elif item_data.get('is_above_master_degree') == '1':
+            education = '硕士'
+        elif item_data.get('is_above_bachelor_degree') == '1':
+            education = '本科'
+        elif item_data.get('is_above_college_degree') == '1':
+            education = '大专'
+        else:
+            # 从详情页 HTML 中正则匹配学历
+            edu_match = re.search(r'(本科|硕士|博士|大专|中专|高中|不限)', html_content)
+            if edu_match:
+                education = edu_match.group(1)
+
+        # 专业要求来自列表 API
+        if item_data.get('professionals'):
+            requirement = f"专业要求：{item_data['professionals']}"
+
+        # 提取联系方式（参照 CUEB 的 contact_patterns）
+        contact_patterns = [
+            (r'联系人[：:]\s*(\S+)', '联系人'),
+            (r'联系电话[：:]\s*([\d\-]+)', '联系电话'),
+            (r'联系邮箱[：:]\s*([\w\.-]+@[\w\.-]+\.\w+)', '联系邮箱'),
+            (r'[\w\.-]+@[\w\.-]+\.\w+', '联系邮箱'),
+            (r'(?:电话|Tel|联系方式)[：:]?\s*(\d[-\d]{7,})', '联系电话'),
+            (r'(1[3-9]\d{9})', '联系电话'),
+        ]
+
+        for pattern, label in contact_patterns:
+            match = re.search(pattern, html_content)
+            if match:
+                contact_value = match.group(1) if match.lastindex else match.group(0)
+                contact_str = f"{label}：{contact_value}"
+                if contact_str not in contact_info:
+                    contact_info.append(contact_str)
+
+        # 提取薪资
+        salary = _extract_salary_from_text(html_content)
+
+        return {
+            "title": title,
+            "description": description,
+            "requirement": requirement,
+            "salary": salary,
+            "education": education,
+            "job_type": job_type,
+            "contact_info": contact_info,
+        }
+    except Exception as e:
+        logger.debug(f"NEEPU详情页解析异常: {e}")
+        return {
+            "title": item_data.get('title', ''),
+            "description": "",
+            "requirement": "",
+            "salary": "面议",
+            "education": "",
+            "job_type": job_type,
+            "contact_info": [],
+        }
+
+
 # ==================== ZJGSU 爬虫 ====================
 
 def crawl_zjgsu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
@@ -2890,6 +2991,205 @@ def crawl_cueb(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
                 except Exception as e:
                     crawl_logger.log_error(source, e, f"解析列表页: {page}")
                     break
+    except KeyboardInterrupt:
+        logger.warning("用户中断爬取")
+    except Exception as e:
+        crawl_logger.log_error(source, e, "爬取过程异常")
+    finally:
+        save_crawl_state(source, 0, count, extra='{}')
+
+    crawl_logger.log_source_end(source, source_name, count)
+
+
+def crawl_neepu(source_config: Dict, max_items: int = 0) -> Iterator[Dict]:
+    """爬取 NEEPU - 东北电力大学（基于URL去重的增量爬取）
+
+    增量策略：
+    - GET 请求列表 API，分页参数 start_page（从 1 开始）
+    - 每页 count=15 条
+    - 用 detail_url_pattern 构造去重 URL
+    - 每页检查所有 URL 是否已存在，全部存在则停止
+    - 最多爬取 MAX_PAGES=20 页
+    - 需要访问详情页获取完整岗位信息（div.mian-inner）
+    """
+    source = "neepu"
+    source_name = source_config["name"]
+    base_url = source_config["base_url"]
+    list_api = source_config.get("list_api", "https://jy.neepu.edu.cn/module/getonlines")
+    detail_url_pattern = source_config.get(
+        "detail_url_pattern",
+        "https://jy.neepu.edu.cn/detail/online?id={recruitment_id}&menu_id=36793"
+    )
+    page_size = source_config.get("page_size", 15)
+    max_pages = source_config.get("max_pages", MAX_PAGES)
+
+    crawl_logger.log_source_start(source, source_name)
+
+    count = 0
+
+    headers = {
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+        "Referer": "https://jy.neepu.edu.cn/detail/online",
+    }
+
+    try:
+        page = 1
+        while page <= max_pages:
+            if max_items > 0 and count >= max_items:
+                logger.info(f"达到最大数量限制 ({max_items})，停止爬取")
+                break
+
+            # 构造列表 API URL（带时间戳参数）
+            timestamp_ms = int(time.time() * 1000)
+            params = {
+                "start_page": str(page),
+                "k": "",
+                "recruit_type": "",
+                "panel_id": "",
+                "professionals": "",
+                "work_city": "",
+                "company_property": "",
+                "company_industry": "",
+                "count": str(page_size),
+                "start": str((page - 1) * page_size + 1),
+                "_": str(timestamp_ms),
+            }
+
+            logger.info(f"▶ 爬取第 {page} 页: start_page={page}")
+
+            response = fetch_with_retry(list_api, params=params, headers=headers)
+
+            if not response:
+                logger.warning(f"第 {page} 页列表获取失败，停止爬取")
+                break
+
+            try:
+                result = response.json()
+                if result.get("code") != 1:
+                    crawl_logger.log_error(
+                        source,
+                        Exception(f"API返回code={result.get('code')}, msg={result.get('msg')}"),
+                        f"列表页 {page}"
+                    )
+                    break
+
+                items = result.get("data", [])
+                if not items:
+                    logger.debug(f"第 {page} 页无数据，爬取结束")
+                    break
+
+                logger.info(f"第 {page} 页: 获取到 {len(items)} 条列表项")
+
+                # 检查当前页所有 URL 是否都已存在
+                if not OVERWRITE_MODE:
+                    page_urls = [
+                        detail_url_pattern.format(recruitment_id=item.get('recruitment_id'))
+                        for item in items if item.get('recruitment_id')
+                    ]
+                    existing_count = sum(1 for url in page_urls if url_exists(url))
+
+                    if existing_count == len(page_urls) and len(page_urls) > 0:
+                        logger.info(
+                            f"第 {page} 页所有 URL 已存在 ({existing_count}/{len(page_urls)})，停止爬取"
+                        )
+                        break
+
+                for item in items:
+                    if max_items > 0 and count >= max_items:
+                        break
+
+                    recruitment_id = item.get('recruitment_id')
+                    if not recruitment_id:
+                        continue
+
+                    view_url = detail_url_pattern.format(recruitment_id=recruitment_id)
+
+                    if not OVERWRITE_MODE and url_exists(view_url):
+                        continue
+
+                    # 访问详情页获取完整信息
+                    detail_response = fetch_with_retry(view_url, headers=headers)
+                    if not detail_response:
+                        continue
+
+                    try:
+                        # 使用 NEEPU 专用解析函数
+                        recruit_type = item.get('recruit_type', '正式招聘')
+                        job_type = '实习' if '实习' in recruit_type else '全职'
+                        parsed = _parse_neepu_detail_page(
+                            detail_response.text,
+                            item,
+                            job_type
+                        )
+
+                        # 提取基本信息
+                        company = item.get('company_name', '')
+                        location = item.get('work_city', '') or source_config.get('location', '吉林')
+                        views = item.get('view_count', '0')
+                        publish_date = item.get('create_time', '')
+
+                        # 构造完整描述
+                        description_parts = []
+
+                        # 添加信息
+                        extra_info = []
+                        if views and views != '0':
+                            extra_info.append(f"浏览量: {views}")
+                        if item.get('job_recruitment'):
+                            extra_info.append(f"招聘岗位: {item['job_recruitment']}")
+                        if item.get('recruitment_num') and item['recruitment_num'] != '0':
+                            extra_info.append(f"招聘人数: {item['recruitment_num']}")
+
+                        if extra_info:
+                            description_parts.append("【信息】\n" + "\n".join(extra_info))
+
+                        # 添加联系方式（放在前面，避免被 truncate_text 截断丢失）
+                        if parsed.get("contact_info"):
+                            description_parts.append("【联系方式】\n" + "\n".join(parsed["contact_info"]))
+
+                        # 添加岗位要求
+                        if parsed["requirement"]:
+                            description_parts.append("【岗位要求】\n" + parsed["requirement"])
+
+                        # 添加描述内容
+                        if parsed["description"]:
+                            description_parts.append(parsed["description"])
+
+                        full_description = "\n\n".join(description_parts)
+
+                        job = {
+                            "title": parsed["title"] or item.get('title', ''),
+                            "company": company,
+                            "location": location,
+                            "salary": parsed["salary"],
+                            "education": parsed["education"],
+                            "description": truncate_text(full_description),
+                            "publish_date": publish_date,
+                            "job_type": parsed["job_type"],
+                            "source": source,
+                            "university": source_name,
+                            "source_url": view_url,
+                            "apply_url": view_url,
+                        }
+
+                        yield job
+                        count += 1
+
+                        if count % 10 == 0:
+                            logger.info(f"  已完成: {count} 条")
+
+                        time.sleep(DETAIL_DELAY)
+
+                    except Exception as e:
+                        crawl_logger.log_error(source, e, f"解析详情页: {view_url}")
+                        continue
+
+                page += 1
+
+            except Exception as e:
+                crawl_logger.log_error(source, e, f"解析列表页: {page}")
+                break
     except KeyboardInterrupt:
         logger.warning("用户中断爬取")
     except Exception as e:
@@ -5704,6 +6004,8 @@ def crawl_source(source: str, max_items: int = 0, date_filter_months: int = 2) -
         job_iterator = crawl_zjgsu(source_config, max_items)
     elif source == "cueb":
         job_iterator = crawl_cueb(source_config, max_items)
+    elif source == "neepu":
+        job_iterator = crawl_neepu(source_config, max_items)
     elif source == "zufe":
         job_iterator = crawl_zufe(source_config, max_items, date_filter_months)
     elif source == "bytedance":
